@@ -1,9 +1,9 @@
 <script setup>
-
+import '@/components/system/SystemComponents.vue';
 </script>
 
 <template>
 	<div>
-		index
+		<SystemComponents />
 	</div>
 </template>
