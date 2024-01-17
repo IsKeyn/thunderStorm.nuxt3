@@ -23,13 +23,8 @@ await useFetch(
 			},
 		},
 );
-
-// : 'Bearer 3|b4WyeVmQQP3V1NYFbcYCOvqi8AS0Tda4LXU6Azfl'
 </script>
 
 <template>
-	<div>
-		Тут должны юыть данные:
-		{{ userStore.user }}
-	</div>
+	<div />
 </template>
