@@ -5,6 +5,9 @@ export default defineNuxtConfig({
       '@nuxtjs/tailwindcss',
   ],
   devtools: { enabled: true },
+  css: [
+    '@fortawesome/fontawesome-svg-core/styles.css'
+  ],
   ssr: true,
   runtimeConfig: {
     // The private keys which are only available server-side

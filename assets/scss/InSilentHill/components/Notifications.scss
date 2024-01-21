@@ -25,10 +25,9 @@
     relative
     bg-[var(--not-error-bg-color)]
     cursor-pointer
-    mt-5 p-5 pl-16
-    rounded-md;
+    mt-5 p-5 pl-16;
 
-    i {
+    svg.fa-circle-exclamation {
       @apply absolute left-4;
       top: calc(50% - 16px);
     }

@@ -30,7 +30,7 @@
     mt-5 p-5 pl-16
     rounded-md;
 
-    i {
+    svg.fa-circle-exclamation {
       @apply absolute left-4;
       top: calc(50% - 16px);
     }

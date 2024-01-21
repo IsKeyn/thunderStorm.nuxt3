@@ -73,15 +73,17 @@ const getSaveErrorMessage = (result) => {
 				:style=setStyle(alert.id)
 		>
 			<span class="w-[30px] text-left">
-				<i class="fas fa-exclamation" />
+				<font-awesome-icon :icon="['fas', 'exclamation']" class="font-[35px]" />
 			</span>
 			<span class="message">
 				{{ alert.message }}
 			</span>
 			<span class="w-[30px] text-right">
-				<i
-						class="fa fa-times cursor-pointer"
-						@click="hideNotification(alert.id)" />
+				<font-awesome-icon
+						:icon="['fass', 'xmark']"
+						class="cursor-pointer"
+						@click="hideNotification(alert.id)"
+				/>
 			</span>
 		</div>
 
@@ -93,7 +95,7 @@ const getSaveErrorMessage = (result) => {
 					@click="hideNotification(error.id)"
 					:style=setStyle(error.id)
 			>
-				<i class="fas fa-info-circle fa-2x"/>{{ error.currentTime }} : {{ error.message }}
+				<font-awesome-icon :icon="['fas', 'circle-exclamation']" beat-fade size="2xl" />{{ error.currentTime }} : {{ error.message }}
 				<template v-if="typeof(error.saveErrorResult) === 'boolean'">
 					<div class="mt-2 font-bold">{{ getSaveErrorMessage(error.saveErrorResult) }}</div>
 				</template>
