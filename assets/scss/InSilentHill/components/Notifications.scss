@@ -1,0 +1,36 @@
+/* Стили alert окна  */
+.alert-box {
+  @apply
+  fixed z-[10] top-0
+  flex
+  bg-[var(--not-alert-bg-color)] text-[20px]
+  pt-[25px] pr-[30px] pb-[25px] pl-[30px];
+
+  width: var(--main-block-width);
+
+  .message {
+    width: calc(var(--main-block-width) - 60px);
+  }
+}
+
+/* Стили error окна */
+.error-box {
+  @apply
+  fixed z-[1001] bottom-0 right-0
+  mr-10 mb-10
+  w-[500px];
+
+  .wrap {
+    @apply
+    relative
+    bg-[var(--not-error-bg-color)]
+    cursor-pointer
+    mt-5 p-5 pl-16
+    rounded-md;
+
+    i {
+      @apply absolute left-4;
+      top: calc(50% - 16px);
+    }
+  }
+}

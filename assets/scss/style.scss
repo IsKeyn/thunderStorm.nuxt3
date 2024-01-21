@@ -1,0 +1,38 @@
+/* НАЧАЛО основные стили */
+body {
+  margin: 0 auto;
+  font-size: 16px;
+  font-family: var(--main-text-font);
+  color: var(--main-text-color);
+
+  @apply
+    bg-[var(--body-bg-color)]
+  ;
+
+  .main {
+    width: var(--main-block-width);
+    overflow: auto;
+    margin-right: auto;
+    margin-left: auto;
+    background: var(--main-bg-color);
+
+    article {
+      padding: 0 var(--main-left-padding) 30px var(--main-right-padding);
+    }
+
+    /*
+    .KeynTR_theme {
+      @import  '~/assets/scss/KeynTR/vars.scss';
+      @import  '~/assets/scss/KeynTR/style.scss';
+      @import  '~/assets/scss/KeynTR/imports.scss';
+    }
+
+    .InSilentHill_theme {
+      @import  '~/assets/scss/InSilentHill/vars.scss';
+      @import  '~/assets/scss/InSilentHill/style.scss';
+      @import  '~/assets/scss/InSilentHill/imports.scss';
+    }
+    */
+  }
+}
+/* КОНЕЦ основные стили */

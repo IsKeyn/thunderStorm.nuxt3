@@ -1,0 +1,28 @@
+:root {
+  /* Цветовая схема InSilentHill  */
+  /* фоны */
+  --body-bg-color: #333333;
+  --main-bg-color: #000000;
+  --main-veil-color: rgba(0, 0, 0, 0.5);
+
+  /* Текст */
+  --main-text-color: #C0C0C0;
+
+  /* Размеры */
+  --main-block-width: 1400px;
+
+  /* Отступлы контентной зоны */
+  --main-padding: 30px;
+  --main-left-padding: 60px;
+  --main-right-padding: 60px;
+  --main-without-left-padding: -60px;
+  --main-without-right-padding: -60px;
+
+  /*
+   * Префикс первые три буквы, пример alerts - --ale-main-color
+   */
+
+  /* Notification */
+  --not-alert-bg-color: #004d42;
+  --not-error-bg-color: #800000;
+}

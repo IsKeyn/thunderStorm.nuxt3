@@ -2,12 +2,14 @@
 import FormGenerator from '@/components/forms/FormGenerator.vue';
 
 import { useUserStore } from '@/stores/user';
-import { api } from '@/composables/api.js'
-import { validate } from '@/composables/validate.js'
+import { api } from '@/composables/api.js';
+import { validate } from '@/composables/validate.js';
+import { notifications } from '@/composables/notifications.js';
 
 const userStore = useUserStore();
 const { apiUrl } = api();
 const { validateElement } = validate();
+const { alert, error } = notifications();
 
 const formError = ref(null);
 
@@ -32,6 +34,9 @@ const form = ref(
 const Authorization = useCookie('Authorization');
 
 const sendLoginForm = async () => {
+	alert('asd');
+	error('test');
+
 	formError.value = '';
 
 	const rawData = toRaw(form)._rawValue;
@@ -52,6 +57,7 @@ const sendLoginForm = async () => {
 }
 
 const sendRequest = async () => {
+
 	try {
 		// const response = await $fetch(
 		// 		`${apiUrl.value}auth/login`,
@@ -70,10 +76,7 @@ const sendRequest = async () => {
 		// 	Authorization.path = '/';
 		// }
 	} catch (e) {
-
-		console.log(e);
-		// TODO отображение ошибок показать
-		// this.error(e);
+		error(e);
 	}
 }
 
@@ -97,8 +100,8 @@ const sendLogoutRequest = async () => {
 			<button @click="sendLogoutRequest()">send</button>
 		</template>
 		<template v-else>
-			<div v-if="formErrors">
-				{{ formErrors }}
+			<div v-if="formError">
+				{{ formError }}
 			</div>
 			<FormGenerator
 					v-for="(field, index) in form"

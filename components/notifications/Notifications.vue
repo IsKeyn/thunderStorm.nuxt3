@@ -1,0 +1,103 @@
+<script setup>
+import { watch } from 'vue'
+
+import { useNotificationsStore } from '@/stores/notifications';
+
+const useNotifications = useNotificationsStore();
+
+const errors = computed(() => {
+	return useNotifications.notifications.filter((item, index) => {
+		if (item.type === 'error') {
+			item.id = index;
+			return item;
+		}
+	});
+});
+
+const alerts = computed(() => {
+	return useNotifications.notifications.filter((item, index) => {
+		if (item.type === 'alert') {
+			item.id = index;
+			return item;
+		}
+	});
+});
+
+watch(useNotifications.notifications, async (newValue) => {
+	if (newValue) {
+		newValue.forEach((item, index) => {
+			if (!item.hasOwnProperty('active')) {
+				useNotifications.changeNotification({ key: index, prop: 'active', value: true });
+
+				const rawItem = toRaw(item);
+
+				if (rawItem.time) {
+					setTimeout(() => {
+						useNotifications.changeNotification({ key: index, prop: 'active', value: false });
+					}, rawItem.time);
+				}
+			}
+		});
+	}
+});
+
+const setStyle = (key) => {
+	let returnData = {};
+
+	if (useNotifications.notifications[key] && useNotifications.notifications[key].color) {
+		returnData.background = useNotifications.notifications[key].color;
+	}
+
+	return returnData;
+}
+
+const hideNotification = (key) => {
+	useNotifications.changeNotification({ key, prop: 'active', value: false });
+}
+
+const getSaveErrorMessage = (result) => {
+	if (result === true) {
+		return 'Ошибка сохранена в базу данных';
+	} else {
+		return 'Не удалось сохранить ошибку в базу данных';
+	}
+}
+</script>
+
+<template>
+	<div>
+		<div
+				v-for="alert in alerts"
+				v-show="alert.active"
+				class="alert-box"
+				:style=setStyle(alert.id)
+		>
+			<span class="w-[30px] text-left">
+				<i class="fas fa-exclamation" />
+			</span>
+			<span class="message">
+				{{ alert.message }}
+			</span>
+			<span class="w-[30px] text-right">
+				<i
+						class="fa fa-times cursor-pointer"
+						@click="hideNotification(alert.id)" />
+			</span>
+		</div>
+
+		<div class="error-box">
+			<div
+					v-for="error in errors"
+					v-show="error.active"
+					class="wrap"
+					@click="hideNotification(error.id)"
+					:style=setStyle(error.id)
+			>
+				<i class="fas fa-info-circle fa-2x"/>{{ error.currentTime }} : {{ error.message }}
+				<template v-if="typeof(error.saveErrorResult) === 'boolean'">
+					<div class="mt-2 font-bold">{{ getSaveErrorMessage(error.saveErrorResult) }}</div>
+				</template>
+			</div>
+		</div>
+	</div>
+</template>
