@@ -3,10 +3,9 @@
   @apply
   fixed z-[10] top-0
   flex
+  w-[var(--main-block-width)]
   bg-[var(--not-alert-bg-color)] text-[20px]
   pt-[25px] pr-[30px] pb-[25px] pl-[30px];
-
-  width: var(--main-block-width);
 
   .message {
     width: calc(var(--main-block-width) - 60px);

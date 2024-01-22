@@ -3,10 +3,20 @@
   /* фоны */
   --body-bg-color: #333333;
   --main-bg-color: #000000;
+
+  /* Пелена */
   --main-veil-color: rgba(0, 0, 0, 0.5);
 
   /* Текст */
   --main-text-color: #C0C0C0;
+  --main-text-font: Verdana;
+  --main-font-size: 16px;
+
+  /* Ссылки */
+  --main-href-color: #800000;
+  --main-hover-color: #900000;
+  --second-href-color: #150000;
+  --second-hover-color: #250000;
 
   /* Размеры */
   --main-block-width: 1400px;

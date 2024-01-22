@@ -95,7 +95,7 @@ const sendLogoutRequest = async () => {
 
 <template>
 	<div>
-		<font-awesome-icon :icon="['far', 'user']" />
+		<button class="btn"><font-awesome-icon :icon="['far', 'user']" /> Авторизоваться</button>
 		<template v-if="Object.keys(userStore.user).length > 0">
 				Вы залогинены
 			<button @click="sendLogoutRequest()">send</button>

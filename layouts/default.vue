@@ -15,6 +15,7 @@ import(`~/assets/scss/${runtimeConfig.public.theme}/imports.scss`);
 
 import('~/assets/scss/InSilentHill/vars.scss');
 import('~/assets/scss/InSilentHill/style.scss');
+import('~/assets/scss/InSilentHill/fonts.scss');
 import('~/assets/scss/InSilentHill/imports.scss');
 
 const theme = computed(() => {

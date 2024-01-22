@@ -1,4 +1,51 @@
 :root {
+  /* Цветовая схема DeepOcean  */
+  /* фоны */
+  --body-bg-color: #333333;
+  --main-bg-color: #fff;
+
+  /* Пелена */
+  --main-veil-color: rgba(0, 0, 0, 0.5);
+
+  /* Текст */
+  --main-text-color: #000;
+  --main-text-font: Verdana;
+  --second-text-color: #fff;
+  --third-text-color: #015278;
+
+  --main-font-size: 22px;
+  --medium-text-font-size: 18px;
+
+  /* Ошибки, сообщения и предупреждения */
+  --error-color: #880000;
+
+  /* Ссылки */
+  --main-href-color: #015278;
+  --main-hover-color: #79a0ff;
+  --second-href-color: #fff;
+
+  /* Блоки */
+  --main-block-color: #015278;
+  --second-block-color: #fff;
+
+  /* Рамки */
+  --main-border-color: #015278;
+  --main-very-light-color: #01527824;
+  --second-border-color: #bcbcbc;
+  --third-border-color: #fff;
+
+  /* hover */
+  --second-hover-color: #015278;
+
+  /* Размеры */
+  --main-block-width: 1400px;
+
+  /* Отступлы контентной зоны */
+  --main-padding: 30px;
+  --main-left-padding: 60px;
+  --main-right-padding: 60px;
+  --main-without-left-padding: -60px;
+  --main-without-right-padding: -60px;
 
   /*
   * Префикс первые три буквы, пример alerts - --ale-main-color

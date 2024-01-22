@@ -1,1 +1,16 @@
+/* НАЧАЛО кнопки и ссылки */
+button,
+button, [type="button"], [type="reset"], [type="submit"] {
+  @apply
+    bg-gradient-to-r from-[var(--main-href-color)] to-[var(--second-href-color)]
+    pt-[5px] pr-[20px] pb-[5px] pl-[20px]
+    mt-[10px] mb-[10px]
+  ;
 
+  &:hover {
+    @apply
+      bg-gradient-to-r from-[var(--main-hover-color)] to-[var(--second-hover-color)]
+    ;
+  }
+}
+/* КОНЕЦ кнопки и ссылки */
