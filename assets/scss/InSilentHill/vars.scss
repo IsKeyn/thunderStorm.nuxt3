@@ -1,5 +1,8 @@
 :root {
   /* Цветовая схема InSilentHill  */
+  /* Цвета */
+  --alert-color: #800000;
+
   /* фоны */
   --body-bg-color: #333333;
   --main-bg-color: #000000;
@@ -17,6 +20,10 @@
   --main-hover-color: #900000;
   --second-href-color: #150000;
   --second-hover-color: #250000;
+
+  /* Рамки */
+  --main-border-color: #015278;
+  --second-border-color: #333333;
 
   /* Размеры */
   --main-block-width: 1400px;

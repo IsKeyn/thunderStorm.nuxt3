@@ -1,0 +1,20 @@
+.input-wrap {
+  @apply block relative;
+
+  .password-eye-wrap {
+    @apply absolute bottom-[6px] right-0;
+
+    .password-eye-icon {
+      @apply cursor-pointer
+      ;
+    }
+  }
+}
+
+.field-error-message {
+  @apply
+    mt-[4px]
+  ;
+
+  color: var(--alert-color);
+}

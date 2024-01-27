@@ -21,3 +21,18 @@ button:hover {
   color: var(--third-text-color);
 }
 /* КОНЕЦ кнопки и ссылки */
+
+input {
+  min-width: 15%;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid var(--second-border-color);
+  margin-right: 15px;
+  padding: 10px 10px 10px 20px;
+}
+
+input.button-height {
+  border: 2px solid var(--second-text-color);
+  font-size: 20px;
+}
+/* КОНЕЦ Поля ввода */

@@ -1,0 +1,47 @@
+:root {
+  --mod-pt: 8px;
+  --mod-pr: 35px;
+  --mod-pb: 10px;
+  --mod-pl: 35px;
+}
+
+.modal-outer-wrapper {
+  @apply fixed z-[1000] top-1/2 left-1/2 max-h-full overflow-auto;
+
+  .close-button {
+    @apply text-white absolute text-3xl right-3 top-0 cursor-pointer;
+  }
+
+  .modal-inner-wrapper {
+    @apply bg-[var(--main-bg-color)] h-full overflow-auto;
+  }
+}
+
+/* modal-window - class который можно переопределить с помощью props, для изменения размеров модального окна */
+.modal-window {
+  &.small {
+    @apply w-[18%];
+
+    margin-left: calc(-9% + 60px);
+  }
+
+  &.huge {
+    @apply w-[70%] ml-[-35%];
+  }
+
+  &.medium {
+    @apply w-[36%] ml-[-18%];
+  }
+
+  .modal-inner-wrapper {
+    @apply pt-[var(--mod-pt)] pr-[var(--mod-pr)] pb-[var(--mod-pb)] pl-[var(--mod-pl)] mr-[60px];
+  }
+
+  @media (max-width: 768px) {
+    &.small,
+    &.medium,
+    &.huge {
+      @apply w-[100%] left-0 ml-0;
+    }
+  }
+}

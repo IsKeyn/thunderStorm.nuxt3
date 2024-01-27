@@ -14,3 +14,27 @@ button, [type="button"], [type="reset"], [type="submit"] {
   }
 }
 /* КОНЕЦ кнопки и ссылки */
+
+/* НАЧАЛО Поля ввода */
+input {
+  @apply
+    pt-[5px] pr-[0] pb-[5px] pl-[0]
+    bg-[var(--main-bg-color)]
+  ;
+
+  border-bottom: 1px solid var(--second-border-color);
+
+  &.error {
+    //border-bottom: 1px solid var(--alert-color);
+  }
+}
+/* КОНЕЦ Поля ввода */
+
+
+/* НАЧАЛО Ошибки */
+.small-error-text {
+  @apply
+    text-[14px];
+  ;
+}
+/* Конец Ошибки */

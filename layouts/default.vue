@@ -1,4 +1,5 @@
 <script setup>
+import SystemComponents from '@/components/system/SystemComponents.vue';
 import Notifications from '@/components/notifications/Notifications.vue';
 
 import('~/assets/scss/vars.scss');
@@ -26,6 +27,8 @@ const theme = computed(() => {
 <template>
 	<div :class="theme">
 		<div class="main">
+			<SystemComponents />
+			<div id="modals"></div>
 			<article>
 				<slot />
 			</article>

@@ -16,17 +16,19 @@ const formError = ref(null);
 const form = ref(
 		{
 			email: {
-				name: 'Логин пользователя',
+				name: 'E-mail',
 				value: '',
 				type: 'text',
 				validateRules: 'required, email',
+				classes: ['w-full', 'mt-[5px]'],
 			},
 			password: {
-				name: 'Пароль пользователя',
+				name: 'Пароль',
 				value: '',
 				type: 'password',
 				validateRules: 'required',
 				showChangeTypeButton: true,
+				classes: ['w-full', 'pr-[25px]', 'mt-[5px]'],
 			},
 		}
 );
@@ -95,23 +97,25 @@ const sendLogoutRequest = async () => {
 
 <template>
 	<div>
-		<button class="btn"><font-awesome-icon :icon="['far', 'user']" /> Авторизоваться</button>
 		<template v-if="Object.keys(userStore.user).length > 0">
 				Вы залогинены
 			<button @click="sendLogoutRequest()">send</button>
 		</template>
 		<template v-else>
-			<div v-if="formError">
-				{{ formError }}
-			</div>
+<!--			<div v-if="formError">-->
+<!--				{{ formError }}-->
+<!--			</div>-->
 			<FormGenerator
 					v-for="(field, index) in form"
 					:key="index"
 					:name="index"
 					:element="field"
-					:showValidateError="true"
+					:showValidateError=true
+					validateErrorPosition="bottom"
+					:labelClasses="['block', 'mb-[10px]']"
+					:fieldClasses="field.classes"
 			/>
-			<button @click="sendLoginForm()">send</button>
+			<button @click="sendLoginForm()">Отправать</button>
 		</template>
 	</div>
 </template>

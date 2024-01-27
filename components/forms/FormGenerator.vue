@@ -14,6 +14,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	validateErrorPosition: {
+		type: String,
+		default: 'top',
+	},
 	showTitle: {
 		type: Boolean,
 		default: true,
@@ -23,6 +27,10 @@ const props = defineProps({
 		default: false,
 	},
 	labelClasses: {
+		type: String,
+		default: '',
+	},
+	fieldClasses: {
 		type: String,
 		default: '',
 	},
@@ -43,6 +51,26 @@ watch(props.element, async (newValue) => {
 	}
 })
 
+const getLabelClasses = computed(() => {
+	const classes = [];
+
+	if (props.labelClasses) {
+		classes.push(props.labelClasses);
+	}
+
+	return classes;
+});
+
+const getFieldClasses = computed(() => {
+	const classes = [];
+
+	if (props.fieldClasses) {
+		classes.push(props.fieldClasses);
+	}
+
+	return classes;
+});
+
 const showPassword = () => {
 	if (props.element.type === 'password') {
 		props.element.type = 'text'
@@ -53,20 +81,43 @@ const showPassword = () => {
 </script>
 
 <template>
-	<label ref="label" :class="labelClasses">
-		<span v-if="element.validareResult && showValidateError">
-			{{ element.validareResult }}
+	<label
+			ref="label"
+			:class="getLabelClasses"
+	>
+		<span
+				v-if="validateErrorPosition === 'top' && element.validateResult && showValidateError"
+		>
+			{{ element.validateResult }}
 		</span>
 		<span v-if="showTitle && element.name">{{ element.name }}</span>
 		<template v-if="element.type === 'text' || element.type === 'number' || element.type === 'password'"">
-			<input
-					v-model="element.value"
-					:type="element.type"
-					:name="name"
-					:friendly-name="element.name"
-					:placeholder="element.placeholder"
-			/>
-			<span v-if="element.showChangeTypeButton" @click="showPassword">глазик</span>
+			<span class="input-wrap">
+				<input
+						v-model="element.value"
+						:type="element.type"
+						:name="name"
+						:friendly-name="element.name"
+						:placeholder="element.placeholder"
+						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+				/>
+				<span
+						v-if="element.showChangeTypeButton"
+						@click="showPassword"
+						class="password-eye-wrap"
+				>
+					<font-awesome-icon
+							v-if="element.type === 'password'"
+							:icon="['far', 'eye-slash']"
+							class="password-eye-icon"
+					/>
+					<font-awesome-icon
+							v-if="element.type === 'text'"
+							:icon="['far', 'eye']"
+							class="password-eye-icon"
+					/>
+				</span>
+			</span>
 		</template>
 		<template v-else-if="element.type === 'textarea'">
 			<textarea
@@ -74,6 +125,7 @@ const showPassword = () => {
 					:name="name"
 					:friendly-name="element.name"
 					:placeholder="element.placeholder"
+					:class="getFieldClasses"
 			/>
 		</template>
 		<template v-else-if="element.type === 'file'">
@@ -85,6 +137,7 @@ const showPassword = () => {
 						:name="name"
 						:friendly-name="element.name"
 						:placeholder="element.placeholder"
+						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
 						@change="element.value = $event.target.files"
 				/>
 			</template>
@@ -95,9 +148,16 @@ const showPassword = () => {
 						:name="name"
 						:friendly-name="element.name"
 						:placeholder="element.placeholder"
+						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
 						@change="element.value = $event.target.files"
 				/>
 			</template>
 		</template>
+		<span
+			v-if="validateErrorPosition === 'bottom' && element.validateResult && showValidateError"
+			class="field-error-message small-error-text"
+		>
+			{{ element.validateResult }}
+		</span>
 	</label>
 </template>
