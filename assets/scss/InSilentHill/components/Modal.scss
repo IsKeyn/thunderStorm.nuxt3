@@ -6,10 +6,20 @@
 }
 
 .modal-outer-wrapper {
-  @apply fixed z-[1000] top-1/2 left-1/2 max-h-full overflow-auto;
+  @apply
+    fixed z-[1000]
+    top-1/2 sm:left-1/2
+    max-h-full overflow-auto
+  ;
 
   .close-button {
-    @apply text-white absolute text-3xl right-3 top-0 cursor-pointer;
+    @apply
+      text-white
+      absolute
+      text-3xl
+      right-3
+      top-3 md:top-0
+      cursor-pointer;
   }
 
   .modal-inner-wrapper {
@@ -19,29 +29,28 @@
 
 /* modal-window - class который можно переопределить с помощью props, для изменения размеров модального окна */
 .modal-window {
+  @media (max-width: 639px) {
+    @apply w-[100%];
+  }
+
   &.small {
-    @apply w-[18%];
+    @media (min-width: 640px) { // sm
+      margin-left: calc(var(--modal-small-width) / 2 - var(--modal-small-width) );
+    }
 
-    margin-left: calc(-9% + 60px);
+    @media (min-width: 768px) {
+      margin-left: calc(0px - var(--modal-small-width) / 2);
+    }
   }
 
-  &.huge {
-    @apply w-[70%] ml-[-35%];
-  }
-
-  &.medium {
-    @apply w-[36%] ml-[-18%];
-  }
+  &.medium {}
+  &.huge {}
 
   .modal-inner-wrapper {
-    @apply pt-[var(--mod-pt)] pr-[var(--mod-pr)] pb-[var(--mod-pb)] pl-[var(--mod-pl)] mr-[60px];
-  }
-
-  @media (max-width: 768px) {
-    &.small,
-    &.medium,
-    &.huge {
-      @apply w-[100%] left-0 ml-0;
-    }
+    @apply
+      w-[100%] sm:w-[var(--modal-small-width)]
+      pt-[var(--mod-pt)] pr-[var(--mod-pr)] pb-[var(--mod-pb)] pl-[var(--mod-pl)]
+      md:mr-[60px]
+    ;
   }
 }

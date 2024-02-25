@@ -9,20 +9,21 @@ const { getFormattedDate } = date();
 export function notifications() {
     const useNotifications = useNotificationsStore();
 
-    const alert = (message, time = null, color = null) => {
+    const alert = (message, time = null, color = null, func = null) => {
         if (message) {
             const params = {
                 type: 'alert',
                 message,
                 time: time ? time : 3000,
                 color: color,
+                func,
             };
 
             useNotifications.addNotification(params);
         }
     };
 
-    const error = async(message, time = null, color = null, saveError = false, from = null) => {
+    const error = async(message, time = null, color = null, saveError = false, from = null, func = null) => {
         if (message) {
             const currentTime = getFormattedDate('d.m.Y H:i:s');
             const params = {
@@ -31,6 +32,7 @@ export function notifications() {
                 time,
                 color: color,
                 currentTime,
+                func,
             };
 
             if (saveError) {

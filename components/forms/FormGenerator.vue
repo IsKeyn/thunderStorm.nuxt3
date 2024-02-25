@@ -155,7 +155,7 @@ const showPassword = () => {
 		</template>
 		<span
 			v-if="validateErrorPosition === 'bottom' && element.validateResult && showValidateError"
-			class="field-error-message small-error-text"
+			class="field-error-message small-text"
 		>
 			{{ element.validateResult }}
 		</span>

@@ -1,0 +1,76 @@
+<script setup>
+import { watch, onMounted } from "vue";
+import LoginForm from '@/components/forms/LoginForm.vue';
+import RecoveryPasswordForm from '@/components/forms/RecoveryPasswordForm.vue';
+import RegistrationForm from '@/components/forms/RegistrationForm.vue';
+import ResetPasswordForm from '@/components/forms/ResetPasswordForm.vue';
+
+const props = defineProps({
+	title: {
+		type: String,
+		default: 'Авторизация',
+	},
+	actionType: {
+		type: String,
+		default: 'login',
+	},
+});
+
+// watch(() => props.actionType, (newValue) => {
+// 	setActionType({ value: actionType.value, title: newValue });
+// });
+
+onMounted(() => {
+	setActionType({ value: props.actionType, title: props.title });
+})
+
+const emit = defineEmits(['сlosureFunc', 'reCalcHeight', 'closeModal']);
+
+const actionType = ref('login');
+const actionTypeTitle = ref('Авторизация');
+
+const setActionType = (paramsObj) => {
+	actionType.value = paramsObj.value;
+	actionTypeTitle.value = paramsObj.title;
+
+	emit('reCalcHeight');
+}
+</script>
+
+<template>
+	<div>
+		<h3 class="auth-title">{{ actionTypeTitle }}</h3>
+		<LoginForm
+				v-if="actionType === 'login'"
+				@setActionType="setActionType"
+				@сlosureFunc="emit('сlosureFunc')"
+		/>
+		<RecoveryPasswordForm
+				v-if="actionType === 'recovery_password'"
+				@setActionType="setActionType"
+				@closeModal="emit('closeModal')"
+		/>
+		<RegistrationForm
+				v-if="actionType === 'registration'"
+				@setActionType="setActionType"
+		/>
+		<ResetPasswordForm
+				v-if="actionType === 'reset_password'"
+				@setActionType="setActionType"
+				@closeModal="emit('closeModal')"
+		/>
+	</div>
+</template>
+
+<style lang="scss" scoped>
+h3.auth-title {
+	@apply
+	bg-gradient-to-r from-[var(--main-href-color)] to-[var(--second-href-color)]
+	text-[18px]
+	mt-[-8px] mr-[-35px] mb-[16px] ml-[-35px]
+	pt-[12px] pb-[12px] pl-[34px]
+	;
+
+	width: calc(100% + 35px + 35px);
+}
+</style>

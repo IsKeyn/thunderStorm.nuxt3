@@ -13,6 +13,15 @@ button, [type="button"], [type="reset"], [type="submit"] {
     ;
   }
 }
+
+a {
+  color: var(--main-href-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
 /* КОНЕЦ кнопки и ссылки */
 
 /* НАЧАЛО Поля ввода */
@@ -30,11 +39,12 @@ input {
 }
 /* КОНЕЦ Поля ввода */
 
+/* НАЧАЛО тексты */
+.small-text {
+  font-size: var(--text-small-text);
+}
+/* КОНЕЦ тексты */
 
 /* НАЧАЛО Ошибки */
-.small-error-text {
-  @apply
-    text-[14px];
-  ;
-}
+
 /* Конец Ошибки */

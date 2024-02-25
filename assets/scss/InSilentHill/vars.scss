@@ -2,13 +2,19 @@
   /* Цветовая схема InSilentHill  */
   /* Цвета */
   --alert-color: #800000;
+  --success-color: #004d42;
 
-  /* фоны */
+  /* Фоны */
   --body-bg-color: #333333;
   --main-bg-color: #000000;
 
   /* Пелена */
   --main-veil-color: rgba(0, 0, 0, 0.5);
+
+  /* Модалки */
+  --modal-small-width: 400px;
+  --modal-medium-width: 900px;
+  --modal-full-screen-width: 100%;
 
   /* Текст */
   --main-text-color: #C0C0C0;
@@ -24,6 +30,9 @@
   /* Рамки */
   --main-border-color: #015278;
   --second-border-color: #333333;
+
+  /* Размеры шрифтов */
+  --text-small-text: 14px;
 
   /* Размеры */
   --main-block-width: 1400px;

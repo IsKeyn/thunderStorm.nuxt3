@@ -34,6 +34,10 @@ watch(useNotifications.notifications, async (newValue) => {
 				if (rawItem.time) {
 					setTimeout(() => {
 						useNotifications.changeNotification({ key: index, prop: 'active', value: false });
+
+						if (rawItem.func) {
+							rawItem.func();
+						}
 					}, rawItem.time);
 				}
 			}

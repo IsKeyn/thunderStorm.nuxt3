@@ -11,10 +11,15 @@ body {
 
   .main {
     @apply
-      w-[var(--main-block-width)] overflow-auto
+      w-full
+      overflow-auto
       mr-auto ml-auto
       bg-[var(--main-bg-color)]
     ;
+
+    @media (min-width: 1400px) { // lg
+      @apply w-[var(--main-block-width)];
+    }
 
     article {
       @apply

@@ -10,13 +10,14 @@ const Authorization = useCookie('Authorization');
 await useFetch(
 		`${apiUrl.value}auth/user`,
 		{
-			method: 'GET',
+			$fetch: useRequestFetch(), // TODO Установка кук из ответа, работает странно...
+			credentials: 'include',
 			headers: {
-				Authorization,
+				Authorization: Authorization.value,
 				Accept: 'application/json',
 				'X-Requested-With': 'XMLHttpRequest',
 			},
-			onResponse({ response}) {
+			onResponse({response}) {
 				if (response.status === 200) {
 					userStore.user = response._data;
 				}

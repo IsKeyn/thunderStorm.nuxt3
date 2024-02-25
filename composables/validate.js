@@ -10,7 +10,39 @@ export function validate() {
         },
     };
 
-    const validateElement = (value, rules) => {
+    const validateForm = (form, validateType = 'singError') => {
+
+        /*
+         * validateType:string
+         * singError - при нахождении ошибки в форме возвращается ошибка
+         */
+
+        let currentElValidateResult,
+            validateResult,
+            status = true;
+        const rawData = toRaw(form)._rawValue;
+
+        for (var key in rawData) {
+            currentElValidateResult = validateElement(rawData[key].value, rawData[key].validateRules, rawData);
+
+            if (validateType === 'singError') {
+                if (typeof currentElValidateResult === 'string')
+                    return {
+                        status: false,
+                        key,
+                        validateResult: currentElValidateResult.replaceAll('{fieldName}', rawData[key].name)
+                    };
+            } else if (validateType === 'allError') {
+                if (typeof currentElValidateResult === 'string') {
+                    validateResult[key].validateResult = currentElValidateResult.replaceAll('{fieldName}', rawData[key].name);
+                }
+            }
+        }
+
+        return { status, validateResult };
+    }
+
+    const validateElement = (value, rules, allElements = {}) => {
         const arRules = rules.replaceAll(' ', '').split(',');
         let error = null;
 
@@ -33,6 +65,24 @@ export function validate() {
 
             if (item === 'phone') {
 
+            }
+
+            const minLengthRegex = /minLength_[0-9]{1,6}/i;
+            if (minLengthRegex.test(item)) { // example minLength_10
+                const minLength = Number(item.split('_')[1]);
+
+                if (value.length < minLength) {
+                    error = `Длина строки должна быть не меньше ${minLength} символов`;
+                }
+            }
+
+            const maxLengthRegex = /maxLength_[0-9]{1,6}/i;
+            if (maxLengthRegex.test(item)) { // example minLength_10
+                const maxLength = Number(item.split('_')[1]);
+
+                if (value.length > maxLength) {
+                    error = `Длина строки должна быть не меньше ${maxLength} символов`;
+                }
             }
 
             const sizeRegex = /size_[0-9]{1,6}/i;
@@ -83,6 +133,29 @@ export function validate() {
 
                 error = errors.join(', ');
             }
+
+            // Правило валидации, при котором для поля должны быть равны
+            const sameFieldsRegex = /sameFields_[a-z0-9]{1,50}/i;
+            if (sameFieldsRegex.test(item)) {
+                const fieldForCompare = item.split('_')[1];
+
+                if (fieldForCompare && Object.keys(allElements).length > 0) {
+                    if (!allElements[fieldForCompare]) {
+                        error = 'Отсутсвтует поле для сравнения';
+                    } else {
+                        if (value !== allElements[fieldForCompare].value) {
+                            error = `Поле "{fieldName}" должно соотвествовать полю "${allElements[fieldForCompare].name}"`;
+                        }
+                    }
+                }
+            }
+
+            // Правило валидации, при котором два поля не должны быть равны
+            const isNotSameFieldsRegex = /isNotSameFields_[a-z0-9]{1,50}/i;
+            if (isNotSameFieldsRegex.test(item)) {
+
+                console.log('isNotSameFieldsRegex');
+            }
         }
 
         return error;
@@ -109,5 +182,5 @@ export function validate() {
         return supportedMimes.includes(fileType);
     }
 
-    return { validateElement };
+    return { validateForm, validateElement };
 }

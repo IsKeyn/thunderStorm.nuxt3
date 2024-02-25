@@ -7,7 +7,7 @@ import Overlay from "@/components/layout/Overlay.vue";
 import { notifications } from '@/composables/notifications.js';
 
 const { alert, error } = notifications();
-const emit = defineEmits(['inFocus', 'toggleModal']);
+const emit = defineEmits(['toggleModal', 'setReCalcValue']);
 
 const props = defineProps({
 	showOpenModal: {
@@ -38,6 +38,10 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	reCalcHeight: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const id = ref(null);
@@ -49,8 +53,15 @@ watch(() => props.showOpenModal, (newValue) => {
 	modalActive.value = newValue;
 });
 
+watch(() => props.reCalcHeight, (newValue) => {
+	if (newValue) {
+		calcHeight();
+		emit('setReCalcValue', false);
+	}
+});
+
 watch(modalActive, (newValue) => {
-	modalActive.value = newValue;
+	// modalActive.value = newValue;
 
 	if (newValue && wasOpen.value === false) {
 		init();
@@ -105,12 +116,14 @@ const calcHeight = (time, timeout = 1) => {
 
 	const modal = document.getElementById(id.value);
 	if (modal) {
-		if (checkModalHeightInterval.value) {
-			clearInterval(checkModalHeightInterval.value);
-			checkModalHeightInterval.value = null;
-		}
+		setTimeout(() => { // TODO попробовать решить задачу без таймаута
+			if (checkModalHeightInterval.value) {
+				clearInterval(checkModalHeightInterval.value);
+				checkModalHeightInterval.value = null;
+			}
 
-		modal.style.marginTop = `-${modal.offsetHeight / 2}px`;
+			modal.style.marginTop = `-${modal.offsetHeight / 2}px`;
+		}, 10);
 	} else if (!checkModalHeightInterval.value) {
 		time = time ? time : 5000;
 
