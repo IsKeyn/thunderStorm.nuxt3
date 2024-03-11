@@ -79,7 +79,7 @@ const sendVerifyEmailRequest = async (params) => {
 		);
 
 		if (response) {
-			userStore.user = response;
+			userStore.user = response.data;
 			alert(
 					'Ваш email подтверждён',
 					3000,

@@ -93,6 +93,7 @@ const showPassword = () => {
 		<span v-if="showTitle && element.name">{{ element.name }}</span>
 		<template v-if="element.type === 'text' || element.type === 'number' || element.type === 'password'"">
 			<span class="input-wrap">
+			<!--	Выбор значения из сущности (отдельный компонент) // медиабиблиотека			-->
 				<input
 						v-model="element.value"
 						:type="element.type"
@@ -142,15 +143,34 @@ const showPassword = () => {
 				/>
 			</template>
 			<template v-else>
-				<input
-						type="file"
-						:accept="element.accept"
-						:name="name"
-						:friendly-name="element.name"
-						:placeholder="element.placeholder"
-						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
-						@change="element.value = $event.target.files"
-				/>
+				<template v-if="element.showFile && element.value && typeof element.value === 'string'">
+					<div class="grid grid-cols-4">
+						<input
+								type="file"
+								class="col-span-2"
+								:accept="element.accept"
+								:name="name"
+								:friendly-name="element.name"
+								:placeholder="element.placeholder"
+								:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+								@change="element.value = $event.target.files"
+						/>
+						<div class="col-span-2 text-center">
+							<img :src="element.value" class="inline-block max-w-[500px] max-h-[500px]">
+						</div>
+					</div>
+				</template>
+				<template v-else>
+					<input
+							type="file"
+							:accept="element.accept"
+							:name="name"
+							:friendly-name="element.name"
+							:placeholder="element.placeholder"
+							:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+							@change="element.value = $event.target.files"
+					/>
+				</template>
 			</template>
 		</template>
 		<span

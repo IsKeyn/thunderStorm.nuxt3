@@ -19,7 +19,7 @@ await useFetch(
 			},
 			onResponse({response}) {
 				if (response.status === 200) {
-					userStore.user = response._data;
+					userStore.user = response._data.data;
 				}
 			},
 		},

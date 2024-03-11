@@ -55,5 +55,19 @@ export function notifications() {
         }
     };
 
-    return { alert, error };
+    const choiceAlert = (choiceAlertParams) => {
+        if (choiceAlertParams) {
+            const params = {
+                type: 'choiceAlert',
+                card: choiceAlertParams.card ? choiceAlertParams.card : 'ChoiceAlertCard1',
+                title: choiceAlertParams.title,
+                message: choiceAlertParams.message,
+                buttons: choiceAlertParams.buttons,
+            };
+
+            useNotifications.addNotification(params);
+        }
+    }
+
+    return { alert, error, choiceAlert };
 }

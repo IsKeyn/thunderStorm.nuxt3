@@ -20,7 +20,8 @@ export function validate() {
         let currentElValidateResult,
             validateResult,
             status = true;
-        const rawData = toRaw(form)._rawValue;
+
+        const rawData = toRaw(form)._rawValue ? toRaw(form)._rawValue : toRaw(form);
 
         for (var key in rawData) {
             currentElValidateResult = validateElement(rawData[key].value, rawData[key].validateRules, rawData);

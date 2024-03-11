@@ -26,6 +26,14 @@ body {
         pt-0 pr-[var(--main-left-padding)] pb-[30px] pl-[var(--main-right-padding)]
       ;
     }
+
+    &.admin {
+      @apply w-full;
+    }
   }
 }
 /* КОНЕЦ основные стили */
+
+/* НАЧАЛО формы ввода */
+
+/* КОНЕЦ формы ввода */

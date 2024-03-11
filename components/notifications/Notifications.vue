@@ -1,6 +1,9 @@
 <script setup>
 import { watch } from 'vue'
 
+import Modal from '@/components/modals/Modal.vue';
+import ChoiceAlertCard1 from '@/components/notifications/cards/ChoiceAlertCard1.vue';
+
 import { useNotificationsStore } from '@/stores/notifications';
 
 const useNotifications = useNotificationsStore();
@@ -17,6 +20,15 @@ const errors = computed(() => {
 const alerts = computed(() => {
 	return useNotifications.notifications.filter((item, index) => {
 		if (item.type === 'alert') {
+			item.id = index;
+			return item;
+		}
+	});
+});
+
+const choiceAlerts = computed(() => {
+	return useNotifications.notifications.filter((item, index) => {
+		if (item.type === 'choiceAlert') {
 			item.id = index;
 			return item;
 		}
@@ -66,6 +78,12 @@ const getSaveErrorMessage = (result) => {
 		return 'Не удалось сохранить ошибку в базу данных';
 	}
 }
+
+const getCardType = (cardName) => {
+	switch (cardName) {
+		case 'ChoiceAlertCard1': return ChoiceAlertCard1;
+	}
+}
 </script>
 
 <template>
@@ -104,6 +122,20 @@ const getSaveErrorMessage = (result) => {
 					<div class="mt-2 font-bold">{{ getSaveErrorMessage(error.saveErrorResult) }}</div>
 				</template>
 			</div>
+		</div>
+
+		<div v-for="choiceAlert in choiceAlerts">
+			<Modal
+					:showOpenModal="choiceAlert.active"
+					:canClose="false"
+					size="small"
+			>
+				<component
+						:is="getCardType(choiceAlert.card)"
+						:item="choiceAlert"
+						@close="hideNotification(choiceAlert.id)"
+				/>
+			</Modal>
 		</div>
 	</div>
 </template>

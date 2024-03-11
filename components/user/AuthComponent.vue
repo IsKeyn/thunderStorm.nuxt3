@@ -39,7 +39,7 @@ const setActionType = (paramsObj) => {
 
 <template>
 	<div>
-		<h3 class="auth-title">{{ actionTypeTitle }}</h3>
+		<h3 class="modal-title">{{ actionTypeTitle }}</h3>
 		<LoginForm
 				v-if="actionType === 'login'"
 				@setActionType="setActionType"
@@ -61,16 +61,3 @@ const setActionType = (paramsObj) => {
 		/>
 	</div>
 </template>
-
-<style lang="scss" scoped>
-h3.auth-title {
-	@apply
-	bg-gradient-to-r from-[var(--main-href-color)] to-[var(--second-href-color)]
-	text-[18px]
-	mt-[-8px] mr-[-35px] mb-[16px] ml-[-35px]
-	pt-[12px] pb-[12px] pl-[34px]
-	;
-
-	width: calc(100% + 35px + 35px);
-}
-</style>

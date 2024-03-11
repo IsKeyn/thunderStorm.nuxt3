@@ -54,3 +54,14 @@
     ;
   }
 }
+
+h3.modal-title {
+  @apply
+    bg-gradient-to-r from-[var(--main-href-color)] to-[var(--second-href-color)]
+    text-[18px]
+    mt-[-8px] mr-[-35px] mb-[16px] ml-[-35px]
+    pt-[12px] pb-[12px] pl-[34px]
+  ;
+
+  width: calc(100% + 35px + 35px);
+}

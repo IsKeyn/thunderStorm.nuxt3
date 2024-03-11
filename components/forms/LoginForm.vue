@@ -152,7 +152,7 @@ const getUserData = async () => {
 		);
 
 		if (response) {
-			userStore.user = response;
+			userStore.user = response.data;
 			requestInProgress.value = false;
 		}
 	} catch (e) {
@@ -164,7 +164,7 @@ const getUserData = async () => {
 
 <template>
 	<div>
-		<template v-if="Object.keys(userStore.user).length > 0 && Authorization">
+		<template v-if="userStore.user && Object.keys(userStore.user).length > 0 && Authorization">
 			<template v-if="userStore.user.email_verified_at">
 				Вы залогинены
 				<div class="grid grid-cols-6">

@@ -1,4 +1,14 @@
 /* Стили alert окна  */
+.admin {
+  .alert-box {
+    @apply w-full;
+
+    .message {
+      width: calc(100% - 60px);
+    }
+  }
+}
+
 .alert-box {
   @apply
     fixed z-[1000] top-0

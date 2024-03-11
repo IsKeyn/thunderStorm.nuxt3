@@ -122,7 +122,7 @@ const getUserData = async () => {
 		);
 
 		if (response) {
-			userStore.user = response;
+			userStore.user = response.data;
 			requestInProgress.value = false;
 		}
 	} catch (e) {

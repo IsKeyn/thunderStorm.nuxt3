@@ -5,6 +5,7 @@ button, [type="button"], [type="reset"], [type="submit"] {
     bg-gradient-to-r from-[var(--main-href-color)] to-[var(--second-href-color)]
     pt-[5px] pr-[20px] pb-[5px] pl-[20px]
     mt-[10px] mb-[10px]
+    text-[var(--main-text-color)]
   ;
 
   &:hover {
@@ -36,6 +37,20 @@ input {
   &.error {
     //border-bottom: 1px solid var(--alert-color);
   }
+}
+
+textarea {
+  @apply
+    min-h-[120px]
+    pt-[10px] pr-[10px] pb-[10px] pl-[20px]
+    border-none
+    bg-[var(--main-bg-color)]
+  ;
+
+  width: calc(100% - 30px);
+  border-bottom: 1px solid var(--second-border-color);
+  border-left: 1px solid var(--second-border-color);
+  resize: none;
 }
 /* КОНЕЦ Поля ввода */
 
