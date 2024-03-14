@@ -2,6 +2,7 @@
 import SystemComponents from '@/components/system/SystemComponents.vue';
 import Notifications from '@/components/notifications/Notifications.vue';
 import FloatHeader from '@/components/headers/FloatHeader.vue';
+import MainBackground from '@/components/layout/MainBackground.vue';
 
 import('~/assets/scss/vars.scss');
 import('~/assets/scss/style.scss');
@@ -27,8 +28,9 @@ const theme = computed(() => {
 
 <template>
 	<div :class="theme">
+		<SystemComponents />
+		<MainBackground />
 		<div class="main">
-			<SystemComponents />
 			<div id="modals"></div>
 			<FloatHeader />
 			<article>

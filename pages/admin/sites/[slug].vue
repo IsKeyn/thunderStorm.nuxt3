@@ -4,18 +4,16 @@ definePageMeta({
 });
 
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import ListTable from '@/components/admin/list/ListTable.vue';
+import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
-const titles = ref(
+const form = ref(
 		{
-			id: {
-				name: 'id',
-			},
 			name: {
 				name: 'Наименование',
-			},
-			code: {
-				name: 'Код',
+				value: '',
+				type: 'text',
+				validateRules: 'required, minLength_2, maxLength_40',
+				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
 );
@@ -38,17 +36,23 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Типы меню',
+			name: 'Сайты',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
+		},
+		{
+			name: pageType.value === 'create' ? 'Создание' : 'Редактирование',
+			href: `/${splitedPath[1]}/${splitedPath[2]}/${splitedPath[3]}`,
 		},
 	];
 });
 </script>
 
 <template>
-	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-	<ListTable
-		:titles="titles"
-		fetchUrl="admin/entity/MenuType"
-	/>
+	<div>
+		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
+		<CreateEditForm
+				:form="form"
+				fetchUrl="admin/entity/Site"
+		/>
+	</div>
 </template>

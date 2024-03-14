@@ -8,18 +8,32 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
+			site_id: {
+				name: 'id сайта',
+				value: '',
+				type: 'text',
+				validateRules: 'required',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			name: {
 				name: 'Наименование',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			code: {
-				name: 'Код',
+				name: 'Символьное наименование',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			value: {
+				name: 'Значение',
+				value: '',
+				type: 'text',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -43,7 +57,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Типы меню',
+			name: 'Настройки',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -59,7 +73,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/entity/MenuType"
+				fetchUrl="admin/entity/Setting"
 		/>
 	</div>
 </template>

@@ -63,3 +63,10 @@ textarea {
 /* НАЧАЛО Ошибки */
 
 /* Конец Ошибки */
+
+/* НАЧАЛО Общие блоки */
+.vein {
+  @apply absolute w-full h-full;
+  background: rgba(0, 0, 0, 0.5)
+}
+/* Конец Общие блоки */
