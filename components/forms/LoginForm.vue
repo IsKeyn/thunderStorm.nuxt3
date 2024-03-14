@@ -12,7 +12,7 @@ import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
 const userStore = useUserStore();
-const { apiUrl, errorHandler } = api();
+const { apiUrl, backendUrl, errorHandler } = api();
 const { validateElement } = validate();
 
 const emit = defineEmits(['сlosureFunc']);
@@ -69,10 +69,30 @@ const sendRequest = async () => {
 	requestInProgress.value = true;
 
 	try {
+		await $fetch(
+				`${backendUrl.value}/sanctum/csrf-cookie`,
+				{
+					withCredentials: true,
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'X-Requested-With': 'XMLHttpRequest',
+					},
+				},
+		);
+
+		const XsrfToken = useCookie('XSRF-TOKEN');
+
 		const response = await $fetch(
 				`${apiUrl.value}auth/login`,
 				{
 					method: 'POST',
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'X-Requested-With': 'XMLHttpRequest',
+						'X-XSRF-TOKEN': XsrfToken.value,
+					},
 					body: {
 						email: form.value.email.value,
 						password: form.value.password.value,

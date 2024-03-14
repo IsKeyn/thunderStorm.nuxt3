@@ -1,0 +1,15 @@
+header {
+  .float-header {
+    .wrapper {
+      .menu-element {
+        @apply block mr-[20px] text-[20px] font-semibold uppercase cursor-pointer;
+
+        color: var(--third-text-color);
+      }
+
+      .icon {
+        @apply cursor-pointer text-[28px] cursor-pointer;
+      }
+    }
+  }
+}

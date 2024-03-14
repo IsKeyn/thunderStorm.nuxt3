@@ -1,13 +1,11 @@
 <script setup>
-import MenuColumns from '@/components/menu/MenuColumns.vue';
-
 import { api } from '@/composables/api.js'
 const { apiUrl } = api();
 
 const props = defineProps({
-	menuType: {
+	fetchUrl: {
 		type: String,
-		default: null,
+		default: 'menu/get',
 	},
 	parentClass: {
 		type: String,
@@ -31,7 +29,7 @@ const props = defineProps({
 const menuElements = ref();
 
 await useFetch(
-		`${apiUrl.value}menu/get`,
+		`${apiUrl.value}${props.fetchUrl}`,
 		{
 			method: 'POST',
 			body: {

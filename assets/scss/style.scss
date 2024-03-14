@@ -15,6 +15,7 @@ body {
       overflow-auto
       mr-auto ml-auto
       bg-[var(--main-bg-color)]
+      min-h-[500px]
     ;
 
     @media (min-width: 1400px) { // lg
@@ -29,6 +30,17 @@ body {
 
     &.admin {
       @apply w-full;
+    }
+
+    .veil {
+      @apply absolute top-0 left-0 w-full h-full bg-[var(--main-veil-color)];
+    }
+
+    h1 {
+      @apply text-[28px] uppercase font-normal;
+
+      color: var(--third-text-color);
+      //text-decoration: none;
     }
   }
 }

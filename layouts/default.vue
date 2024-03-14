@@ -1,6 +1,7 @@
 <script setup>
 import SystemComponents from '@/components/system/SystemComponents.vue';
 import Notifications from '@/components/notifications/Notifications.vue';
+import FloatHeader from '@/components/headers/FloatHeader.vue';
 
 import('~/assets/scss/vars.scss');
 import('~/assets/scss/style.scss');
@@ -29,6 +30,7 @@ const theme = computed(() => {
 		<div class="main">
 			<SystemComponents />
 			<div id="modals"></div>
+			<FloatHeader />
 			<article>
 				<slot />
 			</article>
