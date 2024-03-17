@@ -93,7 +93,7 @@ import Menu from '@/components/admin/Menu.vue';
 							<Modal
 									:showOpenModal="activeAuthModal"
 									size="small"
-									modal-id="send-bug--form"
+									modal-id="auth-modal"
 									:re-calc-height="reCalc"
 									@setReCalcValue="reCalcHeight"
 									@toggleModal="toggleAuthModal"
@@ -114,7 +114,7 @@ import Menu from '@/components/admin/Menu.vue';
 					<Modal
 							:showOpenModal="activeAuthModal"
 							size="small"
-							modal-id="send-bug--form"
+							modal-id="auth-form"
 							:re-calc-height="reCalc"
 							@setReCalcValue="reCalcHeight"
 							@toggleModal="toggleAuthModal"

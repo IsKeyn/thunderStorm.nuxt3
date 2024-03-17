@@ -61,8 +61,6 @@ watch(() => props.reCalcHeight, (newValue) => {
 });
 
 watch(modalActive, (newValue) => {
-	// modalActive.value = newValue;
-
 	if (newValue && wasOpen.value === false) {
 		init();
 	}
@@ -156,29 +154,31 @@ const closeModal = () => {
 </script>
 
 <template>
-	<teleport :to="modalsContainerSelector">
-		<Overlay
-				v-if="modalActive"
-				@click="closeModal()"
-		/>
-		<template v-if="wasOpen">
-			<div
-					v-show="modalActive"
-					:id="id"
-					class="modal-outer-wrapper"
-					:class="[modalClass, size]"
-			>
-				<template v-if="canClose">
-					<font-awesome-icon
-							:icon="['fas', 'xmark']"
-							class="close-button"
-							@click="closeModal()"
-					/>
-				</template>
-				<div class="modal-inner-wrapper">
-					<slot />
+	<ClientOnly>
+		<teleport :to="modalsContainerSelector">
+			<Overlay
+					v-if="modalActive"
+					@click="closeModal()"
+			/>
+			<template v-if="wasOpen">
+				<div
+						v-show="modalActive"
+						:id="id"
+						class="modal-outer-wrapper"
+						:class="[modalClass, size]"
+				>
+					<template v-if="canClose">
+						<font-awesome-icon
+								:icon="['fas', 'xmark']"
+								class="close-button"
+								@click="closeModal()"
+						/>
+					</template>
+					<div class="modal-inner-wrapper">
+						<slot />
+					</div>
 				</div>
-			</div>
-		</template>
-	</teleport>
+			</template>
+		</teleport>
+	</ClientOnly>
 </template>

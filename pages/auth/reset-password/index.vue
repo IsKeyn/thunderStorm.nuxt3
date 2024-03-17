@@ -19,7 +19,7 @@ const reCalcHeight = (value = true) => {
 			:showOpenModal="activeAuthModal"
 			:canClose="false"
 			size="small"
-			modal-id="send-bug--form"
+			modal-id="reset-password-modal"
 			:re-calc-height="reCalc"
 			@setReCalcValue="reCalcHeight"
 			@toggleModal="toggleAuthModal"

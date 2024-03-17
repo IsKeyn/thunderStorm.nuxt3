@@ -118,7 +118,7 @@ const sendLogoutRequest = async () => {
 			<Modal
 					:showOpenModal="activeAuthModal"
 					size="small"
-					modal-id="send-bug--form"
+					modal-id="logout-modal"
 					:re-calc-height="reCalc"
 					@setReCalcValue="reCalcHeight"
 					@toggleModal="toggleAuthModal"

@@ -1,4 +1,7 @@
 <script setup>
+// import { settings } from '@/composables/settings.js'
+const { getSettingByCode } = settings();
+
 const backgroundStyle = computed(() => {
 	let backgroundStyles = '';
 	const setting = getSettingByCode('background_image');
@@ -9,20 +12,6 @@ const backgroundStyle = computed(() => {
 
 	return backgroundStyles;
 });
-
-// TODO перенести в отдельный composables
-import { useSettingsStore } from '@/stores/settings';
-const settingStore = useSettingsStore();
-
-const getSettingByCode = (code) => {
-	if (code) {
-		return toRaw(settingStore.settings).filter((item) => {
-			if (item.code === code) {
-				return true;
-			}
-		});
-	}
-}
 </script>
 
 <template>

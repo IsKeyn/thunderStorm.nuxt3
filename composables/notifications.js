@@ -5,7 +5,6 @@ import { date } from '@/composables/date.js';
 const { apiUrl } = api();
 const { getFormattedDate } = date();
 
-
 export function notifications() {
     const useNotifications = useNotificationsStore();
 
