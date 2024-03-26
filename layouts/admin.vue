@@ -73,6 +73,7 @@ import Menu from '@/components/admin/Menu.vue';
 			<SystemComponents />
 			<div id="modals"></div>
 			<article>
+				<NuxtLoadingIndicator />
 				<template v-if="userStore.user && Object.keys(userStore.user).length > 0 && Authorization">
 					<template v-if="hasRole('admin', userStore.user) === true">
 						<template v-if="userStore.user.email_verified_at">

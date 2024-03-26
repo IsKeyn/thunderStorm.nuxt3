@@ -18,3 +18,11 @@
 
   color: var(--alert-color);
 }
+
+.choice-file-block {
+  border-bottom: 1px solid var(--second-border-color);
+
+  .choice-btn {
+    @apply inline-block cursor-pointer mr-3;
+  }
+}

@@ -1,5 +1,5 @@
 <template>
 	<div>
-		Компонент галерии
+		detail media
 	</div>
 </template>

@@ -145,16 +145,23 @@ const showPassword = () => {
 			<template v-else>
 				<template v-if="element.showFile && element.value && typeof element.value === 'string'">
 					<div class="grid grid-cols-4">
-						<input
-								type="file"
-								class="col-span-2"
-								:accept="element.accept"
-								:name="name"
-								:friendly-name="element.name"
-								:placeholder="element.placeholder"
-								:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
-								@change="element.value = $event.target.files"
-						/>
+						<div class="col-span-2">
+							<input
+									type="file"
+									:accept="element.accept"
+									:name="name"
+									:friendly-name="element.name"
+									:placeholder="element.placeholder"
+									class="hidden"
+									@change="element.value = $event.target.files"
+							/>
+							<div
+									class="choice-file-block"
+									:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+							>
+								<div class="button choice-btn">Обзор...</div> {{ element.value ? element.value[0].name : '' }}
+							</div>
+						</div>
 						<div class="col-span-2 text-center">
 							<img :src="element.value" class="inline-block max-w-[500px] max-h-[500px]">
 						</div>
@@ -167,9 +174,15 @@ const showPassword = () => {
 							:name="name"
 							:friendly-name="element.name"
 							:placeholder="element.placeholder"
-							:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+							class="hidden"
 							@change="element.value = $event.target.files"
 					/>
+					<div
+							class="choice-file-block"
+							:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+					>
+						<div class="button choice-btn">Обзор...</div> {{ element.value ? element.value[0].name : '' }}
+					</div>
 				</template>
 			</template>
 		</template>

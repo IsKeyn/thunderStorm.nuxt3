@@ -1,0 +1,242 @@
+<script setup>
+import { watch } from 'vue'
+
+import FormGenerator from '@/components/forms/FormGenerator.vue';
+
+// const modelValue = defineModel();
+
+const props = defineProps({
+	canAddTags: {
+		type: Boolean,
+		default: true,
+	},
+	modelValue: {
+		type: Array,
+		default: [],
+	},
+	type: {
+		type: String,
+		default: 'all',
+	},
+});
+
+
+watch(() => props.modelValue, (newValue) => {
+	tagsList.value.forEach((item) => {
+		item.selected = newValue.includes(item.name);
+	});
+}, { deep: true });
+
+const tagsList = ref([]);
+
+const form = ref({
+	tag: {
+		name: 'Новый тег',
+		value: '',
+		type: 'text',
+		validateRules: 'required, minLength_3, maxLength_40',
+		classes: ['w-full', 'mt-[5px]'],
+	},
+});
+
+// Получаем с бека теги
+import { api } from '@/composables/api.js'
+const { apiUrl } = api();
+
+const Authorization = useCookie('Authorization');
+
+const fetchedData = ref('');
+
+await useAsyncData(
+		'mountains',
+		async () => {
+			let request = `${apiUrl.value}tag/get`;
+
+			if (props.type) {
+				request += `/${props.type}`;
+			}
+
+			await $fetch(
+					request,
+					{
+						method: 'GET',
+						headers: {
+							Authorization: Authorization.value,
+							Accept: 'application/json',
+							'X-Requested-With': 'XMLHttpRequest',
+						},
+						onResponse({response}) {
+							if (response.status === 200) {
+								fetchedData.value = response._data.data;
+
+								fetchedData.value.forEach((item) => {
+									// Данный select не отрабатывает (в большинстве случаев), так как данные props.modelValue ещё не получены от бека на данном этапе
+									const selected = toRaw(props.modelValue).includes(item.name);
+
+									tagsList.value.push({
+										name: item.name,
+										selected,
+									});
+								});
+							}
+						}
+					},
+			)
+		}
+)
+
+//
+// const fetchedData = ref();
+//
+// let request = `${apiUrl.value}tag/get`;
+//
+// if (props.type) {
+// 	request += `/${props.type}`;
+// }
+//
+// await useFetch(
+// 		request,
+// 		{
+// 			method: 'GET',
+// 			headers: {
+// 				Authorization: Authorization.value,
+// 				Accept: 'application/json',
+// 				'X-Requested-With': 'XMLHttpRequest',
+// 			},
+// 		},
+// ).then((response) => {
+// 	if (response.status.value === 'success') {
+// 		fetchedData.value = toRaw(response.data.value).data;
+//
+// 		if (fetchedData.value) {
+// 			fetchedData.value.forEach((item) => {
+// 				// Данный select не отрабатывает (в большинстве случаев), так как данные props.modelValue ещё не получены от бека на данном этапе
+// 				const selected = toRaw(props.modelValue).includes(item.name);
+//
+// 				tagsList.value.push({
+// 					name: item.name,
+// 					selected,
+// 				});
+// 			});
+// 		}
+// 	}
+// });
+
+const getTagClasses = (key) => {
+	let classes = 'tag';
+
+	if (tagsList.value[key].selected) {
+		classes += ' selected';
+	}
+
+	return classes;
+}
+
+const emit = defineEmits(['update:modelValue']);
+
+const toggleTag = (key) => {
+	if (tagsList.value[key].new) {
+		tagsList.value.splice(key, 1);
+	} else {
+		tagsList.value[key].selected = !tagsList.value[key].selected;
+	}
+
+	setVmodel();
+}
+
+const setVmodel = () => {
+	const vmodel = [];
+
+	tagsList.value.forEach((item) => {
+		if (item.selected) {
+			vmodel.push(item.name);
+		}
+	});
+
+	emit('update:modelValue', vmodel);
+}
+
+import { validate } from '@/composables/validate.js';
+const { validateElement, validateForm  } = validate();
+
+const addTag = () => {
+	for (const formKey in form.value) {
+		form.value[formKey].validateResult = '';
+	}
+
+	const { status, key, validateResult } = validateForm(form.value);
+
+	if (status) {
+		let hasTag = null;
+
+		for (let i = 0; i < tagsList.value.length; i++) {
+			if (tagsList.value[i].name.toLowerCase() === form.value.tag.value.toLowerCase()) {
+				hasTag = i;
+				break;
+			}
+		}
+
+		if (hasTag === null) {
+			tagsList.value.push({
+				name: form.value.tag.value,
+				selected: true,
+				new: true,
+			});
+			form.value.tag.value = '';
+		} else {
+			form.value.tag.validateResult = 'Тег уже существует в списке, тег был выделен';
+			tagsList.value[hasTag].selected = true;
+		}
+
+		setVmodel();
+	} else {
+		form.value[key].validateResult = validateResult;
+	}
+}
+</script>
+
+<template>
+	<div>
+		<span
+				v-for="(tag, key) in tagsList"
+				:class="getTagClasses(key)"
+				@click="toggleTag(key)"
+		>
+			{{ tag.name }}
+		</span>
+		<div v-if="canAddTags">
+			<FormGenerator
+					v-for="(field, index) in form"
+					:key="index"
+					:name="index"
+					:element="field"
+					:showValidateError=true
+					validateErrorPosition="bottom"
+					:labelClasses="['inline-block', 'mb-[10px]', 'mr-2']"
+					:fieldClasses="field.classes"
+			/>
+			<button @click="addTag">Добавить</button>
+		</div>
+	</div>
+</template>
+
+<style lang="scss" scoped>
+.tag {
+	@apply
+	inline-block
+	m-[4px]
+	pt-[4px] pr-[6px] pb-[4px] pl-[6px]
+	rounded
+	cursor-pointer
+	;
+
+	border: 1px solid var(--main-text-color);
+	color: var(--main-text-color);
+
+	&:hover,
+	&.selected {
+		border: 1px solid var(--main-hover-color);
+		color: var(--main-hover-color);
+	}
+}
+</style>

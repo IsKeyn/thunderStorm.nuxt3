@@ -1,0 +1,293 @@
+<script setup>
+import { watch } from "vue";
+import FormGenerator from '@/components/forms/FormGenerator.vue';
+
+const files = ref([]);
+const formSample = ref(
+		{
+			name: {
+				name: 'Наименование',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			description: {
+				name: 'Описание',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			type: {
+				name: 'Тип',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+		}
+);
+
+const fileKeyName = ref('image');
+const fileSample = ref(
+		{
+			name: 'Файл',
+			value: '',
+			type: 'file',
+			validateRules: 'mime_1, size_10',
+			classes: ['w-full', 'mt-[5px]'],
+			showFile: true,
+			fileType: 'image',
+		}
+);
+
+const form = ref([]);
+
+watch(files, () => {
+	if (files._value.length > 0) {
+		form.value = [];
+		const rawSampleObj = toRaw(formSample.value);
+		for (var i = 0; i < files._value.length; i++) {
+			const newObj = {};
+
+			Object.keys(rawSampleObj).forEach((key) => {
+				newObj[key] = {...rawSampleObj[key]};
+			});
+
+			newObj[fileKeyName.value] = {...fileSample.value};
+			newObj[fileKeyName.value].value = [ files._value[i] ];
+
+			form.value.push(newObj);
+		}
+	}
+});
+
+const deleteElement = (index) => {
+	form.value = form.value.filter((item, i) => i !== index);
+}
+
+import { math } from '@/composables/math.js'
+const { bytesToMb } = math();
+
+const matchMbCount = (bytes) => {
+	return bytesToMb(bytes).toFixed(3) + ' mb';
+}
+
+import { date } from '@/composables/date.js';
+const { getFormattedDate } = date();
+
+const getFormattedData = (date) => {
+	return getFormattedDate('d.m.Y H:i:s', date);
+}
+
+import { validate } from '@/composables/validate.js';
+const { validateElement, validateForm  } = validate();
+
+import { notifications } from '@/composables/notifications.js';
+const { alert, error } = notifications();
+
+const sendData = async () => {
+	let hasErrors = false;
+
+	form.value.forEach((item) => {
+		for (const formKey in item) {
+			item[formKey].validateResult = '';
+		}
+
+		const { status, key, validateResult } = validateForm(item);
+
+		if (!status) {
+			item[key].validateResult = validateResult;
+			hasErrors = true;
+		}
+	});
+
+	if (hasErrors) {
+		alert(
+				'Проверьте ошибки в форме',
+				10000,
+				'#004d42',
+		);
+	} else {
+		await sendRequest();
+	}
+}
+
+const responseErrors = ref({});
+const requestInProgress = ref(false);
+
+import { api } from '@/composables/api.js';
+const { apiUrl, backendUrl, errorHandler } = api();
+
+const Authorization = useCookie('Authorization');
+
+const sendRequest = async () => {
+	responseErrors.value = {};
+	requestInProgress.value = true;
+
+	try {
+		// TODO сделать проверку на время жизни csrf токена
+		await $fetch(
+				`${backendUrl.value}/sanctum/csrf-cookie`,
+				{
+					withCredentials: true,
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'X-Requested-With': 'XMLHttpRequest',
+					},
+				},
+		);
+
+		const XsrfToken = useCookie('XSRF-TOKEN');
+
+		const body = preparedRequestBody();
+
+		let request = '';
+		let opts = {};
+
+		request = `${apiUrl.value}admin/media/multi-store`;
+		opts = {
+			method: 'post',
+			credentials: 'include',
+			headers: {
+				Authorization: Authorization.value,
+				Accept: 'application/json',
+				'X-Requested-With': 'XMLHttpRequest',
+				'X-XSRF-TOKEN': XsrfToken.value,
+			},
+			body,
+		};
+
+		const response = await $fetch(request, opts);
+
+		if (response) {
+			requestInProgress.value = false;
+			form.value = [];
+			alert(
+					'Файлы успешно добавлены',
+					10000,
+					'#004d42',
+			);
+		}
+	} catch (e) {
+		responseErrors.value = errorHandler(e);
+		requestInProgress.value = false;
+	}
+}
+
+const preparedRequestBody = () => {
+	const formData = new FormData();
+
+	form.value.forEach((item, key) => {
+		const rawData = toRaw(item);
+		for (let formKey in rawData) {
+			if (rawData[formKey].type === 'file') {
+				formData.append(`multiFiles[${key}][${formKey}]`, rawData[formKey].value[0]);
+			} else {
+				formData.append(`multiFiles[${key}][${formKey}]`, rawData[formKey].value);
+			}
+		}
+	});
+
+	return formData;
+}
+
+import SendFormButton from '@/components/forms/fragments/SendFormButton.vue';
+</script>
+
+<template>
+	<div>
+		<label>
+			<div class="multi-upload-block">
+				Выберите несколько файлов для загрузки
+			</div>
+			<input
+					@change="files = $event.target.files"
+					type="file"
+					multiple
+			>
+		</label>
+
+		<div
+				v-if="form.length > 0"
+				class="upload-file-block"
+		>
+			<div
+					v-for="(element, inx) in form"
+					class="mb-5"
+			>
+				<h3>Файл для загрузки {{ inx + 1 }}</h3>
+				<div class="wrapper">
+					<div class="col-span-8">
+						<FormGenerator
+								v-for="(field, index) in element"
+								:key="index"
+								:name="index"
+								:element="field"
+								:showValidateError=true
+								validateErrorPosition="bottom"
+								:labelClasses="['block', 'mb-[10px]']"
+								:fieldClasses="field.classes"
+						/>
+					</div>
+					<div class="info-block">
+						<div class="mb-2 font-bold">Информация о файле</div>
+						<div>Название файла: {{ element[fileKeyName].value[0].name }}</div>
+						<div>Размер: {{ matchMbCount(element[fileKeyName].value[0].size) }}</div>
+						<div>Тип: {{ element[fileKeyName].value[0].type }}</div>
+						<div>Последнее изменение: {{ getFormattedData(element[fileKeyName].value[0].lastModified) }}</div>
+						<button @click="deleteElement(inx)">Удалить файл</button>
+					</div>
+				</div>
+			</div>
+			<SendFormButton
+					buttonName="Отправить"
+					:requestInProgress="requestInProgress"
+					@sendForm="sendData()"
+			/>
+		</div>
+	</div>
+</template>
+
+<style lang="scss" scoped>
+label {
+	.multi-upload-block {
+		@apply max-w-[500px]
+		pt-[50px] pr-[100px] pb-[50px] pl-[100px]
+		text-center text-[18px]
+		cursor-pointer
+		;
+
+		border: 1px solid var(--second-border-color);
+
+		&:hover {
+			@apply text-[var(--main-hover-color)];
+
+			border: 1px solid var(--main-hover-color);
+		}
+	}
+
+	input[type="file"] {
+		display: none;
+	}
+}
+
+.upload-file-block {
+	@apply mt-8;
+
+	h3 {
+		@apply mb-2;
+		font-size: var(--main-title-font-size);
+	}
+
+	.wrapper {
+		@apply grid grid-cols-12;
+
+		.info-block {
+			@apply col-span-4 pl-[30px] text-left;
+		}
+	}
+}
+</style>

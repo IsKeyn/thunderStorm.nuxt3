@@ -19,6 +19,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showTags: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const route = useRoute();
@@ -52,7 +56,6 @@ const afterRequest = (params) => {
 	if (doType === 'saveAndContinue') {
 		if (formMode.value === 'create') {
 			router.push({path: `/${splitedPath[1]}/${splitedPath[2]}/${response.id}`});
-
 		}
 	}
 
@@ -66,6 +69,7 @@ const requestInProgress = ref(false);
 const responseErrors = ref({});
 
 const fetchedData = ref(null);
+const tagsForProp = ref([]);
 
 const sendRequest = async () => {
 	responseErrors.value = {};
@@ -92,6 +96,12 @@ const sendRequest = async () => {
 				if (fetchedData.value[formKey]) {
 					props.form[formKey].value = fetchedData.value[formKey];
 				}
+			}
+
+			if (props.showTags && fetchedData.value.tags) {
+				fetchedData.value.tags.forEach((item) => {
+					tagsForProp.value.push(item.name);
+				});
 			}
 		}
 	} catch (e) {
@@ -121,6 +131,8 @@ const buttons = [
 				:buttons="buttons"
 				:fetchUrl="formMode === 'create' ? `${fetchUrl}` : `${fetchUrl}/${route.params.slug}`"
 				:method="formMode === 'create' ? 'POST' : 'PUT'"
+				:showTags="showTags"
+				:tagsForProp="tagsForProp"
 				@afterRequest="afterRequest"
 		/>
 	</div>

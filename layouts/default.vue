@@ -35,6 +35,7 @@ const theme = computed(() => {
 			<div id="modals"></div>
 			<FloatHeader />
 			<article>
+<!--				<NuxtLoadingIndicator /> // Прочитать про кастомизацию и кастомизировать -->
 				<slot />
 			</article>
 			<Notifications />

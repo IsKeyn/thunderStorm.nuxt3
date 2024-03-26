@@ -1,4 +1,8 @@
 <script setup>
+import TdElementCard from '@/components/admin/list/TdElementCard.vue';
+import Pagination from '@/components/navigation/Pagination.vue';
+import LightBox from '@/components/media/LightBox.vue';
+
 const props = defineProps({
 	titles: {
 		type: Object,
@@ -19,6 +23,18 @@ const props = defineProps({
 	hasResource: {
 		type: Boolean,
 		default: false,
+	},
+	hasMultiUpload: {
+		type: Boolean,
+		default: false,
+	},
+	usePagination: {
+		type: Boolean,
+		default: false,
+	},
+	perPage: {
+		type: Number,
+		default: 10,
 	},
 });
 
@@ -41,13 +57,51 @@ import { api } from '@/composables/api.js'
 const { apiUrl, backendUrl } = api();
 
 const fetchedData = ref(null);
+const pagination = ref(null);
 
 const Authorization = useCookie('Authorization');
 
+const router = useRouter();
 const route = useRoute();
 
-await useFetch(
-		`${apiUrl.value}${props.fetchUrl}`,
+const page = ref(1);
+const perPageCount = ref(props.perPage);
+
+const getRequestUrl = () => {
+	let request = `${apiUrl.value}${props.fetchUrl}`;
+
+	const perPage = route.query.perPage ? route.query.perPage : perPageCount.value;
+	let page = route.query.page ? route.query.page : page.value;
+
+	if (pagination) {
+		const paginationRaw = toRaw(pagination.value);
+
+		if (paginationRaw) {
+			const maxPageCount = Math.ceil(paginationRaw.total / perPage);
+
+			if (maxPageCount < page) {
+				page = maxPageCount;
+
+				router.push({
+					name: route.name,
+					query: {
+						...route.query,
+						page: page,
+					},
+				});
+			}
+		}
+	}
+
+	if (props.usePagination) {
+		request += `?page=${page}&perPage=${perPage}`;
+	}
+
+	return request;
+}
+
+const { pending, refresh } = await useFetch(
+		() => getRequestUrl(),
 		{
 			method: 'GET',
 			headers: {
@@ -58,6 +112,10 @@ await useFetch(
 			onResponse({response}) {
 				if (response.status === 200) {
 					fetchedData.value = props.hasResource ? response._data.data : response._data;
+
+					if (props.usePagination) {
+						pagination.value = response._data.meta;
+					}
 				}
 			},
 		},
@@ -128,22 +186,8 @@ const sendRequestForDeleteElement = async (id) => {
 
 		if (response) {
 			// TODO попробовать вызывать useFetch
-			await $fetch(
-					`${apiUrl.value}${props.fetchUrl}`,
-					{
-						method: 'GET',
-						headers: {
-							Authorization: Authorization.value,
-							Accept: 'application/json',
-							'X-Requested-With': 'XMLHttpRequest',
-						},
-						onResponse({response}) {
-							if (response.status === 200) {
-								fetchedData.value = props.hasResource ? response._data.data : response._data;
-							}
-						},
-					},
-			);
+			// updateTable();
+			refresh();
 
 			alert('Успешно удалено');
 		}
@@ -155,17 +199,78 @@ const sendRequestForDeleteElement = async (id) => {
 	}
 }
 
+const updateTable = async () => {
+	let request = `${apiUrl.value}${props.fetchUrl}`;
+
+	if (props.usePagination) {
+		request += `?page=${page.value}&perPage=${perPageCount.value}`;
+	}
+
+	await $fetch(
+			request,
+			{
+				method: 'GET',
+				headers: {
+					Authorization: Authorization.value,
+					Accept: 'application/json',
+					'X-Requested-With': 'XMLHttpRequest',
+				},
+				onResponse({response}) {
+					if (response.status === 200) {
+						fetchedData.value = props.hasResource ? response._data.data : response._data;
+
+						if (props.usePagination) {
+							pagination.value = response._data.meta;
+						}
+					}
+				},
+			},
+	);
+}
+
+// TODO а нам нужны наблидатели за этими элементами?
+// import { watch } from "vue";
+//
+// watch(page, (newValue, oldValue) => {
+// 	if (newValue !== oldValue) {
+// 		refresh();
+// 		// updateTable();
+// 	}
+// });
+//
+// watch(perPageCount, (newValue, oldValue) => {
+// 	if (newValue !== oldValue) {
+// 		refresh();
+// 		// updateTable();
+// 	}
+// });
+
+const changePage = async (p) => {
+	page.value = p;
+	// refresh();
+}
+
 const pageUrl = computed(() => {
 	return route.matched[0].path;
 });
 
-import TdElementCard from '@/components/admin/list/TdElementCard.vue';
+const openedImage = ref(null);
+
+const setOpenedImage = (item = null) => {
+	openedImage.value = item;
+}
+
+// Установка количества элементов на странице
+const setPerPage = (count) => {
+	perPageCount.value = count;
+	// refresh();
+}
 </script>
 
 <template>
 	<div>
 		<ResponseErrorsComponent :responseErrors="responseErrors" />
-		<table v-if="!requestInProgress">
+		<table v-if="!requestInProgress && !pending">
 			<thead>
 				<tr>
 					<th
@@ -191,6 +296,7 @@ import TdElementCard from '@/components/admin/list/TdElementCard.vue';
 							:keyName="key"
 							:pageUrl="pageUrl"
 							@deleteElement="deleteElement"
+							@openImage="setOpenedImage"
 						/>
 					</td>
 					<td v-for="(titleEl, key) in systemTitles">
@@ -200,6 +306,7 @@ import TdElementCard from '@/components/admin/list/TdElementCard.vue';
 								:keyName="key"
 								:pageUrl="pageUrl"
 								@deleteElement="deleteElement"
+								@openImage="setOpenedImage"
 						/>
 					</td>
 				</tr>
@@ -211,8 +318,21 @@ import TdElementCard from '@/components/admin/list/TdElementCard.vue';
 					spin-pulse
 			/>
 		</div>
-		<router-link :to="`${pageUrl}/create`"><button>Добавить</button></router-link>
+		<Pagination
+			v-if="usePagination && pagination"
+			:pagination="pagination"
+			:navigationButtons="true"
+			@changePage="changePage"
+			@setPerPage="setPerPage"
+		/>
+		<router-link :to="`${pageUrl}/create`"><button>Добавить один элемент</button></router-link>
+		<router-link v-if="hasMultiUpload" :to="`${pageUrl}/multi-upload`"><button>Добавить несколько элементов</button></router-link>
 	</div>
+	<LightBox
+			v-if="openedImage"
+			:image="openedImage"
+			@hideLightBox="setOpenedImage"
+	/>
 </template>
 
 <style lang="scss" scoped>
@@ -237,6 +357,10 @@ table {
 				.svg-inline--fa {
 					@apply mr-[5px] text-[18px];
 				}
+			}
+
+			&:hover {
+				@apply bg-[var(--second-bg-color)];
 			}
 		}
 	}

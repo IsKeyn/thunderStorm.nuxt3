@@ -50,7 +50,7 @@ const emit = defineEmits(['deleteElement']);
 			{{ getFormattedDate('d.m.Y H:i:s', item[keyName]) }}
 		</template>
 		<template v-else-if="titleEl.type && titleEl.type === 'image' && item[keyName]">
-			<img :src="item[keyName]">
+			<img :src="item[keyName]" @click="$emit('openImage', item)">
 		</template>
 		<template v-else>
 			{{ item[keyName] }}
@@ -64,6 +64,10 @@ const emit = defineEmits(['deleteElement']);
 }
 
 img {
-	@apply max-w-[220px] max-h-[220px] inline-block;
+	@apply
+		inline-block
+		max-w-[220px] max-h-[220px]
+		cursor-pointer
+	;
 }
 </style>

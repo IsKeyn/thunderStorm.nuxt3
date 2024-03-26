@@ -15,29 +15,6 @@ const form = ref(
 				validateRules: 'required, minLength_2, maxLength_40',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			description: {
-				name: 'Описание',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			type: {
-				name: 'Тип',
-				value: '',
-				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			src: {
-				name: 'Файл',
-				value: '',
-				type: 'file',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-				showFile: true,
-				fileType: 'image',
-			},
 		}
 );
 
@@ -59,7 +36,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Медиа библиотека',
+			name: 'Теги',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -75,9 +52,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/media"
-				:hasResource="true"
-				:showTags="true"
+				fetchUrl="admin/entity/Tag"
 		/>
 	</div>
 </template>

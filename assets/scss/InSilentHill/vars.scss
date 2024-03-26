@@ -11,6 +11,7 @@
 
   /* Блоки */
   --main-block-color: #000000;
+  --second-block-color: #800000;
 
   /* Пелена */
   --main-veil-color: rgba(0, 0, 0, 0.5);
@@ -23,9 +24,13 @@
   /* Текст */
   --main-text-color: #C0C0C0;
   --main-text-font: Verdana;
-  --main-font-size: 16px;
   --second-text-color: #C0C0C0;
   --third-text-color: #C0C0C0;
+
+  /* Размеры шрифтов */
+  --main-font-size: 16px;
+  --main-title-font-size: 18px;
+  --text-small-text: 14px;
 
   /* Ссылки */
   --main-href-color: #800000;
@@ -34,12 +39,10 @@
   --second-hover-color: #250000;
 
   /* Рамки */
-  --main-border-color: #015278;
+  --main-border-color: #800000;
   --second-border-color: #333333;
   --main-very-light-color: #1d1d1d;
 
-  /* Размеры шрифтов */
-  --text-small-text: 14px;
 
   /* Размеры */
   --main-block-width: 1400px;

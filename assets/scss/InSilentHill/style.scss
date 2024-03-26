@@ -1,6 +1,7 @@
 /* НАЧАЛО кнопки и ссылки */
 button,
-button, [type="button"], [type="reset"], [type="submit"] {
+button, [type="button"], [type="reset"], [type="submit"],
+.button {
   @apply
     bg-gradient-to-r from-[var(--main-href-color)] to-[var(--second-href-color)]
     pt-[5px] pr-[20px] pb-[5px] pl-[20px]
@@ -31,8 +32,11 @@ input {
     pt-[5px] pr-[0] pb-[5px] pl-[0]
     bg-[var(--main-bg-color)]
   ;
-
   border-bottom: 1px solid var(--second-border-color);
+
+  &:focus-visible {
+    @apply outline-none;
+  }
 
   &.error {
     //border-bottom: 1px solid var(--alert-color);

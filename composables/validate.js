@@ -22,7 +22,6 @@ export function validate() {
             status = true;
 
         const rawData = toRaw(form)._rawValue ? toRaw(form)._rawValue : toRaw(form);
-
         for (var key in rawData) {
             currentElValidateResult = validateElement(rawData[key].value, rawData[key].validateRules, rawData);
 
@@ -99,7 +98,9 @@ export function validate() {
                     }
                 }
 
-                error = errors.join(', ');
+                if (errors.length > 0) {
+                    error = errors.join(', ');
+                }
             }
 
             const mimeRegex = /mime_[0-9]{1,6}/i;
@@ -132,7 +133,9 @@ export function validate() {
                     }
                 }
 
-                error = errors.join(', ');
+                if (errors.length > 0) {
+                    error = errors.join(', ');
+                }
             }
 
             // Правило валидации, при котором для поля должны быть равны

@@ -2,6 +2,7 @@
 import FormGenerator from '@/components/forms/FormGenerator.vue';
 import ResponseErrorsComponent from '@/components/forms/fragments/ResponseErrorsComponent.vue';
 import SendFormButton from '@/components/forms/fragments/SendFormButton.vue';
+import TagsList from '@/components/tags/TagsList.vue';
 
 const props = defineProps({
 	form: {
@@ -27,6 +28,14 @@ const props = defineProps({
 	method: {
 		type: String,
 		default: 'POST',
+	},
+	showTags: {
+		type: Boolean,
+		default: false,
+	},
+	tagsForProp: {
+		type: Array,
+		default: [],
 	},
 });
 
@@ -147,6 +156,7 @@ const preparedRequestBody = () => {
 	// }
 
 	for (const formKey in props.form) {
+		// Формируем строку для GET запроса
 		if (props.method.toLowerCase() === 'get') {
 			if (preparedString !== '?') {
 				preparedString += '&';
@@ -154,6 +164,7 @@ const preparedRequestBody = () => {
 
 			preparedString += `${formKey}=${props.form[formKey].value}`;
 		} else {
+			// Формируем formData
 			if (hasFormFile) {
 				if (props.form[formKey].type === 'file') {
 					formData.append(formKey, props.form[formKey].value[0]);
@@ -161,11 +172,26 @@ const preparedRequestBody = () => {
 					formData.append(formKey, props.form[formKey].value);
 				}
 			} else {
+				// Формируем массив
 				preparedObj[formKey] = props.form[formKey].value;
 			}
 		}
 	}
 
+	// Добавляем теги, если они включены
+	if (props.method.toLowerCase() === 'get') {
+		preparedString += `&tags=${tags.value.join(',')}`;
+	} else {
+		if (hasFormFile) {
+			tags.value.forEach((item, key) => {
+				formData.append(`tags[${key}]`, item);
+			});
+		} else {
+			preparedObj['tags'] = tags.value;
+		}
+	}
+
+	// Возвращаем данные
 	if (props.method.toLowerCase() === 'get') {
 		return preparedString;
 	} else {
@@ -193,6 +219,10 @@ const hasFormFile = computed(() => {
 
 	return returnData;
 });
+
+const tags = ref([]);
+
+tags.value = toRaw(props.tagsForProp);
 </script>
 
 <template>
@@ -207,6 +237,10 @@ const hasFormFile = computed(() => {
 				validateErrorPosition="bottom"
 				:labelClasses="['block', 'mb-[10px]']"
 				:fieldClasses="field.classes"
+		/>
+		<TagsList
+				v-if="showTags"
+				v-model="tags"
 		/>
 		<div class="grid grid-cols-6">
 			<div

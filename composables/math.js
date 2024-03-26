@@ -4,5 +4,10 @@ export function math() {
         return mbyte * mbCount;
     }
 
-    return { mbToByte };
+    const bytesToMb = (byteCount) => {
+        const mbyte = Math.pow(2, 20);
+        return byteCount / mbyte;
+    }
+
+    return { mbToByte, bytesToMb };
 }

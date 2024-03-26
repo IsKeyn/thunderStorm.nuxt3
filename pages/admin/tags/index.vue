@@ -5,6 +5,7 @@ definePageMeta({
 
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
 import ListTable from '@/components/admin/list/ListTable.vue';
+
 const titles = ref(
 		{
 			id: {
@@ -12,25 +13,6 @@ const titles = ref(
 			},
 			name: {
 				name: 'Наименование',
-			},
-			description: {
-				name: 'Описание',
-			},
-			mime_type: {
-				name: 'mime_type',
-			},
-			size: {
-				name: 'Размер',
-			},
-			src: {
-				name: 'Изображение',
-				type: 'image'
-			},
-			type: {
-				name: 'Тип',
-			},
-			created_by: {
-				name: 'Создан',
 			},
 		}
 );
@@ -53,7 +35,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Элементы меню',
+			name: 'Теги',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -64,12 +46,8 @@ const breadCrumbsArray = computed(() => {
 	<div>
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<ListTable
-				:titles="titles"
-				fetchUrl="admin/media"
-				:hasResource="true"
-				:hasMultiUpload="true"
-				:usePagination="true"
-				:perPage="10"
+			:titles="titles"
+			fetchUrl="admin/entity/Tag"
 		/>
 	</div>
 </template>

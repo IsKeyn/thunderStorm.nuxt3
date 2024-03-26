@@ -132,7 +132,7 @@ const routerLinkHandler = () => {
 	@apply w-full relative;
 
 	input {
-		@apply outline-none w-full pr-[25px];
+		@apply w-full pr-[25px];
 	}
 
 	.search-icon {

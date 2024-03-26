@@ -49,7 +49,7 @@ const mainStyle = computed(() => {
 
 <style lang="scss" scoped>
 .burger-menu {
-	@apply fixed left-0 z-[600] w-full h-full ;
+	@apply fixed left-0 z-[600] w-full h-full;
 	color: var(--second-text-color);
 
 	.wrapper {
