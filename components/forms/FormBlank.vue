@@ -1,7 +1,7 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator.vue';
 import ResponseErrorsComponent from '@/components/forms/fragments/ResponseErrorsComponent.vue';
-import SendFormButton from '@/components/forms/fragments/SendFormButton.vue';
+import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import TagsList from '@/components/tags/TagsList.vue';
 
 const props = defineProps({
@@ -247,11 +247,11 @@ tags.value = toRaw(props.tagsForProp);
 					v-if="!requestInProgress"
 					class="col-span-3"
 			>
-				<SendFormButton
+				<ActionButton
 						v-for="button in buttons"
 						:class="button.class ? button.class : ''"
 						:buttonName="button.name"
-						@sendForm="sendForm(button.doType ? button.doType : null)"
+						@startAction="sendForm(button.doType ? button.doType : null)"
 				/>
 			</div>
 			<font-awesome-icon

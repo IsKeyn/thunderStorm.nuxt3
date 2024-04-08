@@ -1,6 +1,6 @@
 <script setup>
 import ResponseErrorsComponent from '@/components/forms/fragments/ResponseErrorsComponent.vue';
-import SendFormButton from '@/components/forms/fragments/SendFormButton.vue';
+import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 
 const sendForm = async () => {
 	await sendRequest();
@@ -76,16 +76,11 @@ const sendRequest = async () => {
 		<span v-if="sendVerificationEmailMessage">{{ sendVerificationEmailMessage }}</span>
 		<span v-else class="block mb-2">Подтвердите свой email, перейдя по ссылки из письма</span>
 		<ResponseErrorsComponent :responseErrors="responseErrors" />
-		<div class="grid grid-cols-6">
-			<div class="col-span-3">
-				<SendFormButton
-						v-if="!sendVerificationEmailMessage"
-						buttonName="Запросить новую ссылку"
-						:requestInProgress="requestInProgress"
-						@sendForm="sendForm"
-				/>
-			</div>
-			<div class="col-span-3 text-right"></div>
-		</div>
+		<ActionButton
+				v-if="!sendVerificationEmailMessage"
+				buttonName="Или получите новую ссылку для подтверждения"
+				:actionInProgress="requestInProgress"
+				@startAction="sendForm"
+		/>
 	</div>
 </template>

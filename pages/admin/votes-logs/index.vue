@@ -11,29 +11,17 @@ const titles = ref(
 			id: {
 				name: 'id',
 			},
-			name: {
-				name: 'Имя автора',
+			vote_type: {
+				name: 'Тип голоса',
 			},
-			email: {
-				name: 'e-mail',
-			},
-			message: {
-				name: 'Сообщение',
-			},
-			ip: {
-				name: 'ip',
-			},
-			user_agent: {
-				name: 'user_agent',
-			},
-			created_by: {
-				name: 'ID автора',
+			vote_value: {
+				name: 'Вес голоса',
 			},
 			entity_type: {
-				name: 'Сущность',
+				name: 'entity type',
 			},
 			entity_id: {
-				name: 'ID элемента',
+				name: 'entity id',
 			},
 		}
 );
@@ -56,7 +44,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Типы меню',
+			name: 'Лог голосов',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -64,10 +52,11 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-	<ListTable
-		:titles="titles"
-		titleKey="message"
-		fetchUrl="admin/entity/Comments"
-	/>
+	<div>
+		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
+		<ListTable
+			:titles="titles"
+			fetchUrl="admin/entity/VotesLog"
+		/>
+	</div>
 </template>

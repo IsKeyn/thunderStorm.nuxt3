@@ -8,63 +8,35 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
-			name: {
-				name: 'Имя автора',
+			vote_type: {
+				name: 'Тип голоса',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, maxLength_40', // TODO Валидация, Допустимые значения 1,2,3
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			email: {
-				name: 'e-mail',
+			vote_value: {
+				name: 'Вес голоса',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			message: {
-				name: 'Сообщение',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			ip: {
-				name: 'ip',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			user_agent: {
-				name: 'user_agent',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			created_by: {
-				name: 'ID автора',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, maxLength_40', // TODOВ алидация, только цифры
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			entity_type: {
-				name: 'Сущность',
+				name: 'entity type',
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_2, maxLength_40',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			entity_id: {
-				name: 'ID элемента',
+				name: 'entity id',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, maxLength_40', // TODO Валидация только цифры
 				classes: ['w-full', 'mt-[5px]'],
 			},
-		}
+		},
 );
 
 const pageType = ref('');
@@ -85,7 +57,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Типы меню',
+			name: 'Лог голосов',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -101,7 +73,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/entity/Comments"
+				fetchUrl="admin/entity/VotesLog"
 		/>
 	</div>
 </template>

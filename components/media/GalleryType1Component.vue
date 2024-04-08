@@ -1,132 +1,185 @@
 <script setup>
-import { watch } from 'vue'
+import EntityFilter from '@/components/filters/EntityFilter.vue';
+import ActionButton from '@/components/layout/buttons/ActionButton.vue';
+import LightBox from '@/components/media/LightBox.vue';
 
 import { VueFlexWaterfall } from 'vue-flex-waterfall';
 
-import { api } from '@/composables/api.js'
-const { apiUrl } = api();
+import {
+	watch,
+	onMounted,
+	onUnmounted,
+	ref,
+} from 'vue'
 
-const Authorization = useCookie('Authorization');
+
+import { api } from '@/composables/api.js'
+const {
+	apiUrl,
+	publicUrl,
+	sessionCookieName,
+	getCsrfCookie,
+	errorHandler,
+} = api();
+
+import { notifications } from '@/composables/notifications.js';
+const { alert, error } = notifications();
 
 const data = ref([]);
-const meta = ref();
-
+const meta = ref({});
 const perPage = ref(12);
+const page = ref(1);
+const filters = ref({});
+const dataCollectType = ref('show_more');
 
-await $fetch(
-		`${apiUrl.value}media/get`,
-		{
-			method: 'POST',
-			headers: {
-				Authorization: Authorization.value,
-				Accept: 'application/json',
-				'X-Requested-With': 'XMLHttpRequest',
-			},
-			body: {
+const requestInProgress = ref(false);
+
+const waterFall = ref();
+
+const { refresh } = await useAsyncData(
+		async () => {
+			let request = `${apiUrl.value}media/get`;
+
+			const body = {
 				perPage: perPage.value,
-				page: 1,
-			},
-			onResponse({response}) {
-				if (response.status === 200) {
-					data.value = data.value.concat(response._data.data);
-					meta.value = response._data.meta;
+				page: page.value,
+				filter: {},
+			};
+
+			const rawFilters = toRaw(filters.value);
+
+			for (let key in rawFilters) {
+				if (key === 'tags') {
+					if (rawFilters[key].length > 0) {
+						body.filter[key] = rawFilters[key];
+					}
+				} else {
+					body.filter[key] = rawFilters[key];
 				}
-			},
-		},
+			}
+
+			requestInProgress.value = true;
+
+			const sessionCookie = useCookie(sessionCookieName.value);
+
+			try {
+				const csrfCookie = await getCsrfCookie();
+
+				await $fetch(
+						request,
+						{
+							method: 'POST',
+							credentials: 'include',
+							headers: {
+								Accept: 'application/json',
+								'X-XSRF-TOKEN': csrfCookie.value,
+								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+								Referer: publicUrl.value,
+							},
+							body,
+							onResponse({response}) {
+								if (response.status === 200) {
+									if (dataCollectType.value === 'show_more') {
+										data.value = data.value.concat(response._data.data);
+									} else {
+										data.value = response._data.data;
+									}
+
+									meta.value = response._data.meta;
+
+									// TODO Обновляет waterfall?
+									if (waterFall.value) {
+										waterFall.value.updateOrder();
+									}
+
+									requestInProgress.value = false;
+								}
+							},
+						},
+				);
+			} catch (e) {
+				errorHandler(e);
+				requestInProgress.value = false;
+			}
+		}
 );
 
-const getNextPage = async () => {
-	await fetchData(meta.value.current_page + 1);
+const onOrderUpdated = () => {
+	console.log(onOrderUpdated);
 }
 
-const tags = ref([]);
-watch(tags, () => {
-	fetchData(1, false);
+onMounted(() => {
+	window.addEventListener('scroll', scrollHandler);
 });
 
-const fetchData = async (page, showMore = true) => {
-	const body = {
-		perPage: perPage.value,
-		page,
-		filter: {},
-	};
+onUnmounted(() => {
+	window.removeEventListener('scroll', scrollHandler);
+});
 
-	if (toRaw(tags.value).length > 0) {
-		body.filter.tags = toRaw(tags.value);
+const scrollHandler = (event) => {
+	const gallery = document.getElementById('main-gallery');
+
+	if (gallery) {
+		let bottomOfBlock = (gallery.offsetHeight + gallery.offsetTop) - (window.pageYOffset + window.innerHeight);
+
+		if (bottomOfBlock <= 100 && !requestInProgress.value) {
+			getNextPage();
+		}
 	}
-
-	await $fetch(
-			`${apiUrl.value}media/get`,
-			{
-				method: 'POST',
-				headers: {
-					Authorization: Authorization.value,
-					Accept: 'application/json',
-					'X-Requested-With': 'XMLHttpRequest',
-				},
-				body,
-				onResponse({response}) {
-					if (response.status === 200) {
-						if (showMore) {
-							data.value = data.value.concat(response._data.data);
-						} else {
-							data.value = response._data.data;
-						}
-						meta.value = response._data.meta;
-					}
-				},
-			},
-	);
 }
 
-import { onMounted } from 'vue'
-onMounted(() => {
-	// headClass.value = props.headType;
-	// window.addEventListener("scroll", (event) => { scroll(event); });
-	//
-	// window.onscroll = () => {
-	// 	let bottomOfWindow =
-	// 			window.pageYOffset + window.innerHeight - document.body.offsetHeight;
-	//
-	// 	if (bottomOfWindow > -30 && this.isLoaded) {
-	// 		this.pageCount++;
-	// 		this.isLoaded = false;
-	// 		this.getImages(this.page);
-	// 	}
-	// };
-})
-
-import LightBox from '@/components/media/LightBox.vue';
-import TagsList from '@/components/tags/TagsList.vue';
+const getNextPage = async () => {
+	if (meta.value.current_page < meta.value.last_page) {
+		page.value = meta.value.current_page + 1
+		dataCollectType.value = 'show_more';
+		refresh();
+	}
+}
 
 const currentElement = ref(null);
+const currentElementKey = ref(null);
 
 const setCurrentElement = (key) => {
-	if (key) {
+	if (Number.isInteger(key)) {
 		currentElement.value = data.value[key];
+		currentElementKey.value = key;
+
+		if (data.value.length <= currentElementKey.value + 2) {
+			getNextPage();
+		}
 	} else {
 		currentElement.value = null;
+		currentElementKey.value = null;
 	}
+}
+
+const setNewFilters = (newFilters) => {
+	filters.value = newFilters.value;
+	page.value = 1;
+	dataCollectType.value = 'update';
+	refresh();
 }
 </script>
 
 <template>
-	<TagsList
-			:canAddTags="false"
-			type="media"
-			v-model="tags"
-	/>
-	<div>
+		<EntityFilter
+			@setNewFilters="setNewFilters"
+		/>
 		<VueFlexWaterfall
+				v-if="data.length > 0"
+				id="main-gallery"
 				align-content="center"
 				col="4"
 				col-spacing="15"
 				:break-at="{ 900: 3, 600: 2, 300: 1 }"
 				break-by-container: true
+				ref="waterFall"
+				@order-updated="onOrderUpdated"
 		>
 				<div
 						v-for="(element, key) in data"
-						class="w-[308px] mb-2"
+						:key="key"
+						class="element"
 						@click="setCurrentElement(key)"
 				>
 					<img
@@ -139,9 +192,26 @@ const setCurrentElement = (key) => {
 		<LightBox
 			v-if="currentElement"
 			:image="currentElement"
-			@hideLightBox="setCurrentElement"
+			:prevElementKey="currentElementKey - 1 >= 0 ? currentElementKey - 1 : null"
+			:nextElementKey="currentElementKey + 2 <= data.length ? currentElementKey + 1 : null"
+			:setViewsLog="true"
+			@setCurrentElement="setCurrentElement"
 		/>
-		<button @click="getNextPage()">Показать ещё</button>
-	</div>
+
+		<div
+				v-if="meta?.current_page < meta?.last_page"
+				class="text-center"
+		>
+			<ActionButton
+					buttonName="Показать ещё"
+					:actionInProgress="requestInProgress"
+					@startAction="getNextPage"
+			/>
+		</div>
 </template>
 
+<style lang="scss" scoped>
+.element {
+	@apply w-[308px] mb-2 cursor-pointer;
+}
+</style>

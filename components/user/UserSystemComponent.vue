@@ -1,21 +1,19 @@
 <script setup>
 import { useUserStore } from '@/stores/user';
-import { api } from '@/composables/api.js'
-
 const userStore = useUserStore();
-const { apiUrl } = api();
 
-const Authorization = useCookie('Authorization');
+import { api } from '@/composables/api.js'
+const { apiUrl, publicUrl, sessionCookieName } = api();
+
+const sessionCookie = useCookie(sessionCookieName.value);
 
 await useFetch(
 		`${apiUrl.value}auth/user`,
 		{
-			$fetch: useRequestFetch(), // TODO Установка кук из ответа, работает странно...
-			credentials: 'include',
 			headers: {
-				Authorization: Authorization.value,
 				Accept: 'application/json',
-				'X-Requested-With': 'XMLHttpRequest',
+				Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+				Referer: publicUrl.value,
 			},
 			onResponse({response}) {
 				if (response.status === 200) {
@@ -26,6 +24,4 @@ await useFetch(
 );
 </script>
 
-<template>
-	<div />
-</template>
+<template />

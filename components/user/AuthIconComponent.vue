@@ -45,7 +45,7 @@ const logout = () => {
 
 import { api } from '@/composables/api.js';
 const { apiUrl, errorHandler } = api();
-const Authorization = useCookie('Authorization');
+// const Authorization = useCookie('Authorization');
 
 const requestInProgress = ref(false);
 const responseErrors = ref({});
@@ -67,9 +67,9 @@ const sendLogoutRequest = async () => {
 		);
 
 		if (response) {
-			Authorization.value = '';
-			Authorization.expires = 0;
-			Authorization.path = '/';
+			// Authorization.value = '';
+			// Authorization.expires = 0;
+			// Authorization.path = '/';
 
 			userStore.user = {};
 
@@ -92,7 +92,7 @@ const sendLogoutRequest = async () => {
 				class="menu-element icon"
 			/>
 		</template>
-		<template v-else-if="userStore.user && Object.keys(userStore.user).length > 0 && Authorization">
+		<template v-else-if="userStore.user && Object.keys(userStore.user).length > 0">
 			<router-link
 					to="/profile/"
 					@click="$emit('showHideMenu', false)"
@@ -118,7 +118,7 @@ const sendLogoutRequest = async () => {
 			<Modal
 					:showOpenModal="activeAuthModal"
 					size="small"
-					modal-id="logout-modal"
+					modal-id="login-modal"
 					:re-calc-height="reCalc"
 					@setReCalcValue="reCalcHeight"
 					@toggleModal="toggleAuthModal"

@@ -1,12 +1,12 @@
 <script setup>
-const emit = defineEmits(['sendForm']);
+const emit = defineEmits(['startAction']);
 
 const props = defineProps({
 	buttonName: {
 		type: String,
 		default: '',
 	},
-	requestInProgress: {
+	actionInProgress: {
 		type: Boolean,
 		default: false,
 	},
@@ -15,11 +15,11 @@ const props = defineProps({
 
 <template>
 	<button
-			@click="emit('sendForm')"
-			:disabled="requestInProgress"
+			@click="emit('startAction')"
+			:disabled="actionInProgress"
 			class="min-w-24"
 	>
-		<template v-if="!requestInProgress">
+		<template v-if="!actionInProgress">
 			{{ buttonName }}
 		</template>
 		<font-awesome-icon

@@ -86,11 +86,12 @@ const init = () => {
 
 	if (props.modalId) {
 		/* Проверяем не существует ли модального окна с переданным идентификатором в modalId */
-		modalsList.forEach((item) => {
-			if (item.id === props.modalId) {
-				error(`Модальное окно с ID "${modalId.value}" уже существует, передайте в модальное окно иной modalId`);
+		for (var i = 0; i < modalsList.length; i++) {
+			if (modalsList[i].id === props.modalId) {
+				error(`Модальное окно с ID "${props.modalId}" уже существует, передайте в модальное окно иной modalId`);
+				break;
 			}
-		});
+		}
 		id.value = props.modalId;
 	} else {
 		if (modalsList && modalsList.length) {

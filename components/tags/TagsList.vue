@@ -48,7 +48,7 @@ const Authorization = useCookie('Authorization');
 const fetchedData = ref('');
 
 await useAsyncData(
-		'mountains',
+		'tags',
 		async () => {
 			let request = `${apiUrl.value}tag/get`;
 
@@ -219,24 +219,3 @@ const addTag = () => {
 		</div>
 	</div>
 </template>
-
-<style lang="scss" scoped>
-.tag {
-	@apply
-	inline-block
-	m-[4px]
-	pt-[4px] pr-[6px] pb-[4px] pl-[6px]
-	rounded
-	cursor-pointer
-	;
-
-	border: 1px solid var(--main-text-color);
-	color: var(--main-text-color);
-
-	&:hover,
-	&.selected {
-		border: 1px solid var(--main-hover-color);
-		color: var(--main-hover-color);
-	}
-}
-</style>

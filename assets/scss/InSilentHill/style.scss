@@ -44,6 +44,28 @@ input {
 }
 
 textarea {
+  &:focus-visible {
+    @apply outline-none;
+  }
+}
+
+select {
+  @apply
+    pt-[10px] pr-[0] pb-[10px] pl-[0]
+    bg-[var(--main-bg-color)]
+  ;
+  border-bottom: 1px solid var(--second-border-color);
+
+  &:focus-visible {
+    @apply outline-none;
+  }
+
+  &.error {
+    //border-bottom: 1px solid var(--alert-color);
+  }
+}
+
+textarea {
   @apply
     min-h-[120px]
     pt-[10px] pr-[10px] pb-[10px] pl-[20px]
@@ -73,4 +95,34 @@ textarea {
   @apply absolute w-full h-full;
   background: rgba(0, 0, 0, 0.5)
 }
-/* Конец Общие блоки */
+/* КОНЕЦ Общие блоки */
+
+/* НАЧАЛО Теги */
+.tag {
+  @apply
+  inline-block
+  mr-[4px] mb-[4px]
+  pt-[4px] pr-[6px] pb-[4px] pl-[6px]
+  rounded
+  cursor-pointer
+  ;
+
+  border: 1px solid var(--main-text-color);
+  color: var(--main-text-color);
+
+  &:hover,
+  &.selected {
+    border: 1px solid var(--main-hover-color);
+    color: var(--main-hover-color);
+  }
+}
+/* КОНЕЦ Теги */
+
+/* НАЧАЛО Заголовки */
+.title {
+  @apply text-[20px] uppercase;
+
+  color: var(--third-text-color);
+  text-decoration: none;
+}
+/* КОНЕЦ Заголовки */

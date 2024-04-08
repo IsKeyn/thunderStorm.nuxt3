@@ -2,36 +2,44 @@
 import { watch } from 'vue'
 
 const props = defineProps({
+	// Отображаемое имя поля
+	name: {
+		type: [String, Number],
+		required: true,
+	},
+	// Объект с данными поля
 	element: {
 		type: Object,
 		default: {},
 	},
-	name: {
-		type: String,
-		required: true,
-	},
-	showValidateError: {
-		type: Boolean,
-		default: false,
-	},
-	validateErrorPosition: {
-		type: String,
-		default: 'top',
-	},
+	// Отображать или скрывать заголовок
 	showTitle: {
 		type: Boolean,
 		default: true,
 	},
+	// Отображать ошибки или нет
+	showValidateError: {
+		type: Boolean,
+		default: false,
+	},
+	// Место отображения ошибок (над формой или под ней)
+	validateErrorPosition: {
+		type: String,
+		default: 'top',
+	},
+	// Отображение смены типы поля с password на text и обратно, в данный момент работает только для password
 	showChangeTypeButton: {
 		type: Boolean,
 		default: false,
 	},
+	// Дополнительные классы для тега <label>
 	labelClasses: {
-		type: String,
+		type: [String, Array],
 		default: '',
 	},
+	// Дополнительные классы для поля
 	fieldClasses: {
-		type: String,
+		type: [String, Array],
 		default: '',
 	},
 });
@@ -185,6 +193,25 @@ const showPassword = () => {
 					</div>
 				</template>
 			</template>
+		</template>
+		<template v-else-if="element.type === 'select'">
+			<select
+				v-model="element.value"
+			>
+				<option
+						v-if="element.defaultOption"
+						:value="element.defaultOption.value"
+				>
+					{{ element.defaultOption.name }}
+				</option>
+				<option
+						v-for="(option, key) in element.options"
+						:key="key"
+						:value="option.value"
+				>
+					{{ option.name }}
+				</option>
+			</select>
 		</template>
 		<span
 			v-if="validateErrorPosition === 'bottom' && element.validateResult && showValidateError"

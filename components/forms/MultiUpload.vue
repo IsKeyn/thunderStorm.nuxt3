@@ -29,7 +29,7 @@ const formSample = ref(
 		}
 );
 
-const fileKeyName = ref('image');
+const fileKeyName = ref('src');
 const fileSample = ref(
 		{
 			name: 'Файл',
@@ -38,7 +38,7 @@ const fileSample = ref(
 			validateRules: 'mime_1, size_10',
 			classes: ['w-full', 'mt-[5px]'],
 			showFile: true,
-			fileType: 'image',
+			fileType: 'src',
 		}
 );
 
@@ -194,7 +194,7 @@ const preparedRequestBody = () => {
 	return formData;
 }
 
-import SendFormButton from '@/components/forms/fragments/SendFormButton.vue';
+import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 </script>
 
 <template>
@@ -242,10 +242,10 @@ import SendFormButton from '@/components/forms/fragments/SendFormButton.vue';
 					</div>
 				</div>
 			</div>
-			<SendFormButton
+			<ActionButton
 					buttonName="Отправить"
-					:requestInProgress="requestInProgress"
-					@sendForm="sendData()"
+					:actionInProgress="requestInProgress"
+					@startAction="sendData()"
 			/>
 		</div>
 	</div>

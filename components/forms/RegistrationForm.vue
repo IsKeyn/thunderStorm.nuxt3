@@ -7,7 +7,7 @@ import { api } from '@/composables/api.js';
 import { useUserStore } from '@/stores/user';
 
 const { validateElement } = validate();
-const { apiUrl, errorHandler } = api();
+const { apiUrl, errorHandler, getCsrfCookie } = api();
 
 const userStore = useUserStore();
 
@@ -77,21 +77,27 @@ const sendRequest = async () => {
 	requestInProgress.value = true;
 
 	try {
+		const csrfCookie = await getCsrfCookie();
+
 		const response = await $fetch(
 				`${apiUrl.value}auth/register`,
 				{
 					method: 'POST',
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'X-XSRF-TOKEN': csrfCookie.value,
+					},
 					body: {
 						name: form.value.name.value,
 						email: form.value.email.value,
 						password: form.value.password.value,
 						password_confirmation: form.value.repeatPassword.value,
-					}
+					},
 				},
 		);
 
 		if (response) {
-
 			Authorization.value = `${response.token_type} ${response.token}`;
 			Authorization.expires = response.expires;
 			Authorization.path = '/';
@@ -134,7 +140,7 @@ const getUserData = async () => {
 
 <template>
 	<div>
-		<template v-if="Object.keys(userStore.user).length > 0 && Authorization">
+		<template v-if="userStore.user && Object.keys(userStore.user).length > 0 && Authorization">
 			<template v-if="userStore.user.email_verified_at">
 				Вы уже зарегистрированы
 			</template>

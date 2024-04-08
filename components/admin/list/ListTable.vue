@@ -71,7 +71,8 @@ const getRequestUrl = () => {
 	let request = `${apiUrl.value}${props.fetchUrl}`;
 
 	const perPage = route.query.perPage ? route.query.perPage : perPageCount.value;
-	let page = route.query.page ? route.query.page : page.value;
+
+	let currentPage = route.query.page ? route.query.page : page.value;
 
 	if (pagination) {
 		const paginationRaw = toRaw(pagination.value);
@@ -79,14 +80,14 @@ const getRequestUrl = () => {
 		if (paginationRaw) {
 			const maxPageCount = Math.ceil(paginationRaw.total / perPage);
 
-			if (maxPageCount < page) {
-				page = maxPageCount;
+			if (maxPageCount < currentPage) {
+				currentPage = maxPageCount;
 
 				router.push({
 					name: route.name,
 					query: {
 						...route.query,
-						page: page,
+						page: currentPage,
 					},
 				});
 			}
@@ -94,7 +95,7 @@ const getRequestUrl = () => {
 	}
 
 	if (props.usePagination) {
-		request += `?page=${page}&perPage=${perPage}`;
+		request += `?page=${currentPage}&perPage=${perPage}`;
 	}
 
 	return request;
@@ -331,7 +332,7 @@ const setPerPage = (count) => {
 	<LightBox
 			v-if="openedImage"
 			:image="openedImage"
-			@hideLightBox="setOpenedImage"
+			@setCurrentElement="setOpenedImage"
 	/>
 </template>
 

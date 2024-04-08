@@ -1,5 +1,6 @@
+<script setup>
+</script>
+
 <template>
-	<div>
-		detail media
-	</div>
+	<MediaDetail />
 </template>

@@ -42,7 +42,7 @@ const form = ref(
 
 const requestInProgress = ref(false);
 
-const Authorization = useCookie('Authorization');
+// const Authorization = useCookie('Authorization');
 
 const sendForm = async () => {
 	formError.value = '';
@@ -101,9 +101,9 @@ const sendRequest = async () => {
 		);
 
 		if (response) {
-			Authorization.value = `${response.token_type} ${response.token}`;
-			Authorization.expires = response.expires;
-			Authorization.path = '/';
+			// Authorization.value = `${response.token_type} ${response.token}`;
+			// Authorization.expires = response.expires;
+			// Authorization.path = '/';
 
 			requestInProgress.value = false;
 
@@ -125,7 +125,7 @@ const sendLogoutRequest = async () => {
 				{
 					method: 'GET',
 					headers: {
-						Authorization: Authorization.value,
+						// Authorization: Authorization.value,
 						Accept: 'application/json',
 						'X-Requested-With': 'XMLHttpRequest',
 					},
@@ -133,9 +133,9 @@ const sendLogoutRequest = async () => {
 		);
 
 		if (response) {
-			Authorization.value = '';
-			Authorization.expires = 0;
-			Authorization.path = '/';
+			// Authorization.value = '';
+			// Authorization.expires = 0;
+			// Authorization.path = '/';
 
 			userStore.user = {};
 
@@ -156,10 +156,11 @@ const getUserData = async () => {
 				{
 					method: 'GET',
 					headers: {
-						Authorization: Authorization.value,
+						// Authorization: Authorization.value,
 						Accept: 'application/json',
 						'X-Requested-With': 'XMLHttpRequest',
 					},
+					withCredentials: true,
 					credentials: 'include',
 					// onRequest({request, options}) {
 					// 	console.log("[fetch request]", request, options)
@@ -184,7 +185,7 @@ const getUserData = async () => {
 
 <template>
 	<div>
-		<template v-if="userStore.user && Object.keys(userStore.user).length > 0 && Authorization">
+		<template v-if="userStore.user && Object.keys(userStore.user).length > 0">
 			<template v-if="userStore.user.email_verified_at">
 				Вы залогинены
 				<div class="grid grid-cols-6">

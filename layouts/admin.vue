@@ -33,21 +33,12 @@ import { roles } from '@/composables/roles.js';
 const { hasRole } = roles();
 
 // Окно авторизации
+import VerifyEmailBlock from "@/components/user/VerifyEmailBlock.vue";
+
 import Modal from '@/components/modals/Modal.vue';
 import AuthComponent from '@/components/user/AuthComponent.vue';
 
-const activeAuthModal = ref(false);
-const reCalc = ref(false);
 
-const toggleAuthModal = () => {
-	activeAuthModal.value = !activeAuthModal.value;
-}
-
-const reCalcHeight = (value = true) => {
-	reCalc.value = value;
-}
-
-//
 import { onMounted } from "vue";
 
 // Открытие модального окна
@@ -86,24 +77,7 @@ import Menu from '@/components/admin/Menu.vue';
 							</div>
 						</template>
 						<template v-else>
-							Для доступа в раздел необходимо веринтифицировать Ваш email
-							<button class="btn block" @click="toggleAuthModal()">
-								<font-awesome-icon :icon="['far', 'user']" /> Отправить email повторно
-							</button>
-
-							<Modal
-									:showOpenModal="activeAuthModal"
-									size="small"
-									modal-id="auth-modal"
-									:re-calc-height="reCalc"
-									@setReCalcValue="reCalcHeight"
-									@toggleModal="toggleAuthModal"
-							>
-								<AuthComponent
-										@reCalcHeight="reCalcHeight"
-										@closeModal="toggleAuthModal"
-								/>
-							</Modal>
+							<VerifyEmailBlock />
 						</template>
 					</template>
 					<template v-else>

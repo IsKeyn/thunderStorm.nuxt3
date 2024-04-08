@@ -1,5 +1,5 @@
 <script setup>
-// import { settings } from '@/composables/settings.js'
+import { settings } from '@/composables/settings.js'
 const { getSettingByCode } = settings();
 
 const backgroundStyle = computed(() => {

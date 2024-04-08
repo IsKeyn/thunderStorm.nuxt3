@@ -18,7 +18,9 @@ export default defineNuxtConfig({
     // Keys within public are also exposed client-side
     public: {
       theme: 'KeynTR',
+      url: '', // .env NUXT_PUBLIC_API_URL
       apiUrl: '', // .env NUXT_PUBLIC_API_URL
+      sessionCookieName: '', // .env NUXT_PUBLIC_SESSION_COOKIE_NAME
     }
   },
 })

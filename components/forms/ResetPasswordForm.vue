@@ -1,7 +1,7 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator.vue';
 import ResponseErrorsComponent from '@/components/forms/fragments/ResponseErrorsComponent.vue';
-import SendFormButton from '@/components/forms/fragments/SendFormButton.vue';
+import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 
 const form = ref(
 		{
@@ -118,10 +118,10 @@ const sendRequest = async () => {
 		/>
 		<div class="grid grid-cols-6">
 			<div class="col-span-3">
-				<SendFormButton
+				<ActionButton
 						buttonName="Восстановить"
-						:requestInProgress="requestInProgress"
-						@sendForm="sendForm"
+						:actionInProgress="requestInProgress"
+						@startAction="sendForm"
 				/>
 			</div>
 			<div class="col-span-3 text-right">
