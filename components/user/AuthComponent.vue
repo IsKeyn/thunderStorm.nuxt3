@@ -16,14 +16,6 @@ const props = defineProps({
 	},
 });
 
-// watch(() => props.actionType, (newValue) => {
-// 	setActionType({ value: actionType.value, title: newValue });
-// });
-
-onMounted(() => {
-	setActionType({ value: props.actionType, title: props.title });
-})
-
 const emit = defineEmits(['сlosureFunc', 'reCalcHeight', 'closeModal']);
 
 const actionType = ref('login');
@@ -35,6 +27,12 @@ const setActionType = (paramsObj) => {
 
 	emit('reCalcHeight');
 }
+
+setActionType({ value: props.actionType, title: props.title });
+
+watch(() => props.actionType, () => {
+	setActionType({ value: props.actionType, title: props.title });
+});
 </script>
 
 <template>

@@ -1,9 +1,10 @@
 <script setup>
-import FormGenerator from '@/components/forms/FormGenerator.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import AlertBox from '@/components/notifications/AlertBlock.vue';
 import VerifyEmailBlock from '@/components/user/VerifyEmailBlock.vue';
-import RecommendMessageForRegistration from '@/components/user/registration/RecommendMessageForRegistration.vue'
+import RecommendMessageForRegistration from '@/components/user/registration/RecommendMessageForRegistration.vue';
+import OpeningBox from '@/components/interface/OpeningBox.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -28,11 +29,23 @@ const props = defineProps({
 	},
 });
 
-// Создание формы комментария
+/**
+ * Создание формы комментария
+ * Создание формы (createForm()) также вызывается если пользователь авторизовался, убирает более не нужные поля (Ваше имя и Ваш e-mail)
+ * доабавляем значение message если пользователь уже начал его заполнять и очищаем ошибки валидации
+ **/
+
+const form = ref({});
+
 const createForm = () => {
+	if (errorsMessages) {
+		errorsMessages.value = [];
+	}
+
+	const createdForm = {};
+
 	if (!(userStore.user && Object.keys(userStore.user).length > 0)) {
-		{
-			form.value.name = {
+		createdForm.name = {
 				name: 'Ваше имя',
 				value: '',
 				type: 'text',
@@ -41,7 +54,7 @@ const createForm = () => {
 				classes: 'min-w-[30%]',
 			};
 
-			form.value.email = {
+		createdForm.email = {
 				name: 'Ваш e-mail',
 				value: '',
 				type: 'text',
@@ -49,20 +62,18 @@ const createForm = () => {
 				validateRules: 'required, email, minLength_2, maxLength_50',
 				classes: 'min-w-[30%]',
 			};
-		}
 	}
 
-	form.value.message = {
+	createdForm.message = {
 		name: 'Комментарий',
-		value: '',
+		value: form.value.message?.value ? form.value.message.value : '',
 		type: 'textarea',
 		placeholder: 'Комментарий',
 		validateRules: 'required, minLength_2, maxLength_3000',
 	};
-};
 
-const form = ref({});
-createForm();
+	form.value = createdForm;
+};
 
 // Отправка комментария
 const errorsMessages = ref([]);
@@ -109,80 +120,65 @@ const sendRequest = async () => {
 	}
 }
 
-const contentStatus = ref(false);
+createForm();
 
-const toggleContent = (newStatus) => {
-	if (newStatus === undefined || newStatus === null) {
-		contentStatus.value = !contentStatus.value;
-	} else {
-		contentStatus.value = newStatus;
+watch(() => userStore.user, () => {
+	if (userStore.user && Object.keys(userStore.user).length > 0) {
+		createForm();
 	}
-}
+});
 </script>
 
 <template>
-	<div class="opening-box">
-		<div
-				class="header"
-				@click="toggleContent(null)"
-		>
-			Добавить комментарий
-
-			<div class="icon-box">
-				<font-awesome-icon v-if="contentStatus" :icon="['fas', 'angle-up']" />
-				<font-awesome-icon v-else :icon="['fas', 'angle-down']" />
-			</div>
-		</div>
-		<div
-				v-show="contentStatus"
-				class="content"
-		>
-			<AlertBox
-					:errorsMessages="errorsMessages"
-					class="mb-2"
+	<OpeningBox title="Добавить комментарий">
+		<AlertBox
+				:errorsMessages="errorsMessages"
+				class="mb-2"
+		/>
+		<div v-if="!(userStore.user && Object.keys(userStore.user).length > 0)">
+			<RecommendMessageForRegistration
+					:modalId="`modal-from-from-recommend-message-${entityType}-${entityId}`"
+					message=", чтобы получать уведомления об ответах"
 			/>
-			<div v-if="!(userStore.user && Object.keys(userStore.user).length > 0)">
-				<RecommendMessageForRegistration
-						:modalName="`registration-modal-${entityType}-${entityId}`"
-				/>
-				<div class="users-fields">
-					<FormGenerator
-							v-if="form.name"
-							name="name"
-							:element="form.name"
-							:showTitle="false"
-							validateErrorPosition="bottom"
-							labelClasses="mr-4"
-							:fieldClasses="form.name.classes"
-					/>
-					<FormGenerator
-							v-if="form.email"
-							name="email"
-							:element="form.email"
-							:showTitle="false"
-							validateErrorPosition="bottom"
-							:fieldClasses="form.name.classes"
-					/>
-				</div>
-			</div>
-			<VerifyEmailBlock v-if="userStore.user && !userStore.user.email_verified_at" />
-			<div v-else>
+			<div class="users-fields">
 				<FormGenerator
-						v-if="form.message"
-						name="message"
-						:element="form.message"
+						v-if="form.name"
+						name="name"
+						:element="form.name"
 						:showTitle="false"
 						validateErrorPosition="bottom"
-						:fieldClasses="form.message.classes"
+						labelClasses="mr-4"
+						:fieldClasses="form.name.classes"
 				/>
-				<ActionButton
-						buttonName="Добавить"
-						:actionInProgress="requestInProgress"
-						@startAction="sendForm()"
+				<FormGenerator
+						v-if="form.email"
+						name="email"
+						:element="form.email"
+						:showTitle="false"
+						validateErrorPosition="bottom"
+						:fieldClasses="form.name.classes"
 				/>
 			</div>
 		</div>
-	</div>
+		<VerifyEmailBlock
+				v-if="userStore.user && Object.keys(userStore.user).length > 0 && !userStore.user.email_verified_at"
+		/>
+		<div v-else>
+			<FormGenerator
+					v-if="form.message"
+					name="message"
+					:element="form.message"
+					:showTitle="false"
+					validateErrorPosition="bottom"
+					:fieldClasses="form.message.classes"
+			/>
+			<ActionButton
+					buttonName="Добавить"
+					:actionInProgress="requestInProgress"
+					@startAction="sendForm()"
+			/>
+		</div>
+	</OpeningBox>
 </template>
 
 <style lang="scss" scoped>

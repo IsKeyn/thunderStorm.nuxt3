@@ -1,5 +1,5 @@
 <script setup>
-import FormGenerator from '@/components/forms/FormGenerator.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ResponseErrorsComponent from '@/components/forms/fragments/ResponseErrorsComponent.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import TagsList from '@/components/tags/TagsList.vue';
@@ -139,7 +139,11 @@ const sendRequest = async (doType = null) => {
 			emit('afterRequest', { response, doType });
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }

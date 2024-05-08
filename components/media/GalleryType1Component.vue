@@ -12,7 +12,6 @@ import {
 	ref,
 } from 'vue'
 
-
 import { api } from '@/composables/api.js'
 const {
 	apiUrl,
@@ -25,7 +24,26 @@ const {
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
-const data = ref([]);
+const emit = defineEmits(['selectThisElement']);
+
+const props = defineProps({
+	/* Скрывать/показывать кнопку выбора картинки, используется для выбора медиа в FormGenerator.vue */
+	selectButton: {
+		type: Boolean,
+		default: false,
+	},
+	/* Скрывать/показывать полосу прокрутки на элементе body при вызове LightBox.vue */
+	hideBodyScrollLine: {
+		type: Boolean,
+		default: true,
+	},
+	setViewsLog: {
+		type: Boolean,
+		default: true,
+	},
+});
+
+const fetchedData = ref([]);
 const meta = ref({});
 const perPage = ref(12);
 const page = ref(1);
@@ -80,9 +98,9 @@ const { refresh } = await useAsyncData(
 							onResponse({response}) {
 								if (response.status === 200) {
 									if (dataCollectType.value === 'show_more') {
-										data.value = data.value.concat(response._data.data);
+										fetchedData.value = fetchedData.value.concat(response._data.data);
 									} else {
-										data.value = response._data.data;
+										fetchedData.value = response._data.data;
 									}
 
 									meta.value = response._data.meta;
@@ -141,10 +159,10 @@ const currentElementKey = ref(null);
 
 const setCurrentElement = (key) => {
 	if (Number.isInteger(key)) {
-		currentElement.value = data.value[key];
+		currentElement.value = fetchedData.value[key];
 		currentElementKey.value = key;
 
-		if (data.value.length <= currentElementKey.value + 2) {
+		if (fetchedData.value.length <= currentElementKey.value + 2) {
 			getNextPage();
 		}
 	} else {
@@ -159,6 +177,18 @@ const setNewFilters = (newFilters) => {
 	dataCollectType.value = 'update';
 	refresh();
 }
+
+const updateLikes = (params) => {
+	const { entityId, count } = params;
+
+	for (const key in fetchedData.value) {
+		if (fetchedData.value[key].id === entityId) {
+			fetchedData.value[key].likes = count;
+			break;
+		}
+	}
+}
+
 </script>
 
 <template>
@@ -166,7 +196,7 @@ const setNewFilters = (newFilters) => {
 			@setNewFilters="setNewFilters"
 		/>
 		<VueFlexWaterfall
-				v-if="data.length > 0"
+				v-if="fetchedData.length > 0"
 				id="main-gallery"
 				align-content="center"
 				col="4"
@@ -177,12 +207,19 @@ const setNewFilters = (newFilters) => {
 				@order-updated="onOrderUpdated"
 		>
 				<div
-						v-for="(element, key) in data"
+						v-for="(element, key) in fetchedData"
 						:key="key"
 						class="element"
-						@click="setCurrentElement(key)"
 				>
+					<span
+							v-if="selectButton"
+							class="btn-icon select-button"
+							@click="$emit('selectThisElement', element)"
+					>
+						<font-awesome-icon :icon="['fas', 'check']"/>
+					</span>
 					<img
+							@click="setCurrentElement(key)"
 							class="img"
 							:src="element.src"
 							:alt="element.name"
@@ -193,9 +230,13 @@ const setNewFilters = (newFilters) => {
 			v-if="currentElement"
 			:image="currentElement"
 			:prevElementKey="currentElementKey - 1 >= 0 ? currentElementKey - 1 : null"
-			:nextElementKey="currentElementKey + 2 <= data.length ? currentElementKey + 1 : null"
-			:setViewsLog="true"
+			:nextElementKey="currentElementKey + 2 <= fetchedData.length ? currentElementKey + 1 : null"
+			:setViewsLog="setViewsLog"
+			:selectButton="selectButton"
+			:hideBodyScrollLine="hideBodyScrollLine"
 			@setCurrentElement="setCurrentElement"
+			@selectThisElement="$emit('selectThisElement', $event)"
+			@updateLikes="updateLikes"
 		/>
 
 		<div
@@ -212,6 +253,27 @@ const setNewFilters = (newFilters) => {
 
 <style lang="scss" scoped>
 .element {
-	@apply w-[308px] mb-2 cursor-pointer;
+	@apply relative w-[308px] mb-2 cursor-pointer;
+
+	.btn-icon {
+		@apply
+			absolute z-[700]
+			text-[25px] text-center leading-[45px]
+			cursor-pointer
+			bg-[var(--second-bg-color)]
+			w-[45px] h-[45px]
+			rounded-full
+		;
+
+		&.select-button {
+			@apply
+				top-[5px] right-[5px]
+			;
+		}
+
+		&:hover {
+			@apply bg-[var(--second-hover-color)];
+		}
+	}
 }
 </style>

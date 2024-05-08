@@ -12,7 +12,7 @@
     max-h-full overflow-auto
   ;
 
-  .close-button {
+  svg.close-button {
     @apply
       text-white
       absolute
@@ -41,16 +41,45 @@
     @media (min-width: 768px) {
       margin-left: calc(0px - var(--modal-small-width) / 2);
     }
+
+    .modal-inner-wrapper {
+      @apply
+        w-[100%] sm:w-[var(--modal-small-width)]
+        pt-[var(--mod-pt)] pr-[var(--mod-pr)] pb-[var(--mod-pb)] pl-[var(--mod-pl)]
+        md:mr-[60px]
+      ;
+    }
   }
 
   &.medium {}
   &.huge {}
-
-  .modal-inner-wrapper {
+  &.full-width {
     @apply
-      w-[100%] sm:w-[var(--modal-small-width)]
+      top-0
+      h-[100vh]
+    ;
+
+    @media (min-width: 640px) { // sm
+      margin-left: calc(var(--main-block-width) / 2 - var(--main-block-width) );
+    }
+
+    @media (min-width: 768px) {
+      margin-left: calc(0px - var(--main-block-width) / 2);
+    }
+
+    .modal-inner-wrapper {
+      @apply
+      w-[100%] sm:w-[var(--main-block-width)]
       pt-[var(--mod-pt)] pr-[var(--mod-pr)] pb-[var(--mod-pb)] pl-[var(--mod-pl)]
       md:mr-[60px]
+      ;
+    }
+  }
+  &.full-screen {
+    @apply
+      top-0 left-0
+      w-full
+      h-[100vh]
     ;
   }
 }

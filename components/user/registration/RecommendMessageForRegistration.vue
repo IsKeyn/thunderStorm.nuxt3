@@ -2,18 +2,39 @@
 import AuthComponent from '@/components/user/AuthComponent.vue';
 import Modal from '@/components/modals/Modal.vue';
 
-const activeAuthModal = ref(false);
+const isActiveModal = ref(false);
 const reCalc = ref(false);
 
 const props = defineProps({
-	modalName: {
+	modalId: {
 		type: String,
 		default: 'registration-from-recommend-message',
 	},
+	message: {
+		type: String,
+		default: ', чтобы иметь больше функционала'
+	},
 });
 
-const toggleAuthModal = () => {
-	activeAuthModal.value = !activeAuthModal.value;
+const modalTitle = ref('');
+const modalActionType = ref('');
+
+const setAndOpenModal = (type) => {
+	if (type === 'registration') {
+		modalTitle.value = 'Регистрация';
+		modalActionType.value = 'registration';
+	}
+
+	if (type === 'login') {
+		modalTitle.value = 'Авторизация';
+		modalActionType.value = 'login';
+	}
+
+	toggleModal();
+}
+
+const toggleModal = () => {
+	isActiveModal.value = !isActiveModal.value;
 }
 
 const reCalcHeight = (value = true) => {
@@ -23,21 +44,32 @@ const reCalcHeight = (value = true) => {
 
 <template>
 	<div class="w-full mb-2">
-		<a class="cursor-pointer" @click="toggleAuthModal">Зарегистрируйтесь</a>, чтобы получать уведомления об ответах
+		<a
+				class="cursor-pointer"
+				@click="setAndOpenModal('registration')"
+		>
+			Зарегистрируйтесь
+		</a> или
+		<a
+				class="cursor-pointer"
+				@click="setAndOpenModal('login')"
+		>
+			войдите в систему
+		</a> {{ message }}
 	</div>
 	<Modal
-			:showOpenModal="activeAuthModal"
+			:showOpenModal="isActiveModal"
 			size="small"
-			:modalId="modalName"
+			:modalId="modalId"
 			:re-calc-height="reCalc"
 			@setReCalcValue="reCalcHeight"
-			@toggleModal="toggleAuthModal"
+			@toggleModal="toggleModal"
 	>
 		<AuthComponent
-				title="Регистрация"
-				actionType="registration"
+				:title="modalTitle"
+				:actionType="modalActionType"
 				@reCalcHeight="reCalcHeight"
-				@closeModal="toggleAuthModal"
+				@closeModal="toggleModal"
 		/>
 	</Modal>
 </template>

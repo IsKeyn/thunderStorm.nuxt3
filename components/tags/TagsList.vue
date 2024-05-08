@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 
-import FormGenerator from '@/components/forms/FormGenerator.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 // const modelValue = defineModel();
 

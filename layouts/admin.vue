@@ -27,8 +27,6 @@ const theme = computed(() => {
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
-const Authorization = useCookie('Authorization');
-
 import { roles } from '@/composables/roles.js';
 const { hasRole } = roles();
 
@@ -65,7 +63,7 @@ import Menu from '@/components/admin/Menu.vue';
 			<div id="modals"></div>
 			<article>
 				<NuxtLoadingIndicator />
-				<template v-if="userStore.user && Object.keys(userStore.user).length > 0 && Authorization">
+				<template v-if="userStore.user && Object.keys(userStore.user).length > 0">
 					<template v-if="hasRole('admin', userStore.user) === true">
 						<template v-if="userStore.user.email_verified_at">
 							<Header />

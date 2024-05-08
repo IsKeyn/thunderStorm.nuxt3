@@ -8,25 +8,18 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
-			title: {
+			name: {
 				name: 'Заголовок',
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			code: {
-				name: 'Код (slug)',
+			slug: {
+				name: 'Slug',
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			tags: {
-				name: 'Теги (устаревшие, перевожу на сущность)',
-				value: '',
-				type: 'text',
-				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			text_preview: {
@@ -45,9 +38,11 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			image: {
-				name: 'Изображение (устаревшее)',
+				name: 'Изображение',
 				value: '',
-				type: 'text',
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -60,20 +55,6 @@ const form = ref(
 			},
 			type: {
 				name: 'Тип статьи',
-				value: '',
-				type: 'text',
-				validateRules: 'required',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			vote_up: {
-				name: 'Лайки',
-				value: '',
-				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			vote_down: {
-				name: 'Дизлайки',
 				value: '',
 				type: 'text',
 				validateRules: '',
@@ -117,6 +98,8 @@ const breadCrumbsArray = computed(() => {
 		<CreateEditForm
 				:form="form"
 				fetchUrl="admin/articles"
+				:showTags="true"
+				:hasResource="true"
 		/>
 	</div>
 </template>

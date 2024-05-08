@@ -1,5 +1,5 @@
 <script setup>
-import FormGenerator from '@/components/forms/FormGenerator.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ResentVerifyEmail from '@/components/user/fragments/ResentVerifyEmail.vue';
 
 import { validate } from '@/composables/validate.js';
@@ -106,7 +106,12 @@ const sendRequest = async () => {
 			getUserData();
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
+
 		requestInProgress.value = false;
 	}
 }
@@ -132,7 +137,11 @@ const getUserData = async () => {
 			requestInProgress.value = false;
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }
@@ -151,6 +160,7 @@ const getUserData = async () => {
 		<template v-else>
 			<template v-if="Object.keys(responseErrors).length > 0">
 				<template v-for="fieldErrors in responseErrors">
+					{{ fieldErrors }}
 					<div
 							v-for="error in fieldErrors"
 							class="field-error-message small-text mb-[10px]"

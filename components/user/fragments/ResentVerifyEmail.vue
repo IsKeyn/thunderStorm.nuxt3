@@ -65,7 +65,11 @@ const sendRequest = async () => {
 			}
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }

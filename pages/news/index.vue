@@ -1,4 +1,5 @@
 <script setup>
+import ArticlesList from '@/components/articles/ArticlesList.vue';
 </script>
 
 <template>
@@ -6,10 +7,5 @@
 			title="Новости"
 			:type="1"
 			:infinityScroll="true"
-			:showPageHeader="false"
 	/>
-
-	<div class="h-[3000px]">
-		Главная
-	</div>
 </template>

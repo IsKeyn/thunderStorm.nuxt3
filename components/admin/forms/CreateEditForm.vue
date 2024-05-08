@@ -64,7 +64,6 @@ const afterRequest = (params) => {
 
 const { apiUrl, errorHandler } = api();
 
-const Authorization = useCookie('Authorization');
 const requestInProgress = ref(false);
 const responseErrors = ref({});
 
@@ -80,8 +79,8 @@ const sendRequest = async () => {
 				`${apiUrl.value}${props.fetchUrl}/${route.params.slug}/edit/`,
 				{
 					method: 'GET',
+					credentials: 'include',
 					headers: {
-						Authorization: Authorization.value,
 						Accept: 'application/json',
 						'X-Requested-With': 'XMLHttpRequest',
 					},
@@ -94,7 +93,15 @@ const sendRequest = async () => {
 
 			for (const formKey in props.form) {
 				if (fetchedData.value[formKey]) {
-					props.form[formKey].value = fetchedData.value[formKey];
+					if (typeof fetchedData.value[formKey] === 'object' && props.form[formKey].keyValueFromObject) {
+						props.form[formKey].value = fetchedData.value[formKey][props.form[formKey].keyValueFromObject];
+
+						if (props.form[formKey].hasOwnProperty('objectValue')) {
+							props.form[formKey].objectValue = fetchedData.value[formKey];
+						}
+					} else {
+						props.form[formKey].value = fetchedData.value[formKey];
+					}
 				}
 			}
 
@@ -105,7 +112,11 @@ const sendRequest = async () => {
 			}
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }

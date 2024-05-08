@@ -1,4 +1,6 @@
 <script setup>
+import { onMounted } from 'vue'
+
 import FastSearchLine from '@/components/search/FastSearchLine.vue';
 import AuthIconComponent from '@/components/user/AuthIconComponent.vue';
 import BurgerMenu from '@/components/menu/BurgerMenu.vue';
@@ -37,7 +39,7 @@ const showHideMenu = (showMenu) => {
 }
 
 const headClass = ref(false);
-import { onMounted } from 'vue'
+
 onMounted(() => {
 	headClass.value = props.headType;
 	window.addEventListener("scroll", (event) => { scroll(event); });

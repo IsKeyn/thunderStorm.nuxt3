@@ -3,6 +3,13 @@ import TdElementCard from '@/components/admin/list/TdElementCard.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
 import LightBox from '@/components/media/LightBox.vue';
 
+import { api } from '@/composables/api.js'
+const {
+	apiUrl,
+	backendUrl,
+	getCsrfCookie
+} = api();
+
 const props = defineProps({
 	titles: {
 		type: Object,
@@ -53,13 +60,9 @@ const systemTitles = ref({
 	},
 });
 
-import { api } from '@/composables/api.js'
-const { apiUrl, backendUrl } = api();
 
 const fetchedData = ref(null);
 const pagination = ref(null);
-
-const Authorization = useCookie('Authorization');
 
 const router = useRouter();
 const route = useRoute();
@@ -105,10 +108,9 @@ const { pending, refresh } = await useFetch(
 		() => getRequestUrl(),
 		{
 			method: 'GET',
+			credentials: 'include',
 			headers: {
-				Authorization: Authorization.value,
 				Accept: 'application/json',
-				'X-Requested-With': 'XMLHttpRequest',
 			},
 			onResponse({response}) {
 				if (response.status === 200) {
@@ -157,19 +159,7 @@ const sendRequestForDeleteElement = async (id) => {
 	requestInProgress.value = true;
 
 	try {
-		await $fetch(
-				`${backendUrl.value}/sanctum/csrf-cookie`,
-				{
-					withCredentials: true,
-					credentials: 'include',
-					headers: {
-						Accept: 'application/json',
-						'X-Requested-With': 'XMLHttpRequest',
-					},
-				},
-		);
-
-		const XsrfToken = useCookie('XSRF-TOKEN');
+		const csrfCookie = await getCsrfCookie();
 
 		const response = await $fetch(
 				`${apiUrl.value}${props.fetchUrl}/${id}`,
@@ -177,10 +167,8 @@ const sendRequestForDeleteElement = async (id) => {
 					method: 'DELETE',
 					credentials: 'include',
 					headers: {
-						Authorization: Authorization.value,
 						Accept: 'application/json',
-						'X-Requested-With': 'XMLHttpRequest',
-						'X-XSRF-TOKEN': XsrfToken.value,
+						'X-XSRF-TOKEN': csrfCookie.value,
 					},
 				}
 		);
@@ -195,7 +183,11 @@ const sendRequestForDeleteElement = async (id) => {
 
 		requestInProgress.value = false;
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+				const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }
@@ -211,10 +203,9 @@ const updateTable = async () => {
 			request,
 			{
 				method: 'GET',
+				credentials: 'include',
 				headers: {
-					Authorization: Authorization.value,
 					Accept: 'application/json',
-					'X-Requested-With': 'XMLHttpRequest',
 				},
 				onResponse({response}) {
 					if (response.status === 200) {

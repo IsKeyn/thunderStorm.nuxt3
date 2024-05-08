@@ -1,6 +1,8 @@
 <script setup>
 import { watch } from 'vue'
 
+import FileFromGallery from './fragments/FileFromGallery.vue';
+
 const props = defineProps({
 	// Отображаемое имя поля
 	name: {
@@ -212,6 +214,13 @@ const showPassword = () => {
 					{{ option.name }}
 				</option>
 			</select>
+		</template>
+		<template v-else-if="element.type === 'fileFromGallery'">
+			<FileFromGallery
+					:name="name"
+					:element="element"
+					:getFieldClasses="getFieldClasses"
+			/>
 		</template>
 		<span
 			v-if="validateErrorPosition === 'bottom' && element.validateResult && showValidateError"

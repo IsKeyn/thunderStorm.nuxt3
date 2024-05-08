@@ -1,6 +1,9 @@
 <script setup>
 import { api } from '@/composables/api.js'
-const { apiUrl } = api();
+const {
+	apiUrl,
+	getCsrfCookie
+} = api();
 
 const props = defineProps({
 	fetchUrl: {
@@ -28,12 +31,17 @@ const props = defineProps({
 
 const menuElements = ref();
 
+const csrfCookie = await getCsrfCookie();
+
 await useFetch(
 		`${apiUrl.value}${props.fetchUrl}`,
 		{
-			method: 'POST',
-			body: {
-				arTypes: props.arColumnsTypes,
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+			query: {
+				arTypes: JSON.stringify(props.arColumnsTypes),
 			},
 			onResponse({response}) {
 				if (response.status === 200) {

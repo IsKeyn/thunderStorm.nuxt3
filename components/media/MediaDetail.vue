@@ -6,7 +6,9 @@ import Comments from '@/components/comments/Comments.vue';
 import Likes from '@/components/voting/Likes.vue';
 
 import { date } from '@/composables/date.js';
-const { getFormattedDate } = date();
+const {
+	getFormattedDate
+} = date();
 
 import { api } from '@/composables/api.js'
 const {
@@ -15,11 +17,12 @@ const {
 	sessionCookieName,
 } = api();
 
+import { lightBox } from '@/composables/lightBox.js';
+const { openedImage, setOpenedImage } = lightBox();
+
 const route = useRoute();
 
-const Authorization = useCookie('Authorization');
-
-const fetchedData = ref('');
+const fetchedData = ref();
 
 const { refresh } = await useAsyncData(
 		async () => {
@@ -39,9 +42,7 @@ const { refresh } = await useAsyncData(
 						method: 'GET',
 						credentials: 'include',
 						headers: {
-							// Authorization: Authorization.value,
 							Accept: 'application/json',
-							// 'X-Requested-With': 'XMLHttpRequest',
 							Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
 							Referer: publicUrl.value,
 						},
@@ -49,8 +50,8 @@ const { refresh } = await useAsyncData(
 							if (response.status === 200) {
 								fetchedData.value = response._data.data;
 
-								if (!sessionStorage.getItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`)) {
-									sessionStorage.setItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.image.id}`, true);
+								if (process.client && !sessionStorage.getItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`)) {
+									sessionStorage.setItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`, true);
 								}
 							} else {
 								// Возарщаем 404
@@ -61,21 +62,12 @@ const { refresh } = await useAsyncData(
 		}
 );
 
-const { getTitle, getBreadCrumbs } = pageHeader(fetchedData);
-const { openedImage, setOpenedImage } = lightBox(fetchedData);
-
-function lightBox(fetchedData) {
-	const openedImage = ref(null);
-
-	const setOpenedImage = (item = null) => {
-		openedImage.value = item;
-	}
-
-	return {
-		openedImage,
-		setOpenedImage
-	};
+const updateLikes = (params) => {
+	const { entityType, entityId, count } = params;
+	fetchedData.value.likes = count;
 }
+
+const { getTitle, getBreadCrumbs } = pageHeader(fetchedData);
 
 function pageHeader(fetchedData) {
 	const getTitle = () => {
@@ -147,7 +139,19 @@ function pageHeader(fetchedData) {
 					</div>
 					<div
 							class="field"
-							v-if="fetchedData.comments_count"
+							v-if="fetchedData.views"
+					>
+						<span class="font-semibold">Просмотров:</span> {{ fetchedData.views }}
+					</div>
+					<div
+							class="field"
+							v-if="fetchedData.likes"
+					>
+						<span class="font-semibold">Лайкнули:</span> {{ fetchedData.likes }} раз
+					</div>
+					<div
+							class="field"
+							v-if="fetchedData.comments_count !== null && fetchedData.comments_count !== undefined"
 					>
 						<span class="font-semibold">Количество комментариев:</span> {{ fetchedData.comments_count }}
 					</div>
@@ -156,6 +160,8 @@ function pageHeader(fetchedData) {
 					<Likes
 							:entityType="fetchedData.entity_type"
 							:entityId="fetchedData.id"
+							:voted="fetchedData.already_voted"
+							@updateLikes="updateLikes"
 					/>
 				</div>
 				<div class="col-span-4">
@@ -183,6 +189,7 @@ function pageHeader(fetchedData) {
 				:image="openedImage"
 				:showCommentBox="false"
 				@setCurrentElement="setOpenedImage"
+				@updateLikes="updateLikes"
 		/>
 	</div>
 </template>

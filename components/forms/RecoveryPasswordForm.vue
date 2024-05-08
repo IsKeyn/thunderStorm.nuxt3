@@ -1,5 +1,5 @@
 <script setup>
-import FormGenerator from '@/components/forms/FormGenerator.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { api } from '@/composables/api.js';
 const { apiUrl, errorHandler } = api();
@@ -62,7 +62,11 @@ const sendRequest = async () => {
 			emit('closeModal');
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }

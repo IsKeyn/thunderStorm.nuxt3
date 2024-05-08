@@ -1,5 +1,10 @@
+<script setup>
+import UserProfile from '@/components/user/registration/UserProfile.vue';
+</script>
+
 <template>
 	<div>
-		Профиль пользователя
+		<UserProfile />
 	</div>
 </template>
+

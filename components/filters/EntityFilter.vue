@@ -1,7 +1,8 @@
 <script setup>
 import { watch } from "vue";
 
-import FormGenerator from '@/components/forms/FormGenerator.vue';
+import OpeningBox from '@/components/interface/OpeningBox.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 const contentStatus = ref(false);
 
@@ -51,6 +52,34 @@ const sort = ref([
 						sort: 'asc',
 					},
 				},
+				// {
+				// 	name: 'Наиболее понравившиеся',
+				// 	value: {
+				// 		field: 'likes',
+				// 		sort: 'desc',
+				// 	},
+				// },
+				// {
+				// 	name: 'Наименее понравившиеся',
+				// 	value: {
+				// 		field: 'likes',
+				// 		sort: 'asc',
+				// 	},
+				// },
+				// {
+				// 	name: 'Наиболее просматриваемые',
+				// 	value: {
+				// 		field: 'views',
+				// 		sort: 'desc',
+				// 	},
+				// },
+				// {
+				// 	name: 'Наименее просматриваемые',
+				// 	value: {
+				// 		field: 'views',
+				// 		sort: 'asc',
+				// 	},
+				// },
 				{
 					name: 'По названию',
 					value: {
@@ -75,44 +104,28 @@ watch(sort.value, (newValue) => {
 </script>
 
 <template>
-	<div class="opening-box">
-		<div
-				class="header"
-				@click="toggleContent(null)"
-		>
-			Фильтры
+	<OpeningBox title="Фильтры">
+		<TagsList
+				class="col-span-8"
+				:canAddTags="false"
+				type="media"
+				v-model="filters.tags"
+		/>
 
-			<div class="icon-box">
-				<font-awesome-icon v-if="contentStatus" :icon="['fas', 'angle-up']" />
-				<font-awesome-icon v-else :icon="['fas', 'angle-down']" />
-			</div>
-		</div>
-		<div
-				v-show="contentStatus"
-				class="content"
-		>
-			<TagsList
-					class="col-span-8"
-					:canAddTags="false"
-					type="media"
-					v-model="filters.tags"
+		<div class="col-span-2"></div>
+		<div class="col-span-2 text-right">
+			<FormGenerator
+					v-for="(field, index) in sort"
+					:key="index"
+					:name="index"
+					:element="field"
+					:showValidateError=true
+					validateErrorPosition="bottom"
+					:labelClasses="['inline-block', 'mb-[10px]', 'mr-2']"
+					:fieldClasses="field.classes"
 			/>
-
-			<div class="col-span-2"></div>
-			<div class="col-span-2 text-right">
-				<FormGenerator
-						v-for="(field, index) in sort"
-						:key="index"
-						:name="index"
-						:element="field"
-						:showValidateError=true
-						validateErrorPosition="bottom"
-						:labelClasses="['inline-block', 'mb-[10px]', 'mr-2']"
-						:fieldClasses="field.classes"
-				/>
-			</div>
 		</div>
-	</div>
+	</OpeningBox>
 </template>
 
 <style lang="scss" scoped>

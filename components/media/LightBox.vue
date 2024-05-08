@@ -3,6 +3,8 @@ import Overlay from '@/components/layout/Overlay.vue';
 import SimpleTagsList from '@/components/tags/SimpleTagsList.vue';
 import Likes from '@/components/voting/Likes.vue';
 
+const emit = defineEmits(['setCurrentElement', 'updateLikes', 'selectThisElement']);
+
 import { api } from '@/composables/api.js'
 const {
 	apiUrl,
@@ -36,7 +38,17 @@ const props = defineProps({
 	setViewsLog: {
 		type: Boolean,
 		default: false,
-	}
+	},
+	/* Скрывать/показывать кнопку выбора картинки, используется для выбора медиа в FormGenerator.vue */
+	selectButton: {
+		type: Boolean,
+		default: false,
+	},
+	/* Скрывать/показывать полосу прокрутки на элементе body */
+	hideBodyScrollLine: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const setView = async () => {
@@ -70,8 +82,6 @@ watch(() => props.image, () => {
 	setView();
 });
 
-const emit = defineEmits(['setCurrentElement']);
-
 const hover = ref(false);
 
 import { date } from '@/composables/date.js';
@@ -79,19 +89,38 @@ const { getFormattedDate } = date();
 
 import {onMounted, onUnmounted, watch} from 'vue'
 onMounted(() => {
-	const body = document.querySelector('body');
-	body.classList.add('overflow-hidden');
+	if (props.hideBodyScrollLine) {
+		const body = document.querySelector('body');
+		body.classList.add('overflow-hidden');
+	}
 
 	document.addEventListener('keydown', keydownHandler);
 });
 
 onUnmounted(() => {
-	const body = document.querySelector('body');
-	body.classList.remove('overflow-hidden');
+	if (props.hideBodyScrollLine) {
+		const body = document.querySelector('body');
+		body.classList.remove('overflow-hidden');
+	}
 
 	document.removeEventListener('keydown', keydownHandler);
 });
 
+const isPined = ref(false);
+
+const togglePin = () => {
+	isPined.value = !isPined.value;
+
+	if (isPined.value) {
+		hover.value = true;
+	}
+}
+
+const setHover = (value) => {
+	if (!isPined.value) {
+		hover.value = value;
+	}
+}
 const keydownHandler = (event) => {
 	switch (event.key) {
 		case 'Escape': emit('setCurrentElement'); break;
@@ -110,12 +139,21 @@ const keydownHandler = (event) => {
 				:src="image.src"
 		>
 		<div class="wrapper">
-			<span class="btn-icon close-button">
+			<span
+					class="btn-icon close-button"
+					@click="$emit('setCurrentElement')"
+			>
 				<font-awesome-icon
 						:icon="['fas', 'xmark']"
 						class="icon"
-						@click="$emit('setCurrentElement')"
 				/>
+			</span>
+			<span
+					v-if="selectButton"
+					class="btn-icon select-button"
+					@click="$emit('selectThisElement', image)"
+			>
+				<font-awesome-icon :icon="['fas', 'check']"/>
 			</span>
 			<span
 					v-if="Number.isInteger(prevElementKey)"
@@ -137,23 +175,17 @@ const keydownHandler = (event) => {
 				<font-awesome-icon :icon="['fas', 'angle-right']" />
 			</span>
 			<Likes
+					theme="forLightBox"
 					:entityType="image.entity_type"
 					:entityId="image.id"
-			>
-				<span
-						class="btn-icon btn-like"
-						@mouseenter="hover = true"
-				>
-					<font-awesome-icon
-							:icon="['fas', 'heart']"
-					/>
-				</span>
-			</Likes>
+					:voted="image.already_voted"
+					@updateLikes="$emit('updateLikes', $event)"
+			/>
 			<div
 					class="item-info-block"
 					:class="hover ? 'active' : ''"
-					@mouseenter="hover = true"
-					@mouseleave="hover = false"
+					@mouseenter="setHover(true)"
+					@mouseleave="setHover(false)"
 			>
 				<div class="content">
 					<div class="line-1">
@@ -165,7 +197,18 @@ const keydownHandler = (event) => {
 							>
 								Количество комментариев: {{ image.comments_count }}
 							</span>
-
+							<span
+									v-if="image.views"
+									class="info-line"
+							>
+								Просмотров: {{ image.views }}
+							</span>
+							<span
+									v-if="image.likes"
+									class="info-line"
+							>
+								Лайкнули: {{ image.likes }} раз
+							</span>
 						</div>
 						<div class="column text-center">
 							<span
@@ -204,6 +247,14 @@ const keydownHandler = (event) => {
 							</router-link>
 						</div>
 					</div>
+				</div>
+				<div class="btn-icon btn-pin">
+					<font-awesome-icon
+							:icon="['fas', 'thumbtack']"
+							rotation=45
+							:class="isPined ? 'active' : ''"
+							@click="togglePin"
+					/>
 				</div>
 			</div>
 		</div>
@@ -249,6 +300,12 @@ const keydownHandler = (event) => {
 			;
 		}
 
+		.select-button {
+			@apply
+			top-[20px] right-[80px]
+			;
+		}
+
 		.btn-nav {
 			top: calc(50% - 30px);
 		}
@@ -261,12 +318,42 @@ const keydownHandler = (event) => {
 			@apply right-[10px];
 		}
 
-		.btn-like {
+		//.btn-like {
+		//	@apply
+		//		absolute z-[701]
+		//		right-[10px] bottom-[20px]
+		//		text-[35px] leading-[60px]
+		//	;
+		//
+		//	&.voted {
+		//		@apply bg-[var(--second-hover-color)];
+		//	}
+		//}
+
+		.btn-pin {
 			@apply
-				absolute z-[701]
-				right-[10px] bottom-[20px]
-				text-[35px] leading-[60px]
+				absolute top-[20px] right-[28px]
+				cursor-pointer text-[30px]
 			;
+
+			height: unset;
+			width: unset;
+
+			&:hover {
+				@apply bg-inherit;
+			}
+
+			svg {
+				rotate: 45deg;
+
+				&.active {
+					rotate: 0deg;
+				}
+
+				&:hover {
+					color: var(--main-hover-color);
+				}
+			}
 		}
 
 		img {

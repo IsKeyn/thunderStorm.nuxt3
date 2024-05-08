@@ -1,6 +1,5 @@
 <script setup>
-import { watch } from 'vue'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 
 import Overlay from "@/components/layout/Overlay.vue";
 
@@ -61,8 +60,20 @@ watch(() => props.reCalcHeight, (newValue) => {
 });
 
 watch(modalActive, (newValue) => {
-	if (newValue && wasOpen.value === false) {
-		init();
+	if (newValue) {
+		if (wasOpen.value === false) {
+			init();
+		}
+
+		if (props.size === 'full-screen' || props.size === 'full-width') {
+			const body = document.querySelector('body');
+			body.classList.add('overflow-hidden');
+		}
+	} else {
+		if (props.size === 'full-screen' || props.size === 'full-width') {
+			const body = document.querySelector('body');
+			body.classList.remove('overflow-hidden');
+		}
 	}
 
 	if (props.saveModalValue) {
@@ -79,6 +90,8 @@ const el = ref()
 onMounted(() => {
 	modalActive.value = props.showOpenModal;
 })
+
+onUnmounted(() => {});
 
 const init = () => {
 	const modalsContainerDom = document.querySelector(props.modalsContainerSelector);
@@ -102,7 +115,9 @@ const init = () => {
 	}
 
 	if (id.value) {
-		calcHeight();
+		if (props.size !== 'full-screen' && props.size !== 'full-width') {
+			calcHeight();
+		}
 	} else {
 		error('У модального окна отсутствует ID');
 	}
@@ -158,7 +173,7 @@ const closeModal = () => {
 	<ClientOnly>
 		<teleport :to="modalsContainerSelector">
 			<Overlay
-					v-if="modalActive"
+					v-if="modalActive && size !== 'full-screen'"
 					@click="closeModal()"
 			/>
 			<template v-if="wasOpen">

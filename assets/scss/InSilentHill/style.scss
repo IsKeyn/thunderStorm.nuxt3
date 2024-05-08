@@ -67,7 +67,7 @@ select {
 
 textarea {
   @apply
-    min-h-[120px]
+    min-h-[120px] w-full
     pt-[10px] pr-[10px] pb-[10px] pl-[20px]
     border-none
     bg-[var(--main-bg-color)]

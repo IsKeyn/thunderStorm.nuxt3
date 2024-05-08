@@ -1,6 +1,6 @@
 <script setup>
 import { watch } from "vue";
-import FormGenerator from '@/components/forms/FormGenerator.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 const files = ref([]);
 const formSample = ref(
@@ -172,7 +172,11 @@ const sendRequest = async () => {
 			);
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }

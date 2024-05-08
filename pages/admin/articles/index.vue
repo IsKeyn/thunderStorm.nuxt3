@@ -11,14 +11,11 @@ const titles = ref(
 			id: {
 				name: 'id',
 			},
-			code: {
-				name: 'Код (slug)',
-			},
-			title: {
+			name: {
 				name: 'Заголовок',
 			},
-			tags: {
-				name: 'Теги (устаревшие, перевожу на сущность)',
+			slug: {
+				name: 'Slug',
 			},
 			text_preview: {
 				name: 'Текст превью',
@@ -27,16 +24,10 @@ const titles = ref(
 				name: 'Текст статьи',
 			},
 			image: {
-				name: 'Изображение (устаревшее)',
+				name: 'Изображение',
 			},
 			type: {
 				name: 'Тип статьи',
-			},
-			vote_up: {
-				name: 'Лайки',
-			},
-			vote_down: {
-				name: 'Дизлайки',
 			},
 		}
 );

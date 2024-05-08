@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 
-import FormGenerator from '@/components/forms/FormGenerator.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ResentVerifyEmail from '@/components/user/fragments/ResentVerifyEmail.vue';
 
 import { useUserStore } from '@/stores/user';
@@ -111,7 +111,11 @@ const sendRequest = async () => {
 			emit('сlosureFunc');
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }
@@ -142,7 +146,11 @@ const sendLogoutRequest = async () => {
 			requestInProgress.value = false;
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }
@@ -177,7 +185,11 @@ const getUserData = async () => {
 			requestInProgress.value = false;
 		}
 	} catch (e) {
-		responseErrors.value = errorHandler(e);
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 		requestInProgress.value = false;
 	}
 }
