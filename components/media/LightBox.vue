@@ -175,6 +175,7 @@ const keydownHandler = (event) => {
 				<font-awesome-icon :icon="['fas', 'angle-right']" />
 			</span>
 			<Likes
+					v-if="image.entity_type && image.id"
 					theme="forLightBox"
 					:entityType="image.entity_type"
 					:entityId="image.id"
@@ -190,7 +191,11 @@ const keydownHandler = (event) => {
 				<div class="content">
 					<div class="line-1">
 						<div class="column">
-							<span class="info-line" v-if="image.description">{{ image.description }}</span>
+							<span
+									class="info-line"
+									v-if="image.description"
+									v-html="image.description"
+							/>
 							<span
 									v-if="image.comments_count !== null && image.comments_count !== undefined"
 									class="info-line"
@@ -237,13 +242,16 @@ const keydownHandler = (event) => {
 							/>
 						</div>
 					</div>
-					<div class="line-2">
+					<div
+							v-if="image.id"
+							class="line-2"
+					>
 						<div class="column">
 							<router-link
 									v-if="showCommentBox"
 									:to="`/media/${image.id}/`"
 							>
-								<button>Оставить комментарий</button>
+								<button class="btn">Оставить комментарий</button>
 							</router-link>
 						</div>
 					</div>

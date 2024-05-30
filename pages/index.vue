@@ -1,15 +1,13 @@
 <script setup>
+import MainPageSlider from '@/components/sliders/MainPageSlider.vue';
 </script>
 
 <template>
+	<MainPageSlider />
 	<ArticlesList
 			title="Новости"
 			:type="1"
 			:infinityScroll="true"
 			:showPageHeader="false"
 	/>
-
-	<div class="h-[3000px]">
-		Главная
-	</div>
 </template>

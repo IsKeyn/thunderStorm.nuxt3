@@ -317,8 +317,8 @@ const setPerPage = (count) => {
 			@changePage="changePage"
 			@setPerPage="setPerPage"
 		/>
-		<router-link :to="`${pageUrl}/create`"><button>Добавить один элемент</button></router-link>
-		<router-link v-if="hasMultiUpload" :to="`${pageUrl}/multi-upload`"><button>Добавить несколько элементов</button></router-link>
+		<router-link :to="`${pageUrl}/create`"><button class="btn">Добавить один элемент</button></router-link>
+		<router-link v-if="hasMultiUpload" :to="`${pageUrl}/multi-upload`"><button class="btn">Добавить несколько элементов</button></router-link>
 	</div>
 	<LightBox
 			v-if="openedImage"

@@ -1,4 +1,5 @@
 <script setup>
+import OpeningBox from '@/components/interface/OpeningBox.vue';
 import AddCommentForm from '@/components/forms/AddCommentForm.vue';
 import CommentsList from '@/components/comments/CommentsList.vue';
 
@@ -25,11 +26,13 @@ const fetchComments = () => {
 
 <template>
 	<div>
-		<AddCommentForm
-				:entityType="entityType"
-				:entityId="entityId"
-				@fetchComments="fetchComments"
-		/>
+		<OpeningBox title="Добавить комментарий">
+			<AddCommentForm
+					:entityType="entityType"
+					:entityId="entityId"
+					@fetchComments="fetchComments"
+			/>
+		</OpeningBox>
 		<CommentsList
 				:entityType="entityType"
 				:entityId="entityId"

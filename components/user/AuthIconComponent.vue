@@ -85,10 +85,14 @@ const sendLogoutRequest = async () => {
 	}
 }
 
+const showUserMenu = ref(false);
+const toggleUserMenu = () => {
+	showUserMenu.value = !showUserMenu.value;
+}
 </script>
 
 <template>
-	<div class="flex">
+	<div>
 		<template v-if="requestInProgress">
 			<font-awesome-icon
 				:icon="['fas', 'spinner']"
@@ -97,27 +101,32 @@ const sendLogoutRequest = async () => {
 			/>
 		</template>
 		<template v-else-if="userStore.user && Object.keys(userStore.user).length > 0">
-			<router-link
-					to="/profile/"
-					@click="$emit('showHideMenu', false)"
+			<div
+					class="user-profile-actions"
+					@click="toggleUserMenu"
 			>
-				<font-awesome-icon
-						:icon="['far', 'user']"
-						class="menu-element icon"
+				<img
+						v-if="userStore.user.avatar"
+						:src="userStore.user.avatar"
 				/>
-			</router-link>
-			<font-awesome-icon
-					:icon="['fas', 'right-from-bracket']"
-					class="menu-element icon"
-					@click="logout()"
-			/>
+				<span v-else>
+					<font-awesome-icon
+							:icon="['far', 'user']"
+					/>
+				</span>
+			</div>
 		</template>
-		<template v-else-if="true">
-			<font-awesome-icon
-					:icon="['fas', 'right-to-bracket']"
-					class="menu-element icon"
+		<template v-else>
+			<div
+					class="user-profile-actions"
 					@click="toggleAuthModal()"
-			/>
+			>
+				<span>
+					<font-awesome-icon
+							:icon="['fas', 'right-to-bracket']"
+					/>
+				</span>
+			</div>
 
 			<Modal
 					:showOpenModal="activeAuthModal"
@@ -134,4 +143,90 @@ const sendLogoutRequest = async () => {
 			</Modal>
 		</template>
 	</div>
+	<div
+			class="user-menu"
+			v-if="userStore.user && Object.keys(userStore.user).length > 0"
+			v-show="showUserMenu"
+	>
+		<ul>
+			<li>
+				<router-link
+						to="/profile/"
+						@click="$emit('showHideMenu', false)"
+				>
+					<font-awesome-icon
+							:icon="['far', 'user']"
+							class=""
+					/> Профиль
+				</router-link>
+			</li>
+			<li>
+				<a href="#" @click.prevent="logout()">
+					<font-awesome-icon
+							:icon="['fas', 'right-from-bracket']"
+							class=""
+					/> Выход
+				</a>
+			</li>
+		</ul>
+
+	</div>
 </template>
+
+<style lang="scss" scoped>
+.user-profile-actions {
+	@apply
+		h-[50px] w-[50px] mt-[-10px]
+		cursor-pointer
+	;
+
+	span {
+		@apply
+			flex justify-center items-center
+			bg-[var(--body-bg-color)]
+			w-full h-full rounded-full
+		;
+
+		svg {
+			@apply text-[28px];
+		}
+	}
+
+	img {
+		@apply w-full h-full rounded-full;
+	}
+}
+
+.user-menu {
+	@apply
+		absolute top-[90px] right-0 z-[601]
+		min-w-[200px]
+		bg-[var(--main-bg-color)]
+	;
+
+	ul {
+		li {
+			a {
+				@apply
+					block
+					pt-[5px] pr-[10px] pb-[5px] pl-[10px]
+					text-[var(--main-text-color)]
+				;
+
+				&:hover {
+					@apply no-underline;
+					//text-decoration: none;
+				}
+
+				svg {
+					@apply min-w-[20px];
+				}
+			}
+
+			&:hover {
+				@apply bg-[var(--second-hover-color)];
+			}
+		}
+	}
+}
+</style>

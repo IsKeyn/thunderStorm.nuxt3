@@ -36,7 +36,7 @@ const updateLikes = (params) => {
 	>
 		<div class="header">
       <div class="header-line">
-				<div class="article-title">
+				<div class="card-title">
 					<router-link
 							:to=articleUrl
 							class="title"
@@ -69,7 +69,7 @@ const updateLikes = (params) => {
 		<div class="footer">
 			<div class="column-1">
 				<router-link :to=articleUrl>
-					<button>Читать полностью <font-awesome-icon :icon="['fas', 'arrow-right']" /></button>
+					<button class="btn">Читать полностью <font-awesome-icon :icon="['fas', 'arrow-right']" /></button>
 				</router-link>
 			</div>
 			<div class="column-2">
@@ -108,7 +108,7 @@ const updateLikes = (params) => {
 		.header-line {
 			@apply grid grid-cols-12;
 
-			.article-title {
+			.card-title {
 				@apply col-span-10;
 
 				a.title {

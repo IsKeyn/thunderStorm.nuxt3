@@ -1,4 +1,12 @@
 <script setup>
+import { date } from '@/composables/date.js';
+const { getFormattedDate } = date();
+
+import { file } from '@/composables/file.js'
+const {
+	getFileType,
+} = file();
+
 const props = defineProps({
 	item: {
 		type: Object,
@@ -18,10 +26,11 @@ const props = defineProps({
 	},
 });
 
-import { date } from '@/composables/date.js';
-const { getFormattedDate } = date();
-
 const emit = defineEmits(['deleteElement']);
+
+const fileType = computed(() => {
+	return getFileType(props.item[props.keyName]);
+});
 </script>
 
 <template>
@@ -49,8 +58,26 @@ const emit = defineEmits(['deleteElement']);
 		<template v-else-if="keyName === 'deleted_at' && item[keyName]">
 			{{ getFormattedDate('d.m.Y H:i:s', item[keyName]) }}
 		</template>
-		<template v-else-if="titleEl.type && titleEl.type === 'image' && item[keyName]">
-			<img :src="item[keyName]" @click="$emit('openImage', item)">
+		<template v-else-if="titleEl.type && titleEl.type === 'media' && item[keyName]">
+			<a
+					v-if="fileType === 'video'"
+					:href="item[keyName]"
+					target="_blank"
+			>
+				Открыть видео
+			</a>
+<!--			<video-->
+<!--					v-if="fileType === 'video'"-->
+<!--					:src="item[keyName]"-->
+<!--					muted autoplay loop-->
+<!--			>-->
+<!--				Sorry, your browser doesn't support embedded videos-->
+<!--			</video>-->
+			<img
+					v-if="fileType === 'image'"
+					:src="item[keyName]"
+					@click="$emit('openImage', item)"
+			>
 		</template>
 		<template v-else>
 			{{ item[keyName] }}

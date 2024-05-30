@@ -1,4 +1,6 @@
 <script setup>
+import { onMounted } from 'vue'
+
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import AlertBox from '@/components/notifications/AlertBlock.vue';
@@ -27,6 +29,14 @@ const props = defineProps({
 		type: Number,
 		required: true,
 	},
+	firstParent: {
+		type: Number,
+		default: null,
+	},
+	answerTo: {
+		type: Number,
+		default: null,
+	},
 });
 
 /**
@@ -47,7 +57,7 @@ const createForm = () => {
 	if (!(userStore.user && Object.keys(userStore.user).length > 0)) {
 		createdForm.name = {
 				name: 'Ваше имя',
-				value: '',
+				value: sessionStorage.getItem('guest_name') ? sessionStorage.getItem('guest_name') : '',
 				type: 'text',
 				placeholder: 'Ваше имя',
 				validateRules: 'required, minLength_2, maxLength_50',
@@ -56,7 +66,7 @@ const createForm = () => {
 
 		createdForm.email = {
 				name: 'Ваш e-mail',
-				value: '',
+				value: sessionStorage.getItem('guest_email') ? sessionStorage.getItem('guest_email') : '',
 				type: 'text',
 				placeholder: 'Ваш e-mail',
 				validateRules: 'required, email, minLength_2, maxLength_50',
@@ -102,8 +112,18 @@ const sendRequest = async () => {
 	try {
 		const body = preparedRequestBody(form.value);
 
+		if (body.name) {
+			sessionStorage.setItem('guest_name', body.name);
+		}
+
+		if (body.email) {
+			sessionStorage.setItem('guest_email', body.email);
+		}
+
 		body.entity_type = props.entityType;
 		body.entity_id = props.entityId;
+		body.first_parent = props.firstParent;
+		body.answer_to = props.answerTo;
 
 		const response = await sendApiRequest('comment/add', 'POST', body);
 
@@ -120,7 +140,9 @@ const sendRequest = async () => {
 	}
 }
 
-createForm();
+onMounted(() => {
+	createForm();
+});
 
 watch(() => userStore.user, () => {
 	if (userStore.user && Object.keys(userStore.user).length > 0) {
@@ -130,55 +152,53 @@ watch(() => userStore.user, () => {
 </script>
 
 <template>
-	<OpeningBox title="Добавить комментарий">
-		<AlertBox
-				:errorsMessages="errorsMessages"
-				class="mb-2"
+	<AlertBox
+			:errorsMessages="errorsMessages"
+			class="mb-2"
+	/>
+	<div v-if="!(userStore.user && Object.keys(userStore.user).length > 0)">
+		<RecommendMessageForRegistration
+				:modalId="`modal-from-from-recommend-message-${entityType}-${entityId}`"
+				message=", чтобы получать уведомления об ответах"
 		/>
-		<div v-if="!(userStore.user && Object.keys(userStore.user).length > 0)">
-			<RecommendMessageForRegistration
-					:modalId="`modal-from-from-recommend-message-${entityType}-${entityId}`"
-					message=", чтобы получать уведомления об ответах"
-			/>
-			<div class="users-fields">
-				<FormGenerator
-						v-if="form.name"
-						name="name"
-						:element="form.name"
-						:showTitle="false"
-						validateErrorPosition="bottom"
-						labelClasses="mr-4"
-						:fieldClasses="form.name.classes"
-				/>
-				<FormGenerator
-						v-if="form.email"
-						name="email"
-						:element="form.email"
-						:showTitle="false"
-						validateErrorPosition="bottom"
-						:fieldClasses="form.name.classes"
-				/>
-			</div>
-		</div>
-		<VerifyEmailBlock
-				v-if="userStore.user && Object.keys(userStore.user).length > 0 && !userStore.user.email_verified_at"
-		/>
-		<div v-else>
+		<div class="users-fields">
 			<FormGenerator
-					v-if="form.message"
-					name="message"
-					:element="form.message"
+					v-if="form.name"
+					name="name"
+					:element="form.name"
 					:showTitle="false"
 					validateErrorPosition="bottom"
-					:fieldClasses="form.message.classes"
+					labelClasses="mr-4"
+					:fieldClasses="form.name.classes"
 			/>
-			<ActionButton
-					buttonName="Добавить"
-					:actionInProgress="requestInProgress"
-					@startAction="sendForm()"
+			<FormGenerator
+					v-if="form.email"
+					name="email"
+					:element="form.email"
+					:showTitle="false"
+					validateErrorPosition="bottom"
+					:fieldClasses="form.name.classes"
 			/>
 		</div>
-	</OpeningBox>
+	</div>
+	<VerifyEmailBlock
+			v-if="userStore.user && Object.keys(userStore.user).length > 0 && !userStore.user.email_verified_at"
+	/>
+	<div v-else>
+		<FormGenerator
+				v-if="form.message"
+				name="message"
+				:element="form.message"
+				:showTitle="false"
+				validateErrorPosition="bottom"
+				:fieldClasses="form.message.classes"
+		/>
+		<ActionButton
+				buttonName="Добавить"
+				:actionInProgress="requestInProgress"
+				@startAction="sendForm()"
+		/>
+	</div>
 </template>
 
 <style lang="scss" scoped>

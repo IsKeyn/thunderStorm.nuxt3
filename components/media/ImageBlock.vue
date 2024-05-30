@@ -4,7 +4,6 @@ import LightBox from '@/components/media/LightBox.vue'
 import { lightBox } from '@/composables/lightBox.js';
 const { openedImage, setOpenedImage } = lightBox();
 
-
 const props = defineProps({
 	image: {
 		type: Object,

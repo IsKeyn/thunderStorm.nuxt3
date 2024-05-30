@@ -3,6 +3,11 @@ import { watch } from 'vue'
 
 import FileFromGallery from './fragments/FileFromGallery.vue';
 
+import { file } from '@/composables/file.js'
+const {
+	getFileType,
+} = file();
+
 const props = defineProps({
 	// Отображаемое имя поля
 	name: {
@@ -88,6 +93,10 @@ const showPassword = () => {
 		props.element.type = 'password'
 	}
 };
+
+const fileType = computed(() => {
+	return getFileType(props.element.value);
+});
 </script>
 
 <template>
@@ -173,7 +182,14 @@ const showPassword = () => {
 							</div>
 						</div>
 						<div class="col-span-2 text-center">
-							<img :src="element.value" class="inline-block max-w-[500px] max-h-[500px]">
+							<video
+									v-if="fileType === 'video'"
+									:src="element.value"
+									muted autoplay loop
+							>
+								Sorry, your browser doesn't support embedded videos
+							</video>
+							<img v-if="fileType === 'image'" :src="element.value" class="inline-block max-w-[500px] max-h-[500px]" />
 						</div>
 					</div>
 				</template>

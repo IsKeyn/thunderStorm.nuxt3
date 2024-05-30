@@ -42,6 +42,7 @@
   /* Рамки */
   --main-border-color: #800000;
   --second-border-color: #333333;
+  --third-border-color: #1c1c1c;
   --main-very-light-color: #1d1d1d;
 
 
@@ -54,6 +55,12 @@
   --main-right-padding: 60px;
   --main-without-left-padding: -60px;
   --main-without-right-padding: -60px;
+
+  --main-mobile-padding: 20px;
+  --main-mobile-left-padding: 20px;
+  --main-mobile-right-padding: 20px;
+  --main-mobile-without-left-padding: -20px;
+  --main-mobile-without-right-padding: -20px;
 
   /*
    * Префикс первые три буквы, пример alerts - --ale-main-color

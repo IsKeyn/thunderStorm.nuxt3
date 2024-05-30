@@ -44,7 +44,6 @@ const selectThisElement = (element) => {
 					:name="name"
 					:friendly-name="element.name"
 					:placeholder="element.placeholder"
-					class="hidden"
 			/>
 			<div
 					class="choice-file-block"

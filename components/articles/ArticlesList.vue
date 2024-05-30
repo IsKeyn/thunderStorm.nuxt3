@@ -154,7 +154,6 @@ const getBreadCrumbs = () => {
 </script>
 
 <template>
-<!--	<button @click="refresh">test</button>-->
 	<PageHeader
 			v-if="showPageHeader"
 			:title="title"

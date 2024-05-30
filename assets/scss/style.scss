@@ -24,7 +24,9 @@ body {
 
     article {
       @apply
-        pt-0 pr-[var(--main-left-padding)] pb-[30px] pl-[var(--main-right-padding)]
+        pt-0
+        pr-[var(--main-mobile-left-padding)] pl-[var(--main-mobile-right-padding)]
+        lg:pr-[var(--main-left-padding)] pb-[30px] lg:pl-[var(--main-right-padding)]
       ;
     }
 

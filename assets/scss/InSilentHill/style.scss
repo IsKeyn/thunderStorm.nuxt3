@@ -1,6 +1,5 @@
 /* НАЧАЛО кнопки и ссылки */
-button,
-button, [type="button"], [type="reset"], [type="submit"],
+.btn,
 .button {
   @apply
     bg-gradient-to-r from-[var(--main-href-color)] to-[var(--second-href-color)]

@@ -242,7 +242,7 @@ import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 						<div>Размер: {{ matchMbCount(element[fileKeyName].value[0].size) }}</div>
 						<div>Тип: {{ element[fileKeyName].value[0].type }}</div>
 						<div>Последнее изменение: {{ getFormattedData(element[fileKeyName].value[0].lastModified) }}</div>
-						<button @click="deleteElement(inx)">Удалить файл</button>
+						<button class="btn" @click="deleteElement(inx)">Удалить файл</button>
 					</div>
 				</div>
 			</div>

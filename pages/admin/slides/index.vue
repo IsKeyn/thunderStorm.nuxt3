@@ -5,32 +5,26 @@ definePageMeta({
 
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
 import ListTable from '@/components/admin/list/ListTable.vue';
+
 const titles = ref(
 		{
 			id: {
 				name: 'id',
 			},
 			name: {
-				name: 'Наименование',
+				name: 'Заголовок',
 			},
-			description: {
-				name: 'Описание',
+			media_id: {
+				name: 'Медиа',
 			},
-			mime_type: {
-				name: 'mime_type',
-			},
-			size: {
-				name: 'Размер',
-			},
-			src: {
-				name: 'Изображение',
-				type: 'media'
+			url: {
+				name: 'Ссылка',
 			},
 			type: {
 				name: 'Тип',
 			},
-			created_by: {
-				name: 'Создан',
+			active: {
+				name: 'Активность',
 			},
 		}
 );
@@ -53,7 +47,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Элементы меню',
+			name: 'Слайды',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -61,15 +55,10 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<ListTable
-				:titles="titles"
-				fetchUrl="admin/media"
-				:hasResource="true"
-				:hasMultiUpload="true"
-				:usePagination="true"
-				:perPage="10"
-		/>
-	</div>
+	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
+	<ListTable
+		:titles="titles"
+		titleKey="title"
+		fetchUrl="admin/slides"
+	/>
 </template>

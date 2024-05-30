@@ -88,29 +88,64 @@ const route = useRoute();
 
 const changePage = (page) => {
 	if (props.pagination.current_page !== page) {
-		router.push({
-			name: route.name,
-			query: {
-				...route.query,
-				page: page,
-			},
-		});
 
-		emit('changePage', page, props.table);
+		if (props.table) {
+			const getParam = `${props.table}_page`;
+
+			const query = {
+				...route.query,
+			};
+
+			query[getParam] = page;
+
+			router.push({
+				name: route.name,
+				query,
+			});
+
+			emit('changePage', page, props.table);
+		} else {
+			router.push({
+				name: route.name,
+				query: {
+					...route.query,
+					page: page,
+				},
+			});
+
+			emit('changePage', page);
+		}
 	}
 }
 
 const changePagination = (perPage) => {
 	if (props.pagination.per_page !== perPage) {
-		emit('setPerPage', perPage, props.table);
+		if (props.table) {
+			const getParam = `${props.table}_perPage`;
 
-		router.push({
-			name: route.name,
-			query: {
+			const query = {
 				...route.query,
-				perPage: perPage,
-			},
-		});
+			};
+
+			query[getParam] = perPage;
+
+			router.push({
+				name: route.name,
+				query,
+			});
+
+			emit('setPerPage', perPage,  props.table);
+		} else {
+			router.push({
+				name: route.name,
+				query: {
+					...route.query,
+					perPage: perPage,
+				},
+			});
+
+			emit('setPerPage', perPage);
+		}
 	}
 }
 
@@ -213,7 +248,10 @@ const changePageDirection = (direction) => {
 				</template>
 			</template>
 		</div>
-		<div class="pagination-col per-page">
+		<div
+				v-if="Number(pagination.total) > Number(perPageOptionsProp[0].count)"
+				class="pagination-col per-page"
+		>
 			На странице
 			<div
 				v-for="(perPage) in perPageOptionsComp"

@@ -1,44 +1,81 @@
 <script setup>
 import { watch } from 'vue'
 
-const searchTrottle = ref(false);
-const searchField = ref('');
-const searchResult = ref({});
+const emit = defineEmits(['showHideMenu']);
 
-watch(searchField, () => {
-	fastSearchStart();
+import { api } from '@/composables/api.js'
+const {
+	apiUrl,
+	publicUrl,
+	sessionCookieName,
+	errorHandler,
+} = api();
+
+
+const props = defineProps({
+	placeholder: {
+		type: String,
+		default: 'Поиск',
+	},
+	clearButtonUseActivateLinkHandler: { // Не лучшее решение, но используется в MobileSearchPanel.vue
+		type: Boolean,
+		default: false,
+	}
 });
 
-const fastSearchStart = () => {
-	if (!searchTrottle.value) {
-		searchTrottle.value = true;
+// const searchTrottle = ref(false);
+const searchField = ref('');
+const searchResult = ref({});
+const showClearButton = ref(false);
 
-		setTimeout(() => {
-			searchTrottle.value = false;
-			sendSearchRequest();
-		}, 500);
-	}
+if (props.clearButtonUseActivateLinkHandler) {
+	showClearButton.value = true;
 }
 
-import { api } from '@/composables/api.js';
-const { apiUrl, errorHandler } = api();
+watch(searchField, (value) => {
+	if (value) {
+		if (!props.clearButtonUseActivateLinkHandler) {
+			showClearButton.value = true;
+		}
+
+		fastSearchStart();
+	} else {
+		if (!props.clearButtonUseActivateLinkHandler) {
+			showClearButton.value = false;
+		}
+
+		searchResult.value = {};
+	}
+});
+
+const searchTimeout = ref(null);
+
+const fastSearchStart = () => {
+	clearTimeout(searchTimeout.value);
+
+	searchTimeout.value = setTimeout(() => {
+		sendSearchRequest();
+	}, 500);
+}
 
 const requestInProgress = ref(false);
 const responseErrors = ref({});
 
-const Authorization = useCookie('Authorization');
-
 const sendSearchRequest = async () => {
 	requestInProgress.value = true;
+
+	const sessionCookie = useCookie(sessionCookieName.value);
 
 	try {
 		const response = await $fetch(
 				`${apiUrl.value}search/${searchField.value}`,
 				{
 					method: 'GET',
+					credentials: 'include',
 					headers: {
-						Authorization: Authorization.value,
 						Accept: 'application/json',
+						Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+						Referer: publicUrl.value,
 						'X-Requested-With': 'XMLHttpRequest',
 					},
 				},
@@ -59,55 +96,79 @@ const sendSearchRequest = async () => {
 	}
 }
 
-const emit = defineEmits(['showHideMenu']);
-
 const routerLinkHandler = () => {
 	searchField.value = '';
-	emit('showHideMenu', false)
+	emit('parentHandler', false)
 }
+
+const router = useRouter();
+
+const submitHandler = () => {
+	const searchValue = searchField.value;
+	routerLinkHandler();
+
+	router.push({
+		path: `/search/`,
+		query: { q: searchValue }
+	});
+}
+
+const clearField = () => {
+	if (props.clearButtonUseActivateLinkHandler) {
+		routerLinkHandler();
+	}
+
+	searchField.value = '';
+}
+
+const articleEntity = 'App\\Models\\Article';
+const youTubeEntity = 'App\\Models\\YoutubeVideo';
 </script>
 
 <template>
 	<div class="search-wrapper">
-		<div>
+		<form @submit.prevent="submitHandler">
 			<input
 					type="text"
-					placeholder="Начните вводить текст для поиска"
+					:placeholder="placeholder"
 					v-model="searchField"
 			>
-			<font-awesome-icon
-					v-if="searchField"
-					:icon="['fas', 'xmark']"
-					class="clear-button"
-					@click="searchField = ''"
-			/>
-			<router-link :to="`/search/?q=${searchField}`">
+			<div class="icon-box">
 				<font-awesome-icon
-						:icon="['fas', 'magnifying-glass']"
-						class="search-icon"
-						@click="routerLinkHandler"
+						v-if="showClearButton"
+						:icon="['fas', 'xmark']"
+						class="icon clear-button"
+						@click="clearField"
 				/>
-			</router-link>
-		</div>
+				<button>
+					<font-awesome-icon
+							:icon="['fas', 'magnifying-glass']"
+							class="icon search-icon"
+					/>
+				</button>
+			</div>
+		</form>
 		<div
 				v-if="searchField"
 				class="search-result"
 		>
-			<template v-if="Object.keys(searchResult).length > 0">
-				<div v-if="searchResult.articles?.data">
+			<template
+					v-if="Object.keys(searchResult).length > 0 && (searchResult[articleEntity]?.data && searchResult[articleEntity]?.data.length > 0) || (searchResult[youTubeEntity]?.data && searchResult[youTubeEntity]?.data.length > 0)"
+			>
+				<div v-if="searchResult[articleEntity]?.data && searchResult[articleEntity]?.data.length > 0">
 					<span class="title">Статьи</span>
-					<div v-for="article in searchResult.articles.data">
+					<div v-for="article in searchResult[articleEntity].data">
 						<router-link
-								:to="article.code"
+								:to="`/${article.type}/${article.slug}`"
 								@click="$emit('showHideMenu', false)"
 						>
-							{{ article.title }}
+							{{ article.name }}
 						</router-link>
 					</div>
 				</div>
-				<div v-if="searchResult.youtube_videos">
+				<div v-if="searchResult[youTubeEntity]?.data && searchResult[youTubeEntity]?.data.length > 0">
 					<span class="title">Видео</span>
-					<div v-for="youtubeVideo in searchResult.youtube_videos?.data">
+					<div v-for="youtubeVideo in searchResult[youTubeEntity]?.data">
 						<router-link
 								:to="`/youtube/${youtubeVideo.video_id}`"
 								@click="routerLinkHandler"
@@ -136,26 +197,50 @@ const routerLinkHandler = () => {
 	@apply w-full relative;
 
 	input {
-		@apply w-full pr-[25px];
+		@apply w-full pr-[55px];
 	}
 
-	.search-icon {
-		@apply absolute top-[8px] right-[3px];
-		color: var(--main-text-color);
-	}
+	.icon-box {
+		@apply
+			absolute top-0 right-0
+			flex items-center
+		;
 
-	.clear-button {
-		@apply absolute top-[6px] right-[26px] text-[21px] cursor-pointer;
+		.icon {
+			@apply cursor-pointer
+			text-[28px]
+			inline
+			;
+		}
+
+		.clear-button {
+			@apply mr-[10px];
+		}
+
+		button {
+			.search-icon {
+				@apply text-[20px];
+			}
+		}
 	}
 }
 
 .search-result {
-	@apply absolute bg-[var(--main-bg-color)] pr-[10px] pb-[10px] pl-[10px] z-[700] left-[-10px];
-	width: calc(100% + 20px);
+	@apply
+		absolute z-[700] left-[-20px] lg:left-[-10px]
+		bg-[var(--main-bg-color)]
+		pr-[20px] lg:pr-[10px] pb-[10px] pl-[20px] lg:pl-[10px];
+
+	width: calc(100% + 40px);
+
+	@media (min-width: 1024px) {
+		width: calc(100% + 20px);
+	}
+
 	top: calc(100% + 3px);
 
 	.title {
-		@apply font-semibold w-full block mb-[10px] pb-[10px] pt-[10px];
+		@apply font-semibold w-full block mb-[10px] pb-[10px] pt-[10px] text-[16px];
 
 		border-bottom: 1px solid  var(--second-border-color);
 	}

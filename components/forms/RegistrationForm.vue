@@ -184,7 +184,7 @@ const getUserData = async () => {
 					<button
 							@click="sendForm()"
 							:disabled="requestInProgress"
-							class="min-w-24"
+							class="btn min-w-24"
 					>
 						<template v-if="!requestInProgress">
 							Зарегистрироваться

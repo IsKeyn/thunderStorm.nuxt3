@@ -3,6 +3,8 @@
 import CommentCard from '@/components/comments/CommentCard.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 
+const emit = defineEmits(['fetchComments']);
+
 // Сomposables
 import { api } from '@/composables/api.js'
 const { apiUrl } = api();
@@ -85,6 +87,10 @@ const getNextPage = async () => {
 			v-for="comment in fetchedData"
 			:key="comment.id"
 			:comment="comment"
+			:entityType="entityType"
+			:entityId="entityId"
+			:firstParent="comment.id"
+			@fetchComments="fetchComments"
 	/>
 
 	<div
