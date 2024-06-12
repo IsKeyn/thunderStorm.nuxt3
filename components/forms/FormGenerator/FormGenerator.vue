@@ -8,6 +8,16 @@ const {
 	getFileType,
 } = file();
 
+import { developerTools } from '@/composables/developerTools.js';
+const {
+	devErrorLog,
+} = developerTools();
+
+import { stringActions } from '@/composables/stringActions.js';
+const {
+	toSlug,
+} = stringActions();
+
 const props = defineProps({
 	// Отображаемое имя поля
 	name: {
@@ -16,6 +26,11 @@ const props = defineProps({
 	},
 	// Объект с данными поля
 	element: {
+		type: Object,
+		default: {},
+	},
+	// Вся форма, используется при автозаполнении
+	form: {
 		type: Object,
 		default: {},
 	},
@@ -53,18 +68,17 @@ const props = defineProps({
 
 const label = ref(null);
 
-watch(props.element, async (newValue) => {
-	// TODO не удается наблидать за props.element.value и props.element.validateResult, наблюдаю за всем объектом, что не совсем корректно
-	if (newValue) {
-		if (newValue.value && props.name === 'phone') {
-			props.element.value = newValue.value.replace(/[^+\(\)\d]/g, '');
-		}
-
-		if (newValue.validateResult && newValue.validateResult.length > 0) {
-			label.value.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth', });
-		}
+watch(() => props.element.value, (newValue) => {
+	if (newValue && props.name === 'phone') {
+		props.element.value = newValue.replace(/[^+\(\)\d]/g, '');
 	}
-})
+}, { deep: true });
+
+watch(() => props.element.validateResult, (newValue) => {
+	if (newValue && newValue.length > 0) {
+		label.value.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth', });
+	}
+}, { deep: true });
 
 const getLabelClasses = computed(() => {
 	const classes = [];
@@ -94,6 +108,33 @@ const showPassword = () => {
 	}
 };
 
+const fillField = () => {
+	if (props.element.autoFill.sourceFieldKey) {
+		const key = props.element.autoFill.sourceFieldKey;
+		const rule = props.element.autoFill?.rule;
+
+		if (props.form) {
+			if (props.form[key]) {
+				if (rule === 'slug') {
+					props.element.value = toSlug(props.form[key].value);
+				} else {
+					props.element.value = props.form[key].value;
+				}
+			}
+		} else {
+			devErrorLog({
+				message: 'Передайте props form в компонент FormGenerator',
+				fileName: 'FormGenerator.vue',
+			});
+		}
+	} else {
+		devErrorLog({
+			message: 'sourceFieldKey должен быть заполнен',
+			fileName: 'FormGenerator.vue',
+		});
+	}
+}
+
 const fileType = computed(() => {
 	return getFileType(props.element.value);
 });
@@ -102,7 +143,7 @@ const fileType = computed(() => {
 <template>
 	<label
 			ref="label"
-			:class="getLabelClasses"
+			:class="[element.type === 'hidden' ? 'hidden' : getLabelClasses]"
 	>
 		<span
 				v-if="validateErrorPosition === 'top' && element.validateResult && showValidateError"
@@ -110,9 +151,17 @@ const fileType = computed(() => {
 			{{ element.validateResult }}
 		</span>
 		<span v-if="showTitle && element.name">{{ element.name }}</span>
-		<template v-if="element.type === 'text' || element.type === 'number' || element.type === 'password'"">
+		<template
+				v-if="
+					element.type === 'text' ||
+					element.type === 'number' ||
+					element.type === 'password' ||
+					element.type === 'hidden' ||
+					element.type === 'date' ||
+					element.type === 'datetime-local'
+				"
+		>
 			<span class="input-wrap">
-			<!--	Выбор значения из сущности (отдельный компонент) // медиабиблиотека			-->
 				<input
 						v-model="element.value"
 						:type="element.type"
@@ -124,17 +173,29 @@ const fileType = computed(() => {
 				<span
 						v-if="element.showChangeTypeButton"
 						@click="showPassword"
-						class="password-eye-wrap"
+						class="additional-action-wrap"
 				>
 					<font-awesome-icon
 							v-if="element.type === 'password'"
 							:icon="['far', 'eye-slash']"
-							class="password-eye-icon"
+							class="additional-action-icon"
 					/>
 					<font-awesome-icon
 							v-if="element.type === 'text'"
 							:icon="['far', 'eye']"
-							class="password-eye-icon"
+							class="additional-action-icon"
+					/>
+				</span>
+				<span
+						v-if="element.autoFill"
+						class="additional-action-wrap"
+						@click="fillField()"
+				>
+					<font-awesome-icon
+							:icon="['fas', 'arrow-right-to-bracket']"
+							rotation=90
+							class="additional-action-icon"
+							:title='`Заполнить поле "${element.name ? element.name : name}" значением из поля "${element.autoFill.sourceFieldKey && form[element.autoFill.sourceFieldKey].name ? form[element.autoFill.sourceFieldKey].name : element.autoFill.sourceFieldKey}" ${element.autoFill.rule ? " по правилу " + element.autoFill.rule : ""}`'
 					/>
 				</span>
 			</span>
@@ -214,7 +275,8 @@ const fileType = computed(() => {
 		</template>
 		<template v-else-if="element.type === 'select'">
 			<select
-				v-model="element.value"
+					:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+					v-model="element.value"
 			>
 				<option
 						v-if="element.defaultOption"

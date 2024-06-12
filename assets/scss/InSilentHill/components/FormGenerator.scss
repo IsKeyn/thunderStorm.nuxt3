@@ -1,10 +1,10 @@
 .input-wrap {
   @apply block relative;
 
-  .password-eye-wrap {
+  .additional-action-wrap {
     @apply absolute bottom-[6px] right-0;
 
-    .password-eye-icon {
+    .additional-action-icon {
       @apply cursor-pointer
       ;
     }

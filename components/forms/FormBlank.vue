@@ -4,6 +4,34 @@ import ResponseErrorsComponent from '@/components/forms/fragments/ResponseErrors
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import TagsList from '@/components/tags/TagsList.vue';
 
+const emit = defineEmits(['afterRequest']);
+
+import { validate } from '@/composables/validate.js';
+const {
+	validateElement,
+	validateForm
+} = validate();
+
+import { formExtensions } from '@/composables/formExtensions.js';
+const {
+	getFormExt
+} = formExtensions();
+
+import { notifications } from '@/composables/notifications.js';
+const {
+	alert,
+	error
+} = notifications();
+
+import { api } from '@/composables/api.js';
+import {watch} from "vue";
+const {
+	apiUrl,
+	backendUrl,
+	errorHandler,
+	getCsrfCookie
+} = api();
+
 const props = defineProps({
 	form: {
 		type: Object,
@@ -37,10 +65,20 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
+	extensions: {
+		type: Array,
+		default: [],
+	},
+	dataForExt: {
+		type: Object,
+		default: {},
+	},
+	// Дополнительные данные для построения, например списку из сущности. Пример селектор для игровых платформ (PS1, PS2, XBOX ... PC)
+	additionalData: {
+		type: Object,
+		default: {},
+	},
 });
-
-import { validate } from '@/composables/validate.js';
-const { validateElement, validateForm  } = validate();
 
 const sendForm = async (doType = null) => {
 	for (const formKey in props.form) {
@@ -59,40 +97,11 @@ const sendForm = async (doType = null) => {
 const responseErrors = ref({});
 const requestInProgress = ref(false);
 
-import { notifications } from '@/composables/notifications.js';
-const { alert, error } = notifications();
-
-import { api } from '@/composables/api.js';
-const { apiUrl, backendUrl, errorHandler } = api();
-
-const Authorization = useCookie('Authorization');
-
-const emit = defineEmits(['afterRequest']);
-
 const sendRequest = async (doType = null) => {
 	responseErrors.value = {};
 	requestInProgress.value = true;
 
 	try {
-		if (props.method.toLowerCase() === 'post'
-		|| props.method.toLowerCase() === 'put'
-		) {
-			// TODO сделать проверку на время жизни csrf токена
-			await $fetch(
-					`${backendUrl.value}/sanctum/csrf-cookie`,
-					{
-						withCredentials: true,
-						credentials: 'include',
-						headers: {
-							Accept: 'application/json',
-							'X-Requested-With': 'XMLHttpRequest',
-						},
-					},
-			);
-		}
-
-		const XsrfToken = useCookie('XSRF-TOKEN');
-
 		const body = preparedRequestBody();
 
 		let request = '';
@@ -100,32 +109,30 @@ const sendRequest = async (doType = null) => {
 		let method = props.method;
 
 		// Изменяем метод с PUT на POST если отправляем formData, тк Laravel не получает данных из форм даты при методе PUT (баг)
-		if (props.method.toLowerCase() === 'put' && hasFormFile) {
+		if (props.method.toLowerCase() === 'put' && hasFormFile.value) {
 			method = 'POST';
 		}
 
-		if (props.method.toLowerCase() === 'get') {
+		if (props.method.toLowerCase() === 'get') { // TODO переделать на query
 			request = `${apiUrl.value}${props.fetchUrl}${body}`;
 			opts = {
 				method: props.method,
 				credentials: 'include',
 				headers: {
-					Authorization: Authorization.value,
 					Accept: 'application/json',
 					'X-Requested-With': 'XMLHttpRequest',
-					'X-XSRF-TOKEN': XsrfToken.value,
 				},
 			};
 		} else {
+			const csrfCookie = await getCsrfCookie();
+
 			request = `${apiUrl.value}${props.fetchUrl}`;
 			opts = {
 				method,
 				credentials: 'include',
 				headers: {
-					Authorization: Authorization.value,
 					Accept: 'application/json',
-					'X-Requested-With': 'XMLHttpRequest',
-					'X-XSRF-TOKEN': XsrfToken.value,
+					'X-XSRF-TOKEN': csrfCookie.value,
 				},
 				body,
 			};
@@ -155,10 +162,6 @@ const preparedRequestBody = () => {
 	let preparedString = '?';
 	const formData = new FormData();
 
-	// if (hasFormFile) {
-	// 	const formData = new FormData();
-	// }
-
 	for (const formKey in props.form) {
 		// Формируем строку для GET запроса
 		if (props.method.toLowerCase() === 'get') {
@@ -169,7 +172,7 @@ const preparedRequestBody = () => {
 			preparedString += `${formKey}=${props.form[formKey].value}`;
 		} else {
 			// Формируем formData
-			if (hasFormFile) {
+			if (hasFormFile.value) {
 				if (props.form[formKey].type === 'file') {
 					formData.append(formKey, props.form[formKey].value[0]);
 				} else {
@@ -186,7 +189,7 @@ const preparedRequestBody = () => {
 	if (props.method.toLowerCase() === 'get') {
 		preparedString += `&tags=${tags.value.join(',')}`;
 	} else {
-		if (hasFormFile) {
+		if (hasFormFile.value) {
 			tags.value.forEach((item, key) => {
 				formData.append(`tags[${key}]`, item);
 			});
@@ -195,11 +198,33 @@ const preparedRequestBody = () => {
 		}
 	}
 
+	// Добавляем данные из расширений extension
+	if (props.extensions.length > 0) {
+		props.extensions.forEach((extItem) => {
+			const name = extItem.keyForBackend ? extItem.keyForBackend : extItem.name;
+
+			if (extensionModels.value[name]) {
+				// TODO данные с репитора не будут корректно передаваться где *, скорректировать (нужно что-то примудмать)
+				if (props.method.toLowerCase() === 'get') { // *
+					preparedString += `&${name}=${extensionModels.value[name].join(',')}`;
+				} else {
+					if (hasFormFile.value) { // *
+						extensionModels.value[name].forEach((item, key) => {
+							formData.append(`${name}[${key}]`, item);
+						});
+					} else { // *
+						preparedObj[name] = extensionModels.value[name];
+					}
+				}
+			}
+		});
+	}
+
 	// Возвращаем данные
 	if (props.method.toLowerCase() === 'get') {
 		return preparedString;
 	} else {
-		if (hasFormFile) {
+		if (hasFormFile.value) {
 			if (props.method.toLowerCase() === 'put' || props.method.toLowerCase() === 'patch') {
 				formData.append('_method', props.method);
 			}
@@ -225,8 +250,10 @@ const hasFormFile = computed(() => {
 });
 
 const tags = ref([]);
-
 tags.value = toRaw(props.tagsForProp);
+
+const extensionModels = ref({});
+extensionModels.value = toRaw(props.dataForExt);
 </script>
 
 <template>
@@ -237,11 +264,20 @@ tags.value = toRaw(props.tagsForProp);
 				:key="index"
 				:name="index"
 				:element="field"
+				:form="form"
 				:showValidateError=true
 				validateErrorPosition="bottom"
 				:labelClasses="['block', 'mb-[10px]']"
 				:fieldClasses="field.classes"
 		/>
+		<component
+				v-if="extensions.length > 0"
+				v-for="extension in extensions"
+				:is="getFormExt(extension.name)"
+				:additionalData="additionalData"
+				v-model="extensionModels[extension.keyForBackend ? extension.keyForBackend : extension.name]"
+		/>
+
 		<TagsList
 				v-if="showTags"
 				v-model="tags"

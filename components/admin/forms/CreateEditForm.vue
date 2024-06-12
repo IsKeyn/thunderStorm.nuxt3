@@ -23,6 +23,14 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	extensions: {
+		type: Array,
+		default: [],
+	},
+	useAdditionalData: {
+		type: Boolean,
+		default: false,
+	}
 });
 
 const route = useRoute();
@@ -38,6 +46,10 @@ onMounted(() => {
 		} else {
 			// TODO Пробросить 404 ошибку
 		}
+	}
+
+	if (props.useAdditionalData) {
+		fetchAdditionalData();
 	}
 })
 
@@ -69,6 +81,8 @@ const responseErrors = ref({});
 
 const fetchedData = ref(null);
 const tagsForProp = ref([]);
+const dataForExt = ref({});
+const additionalData = ref({});
 
 const sendRequest = async () => {
 	responseErrors.value = {};
@@ -110,6 +124,14 @@ const sendRequest = async () => {
 					tagsForProp.value.push(item.name);
 				});
 			}
+
+			props.extensions.forEach((extItem) => {
+				const name = extItem.keyForBackend ? extItem.keyForBackend : extItem.name;
+
+				if (fetchedData.value[name]) {
+					dataForExt.value[name] = fetchedData.value[name];
+				}
+			});
 		}
 	} catch (e) {
 		const errorsPromise = errorHandler(e);
@@ -118,6 +140,34 @@ const sendRequest = async () => {
 			responseErrors.value = element;
 		});
 		requestInProgress.value = false;
+	}
+}
+
+const fetchAdditionalData = async () => { //TODO тут реализовать ленивую загрузку
+	responseErrors.value = {};
+
+	try {
+		const response = await $fetch(
+				`${apiUrl.value}${props.fetchUrl}/get-additional-data/`,
+				{
+					method: 'GET',
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'X-Requested-With': 'XMLHttpRequest',
+					},
+				},
+		);
+
+		if (response) {
+			additionalData.value = response;
+		}
+	} catch (e) {
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
 	}
 }
 
@@ -144,6 +194,9 @@ const buttons = [
 				:method="formMode === 'create' ? 'POST' : 'PUT'"
 				:showTags="showTags"
 				:tagsForProp="tagsForProp"
+				:extensions="extensions"
+				:dataForExt="dataForExt"
+				:additionalData="additionalData"
 				@afterRequest="afterRequest"
 		/>
 	</div>

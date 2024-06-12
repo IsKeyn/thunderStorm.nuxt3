@@ -25,25 +25,53 @@ export function date() {
         return format;
     };
 
-    const monthName = (month, lang = 'ru') => {
+    const monthName = (month, lang = 'ru', langCase = 'ro') => {
+
+        /*
+        * Русские падежи
+        * im - именительный
+        * ro - родительный
+        */
+
         let months;
 
         switch(lang) {
             case 'ru':
-                months = [
-                    'января',
-                    'февраля',
-                    'марта',
-                    'апреля',
-                    'мая',
-                    'июня',
-                    'июля',
-                    'августа',
-                    'сентября',
-                    'октября',
-                    'ноября',
-                    'декабря'
-                ];
+                switch (langCase) {
+                    case 'im':
+                        months = [
+                            'январь',
+                            'февраль',
+                            'март',
+                            'апрель',
+                            'май',
+                            'июнь',
+                            'июль',
+                            'август',
+                            'сентябрь',
+                            'октябрь',
+                            'ноябрь',
+                            'декабрь'
+                        ];
+                        break;
+
+                    case 'ro':
+                        months = [
+                            'января',
+                            'февраля',
+                            'марта',
+                            'апреля',
+                            'мая',
+                            'июня',
+                            'июля',
+                            'августа',
+                            'сентября',
+                            'октября',
+                            'ноября',
+                            'декабря'
+                        ];
+                        break;
+                }
                 break;
             case 'jp':
                 months = [
@@ -65,9 +93,28 @@ export function date() {
         return months[month];
     };
 
+    const weekDayName = (number, lang = 'ru') => {
+        let weekDays;
+
+        switch(lang) {
+            case 'ru':
+                weekDays = [
+                    'пн',
+                    'вт',
+                    'ср',
+                    'чт',
+                    'пт',
+                    'сб',
+                    'вс',
+                ];
+                break;
+        }
+        return weekDays[number];
+    };
+
     const twoDigits = (num) => {
         return ('0' + num).slice(-2);
     };
 
-    return { getFormattedDate };
+    return { getFormattedDate, monthName, weekDayName, twoDigits };
 }
