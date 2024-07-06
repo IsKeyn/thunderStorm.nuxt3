@@ -6,7 +6,7 @@ import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import AlertBox from '@/components/notifications/AlertBlock.vue';
 import VerifyEmailBlock from '@/components/user/VerifyEmailBlock.vue';
 import RecommendMessageForRegistration from '@/components/user/registration/RecommendMessageForRegistration.vue';
-import OpeningBox from '@/components/interface/OpeningBox.vue';
+import OpeningBox from '@/components/ui/OpeningBox.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();

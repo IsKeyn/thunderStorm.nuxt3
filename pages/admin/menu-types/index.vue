@@ -15,6 +15,15 @@ const titles = ref(
 			code: {
 				name: 'Код',
 			},
+			group: {
+				name: 'Это группа',
+			},
+			menu_type_bind_id: {
+				name: 'ID привязанной сущности',
+			},
+			menu_type_bind_type: {
+				name: 'Тип привязанной сущности',
+			},
 		}
 );
 const pageType = ref('');

@@ -1,5 +1,5 @@
 <script setup>
-import OpeningBox from '@/components/interface/OpeningBox.vue';
+import OpeningBox from '@/components/ui/OpeningBox.vue';
 import AddCommentForm from '@/components/forms/AddCommentForm.vue';
 import CommentsList from '@/components/comments/CommentsList.vue';
 

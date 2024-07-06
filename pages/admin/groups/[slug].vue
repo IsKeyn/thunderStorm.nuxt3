@@ -12,30 +12,33 @@ const form = ref(
 				name: 'Наименование',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_60',
+				validateRules: 'required, minLength_2, maxLength_40',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			slug: {
+				name: 'Slug',
+				value: '',
+				type: 'text',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+				autoFill: {
+					sourceFieldKey: 'name',
+					rule: 'slug',
+				},
+			},
+			entity_type: {
+				name: 'Сущность',
+				value: '',
+				type: 'text',
+				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			description: {
 				name: 'Описание',
 				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_1000',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			type: {
-				name: 'Тип',
-				value: '',
-				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			src: {
-				name: 'Файл',
-				value: '',
-				type: 'file',
-				validateRules: 'required',
-				classes: ['w-full', 'mt-[5px]'],
-				showFile: true,
+				type: 'textarea',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 		}
 );
@@ -58,7 +61,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Медиа библиотека',
+			name: 'Роль компании',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -74,9 +77,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/media"
-				:hasResource="true"
-				:showTags="true"
+				fetchUrl="admin/entity/Group"
 		/>
 	</div>
 </template>

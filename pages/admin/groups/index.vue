@@ -12,10 +12,13 @@ const titles = ref(
 				name: 'id',
 			},
 			name: {
-				name: 'Название',
+				name: 'Наименование',
 			},
 			slug: {
 				name: 'Slug',
+			},
+			entity_type: {
+				name: 'Сущность',
 			},
 			description: {
 				name: 'Описание',
@@ -41,7 +44,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игры',
+			name: 'Роль компании',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -49,10 +52,11 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-	<ListTable
-		:titles="titles"
-		titleKey="title"
-		fetchUrl="admin/game"
-	/>
+	<div>
+		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
+		<ListTable
+			:titles="titles"
+			fetchUrl="admin/entity/Group"
+		/>
+	</div>
 </template>

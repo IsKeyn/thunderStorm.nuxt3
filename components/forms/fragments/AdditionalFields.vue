@@ -1,8 +1,7 @@
 <script setup>
-import { watch } from "vue";
-
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
+import { watch } from "vue";
 const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps({
@@ -18,31 +17,60 @@ const props = defineProps({
 	params: {
 		type: Object,
 		default: {},
-	}
+	},
+	defaultValues: {
+		type: Array,
+		default: [],
+	},
 });
 
-const repeaterItem = {
-	date: {
-		name: 'date',
-		type: 'date',
+const repeaterItem = { // Один элемент репитора
+	id: {
+		name: 'id',
 		value: '',
-		placeholder: 'Дата выхода',
+		type: 'hidden',
+		validateRules: null,
+		classes: ['w-full', 'mt-[5px]'],
 	},
-	gaming_platform: {
-		name: 'gaming_platform',
-		type: 'select',
-		options: [
-			{
-				name: 'Не выбрано',
-				value: null,
-			},
-		],
-		value: null,
-		placeholder: 'Платформа',
+	name: {
+		name: 'Название',
+		value: '',
+		type: 'text',
+		placeholder: 'Название',
+		validateRules: 'required, minLength_3, maxLength_255',
+		classes: ['w-full', 'mt-[5px]'],
+	},
+	slug: {
+		name: 'Slug',
+		value: '',
+		type: 'text',
+		placeholder: 'slug',
+		validateRules: 'required, minLength_3, maxLength_255',
+		classes: ['w-full', 'mt-[5px]'],
+		autoFill: {
+			sourceFieldKey: 'name',
+			rule: 'slug',
+		},
+	},
+	value: {
+		name: 'Значение',
+		value: '',
+		type: 'text',
+		placeholder: 'Значение',
+		validateRules: 'required, minLength_3, maxLength_255',
+		classes: ['w-full', 'mt-[5px]'],
+	},
+	sort: {
+		name: 'Сортировка',
+		value: '',
+		type: 'number',
+		placeholder: 'Сортировка',
+		validateRules: 'required, minLength_3, maxLength_255',
+		classes: ['w-full', 'mt-[5px]'],
 	},
 };
 
-const repeaterItems = ref ([]);
+const repeaterItems = ref ([]); // Массив с элементами репитора
 
 const addRepeaterItem = () => {
 	repeaterItems.value.push(structuredClone(repeaterItem));
@@ -80,19 +108,10 @@ const setVmodel = () => {
 
 const updateItems = (currentValue) => {
 	const countItemForClear = repeaterItems.value.length;
-
 	if (currentValue && currentValue.length > 0) {
-		currentValue.forEach((item) => {
-			const preparedData = structuredClone(repeaterItem);
-
-			for (const key in item) {
-				if (preparedData[key]) {
-					preparedData[key].value = item[key];
-				}
-			}
-
-			repeaterItems.value.push(preparedData);
-		});
+		fillRepeaterItems(currentValue);
+	} else if (props.defaultValues && props.defaultValues.length > 0) { // Заполняем дефолтные значения
+		fillRepeaterItems(props.defaultValues);
 	} else {
 		repeaterItems.value.push(structuredClone(repeaterItem));
 	}
@@ -101,8 +120,22 @@ const updateItems = (currentValue) => {
 	if (countItemForClear) {
 		repeaterItems.value.splice(0, countItemForClear);
 	}
+}
 
-	hasFirstLoad.value = true;
+const fillRepeaterItems = (items) => {
+	items.forEach((item) => {
+		const preparedData = structuredClone(repeaterItem);
+
+		for (const key in item) {
+			if (preparedData[key]) {
+				// Важное отличие
+				preparedData[key].value = item[key];
+				preparedData[key].objectValue = item;
+			}
+		}
+
+		repeaterItems.value.push(preparedData);
+	});
 }
 
 watch(repeaterItems.value, () => {
@@ -114,6 +147,7 @@ watch(repeaterItems.value, () => {
 watch(() => props.modelValue, (newValue) => {
 	if (!hasFirstLoad.value) {
 		updateItems(toRaw(newValue));
+		hasFirstLoad.value = true;
 	}
 }, { deep: true });
 
@@ -133,14 +167,15 @@ watch(() => props.additionalData, (newValue) => {
 
 	setVmodel();
 	updateItems(props.modelValue);
-}, { deep: true })
+}, { deep: true });
 
 updateItems(props.modelValue);
 </script>
 
+
 <template>
 	<div class="release-date">
-		<span class="form-title">Дата выхода в связке с платформой</span>
+		<span class="form-title">Дополнительные поля</span>
 		<div
 				v-for="(item, index) in repeaterItems"
 				:key="index"
@@ -149,12 +184,13 @@ updateItems(props.modelValue);
 			<div
 					v-for="(field, ind) in item"
 					:key="ind"
-					class="input-box"
+					:class="field.type === 'hidden' ? 'hidden' : 'input-box'"
 			>
 				<FormGenerator
 						v-if="field"
 						:name="field.name"
 						:element="field"
+						:form="item"
 						:showTitle="false"
 						validateErrorPosition="bottom"
 						fieldClasses="w-full"
@@ -191,11 +227,11 @@ updateItems(props.modelValue);
 		@apply grid grid-cols-12 mb-[15px];
 
 		.input-box {
-			@apply col-span-5  mr-[15px];
+			@apply col-span-2  mr-[15px];
 		}
 
 		.buttons-box {
-			@apply col-span-2;
+			@apply col-span-1;
 
 			.btn {
 				@apply mt-0 mr-[3px] mb-0;

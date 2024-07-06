@@ -6,6 +6,10 @@ const props = defineProps({
 		type: String,
 		default: 'Открыть контент',
 	},
+	classes: {
+		type: String,
+		default: 'mb-4',
+	},
 });
 
 const contentStatus = ref(false);
@@ -26,7 +30,7 @@ watch(injectToggleContent, () => {
 </script>
 
 <template>
-	<div class="opening-box">
+	<div :class="['opening-box', classes]">
 		<div
 				class="header"
 				@click="toggleContent(null)"
@@ -49,8 +53,6 @@ watch(injectToggleContent, () => {
 
 <style lang="scss" scoped>
 .opening-box {
-	@apply mb-4;
-
 	.header {
 		@apply
 		relative

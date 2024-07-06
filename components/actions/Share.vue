@@ -1,5 +1,5 @@
 <script setup>
-import Tooltip from '@/components/interface/Tooltip.vue';
+import Tooltip from '@/components/ui/Tooltip.vue';
 
 import { api } from '@/composables/api.js';
 const { publicUrl } = api();

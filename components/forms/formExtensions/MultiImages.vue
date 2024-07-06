@@ -1,7 +1,8 @@
 <script setup>
-import { watch } from "vue";
-
+import OpeningBox from '@/components/ui/OpeningBox.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+
+import { watch } from "vue";
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -21,28 +22,19 @@ const props = defineProps({
 	}
 });
 
-const repeaterItem = {
-	date: {
-		name: 'date',
-		type: 'date',
+const repeaterItem = { // Один элемент репитора
+	id: {
+		name: 'Изображение',
 		value: '',
-		placeholder: 'Дата выхода',
-	},
-	gaming_platform: {
-		name: 'gaming_platform',
-		type: 'select',
-		options: [
-			{
-				name: 'Не выбрано',
-				value: null,
-			},
-		],
-		value: null,
-		placeholder: 'Платформа',
+		keyValueFromObject: 'id',
+		objectValue: null,
+		type: 'fileFromGallery',
+		validateRules: '',
+		classes: ['w-full', 'mt-[5px]'],
 	},
 };
 
-const repeaterItems = ref ([]);
+const repeaterItems = ref ([]); // Массив с элементами репитора
 
 const addRepeaterItem = () => {
 	repeaterItems.value.push(structuredClone(repeaterItem));
@@ -87,7 +79,9 @@ const updateItems = (currentValue) => {
 
 			for (const key in item) {
 				if (preparedData[key]) {
+					// Важное отличие
 					preparedData[key].value = item[key];
+					preparedData[key].objectValue = item;
 				}
 			}
 
@@ -133,50 +127,53 @@ watch(() => props.additionalData, (newValue) => {
 
 	setVmodel();
 	updateItems(props.modelValue);
-}, { deep: true })
+}, { deep: true });
 
 updateItems(props.modelValue);
 </script>
 
+
 <template>
-	<div class="release-date">
-		<span class="form-title">Дата выхода в связке с платформой</span>
-		<div
-				v-for="(item, index) in repeaterItems"
-				:key="index"
-				class="form"
-		>
+	<OpeningBox title="Обложки">
+		<div class="release-date">
+			<span class="form-title">Дата выхода в связке с платформой</span>
 			<div
-					v-for="(field, ind) in item"
-					:key="ind"
-					class="input-box"
+					v-for="(item, index) in repeaterItems"
+					:key="index"
+					class="form"
 			>
-				<FormGenerator
-						v-if="field"
-						:name="field.name"
-						:element="field"
-						:showTitle="false"
-						validateErrorPosition="bottom"
-						fieldClasses="w-full"
-				/>
-			</div>
-			<div class="buttons-box">
-				<button
-						v-if="repeaterItems.length > 1"
-						class="btn"
-						@click="deleteRepeaterItem(index)"
+				<div
+						v-for="(field, ind) in item"
+						:key="ind"
+						class="input-box"
 				>
-					<font-awesome-icon :icon="['fas', 'xmark']" />
-				</button>
+					<FormGenerator
+							v-if="field"
+							:name="field.name"
+							:element="field"
+							:showTitle="false"
+							validateErrorPosition="bottom"
+							fieldClasses="w-full"
+					/>
+				</div>
+				<div class="buttons-box">
+					<button
+							v-if="repeaterItems.length > 1"
+							class="btn"
+							@click="deleteRepeaterItem(index)"
+					>
+						<font-awesome-icon :icon="['fas', 'xmark']" />
+					</button>
+				</div>
 			</div>
+			<button
+					class="btn"
+					@click="addRepeaterItem"
+			>
+				Добавить
+			</button>
 		</div>
-		<button
-				class="btn"
-				@click="addRepeaterItem"
-		>
-			Добавить
-		</button>
-	</div>
+	</OpeningBox>
 </template>
 
 <style lang="scss" scoped>
@@ -191,7 +188,7 @@ updateItems(props.modelValue);
 		@apply grid grid-cols-12 mb-[15px];
 
 		.input-box {
-			@apply col-span-5  mr-[15px];
+			@apply col-span-10  mr-[15px];
 		}
 
 		.buttons-box {

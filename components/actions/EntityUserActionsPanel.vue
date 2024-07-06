@@ -1,7 +1,7 @@
 <script setup>
 import Likes from '@/components/voting/Likes.vue';
 import Share from '@/components/actions/Share.vue';
-import Tooltip from '@/components/interface/Tooltip.vue';
+import Tooltip from '@/components/ui/Tooltip.vue';
 
 const emit = defineEmits(['updateLikes', 'openSendCommentForm']);
 

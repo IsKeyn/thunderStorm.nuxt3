@@ -1,3 +1,9 @@
+/* НАЧАЛО границы и марджины */
+.without-border {
+  @apply mr-[var(--main-without-right-padding)] ml-[var(--main-without-left-padding)];
+}
+/* КОНЕЦ границы и марджины */
+
 /* НАЧАЛО кнопки и ссылки */
 .btn,
 .button {
@@ -83,11 +89,33 @@ textarea {
 .small-text {
   font-size: var(--text-small-text);
 }
+
+span.flip-text-box {
+  @apply
+  absolute bottom-[30px]
+  bg-[var(--main-bg-color)]
+  text-[25px] uppercase
+  ;
+
+  &.right {
+    @apply
+    right-[0]
+    pt-[10px] pr-[15px] pb-[10px] pl-[5px]
+    ;
+  }
+
+  &.left {
+    @apply
+    left-[0]
+    pt-[10px] pr-[50px] pb-[10px] pl-[15px]
+    ;
+  }
+}
 /* КОНЕЦ тексты */
 
 /* НАЧАЛО Ошибки */
 
-/* Конец Ошибки */
+/* КОНЕЦ Ошибки */
 
 /* НАЧАЛО Общие блоки */
 .vein {

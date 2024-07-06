@@ -1,8 +1,12 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+import AdditionalFieldsComponent from '@/components/forms/fragments/AdditionalFields.vue';
 import ResponseErrorsComponent from '@/components/forms/fragments/ResponseErrorsComponent.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import TagsList from '@/components/tags/TagsList.vue';
+import Tabs from '@/components/ui/tabs/Tabs.vue';
+import SeoForm from '@/components/admin/forms/SeoForm.vue';
+import BlocksEditor from  '@/components/blocks/BlocksEditor.vue';
 
 const emit = defineEmits(['afterRequest']);
 
@@ -25,6 +29,7 @@ const {
 
 import { api } from '@/composables/api.js';
 import {watch} from "vue";
+
 const {
 	apiUrl,
 	backendUrl,
@@ -57,13 +62,37 @@ const props = defineProps({
 		type: String,
 		default: 'POST',
 	},
+	additionalFieldsEnable: {
+		type: Boolean,
+		default: false,
+	},
+	defaultValuesForAdditionalFields: {
+		type: Array,
+		default: [],
+	},
 	showTags: {
 		type: Boolean,
 		default: false,
 	},
+	useBlockEditor: {
+		type: Boolean,
+		default: false,
+	},
+	blocksForProp: {
+		type: Array,
+		default: [],
+	},
+	dataForAdditionalFields: {
+		type: Array,
+		default: [],
+	},
 	tagsForProp: {
 		type: Array,
 		default: [],
+	},
+	seoForProp: {
+		type: Object,
+		default: {},
 	},
 	extensions: {
 		type: Array,
@@ -185,6 +214,36 @@ const preparedRequestBody = () => {
 		}
 	}
 
+	// Добавляем блоки, если они включены
+	if (props.useBlockEditor) {
+		if (props.method.toLowerCase() === 'get') {
+			preparedString += `&blocks=${blocks.value.join(',')}`;
+		} else {
+			if (hasFormFile.value) {
+				blocks.value.forEach((item, key) => {
+					formData.append(`blocks[${key}]`, item);
+				});
+			} else {
+				preparedObj['blocks'] = blocks.value;
+			}
+		}
+	}
+
+	// Добавляем "AdditionalFields если они включены
+	if (props.additionalFieldsEnable) {
+		if (props.method.toLowerCase() === 'get') {
+			preparedString += `&additional_fields=${additionalFields.value.join(',')}`;
+		} else {
+			if (hasFormFile.value) {
+				additionalFields.value.forEach((item, key) => {
+					formData.append(`additional_fields[${key}]`, item);
+				});
+			} else {
+				preparedObj['additional_fields'] = additionalFields.value;
+			}
+		}
+	}
+
 	// Добавляем теги, если они включены
 	if (props.method.toLowerCase() === 'get') {
 		preparedString += `&tags=${tags.value.join(',')}`;
@@ -195,6 +254,19 @@ const preparedRequestBody = () => {
 			});
 		} else {
 			preparedObj['tags'] = tags.value;
+		}
+	}
+
+	// Добавляем seo, если они включены
+	if (props.method.toLowerCase() === 'get') {
+		preparedString += `&seo=${seo.value.join(',')}`;
+	} else {
+		if (hasFormFile.value) {
+			seo.value.forEach((item, key) => {
+				formData.append(`seo[${key}]`, item);
+			});
+		} else {
+			preparedObj['seo'] = seo.value;
 		}
 	}
 
@@ -252,36 +324,101 @@ const hasFormFile = computed(() => {
 const tags = ref([]);
 tags.value = toRaw(props.tagsForProp);
 
+const seo = ref({});
+watch(() => props.seoForProp, (newValue) => {
+	seo.value = toRaw(newValue);
+}, { deep: true });
+
 const extensionModels = ref({});
 extensionModels.value = toRaw(props.dataForExt);
+
+const additionalFields = ref([]);
+additionalFields.value = toRaw(props.dataForAdditionalFields);
+
+const blocks = ref([]);
+blocks.value = toRaw(props.blocksForProp);
+
+const tabsElements = [
+	{
+		id: 1,
+		title: 'Основная информация',
+	},
+	{
+		id: 2,
+		title: 'Дополнительные поля',
+	},
+	{
+		id: 3,
+		title: 'SEO',
+	},
+	{
+		id: 4,
+		title: 'Меню',
+	},
+];
+
+if (props.useBlockEditor) {
+	tabsElements.push({
+		id:	'block-editor',
+		title: 'Блочный редактор',
+	});
+}
 </script>
 
 <template>
 	<div>
 		<ResponseErrorsComponent :responseErrors="responseErrors" />
-		<FormGenerator
-				v-for="(field, index) in form"
-				:key="index"
-				:name="index"
-				:element="field"
-				:form="form"
-				:showValidateError=true
-				validateErrorPosition="bottom"
-				:labelClasses="['block', 'mb-[10px]']"
-				:fieldClasses="field.classes"
-		/>
-		<component
-				v-if="extensions.length > 0"
-				v-for="extension in extensions"
-				:is="getFormExt(extension.name)"
-				:additionalData="additionalData"
-				v-model="extensionModels[extension.keyForBackend ? extension.keyForBackend : extension.name]"
-		/>
 
-		<TagsList
-				v-if="showTags"
-				v-model="tags"
-		/>
+		<Tabs :tabs="tabsElements">
+			<template #tab-1>
+				<FormGenerator
+						v-for="(field, index) in form"
+						:key="index"
+						:name="index"
+						:element="field"
+						:form="form"
+						:showValidateError=true
+						validateErrorPosition="bottom"
+						:labelClasses="['block', 'mb-[10px]']"
+						:fieldClasses="field.classes"
+				/>
+				<TagsList
+						v-if="showTags"
+						v-model="tags"
+				/>
+			</template>
+
+			<template #tab-2>
+				<AdditionalFieldsComponent
+						v-if="additionalFieldsEnable"
+						:defaultValues="defaultValuesForAdditionalFields"
+						v-model="additionalFields"
+				/>
+				<component
+						v-if="extensions.length > 0"
+						v-for="extension in extensions"
+						:is="getFormExt(extension.name)"
+						:params="extension?.params ? extension.params : null"
+						:additionalData="additionalData"
+						v-model="extensionModels[extension.keyForBackend ? extension.keyForBackend : extension.name]"
+				/>
+			</template>
+
+			<template #tab-3>
+				<SeoForm v-model="seo" />
+			</template>
+
+			<template #tab-4>
+				Редактор меню
+			</template>
+
+			<template v-if="useBlockEditor" #tab-block-editor>
+				<BlocksEditor
+					v-model="blocks"
+				/>
+			</template>
+		</Tabs>
+
 		<div class="grid grid-cols-6">
 			<div
 					v-if="!requestInProgress"

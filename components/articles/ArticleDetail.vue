@@ -6,9 +6,6 @@ import EntityUserActionsPanel from '@/components/actions/EntityUserActionsPanel.
 import TitleImage from '@/components/media/TitleImage.vue';
 import SimpleTagsList from '@/components/tags/SimpleTagsList.vue';
 
-import Paragraph from '@/components/blocks/Article/Paragraph.vue';
-
-
 const props = defineProps({
 	type: {
 		type: Number,
@@ -36,6 +33,11 @@ const {
 	sessionCookieName,
 } = api();
 
+import { blocks } from '@/composables/blocks.js'
+const {
+	getBlock,
+} = blocks();
+
 const route = useRoute();
 
 const fetchedData = ref();
@@ -55,6 +57,7 @@ const { refresh } = await useAsyncData(
 
 			if (Number.isInteger(props.type)) {
 				query.type = props.type;
+				query.fullPath = route.fullPath;
 			}
 
 			const sessionCookie = useCookie(sessionCookieName.value);
@@ -115,28 +118,6 @@ const openSendCommentForm = () => {
 	commentsRef.value.$el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth', });
 	injectToggleContent.value = true;
 }
-
-// Блоки
-const blocks = ref([
-	{
-		name: 'Paragraph',
-		structure: {
-			text: 'бла бла бла',
-		},
-	},
-	{
-		name: 'Paragraph',
-		structure: {
-			text: 'бля бля бля',
-		},
-	},
-]);
-
-const getBlockComponent = (name) => {
-	switch (name) {
-		case 'Paragraph': return Paragraph;
-	}
-};
 </script>
 
 <template>
@@ -149,6 +130,7 @@ const getBlockComponent = (name) => {
 			<TitleImage
 				v-if="fetchedData.image"
 				:image="fetchedData.image"
+				parentClass="mt-[30px] mb-[30px]"
 			/>
 			<div class="article-header">
 				<div class="column-1">
@@ -164,8 +146,8 @@ const getBlockComponent = (name) => {
 			<div class="article-body">
 				<div v-html="fetchedData.text_full" />
 				<component
-						v-for="block in blocks"
-						:is="getBlockComponent(block.name)"
+						v-for="block in fetchedData.blocks"
+						:is="getBlock(block.name)"
 						:structure="block.structure"
 				/>
 			</div>

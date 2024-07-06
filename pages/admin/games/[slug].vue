@@ -22,6 +22,15 @@ const form = ref(
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			title_image: {
+				name: 'Титульное изображение',
+				value: '',
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			slug: {
 				name: 'Slug',
 				value: '',
@@ -33,19 +42,19 @@ const form = ref(
 					rule: 'slug',
 				},
 			},
+			created_at: {
+				name: 'Дата создания',
+				value: '',
+				type: 'datetime-local',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			description: {
 				name: 'Описание',
 				value: '',
 				type: 'textarea',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			release_time: {
-				name: 'Дата и время выхода',
-				value: '',
-				type: 'text', // TODO сделать type: 'date_and_time' который будет открывать календарь с выбором даты и временем
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
 );
@@ -80,9 +89,50 @@ const breadCrumbsArray = computed(() => {
 
 const extensions = [
 	{
+		name: 'Genres',
+		keyForBackend: 'genres',
+		params: {
+			additionalDataKeys: ['genre'],
+		},
+	},
+	{
+		name: 'MultiImages',
+		keyForBackend: 'covers',
+		params: null,
+	},
+	{
 		name: 'ReleaseDates',
 		keyForBackend: 'release_dates',
+		params: {
+			additionalDataKeys: ['gaming_platform'],
+		},
+	},
+	{
+		name: 'Companies',
+		keyForBackend: 'companies',
+		params: {
+			additionalDataKeys: ['company', 'company_role'],
+		},
+	},
+	{
+		name: 'Links',
+		keyForBackend: 'links',
 		params: null,
+	},
+];
+
+const defaultValuesForAdditionalFields = [
+	{
+		name: 'Название',
+		slug: 'name',
+		value: '',
+		sort: '10',
+	},
+	{
+		name: 'Количество дисков',
+		slug: 'disc_count',
+		value: '',
+		sort: '20',
 	},
 ];
 </script>
@@ -93,7 +143,10 @@ const extensions = [
 		<CreateEditForm
 				:form="form"
 				fetchUrl="admin/game"
+				:additionalFieldsEnable="true"
+				:defaultValuesForAdditionalFields="defaultValuesForAdditionalFields"
 				:showTags="true"
+				:showSeo="true"
 				:hasResource="true"
 				:useAdditionalData="true"
 				:extensions="extensions"

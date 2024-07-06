@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from "vue";
 
-import OpeningBox from '@/components/interface/OpeningBox.vue';
+import OpeningBox from '@/components/ui/OpeningBox.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 const contentStatus = ref(false);

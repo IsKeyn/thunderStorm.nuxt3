@@ -19,6 +19,31 @@ const form = ref(
 				type: 'text',
 				validateRules: 'required, minLength_2, maxLength_40',
 				classes: ['w-full', 'mt-[5px]'],
+				autoFill: {
+					sourceFieldKey: 'name',
+					rule: 'slug',
+				},
+			},
+			group: {
+				name: 'Это группа',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			menu_type_bind_id: {
+				name: 'ID привязанной сущности',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			menu_type_bind_type: {
+				name: 'Тип привязанной сущности',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
 );

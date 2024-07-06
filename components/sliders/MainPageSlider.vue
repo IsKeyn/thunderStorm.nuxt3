@@ -27,10 +27,10 @@ const slides = ref([
           restart: 10000,
         }"
 			sliderHeight="406px"
-			:slides="slides"
+			:withoutBorder="true"
 	>
 		<div
-				class="element w-full"
+				class="slide w-full"
 				v-for="(slide, index) in slides"
 				:key="index"
 		>
@@ -38,7 +38,7 @@ const slides = ref([
 				<video :src="slide.source" autoplay loop muted></video>
 				<span
 						v-if="slide.title"
-						class="text-box left"
+						class="flip-text-box left"
 				>
 						{{ slide.title }}
 					</span>
@@ -49,7 +49,7 @@ const slides = ref([
 				>
 				<span
 						v-if="slide.title"
-						class="text-box left"
+						class="flip-text-box left"
 				>
 						{{ slide.title }}
 					</span>
@@ -59,34 +59,12 @@ const slides = ref([
 </template>
 
 <style lang="scss" scoped>
-.element {
+.slide {
 	@apply relative overflow-hidden;
 
 	img,
 	video {
 		@apply w-full;
-	}
-
-	span.text-box {
-		@apply
-		absolute bottom-[30px]
-		bg-[var(--main-bg-color)]
-		text-[25px] uppercase
-		;
-
-		&.right {
-			@apply
-			right-[0]
-			pt-[10px] pr-[15px] pb-[10px] pl-[5px]
-			;
-		}
-
-		&.left {
-			@apply
-			left-[0]
-			pt-[10px] pr-[50px] pb-[10px] pl-[15px]
-			;
-		}
 	}
 }
 </style>

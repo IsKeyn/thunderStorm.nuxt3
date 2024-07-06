@@ -19,7 +19,23 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	additionalFieldsEnable: {
+		type: Boolean,
+		default: false,
+	},
+	defaultValuesForAdditionalFields: {
+		type: Array,
+		default: [],
+	},
 	showTags: {
+		type: Boolean,
+		default: false,
+	},
+	showSeo: {
+		type: Boolean,
+		default: false,
+	},
+	useBlockEditor: {
 		type: Boolean,
 		default: false,
 	},
@@ -30,7 +46,7 @@ const props = defineProps({
 	useAdditionalData: {
 		type: Boolean,
 		default: false,
-	}
+	},
 });
 
 const route = useRoute();
@@ -80,9 +96,13 @@ const requestInProgress = ref(false);
 const responseErrors = ref({});
 
 const fetchedData = ref(null);
+
+const dataForAdditionalFields = ref([]);
 const tagsForProp = ref([]);
+const seoForProp = ref({});
 const dataForExt = ref({});
 const additionalData = ref({});
+const blocks = ref([]);
 
 const sendRequest = async () => {
 	responseErrors.value = {};
@@ -119,10 +139,20 @@ const sendRequest = async () => {
 				}
 			}
 
+			if (props.additionalFieldsEnable && fetchedData.value.additional_fields	) {
+				fetchedData.value.additional_fields.forEach((item) => { // TODO не самое лучшее решение прогонять массив
+					dataForAdditionalFields.value.push(toRaw(item));
+				});
+			}
+
 			if (props.showTags && fetchedData.value.tags) {
 				fetchedData.value.tags.forEach((item) => {
 					tagsForProp.value.push(item.name);
 				});
+			}
+
+			if (props.showSeo && fetchedData.value.seo) {
+				seoForProp.value = fetchedData.value.seo;
 			}
 
 			props.extensions.forEach((extItem) => {
@@ -132,6 +162,12 @@ const sendRequest = async () => {
 					dataForExt.value[name] = fetchedData.value[name];
 				}
 			});
+
+			if (props.useBlockEditor && fetchedData.value.blocks && fetchedData.value.blocks.length > 0) {
+				fetchedData.value.blocks.forEach((item) => {
+					blocks.value.push(toRaw(item));
+				});
+			}
 		}
 	} catch (e) {
 		const errorsPromise = errorHandler(e);
@@ -190,13 +226,23 @@ const buttons = [
 		<FormBlank
 				:form="form"
 				:buttons="buttons"
+
 				:fetchUrl="formMode === 'create' ? `${fetchUrl}` : `${fetchUrl}/${route.params.slug}`"
 				:method="formMode === 'create' ? 'POST' : 'PUT'"
+
 				:showTags="showTags"
+				:additionalFieldsEnable="additionalFieldsEnable"
+				:useBlockEditor="useBlockEditor"
+
+				:defaultValuesForAdditionalFields="defaultValuesForAdditionalFields"
 				:tagsForProp="tagsForProp"
+				:seoForProp="seoForProp"
+				:blocksForProp="blocks"
+				:dataForAdditionalFields="dataForAdditionalFields"
+				:additionalData="additionalData"
+
 				:extensions="extensions"
 				:dataForExt="dataForExt"
-				:additionalData="additionalData"
 				@afterRequest="afterRequest"
 		/>
 	</div>

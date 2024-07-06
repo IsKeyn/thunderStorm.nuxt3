@@ -1,14 +1,16 @@
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
 
+import Preloader from '@/components/ui/Preloader.vue';
+
 const props = defineProps({
 	id: {
 		type: String,
 		default: 'slider_1',
 	},
-	slides: {
-		type: Array,
-		required: true,
+	slideSelectorClass: {
+		type: String,
+		default: 'slide',
 	},
 	slidesPerPage: {
 		type: Number,
@@ -24,114 +26,202 @@ const props = defineProps({
 	},
 	sliderHeight: {
 		type: String,
-		default: '500px'
-	}
+		default: null
+	},
+	withoutBorder: {
+		type: Boolean,
+		default: false,
+	},
 });
 
-// TODO возможно лучше заменить ref'ы на обычные objStyle
-const wrapper = ref(null);
+/* DOM элементы слайдера */
+const wrapper = ref(null); // TODO возможно лучше заменить ref'ы на обычные objStyle
+const navPrev = ref(null);
+const navNext = ref(null);
 
-const currentSlide = ref(1);
-const elementWidth = ref(0);
+const currentSlide = ref(1); // id текущего слайда
+const slidesCount = ref(0); // Общее количество слайдов
+const elementWidth = ref(0); // Ширина одного элемента
+const calcFinished = ref(false); // Отметка о конце инициализации
 
-const calcFinished = ref(false);
+const {
+	hasSlot,
+} = slotsFn();
 
-const changeSlide = (direction) => {
-	let slideNumber = null;
+const {
+	calcSize,
+	setVisibleForNavigationButtons,
+	deInitNavigation,
+} = initSliderFn();
 
-	if (direction === 'next') {
-		slideNumber = currentSlide.value + 1;
-	} else if (direction === 'prev') {
-		slideNumber = currentSlide.value - 1;
+const {
+	toSlide,
+	changeSlide,
+} = changeSlidesFn();
+
+const {
+	autoLoopInit,
+	restartAutoLoop,
+	autoLoopInterval,
+} = autoLoopFn();
+
+function slotsFn() {
+	const slots = useSlots();
+
+	const hasSlot = (name) => {
+		return !!slots[name];
 	}
 
-	if (canChangeSlide(slideNumber)) {
-		// Отключаем авто-смену слайдов при ручной смене
-		if (props.autoLoop) {
-			clearInterval(autoLoopInterval.value);
-			autoLoopInterval.value = null;
-			restartAutoLoop();
+	return {
+		slots,
+		hasSlot,
+	}
+}
+
+function initSliderFn() {
+	const calcSize = () => {
+		const mainElement = document.getElementById(props.id);
+		const slideElements = mainElement.querySelectorAll(`.wrapper>.${props.slideSelectorClass}`);
+
+		slidesCount.value = slideElements.length;
+
+		if (slidesCount.value > 0) {
+			elementWidth.value = mainElement.offsetWidth;
+
+			wrapper.value.style.width = `${elementWidth.value * slidesCount.value}px`;
+			if (props.sliderHeight) { wrapper.value.style.height = `${props.sliderHeight}`; }
 		}
 
-		toSlide(slideNumber);
-	} else if (props.returnToFirst) {
+		initNavigation();
+		setVisibleForNavigationButtons();
+
+		calcFinished.value = true;
+	}
+
+	const initNavigation = () => {
+		if (hasSlot('nav-prev')) {
+			navPrev.value = document.getElementById('nav-prev');
+			if (navPrev.value)  navPrev.value.addEventListener('click', () => { changeSlide('prev'); });
+		}
+
+		if (hasSlot('nav-next')) {
+			navNext.value = document.getElementById('nav-next');
+			if (navNext.value) navNext.value.addEventListener('click', () => { changeSlide('next'); });
+		}
+	}
+
+	const deInitNavigation = () => {
+			if (navPrev.value) navPrev.value.removeEventListener('click', () => { changeSlide('prev'); });
+			if (navNext.value) navNext.value.removeEventListener('click', () => { changeSlide('next'); });
+	}
+
+	const setVisibleForNavigationButtons = () => {
+		if (navPrev.value) {
+			navPrev.value.style.display = currentSlide.value !== 1 || props.returnToFirst ? '' : 'none';
+		}
+
+		if (navNext.value) {
+			navNext.value.style.display = currentSlide.value !== slidesCount.value || props.returnToFirst ? '' : 'none';
+		}
+	}
+
+	return {
+		calcSize,
+		deInitNavigation,
+		setVisibleForNavigationButtons,
+	}
+}
+
+function changeSlidesFn() {
+	const toSlide = (slideNumber) => {
+
+		/*
+		 * Переход к слайду по его порядковому номеру
+		 *
+		 * @slideNumber Number номер слайда 1 слайд 0
+		 */
+
+		if (canChangeSlide(slideNumber)) {
+			currentSlide.value = Number(slideNumber);
+			wrapper.value.style.marginLeft = -elementWidth.value * (slideNumber - 1) + 'px';
+			setVisibleForNavigationButtons();
+		}
+	}
+
+	const changeSlide = (direction) => {
+		let slideNumber = null;
+
 		if (direction === 'next') {
-			toSlide(1);
+			slideNumber = currentSlide.value + 1;
 		} else if (direction === 'prev') {
-			toSlide(props.slides.length - props.slidesPerPage + 1);
+			slideNumber = currentSlide.value - 1;
 		}
-	}
-}
 
-const canChangeSlide = (slideNumber) => {
-	return slideNumber > 0 && slideNumber <= props.slides.length;
-}
-
-const toSlide = (slideNumber) => {
-
-	/*
-	 * Переход к слайду по его порядковому номеру
-	 *
-	 * @slideNumber Number номер слайда 1 слайд 0
-	 */
-
-	currentSlide.value = Number(slideNumber);
-
-	if (canChangeSlide(slideNumber)) {
-		wrapper.value.style.marginLeft = -elementWidth.value * (slideNumber - 1) + 'px';
-	}
-}
-
-const calcSize = () => {
-	const mainElement = document.getElementById(props.id);
-	const slideElements = mainElement.querySelectorAll('.wrapper>.element');
-
-	if (slideElements.length > 0) {
-		elementWidth.value = mainElement.offsetWidth;
-
-		const wrapperWidth = elementWidth.value * props.slides.length;
-
-		wrapper.value.style.width = `${wrapperWidth}px`;
-		wrapper.value.style.height = `${props.sliderHeight}`;
-	}
-
-	calcFinished.value = true;
-}
-
-const autoLoopDirection = ref('right');
-const autoLoopInterval = ref(null);
-const autoLoopRestartInterval = ref(null);
-
-const restartAutoLoop = () => {
-	// Перезапуск авто-смены слайдов при остановке
-	clearInterval(autoLoopRestartInterval.value);
-	if (props.autoLoop.restart) {
-		autoLoopRestartInterval.value = setInterval(() => {
-			if (!autoLoopInterval.value) {
-				autoLoopInit();
+		if (canChangeSlide(slideNumber)) {
+			// Отключаем авто-смену слайдов при ручной смене
+			if (props.autoLoop) {
+				clearInterval(autoLoopInterval.value);
+				autoLoopInterval.value = null;
+				restartAutoLoop();
 			}
-		}, props.autoLoop.restart);
+
+			toSlide(slideNumber);
+		} else if (props.returnToFirst) {
+			if (direction === 'next') {
+				toSlide(1);
+			} else if (direction === 'prev') {
+				toSlide(slidesCount.value - props.slidesPerPage + 1);
+			}
+		}
+	}
+
+	const canChangeSlide = (slideNumber) => {
+		return slideNumber > 0 && slideNumber <= slidesCount.value;
+	}
+
+	return {
+		toSlide,
+		changeSlide,
 	}
 }
 
-const autoLoopInit = () => {
-	// Авто смена слайдов
-	autoLoopInterval.value = setInterval(() => {
-		if (currentSlide.value === 1) {
-			autoLoopDirection.value = 'right';
-		} else if (currentSlide.value === props.slides.length) {
-			autoLoopDirection.value = 'left';
-		}
+function autoLoopFn() {
+	const autoLoopInterval = ref(null);
+	const autoLoopDirection = ref('right');
+	const autoLoopRestartInterval = ref(null);
 
-		switch (autoLoopDirection.value) {
-			case 'right':
+	const autoLoopInit = () => { // Авто смена слайдов
+		autoLoopInterval.value = setInterval(() => {
+			if (currentSlide.value === 1) {
+				autoLoopDirection.value = 'right';
+			} else if (currentSlide.value === slidesCount.value) {
+				autoLoopDirection.value = 'left';
+			}
+
+			if (autoLoopDirection.value === 'right') {
 				toSlide(currentSlide.value + 1);
-				break;
-			case 'left':
+			} else if (autoLoopDirection.value === 'left') {
 				toSlide(currentSlide.value - 1);
-				break;
+			}
+		}, props.autoLoop.delay);
+	}
+
+	const restartAutoLoop = () => { // Перезапуск авто-смены слайдов при остановке
+		clearInterval(autoLoopRestartInterval.value);
+		if (props.autoLoop.restart) {
+			autoLoopRestartInterval.value = setInterval(() => {
+				if (!autoLoopInterval.value) {
+					autoLoopInit();
+				}
+			}, props.autoLoop.restart);
 		}
-	}, props.autoLoop.delay);
+	}
+
+	return {
+		autoLoopInit,
+		restartAutoLoop,
+		autoLoopInterval,
+	};
 }
 
 onMounted(() => {
@@ -140,41 +230,46 @@ onMounted(() => {
 	if (props.autoLoop) {
 		autoLoopInit();
 	}
-})
+});
+
+onUnmounted(() => {
+	deInitNavigation();
+});
 </script>
 
 <template>
 	<div
-			class="slider"
 			:id="id"
+			:class="['slider', withoutBorder ? 'without-border' : '']"
 	>
-		<template v-if="slides.length > 1">
-			<span
-					v-if="currentSlide !== 1 || returnToFirst"
-					class="nav-prev"
-					@click="changeSlide('prev')"
-			>
-				<font-awesome-icon :icon="['fas', 'angle-left']" />
-			</span>
-			<span
-					v-if="currentSlide !== slides.length || returnToFirst"
-					class="nav-next"
-					@click="changeSlide('next')"
-			>
-				<font-awesome-icon :icon="['fas', 'angle-right']" />
-			</span>
-		</template>
-		<div
-				class="wrapper"
-				ref="wrapper"
-		>
-			<div
-					class="cap"
-					v-show="!calcFinished"
-			>
-				<span class="text-box left">
-					Загружаю слайдер
+		<template v-if="!calcFinished || slidesCount > 1">
+			<slot name="nav-prev" />
+			<slot name="nav-next"/>
+
+			<!--	Стандартные элементы навигации	-->
+			<template v-if="!(hasSlot('nav-prev') || hasSlot('nav-next'))">
+				<span
+						v-show="currentSlide !== 1 || returnToFirst"
+						class="nav-prev"
+						@click="changeSlide('prev')"
+				>
+					<font-awesome-icon :icon="['fas', 'angle-left']" />
 				</span>
+				<span
+						v-show="currentSlide !== slidesCount || returnToFirst"
+						class="nav-next"
+						@click="changeSlide('next')"
+				>
+					<font-awesome-icon :icon="['fas', 'angle-right']" />
+				</span>
+			</template>
+		</template>
+		<div class="wrapper" ref="wrapper">
+			<div v-if="!calcFinished" class="cap flex justify-center items-center text-[5rem]">
+				<Preloader />
+<!--				<span class="text-box left">-->
+<!--					Загружаю слайдер-->
+<!--				</span>-->
 			</div>
 			<slot/>
 		</div>
@@ -185,7 +280,6 @@ onMounted(() => {
 .slider {
 	@apply
 		relative
-		mr-[var(--main-without-right-padding)] ml-[var(--main-without-left-padding)]
 		overflow-hidden
 	;
 
@@ -224,7 +318,7 @@ onMounted(() => {
 	.nav-prev {
 		@apply
 			absolute z-[1]
-			h-[65px] cursor-pointer hidden
+			cursor-pointer hidden
 			text-[65px]
 		;
 

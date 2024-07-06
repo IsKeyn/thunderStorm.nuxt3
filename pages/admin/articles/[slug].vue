@@ -21,23 +21,25 @@ const form = ref(
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
+				autoFill: {
+					sourceFieldKey: 'name',
+					rule: 'slug',
+				},
 			},
 			text_preview: {
 				name: 'Текст превью',
 				value: '',
 				type: 'textarea',
 				resize: true,
-				validateRules: 'required',
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			text_full: {
 				name: 'Текст статьи',
 				value: '',
 				type: 'textarea',
-				validateRules: 'required',
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			image: {
+			title_image: {
 				name: 'Изображение',
 				value: '',
 				keyValueFromObject: 'id',
@@ -55,7 +57,7 @@ const form = ref(
 			},
 			type: {
 				name: 'Тип статьи',
-				value: '',
+				value: 0,
 				type: 'text',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
@@ -100,6 +102,7 @@ const breadCrumbsArray = computed(() => {
 				fetchUrl="admin/articles"
 				:showTags="true"
 				:hasResource="true"
+				:useBlockEditor="true"
 		/>
 	</div>
 </template>

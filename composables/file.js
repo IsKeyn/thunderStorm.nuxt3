@@ -21,9 +21,9 @@ export function file() {
         if (fileName) {
             const fileExt = fileName.match(/\.([^.]+)$|$/)[1];
 
-            if (imageExt.includes(fileExt)) {
+            if (imageExt.includes(fileExt.toLowerCase())) {
                 return 'image';
-            } else if (videoExt.includes(fileExt)) {
+            } else if (videoExt.includes(fileExt.toLowerCase())) {
                 return 'video';
             }
         } else {

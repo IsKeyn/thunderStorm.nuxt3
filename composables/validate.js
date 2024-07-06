@@ -112,7 +112,7 @@ export function validate() {
                     const maxLength = Number(item.split('_')[1]);
 
                     if (value.length > maxLength) {
-                        error = `Длина строки должна быть не меньше ${maxLength} символов`;
+                        error = `Длина строки должна быть не больше ${maxLength} символов`;
                     }
                 }
 

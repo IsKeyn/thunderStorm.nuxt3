@@ -2,8 +2,10 @@
 import LightBox from '@/components/media/LightBox.vue'
 
 import { lightBox } from '@/composables/lightBox.js';
-const { openedImage, setOpenedImage } = lightBox();
-
+const {
+	openedImage,
+	setOpenedImage,
+} = lightBox();
 
 const props = defineProps({
 	image: {
@@ -11,13 +13,25 @@ const props = defineProps({
 		default: {},
 		required: true,
 	},
+	title: {
+		type: String,
+		default: null,
+	},
+	parentClass: {
+		type: String,
+		default: null,
+	},
+	withoutBorder: {
+		type: Boolean,
+		default: false,
+	},
 });
 </script>
 
 <template>
 	<div
 			v-if="Object.keys(image).length > 0"
-			class="image-box"
+			:class="['image-box', parentClass, withoutBorder ? 'without-border' : '']"
 			@click="setOpenedImage(image)"
 	>
 		<img
@@ -26,6 +40,12 @@ const props = defineProps({
 				:alt="image.name"
 				:name="image.name"
 		/>
+		<span
+				v-if="title"
+				class="flip-text-box left"
+		>
+			{{ title }}
+		</span>
 	</div>
 	<LightBox
 			v-if="openedImage"
@@ -38,15 +58,15 @@ const props = defineProps({
 <style lang="scss" scoped>
 .image-box {
 	@apply
+		relative
 		flex justify-center items-center
 		h-[350px]
 		truncate
-		mt-[30px] mb-[30px]
 		cursor-pointer
 	;
 
 	.article-image {
-		@apply min-h-[350px] max-w-full h-auto;
+		@apply w-full h-full object-cover;
 	}
 }
 </style>
