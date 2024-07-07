@@ -41,6 +41,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	fullCloseModal: { // Удаление модального окна из DOM дерева при закрытии
+		type: Boolean,
+		default: false,
+	}
 });
 
 const id = ref(null);
@@ -178,6 +182,7 @@ const closeModal = () => {
 			/>
 			<template v-if="wasOpen">
 				<div
+						v-if="fullCloseModal ? modalActive : true"
 						v-show="modalActive"
 						:id="id"
 						class="modal-outer-wrapper"
