@@ -22,6 +22,7 @@ const props = defineProps({
 	},
 	repeaterItem: {
 		type: Object,
+		type: Object,
 		default: {},
 	},
 });

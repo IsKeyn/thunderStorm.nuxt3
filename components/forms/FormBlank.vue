@@ -10,6 +10,9 @@ import BlocksEditor from  '@/components/blocks/BlocksEditor.vue';
 
 const emit = defineEmits(['afterRequest']);
 
+import { useBlocksStore } from '@/stores/blocks';
+const pageBlocks = useBlocksStore();
+
 import { validate } from '@/composables/validate.js';
 const {
 	validateElement,
@@ -77,10 +80,6 @@ const props = defineProps({
 	useBlockEditor: {
 		type: Boolean,
 		default: false,
-	},
-	blocksForProp: {
-		type: Array,
-		default: [],
 	},
 	dataForAdditionalFields: {
 		type: Array,
@@ -217,14 +216,14 @@ const preparedRequestBody = () => {
 	// Добавляем блоки, если они включены
 	if (props.useBlockEditor) {
 		if (props.method.toLowerCase() === 'get') {
-			preparedString += `&blocks=${blocks.value.join(',')}`;
+			preparedString += `&blocks=${pageBlocks.blocks.join(',')}`;
 		} else {
 			if (hasFormFile.value) {
-				blocks.value.forEach((item, key) => {
+				pageBlocks.blocks.forEach((item, key) => {
 					formData.append(`blocks[${key}]`, item);
 				});
 			} else {
-				preparedObj['blocks'] = blocks.value;
+				preparedObj['blocks'] = pageBlocks.blocks;
 			}
 		}
 	}
@@ -335,9 +334,6 @@ extensionModels.value = toRaw(props.dataForExt);
 const additionalFields = ref([]);
 additionalFields.value = toRaw(props.dataForAdditionalFields);
 
-const blocks = ref([]);
-blocks.value = toRaw(props.blocksForProp);
-
 const tabsElements = [
 	{
 		id: 1,
@@ -413,9 +409,7 @@ if (props.useBlockEditor) {
 			</template>
 
 			<template v-if="useBlockEditor" #tab-block-editor>
-				<BlocksEditor
-					v-model="blocks"
-				/>
+				<BlocksEditor />
 			</template>
 		</Tabs>
 

@@ -1,17 +1,19 @@
 <script setup>
-import FragmentMedia from '@/components/blocks/fragments/FragmentMedia.vue';
 import ControlPanel from '@/components/blocks/extensions/ControlPanel.vue';
+import FragmentMedia from '@/components/blocks/fragments/FragmentMedia.vue';
 
 import { watch } from "vue";
-const emit = defineEmits(['update:modelValue']);
+
+import { useBlocksStore } from '@/stores/blocks';
+const pageBlocks = useBlocksStore();
 
 const props = defineProps({
-	modelValue: {
-		type: Array,
-		default: {},
-	},
 	structure: {
 		type: Object,
+		default: null,
+	},
+	blockIndex: {
+		type: Number,
 		default: null,
 	},
 	editMode: {
@@ -49,51 +51,55 @@ const addNewFieldsToStructure = () => {
 	}
 };
 
-if (props.editMode) {
-	if (Object.keys(props.modelValue).length > 0) {
-		blockStructure.value = toRaw(props.modelValue);
-		addNewFieldsToStructure();
+const setBlockStructure = () => {
+	if (props.editMode) {
+		if (Object.keys(pageBlocks.getBlockByIndex(props.blockIndex)).length > 0) {
+			blockStructure.value = pageBlocks.getBlockByIndex(props.blockIndex).structure;
+			addNewFieldsToStructure();
+		} else {
+			blockStructure.value = defaultStructure;
+		}
 	} else {
-		blockStructure.value = defaultStructure;
-	}
-} else {
-	if (Object.keys(props.structure).length > 0) {
-		blockStructure.value = toRaw(props.structure);
-		addNewFieldsToStructure();
-	} else {
-		blockStructure.value = defaultStructure;
+		if (Object.keys(props.structure).length > 0) {
+			blockStructure.value = toRaw(props.structure);
+			addNewFieldsToStructure();
+		} else {
+			blockStructure.value = defaultStructure;
+		}
 	}
 }
 
-const hasFirstLoad = ref(false);
+setBlockStructure();
 
-watch(() => props.modelValue, (newValue) => {
-	if (!hasFirstLoad.value) {
-		blockStructure.value = toRaw(newValue);
-	}
+watch(() => pageBlocks.blocks, () => {
+	setBlockStructure();
 }, { deep: true });
 
-watch(() => blockStructure.value, () => {
-	saveValues();
-}, { deep: true });
-
-const saveTimeout = ref(null);
-
-const saveValues = () => {
-	clearTimeout(saveTimeout.value);
-
-	saveTimeout.value = setTimeout(() => {
-		emit('update:modelValue', blockStructure.value);
-	}, 500);
-}
-
-// Контроль блоков
+// watch(() => blockStructure.value, () => {
+// 	saveValues();
+// }, { deep: true });
+//
+// const saveTimeout = ref(null);
+//
+// const saveValues = () => {
+// 	clearTimeout(saveTimeout.value);
+//
+// 	saveTimeout.value = setTimeout(() => {
+// 		console.log(111);
+// 		// emit('update:modelValue', blockStructure.value);
+// 	}, 500);
+// }
+//
+// // Контроль блоков
 
 </script>
 
 <template>
 	<div class="th-block character-block">
-		<ControlPanel class="control-panel" />
+		<ControlPanel
+				v-if="editMode"
+				:blockIndex="blockIndex"
+		/>
 		<p>
 			<FragmentMedia
 					v-model="blockStructure.fields.image"

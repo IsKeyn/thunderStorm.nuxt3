@@ -1,15 +1,13 @@
 <script setup>
 import { watch } from "vue";
 
-const emit = defineEmits(['update:modelValue']);
-
 const props = defineProps({
-	modelValue: {
-		type: Array,
-		default: {},
-	},
 	structure: {
 		type: Object,
+		default: null,
+	},
+	blockIndex: {
+		type: Number,
 		default: null,
 	},
 	editMode: {

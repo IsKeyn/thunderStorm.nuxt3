@@ -2,6 +2,9 @@
 import { onMounted } from 'vue'
 import FormBlank from '@/components/forms/FormBlank.vue';
 
+import { useBlocksStore } from '@/stores/blocks';
+const pageBlocks = useBlocksStore();
+
 const props = defineProps({
 	form: {
 		type: Object,
@@ -102,7 +105,6 @@ const tagsForProp = ref([]);
 const seoForProp = ref({});
 const dataForExt = ref({});
 const additionalData = ref({});
-const blocks = ref([]);
 
 const sendRequest = async () => {
 	responseErrors.value = {};
@@ -164,9 +166,7 @@ const sendRequest = async () => {
 			});
 
 			if (props.useBlockEditor && fetchedData.value.blocks && fetchedData.value.blocks.length > 0) {
-				fetchedData.value.blocks.forEach((item) => {
-					blocks.value.push(toRaw(item));
-				});
+				pageBlocks.blocks = toRaw(fetchedData.value.blocks);
 			}
 		}
 	} catch (e) {
@@ -237,7 +237,6 @@ const buttons = [
 				:defaultValuesForAdditionalFields="defaultValuesForAdditionalFields"
 				:tagsForProp="tagsForProp"
 				:seoForProp="seoForProp"
-				:blocksForProp="blocks"
 				:dataForAdditionalFields="dataForAdditionalFields"
 				:additionalData="additionalData"
 
