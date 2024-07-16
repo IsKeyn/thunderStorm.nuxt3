@@ -18,7 +18,9 @@ const props = defineProps({
 	},
 	params: {
 		type: Object,
-		default: {},
+		default: {
+			title: 'Обложки',
+		},
 	}
 });
 
@@ -87,6 +89,8 @@ const updateItems = (currentValue) => {
 
 			repeaterItems.value.push(preparedData);
 		});
+
+		hasFirstLoad.value = true;
 	} else {
 		repeaterItems.value.push(structuredClone(repeaterItem));
 	}
@@ -95,8 +99,6 @@ const updateItems = (currentValue) => {
 	if (countItemForClear) {
 		repeaterItems.value.splice(0, countItemForClear);
 	}
-
-	hasFirstLoad.value = true;
 }
 
 watch(repeaterItems.value, () => {
@@ -126,7 +128,7 @@ watch(() => props.additionalData, (newValue) => {
 	}
 
 	setVmodel();
-	updateItems(props.modelValue);
+	// updateItems(props.modelValue);
 }, { deep: true });
 
 updateItems(props.modelValue);
@@ -134,7 +136,9 @@ updateItems(props.modelValue);
 
 
 <template>
-	<OpeningBox title="Обложки">
+	<OpeningBox
+			:title="params?.title"
+	>
 		<div class="release-date">
 			<span class="form-title">Дата выхода в связке с платформой</span>
 			<div

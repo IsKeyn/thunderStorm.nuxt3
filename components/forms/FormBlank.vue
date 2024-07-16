@@ -77,6 +77,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showSeo: {
+		type: Boolean,
+		default: false,
+	},
 	useBlockEditor: {
 		type: Boolean,
 		default: false,
@@ -257,15 +261,17 @@ const preparedRequestBody = () => {
 	}
 
 	// Добавляем seo, если они включены
-	if (props.method.toLowerCase() === 'get') {
-		preparedString += `&seo=${seo.value.join(',')}`;
-	} else {
-		if (hasFormFile.value) {
-			seo.value.forEach((item, key) => {
-				formData.append(`seo[${key}]`, item);
-			});
+	if (props.showSeo) {
+		if (props.method.toLowerCase() === 'get') {
+			preparedString += `&seo=${seo.value.join(',')}`;
 		} else {
-			preparedObj['seo'] = seo.value;
+			if (hasFormFile.value) {
+				seo.value.forEach((item, key) => {
+					formData.append(`seo[${key}]`, item);
+				});
+			} else {
+				preparedObj['seo'] = seo.value;
+			}
 		}
 	}
 
@@ -344,14 +350,17 @@ const tabsElements = [
 		title: 'Дополнительные поля',
 	},
 	{
-		id: 3,
-		title: 'SEO',
-	},
-	{
 		id: 4,
 		title: 'Меню',
 	},
 ];
+
+if (props.showSeo) {
+	tabsElements.push({
+		id:	'seo',
+		title: 'SEO',
+	});
+}
 
 if (props.useBlockEditor) {
 	tabsElements.push({
@@ -400,8 +409,8 @@ if (props.useBlockEditor) {
 				/>
 			</template>
 
-			<template #tab-3>
-				<SeoForm v-model="seo" />
+			<template #tab-seo>
+				<SeoForm v-if="showSeo" v-model="seo" />
 			</template>
 
 			<template #tab-4>

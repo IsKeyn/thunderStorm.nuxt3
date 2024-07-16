@@ -1,5 +1,9 @@
+<script setup>
+import PageWithTypes from '@/components/pages/PageWithTypes.vue';
+</script>
+
 <template>
 	<div>
-		О сайте
+		<PageWithTypes />
 	</div>
 </template>

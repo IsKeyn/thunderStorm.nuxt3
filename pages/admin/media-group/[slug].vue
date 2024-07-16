@@ -9,64 +9,34 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 const form = ref(
 		{
 			name: {
-				name: 'Заголовок',
+				name: 'Наименование',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'required, minLength_2, maxLength_40',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			slug: {
 				name: 'Slug',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 				autoFill: {
 					sourceFieldKey: 'name',
 					rule: 'slug',
 				},
 			},
-			text_preview: {
-				name: 'Текст превью',
+			description: {
+				name: 'Описание',
 				value: '',
 				type: 'textarea',
-				resize: true,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			text_full: {
-				name: 'Текст статьи',
-				value: '',
-				type: 'textarea',
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			title_image: {
-				name: 'Изображение',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			type: {
-				name: 'Тип статьи',
-				value: 0,
-				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			created_by: {
-				name: 'ID автора',
-				value: '',
-				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			created_at: {
-				name: 'Дата создания',
-				value: '',
-				type: 'datetime-local',
 				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+			},
+			active: {
+				name: 'Активность',
+				value: '',
+				type: 'text',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -90,7 +60,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Статьи',
+			name: 'Группы медиа',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -99,6 +69,16 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
+
+const extensions = [
+	{
+		name: 'MultiImages',
+		keyForBackend: 'media_group',
+		params: {
+			title: 'Изображения группы',
+		},
+	},
+];
 </script>
 
 <template>
@@ -106,11 +86,9 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/articles"
-				:showTags="true"
-				:showSeo="true"
+				fetchUrl="admin/media-group"
+				:extensions="extensions"
 				:hasResource="true"
-				:useBlockEditor="true"
 		/>
 	</div>
 </template>

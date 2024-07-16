@@ -1,7 +1,14 @@
 import Paragraph from '@/components/blocks/Article/Paragraph.vue';
 import Character from '@/components/blocks/Article/Character.vue';
 
-export function blocks() {
+import { useBlocksStore } from '@/stores/blocks';
+
+export function blocks(
+    defaultStructure = {},
+    structure = {},
+    blockIndex = null,
+    editMode = false
+) {
     const getBlock = (name) => {
         switch (name) {
             case 'Paragraph': return Paragraph;
@@ -20,8 +27,51 @@ export function blocks() {
         },
     ];
 
+    const pageBlocks = useBlocksStore();
+    const blockStructure = ref({});
+
+    const addNewFieldsToStructure = () => {
+        for (let fieldName in defaultStructure.fields) {
+            if (!blockStructure.value.fields[fieldName]) {
+                blockStructure.value.fields[fieldName] = defaultStructure.fields[fieldName];
+            }
+        }
+
+        for (let settingName in defaultStructure.settings) {
+            if (!blockStructure.value.settings[settingName]) {
+                blockStructure.value.settings[settingName] = defaultStructure.settings[settingName];
+            }
+        }
+    };
+
+    const setBlockStructure = () => {
+        if (editMode) {
+            if (Object.keys(pageBlocks.getBlockByIndex(blockIndex)).length > 0 && pageBlocks.getBlockByIndex(blockIndex).id) {
+                if (typeof pageBlocks.getBlockByIndex(blockIndex).structure.length !== "number") {
+                    blockStructure.value = pageBlocks.getBlockByIndex(blockIndex).structure;
+                    addNewFieldsToStructure();
+                } else {
+                    blockStructure.value = defaultStructure;
+                    pageBlocks.getBlockByIndex(blockIndex).structure = toRaw(blockStructure.value);
+                }
+            } else {
+                blockStructure.value = defaultStructure;
+                pageBlocks.getBlockByIndex(blockIndex).structure = blockStructure.value;
+            }
+        } else {
+            if (Object.keys(structure).length > 0) {
+                blockStructure.value = toRaw(structure);
+                addNewFieldsToStructure();
+            } else {
+                blockStructure.value = defaultStructure;
+            }
+        }
+    }
+
     return {
         getBlock,
         blockList,
+        blockStructure,
+        setBlockStructure,
     };
 }

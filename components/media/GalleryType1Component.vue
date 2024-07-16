@@ -41,6 +41,14 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	groupID: {
+		type: Number,
+		default: null,
+	},
+	loadOnScroll: {
+		type: Boolean,
+		default: true,
+	}
 });
 
 const fetchedData = ref([]);
@@ -65,6 +73,7 @@ const { refresh } = await useAsyncData(
 			};
 
 			const rawFilters = toRaw(filters.value);
+			rawFilters.group_id = props.groupID;
 
 			for (let key in rawFilters) {
 				if (key === 'tags') {
@@ -127,11 +136,15 @@ const onOrderUpdated = () => {
 }
 
 onMounted(() => {
-	window.addEventListener('scroll', scrollHandler);
+	if (props.loadOnScroll) {
+		window.addEventListener('scroll', scrollHandler);
+	}
 });
 
 onUnmounted(() => {
-	window.removeEventListener('scroll', scrollHandler);
+	if (props.loadOnScroll) {
+		window.removeEventListener('scroll', scrollHandler);
+	}
 });
 
 const scrollHandler = (event) => {

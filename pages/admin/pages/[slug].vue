@@ -9,64 +9,45 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 const form = ref(
 		{
 			name: {
-				name: 'Заголовок',
+				name: 'Наименование',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'required, minLength_2, maxLength_40',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			slug: {
-				name: 'Slug',
+			description: {
+				name: 'Описание',
+				value: '',
+				type: 'textarea',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+			},
+			path: {
+				name: 'Ссылка',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-				autoFill: {
-					sourceFieldKey: 'name',
-					rule: 'slug',
-				},
-			},
-			text_preview: {
-				name: 'Текст превью',
-				value: '',
-				type: 'textarea',
-				resize: true,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			text_full: {
-				name: 'Текст статьи',
-				value: '',
-				type: 'textarea',
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			title_image: {
-				name: 'Изображение',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
+				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			type: {
-				name: 'Тип статьи',
-				value: 0,
-				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			created_by: {
-				name: 'ID автора',
+				name: 'Тип',
 				value: '',
 				type: 'text',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			created_at: {
-				name: 'Дата создания',
+			entity_type: {
+				name: 'Entity Type',
 				value: '',
-				type: 'datetime-local',
-				validateRules: null,
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			entity_id: {
+				name: 'Entity ID',
+				value: '',
+				type: 'text',
+				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -90,7 +71,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Статьи',
+			name: 'Ссылки',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -106,11 +87,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/articles"
-				:showTags="true"
-				:showSeo="true"
-				:hasResource="true"
-				:useBlockEditor="true"
+				fetchUrl="admin/entity/Page"
 		/>
 	</div>
 </template>

@@ -231,6 +231,7 @@ const buttons = [
 				:method="formMode === 'create' ? 'POST' : 'PUT'"
 
 				:showTags="showTags"
+				:showSeo="showSeo"
 				:additionalFieldsEnable="additionalFieldsEnable"
 				:useBlockEditor="useBlockEditor"
 

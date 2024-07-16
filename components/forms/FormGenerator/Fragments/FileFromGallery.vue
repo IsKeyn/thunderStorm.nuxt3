@@ -70,6 +70,7 @@ const selectThisElement = (element) => {
 				:selectButton="true"
 				:hideBodyScrollLine="false"
 				:setViewsLog="false"
+				:fullCloseModal="true"
 				@selectThisElement="selectThisElement"
 		/>
 	</Modal>

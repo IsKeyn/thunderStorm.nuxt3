@@ -5,6 +5,7 @@ import PageHeader from '@/components/layout/PageHeader.vue';
 import EntityUserActionsPanel from '@/components/actions/EntityUserActionsPanel.vue';
 import TitleImage from '@/components/media/TitleImage.vue';
 import SimpleTagsList from '@/components/tags/SimpleTagsList.vue';
+import Head from '@/components/seo/Head.vue';
 
 const props = defineProps({
 	type: {
@@ -18,6 +19,14 @@ const props = defineProps({
 	showTags: {
 		type: Boolean,
 		default: true,
+	},
+	entityType: {
+		type: String,
+		required: true,
+	},
+	entityId: {
+		type: Number,
+		required: true,
 	},
 });
 
@@ -57,7 +66,15 @@ const { refresh } = await useAsyncData(
 
 			if (Number.isInteger(props.type)) {
 				query.type = props.type;
-				query.fullPath = route.fullPath;
+				query.full_path = route.fullPath;
+			}
+
+			if (props.entityType) {
+				query.entity_type = props.entityType;
+			}
+
+			if (props.entityId) {
+				query.entity_id = props.entityId;
 			}
 
 			const sessionCookie = useCookie(sessionCookieName.value);
@@ -183,6 +200,9 @@ const openSendCommentForm = () => {
 				/>
 			</div>
 		</div>
+		<Head
+				:seo="fetchedData.seo"
+		/>
 	</div>
 </template>
 

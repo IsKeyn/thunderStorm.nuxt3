@@ -1,10 +1,9 @@
 <script setup>
-import ArticleDetail from '@/components/articles/ArticleDetail.vue';
-
-const route = useRoute();
-console.log(222, route);
+// import ArticleDetail from '@/components/articles/ArticleDetail.vue';
+import PageWithTypes from '@/components/pages/PageWithTypes.vue';
 </script>
 
 <template>
-	<ArticleDetail />
+<!--	<ArticleDetail />-->
+	<PageWithTypes :getArticle="true" />
 </template>

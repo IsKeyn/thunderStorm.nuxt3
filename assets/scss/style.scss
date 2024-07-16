@@ -63,3 +63,20 @@ body {
     content-[''] pointer-events-auto bg-transparent
   ;
 }
+
+/* НАЧАЛО блоки, техническая часть */
+// Блок и элементы контроля
+.th-block {
+  @apply relative;
+
+  &:hover {
+    .control-panel {
+      @apply block;
+    }
+  }
+
+  .control-panel {
+    @apply absolute hidden right-0 top-0;
+  }
+}
+/* КОНЕЦ блоки, техническая часть */

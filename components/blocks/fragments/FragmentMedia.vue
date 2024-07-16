@@ -35,7 +35,7 @@ const selectThisElement = (element) => {
 	emit('update:modelValue', rawElement);
 }
 
-const imageHundler = (image) => {
+const imageHandler = (image) => {
 	if (props.editMode) {
 		toggleGalleryModal();
 	} else {
@@ -48,12 +48,12 @@ const imageHundler = (image) => {
 	<img
 			v-if="modelValue && modelValue.src"
 			:src="modelValue.src"
-			@click="imageHundler(modelValue)"
+			@click="imageHandler(modelValue)"
 	>
 	<img
 			v-else-if="editMode"
 			src="/images/admin/no_image.jpg"
-			@click="imageHundler(modelValue)"
+			@click="imageHandler(modelValue)"
 	>
 
 	<Modal
