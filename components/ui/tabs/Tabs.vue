@@ -1,4 +1,6 @@
 <script setup>
+import { onMounted } from "vue";
+
 const props = defineProps({
 	tabs: {
 		type: Array,
@@ -20,6 +22,17 @@ const props = defineProps({
 });
 
 const currentTab = ref(1);
+
+const route = useRoute();
+
+if (route.query?.tab) {
+	for (let key in props.tabs) {
+		if (props.tabs[key].id === route.query.tab) {
+			currentTab.value = route.query.tab;
+			break;
+		}
+	}
+}
 </script>
 
 <template>

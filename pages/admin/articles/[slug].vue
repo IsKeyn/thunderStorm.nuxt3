@@ -55,6 +55,18 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			entity_type: {
+				name: 'Привязка к сущности (класс)',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			entity_id: {
+				name: 'Привязка к сущности (id)',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			created_by: {
 				name: 'ID автора',
 				value: '',

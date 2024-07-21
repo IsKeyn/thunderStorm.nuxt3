@@ -300,6 +300,14 @@ const fileType = computed(() => {
 					:getFieldClasses="getFieldClasses"
 			/>
 		</template>
+		<template v-else-if="element.type === 'checkbox'">
+			<span class="input-wrap">
+			<input
+					v-model="element.value"
+					:type="element.type"
+			> {{ element.name }}
+			</span>
+		</template>
 		<span
 			v-if="validateErrorPosition === 'bottom' && element.validateResult && showValidateError"
 			class="field-error-message small-text"

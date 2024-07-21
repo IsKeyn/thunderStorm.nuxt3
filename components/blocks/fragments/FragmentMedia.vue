@@ -21,6 +21,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	imageClass: {
+		type: String,
+		default: '',
+	},
 });
 
 const activeGalleryModal = ref(false);
@@ -48,11 +52,13 @@ const imageHandler = (image) => {
 	<img
 			v-if="modelValue && modelValue.src"
 			:src="modelValue.src"
+			:class="imageClass"
 			@click="imageHandler(modelValue)"
 	>
 	<img
 			v-else-if="editMode"
 			src="/images/admin/no_image.jpg"
+			:class="imageClass"
 			@click="imageHandler(modelValue)"
 	>
 

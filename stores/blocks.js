@@ -26,10 +26,25 @@ export const useBlocksStore = defineStore('blocks', {
         deleteBlockByIndex(index) {
             this.blocks = this.blocks.filter((item, inx) => {
                 if (index !== inx) {
-                    console.log(111, item, inx);
                     return item;
                 }
             });
+        },
+        changePositionByIndexId(direction, index) {
+            const currentBlock = this.blocks[index];
+            let changedBlock = {};
+
+            if (direction === 'top' && index > 0) {
+                changedBlock = this.blocks[index - 1];
+                this.blocks[index - 1] = currentBlock;
+                this.blocks[index] = changedBlock;
+            }
+
+            if (direction === 'bottom' && this.blocks.length - 1 < index) {
+                changedBlock = this.blocks[index + 1];
+                this.blocks[index + 1] = currentBlock;
+                this.blocks[index] = changedBlock;
+            }
         },
     },
     getters: {

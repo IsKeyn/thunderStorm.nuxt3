@@ -29,6 +29,12 @@ const titles = ref(
 			type: {
 				name: 'Тип статьи',
 			},
+			entity_type: {
+				name: 'Привязка к сущности (класс)',
+			},
+			entity_id: {
+				name: 'Привязка к сущности (id)',
+			},
 		}
 );
 

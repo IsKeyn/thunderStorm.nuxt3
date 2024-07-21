@@ -1,4 +1,7 @@
 <script setup>
+import FixedControlPanel from '@/components/ui/FixedControlPanel.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+
 import { useBlocksStore } from '@/stores/blocks';
 const pageBlocks = useBlocksStore();
 
@@ -12,12 +15,70 @@ const props = defineProps({
 const deleteBlock = () => {
 	pageBlocks.deleteBlockByIndex(props.blockIndex);
 }
+
+const showPanel = ref(false);
+
+const togglePanel = () => {
+	showPanel.value = !showPanel.value;
+}
+
+const changePosition = (direction) => {
+	pageBlocks.changePositionByIndexId(direction, props.blockIndex);
+}
 </script>
 
 <template>
 	<div class="control-panel">
-		<button class="btn"><font-awesome-icon :icon="['fas', 'angle-up']" /></button>
-			<button class="btn"><font-awesome-icon :icon="['fas', 'angle-down']" /></button>
+		<button
+				class="btn"
+				title="Настройки блока"
+				@click="togglePanel"
+		>
+			<font-awesome-icon :icon="['fas', 'sliders']" />
+		</button>
+		<button
+				class="btn"
+				@click="changePosition('top')"
+		>
+			<font-awesome-icon :icon="['fas', 'angle-up']" />
+		</button>
+		<button
+				class="btn"
+				@click="changePosition('bottom')"
+		>
+			<font-awesome-icon :icon="['fas', 'angle-down']" />
+		</button>
 		<button class="btn" @click="deleteBlock"><font-awesome-icon :icon="['fas', 'xmark']" /></button>
 	</div>
+	<FixedControlPanel
+		:showPanel="showPanel"
+		title="Настройки блока"
+		@togglePanel="togglePanel"
+	>
+		<div v-if="pageBlocks.blocks[blockIndex].structure.settings">
+			<div
+					v-for="(setting, key) in pageBlocks.blocks[blockIndex].structure.settings"
+					:key="key"
+			>
+				<div v-if="setting.type === 'checkbox'">
+					<FormGenerator
+							:name="setting.name"
+							:element="setting"
+							:showTitle="false"
+							validateErrorPosition="bottom"
+							fieldClasses="w-full"
+					/>
+				</div>
+				<div v-if="setting.type === 'select'">
+					<FormGenerator
+							:name="setting.name"
+							:element="setting"
+							:showTitle="false"
+							validateErrorPosition="bottom"
+							fieldClasses="w-full"
+					/>
+				</div>
+			</div>
+		</div>
+	</FixedControlPanel>
 </template>

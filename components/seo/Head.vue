@@ -7,15 +7,15 @@ const props = defineProps({
 });
 
 useHead({
-	title: props.seo.title ? props.seo.title : '',
+	title: props.seo?.title ? props.seo.title : '',
 	meta: [
 		{
 			name: 'description',
-			content: props.seo.description ? props.seo.description : '',
+			content: props.seo?.description ? props.seo.description : '',
 		},
 		{
 			name: 'keywords',
-			content: props.seo.keywords ? props.seo.keywords : '',
+			content: props.seo?.keywords ? props.seo.keywords : '',
 		},
 	]
 })

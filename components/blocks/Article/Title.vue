@@ -21,8 +21,7 @@ const props = defineProps({
 
 const defaultStructure = {
 	fields: {
-		text: 'Текст параграфа',
-		image: {},
+		text: 'Заголовок',
 	},
 	settings: {
 		active: {
@@ -30,22 +29,22 @@ const defaultStructure = {
 			value: true,
 			type: 'checkbox',
 		},
-		imagePosition: {
-			name: 'Позиция картинки',
-			value: 'float-right',
+		titlePosition: {
+			name: 'Позиция заголовка',
+			value: 'text-center',
 			type: 'select',
 			options: [
 				{
 					name: 'Слева',
-					value: 'float-left',
+					value: 'text-left',
 				},
 				{
-					name: 'Block',
-					value: '',
+					name: 'Центр',
+					value: 'text-center',
 				},
 				{
 					name: 'Справа',
-					value: 'float-right',
+					value: 'text-right',
 				}
 			],
 		},
@@ -66,24 +65,19 @@ setBlockStructure();
 				v-if="editMode"
 				:blockIndex="blockIndex"
 		/>
-		<p>
-			<FragmentMedia
-					v-model="blockStructure.fields.image"
-					:editMode="editMode"
-					:imageClass="blockStructure.settings.imagePosition.value"
-			/>
+		<span :class="blockStructure.settings.titlePosition.value">
 			<template v-if="editMode">
-				<textarea v-model="blockStructure.fields.text" />
+				<input v-model="blockStructure.fields.text" />
 			</template>
 			<template v-else>
 				{{ blockStructure.fields.text }}
 			</template>
-		</p>
+		</span>
 	</div>
 </template>
 
 <style lang="scss" scoped>
-.paragraph-block {
-	@apply text-justify;
+span {
+	display: block;
 }
 </style>

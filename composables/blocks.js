@@ -1,3 +1,4 @@
+import Title from '@/components/blocks/Article/Title.vue';
 import Paragraph from '@/components/blocks/Article/Paragraph.vue';
 import Character from '@/components/blocks/Article/Character.vue';
 
@@ -11,12 +12,17 @@ export function blocks(
 ) {
     const getBlock = (name) => {
         switch (name) {
+            case 'Title': return Title;
             case 'Paragraph': return Paragraph;
             case 'Character': return Character;
         }
     };
 
     const blockList = [
+        {
+            name: 'Title',
+            componentName: 'Title',
+        },
         {
           name: 'Paragraph',
           componentName: 'Paragraph',
@@ -40,6 +46,12 @@ export function blocks(
         for (let settingName in defaultStructure.settings) {
             if (!blockStructure.value.settings[settingName]) {
                 blockStructure.value.settings[settingName] = defaultStructure.settings[settingName];
+            }
+
+            for (let settingField in defaultStructure.settings[settingName]) {
+                if (settingField !== 'value') {
+                    blockStructure.value.settings[settingName][settingField] = defaultStructure.settings[settingName][settingField];
+                }
             }
         }
     };
