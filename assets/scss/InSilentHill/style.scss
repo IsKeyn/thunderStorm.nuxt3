@@ -8,18 +8,26 @@
 .btn,
 .button {
   @apply
-    bg-gradient-to-r from-[var(--main-href-color)] to-[var(--second-href-color)]
     pt-[5px] pr-[20px] pb-[5px] pl-[20px]
     mt-[10px] mb-[10px]
     text-[var(--main-text-color)]
   ;
 
-  &:hover {
+  &.btn-primary {
+    @apply bg-gradient-to-r from-[var(--main-href-color)] to-[var(--second-href-color)];
+
+    &:hover {
+      @apply bg-gradient-to-r from-[var(--main-hover-color)] to-[var(--second-hover-color)];
+    }
+  }
+
+  &.btn-simple {
     @apply
-      bg-gradient-to-r from-[var(--main-hover-color)] to-[var(--second-hover-color)]
+      bg-[var(--main-href-color)]
     ;
   }
 }
+
 
 a {
   color: var(--main-href-color);

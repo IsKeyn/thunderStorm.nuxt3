@@ -30,25 +30,25 @@ const changePosition = (direction) => {
 <template>
 	<div class="control-panel">
 		<button
-				class="btn"
+				class="btn btn-primary"
 				title="Настройки блока"
 				@click="togglePanel"
 		>
 			<font-awesome-icon :icon="['fas', 'sliders']" />
 		</button>
 		<button
-				class="btn"
+				class="btn btn-primary"
 				@click="changePosition('top')"
 		>
 			<font-awesome-icon :icon="['fas', 'angle-up']" />
 		</button>
 		<button
-				class="btn"
+				class="btn btn-primary"
 				@click="changePosition('bottom')"
 		>
 			<font-awesome-icon :icon="['fas', 'angle-down']" />
 		</button>
-		<button class="btn" @click="deleteBlock"><font-awesome-icon :icon="['fas', 'xmark']" /></button>
+		<button class="btn btn-primary" @click="deleteBlock"><font-awesome-icon :icon="['fas', 'xmark']" /></button>
 	</div>
 	<FixedControlPanel
 		:showPanel="showPanel"
@@ -60,7 +60,7 @@ const changePosition = (direction) => {
 					v-for="(setting, key) in pageBlocks.blocks[blockIndex].structure.settings"
 					:key="key"
 			>
-				<div v-if="setting.type === 'checkbox'">
+				<div v-if="setting.type === 'checkbox' || setting.type === 'text'">
 					<FormGenerator
 							:name="setting.name"
 							:element="setting"

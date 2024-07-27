@@ -163,7 +163,7 @@ updateItems(props.modelValue);
 			<div class="buttons-box">
 				<button
 						v-if="repeaterItems.length > 1"
-						class="btn"
+						class="btn btn-primary"
 						@click="deleteRepeaterItem(index)"
 				>
 					<font-awesome-icon :icon="['fas', 'xmark']" />
@@ -171,7 +171,7 @@ updateItems(props.modelValue);
 			</div>
 		</div>
 		<button
-				class="btn"
+				class="btn btn-primary"
 				@click="addRepeaterItem"
 		>
 			Добавить

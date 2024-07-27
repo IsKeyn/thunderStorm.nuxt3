@@ -1,6 +1,7 @@
 <script setup>
 import ControlPanel from '@/components/blocks/extensions/ControlPanel.vue';
 import FragmentMedia from '@/components/blocks/fragments/FragmentMedia.vue';
+import WysiwygEditor from '@/components/ui/WysiwygEditor.vue';
 
 import { blocks } from '@/composables/blocks.js';
 
@@ -66,24 +67,38 @@ setBlockStructure();
 				v-if="editMode"
 				:blockIndex="blockIndex"
 		/>
-		<p>
-			<FragmentMedia
-					v-model="blockStructure.fields.image"
-					:editMode="editMode"
-					:imageClass="blockStructure.settings.imagePosition.value"
+		<FragmentMedia
+				v-model="blockStructure.fields.image"
+				:editMode="editMode"
+				:imageClass="[blockStructure.settings.imagePosition.value, 'p-[8px] max-w-[26rem]']"
+		/>
+		<template v-if="editMode">
+<!--			<textarea v-model="blockStructure.fields.text" />-->
+			<WysiwygEditor
+					v-model="blockStructure.fields.text"
 			/>
-			<template v-if="editMode">
-				<textarea v-model="blockStructure.fields.text" />
-			</template>
-			<template v-else>
-				{{ blockStructure.fields.text }}
-			</template>
-		</p>
+
+<!--			<div contenteditable="true">{{ blockStructure.fields.text }}</div>-->
+		</template>
+		<template v-else>
+			<div contenteditable="true" v-html="blockStructure.fields.text" />
+		</template>
 	</div>
 </template>
 
 <style lang="scss" scoped>
+textarea {
+	resize: block;
+}
+
 .paragraph-block {
 	@apply text-justify;
+}
+</style>
+
+<style lang="scss">
+.item {
+	color: var(--item-color);
+	font-weight: 600;
 }
 </style>

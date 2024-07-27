@@ -71,7 +71,7 @@ const getButtonClasses = computed(() => {
 			/>
 			<button
 					type="submit"
-					class="btn"
+					class="btn btn-primary"
 					:class="getButtonClasses"
 			>
 				{{ buttonText }}

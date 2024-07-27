@@ -69,7 +69,7 @@ const updateLikes = (params) => {
 		<div class="footer">
 			<div class="column-1">
 				<router-link :to=articleUrl>
-					<button class="btn">Читать полностью <font-awesome-icon :icon="['fas', 'arrow-right']" /></button>
+					<button class="btn btn-primary">Читать полностью <font-awesome-icon :icon="['fas', 'arrow-right']" /></button>
 				</router-link>
 			</div>
 			<div class="column-2">

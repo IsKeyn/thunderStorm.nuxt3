@@ -19,7 +19,7 @@ const form = ref(
 				name: 'Описание',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_1000',
+				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			type: {

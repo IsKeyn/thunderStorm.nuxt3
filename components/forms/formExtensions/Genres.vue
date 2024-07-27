@@ -93,7 +93,7 @@ watch(() => value, (newValue) => {
 						<div class="buttons-box">
 							<button
 									v-if="repeaterItems.length > 1"
-									class="btn"
+									class="btn btn-primary"
 									@click="repeaterComponent.deleteRepeaterItem(index)"
 							>
 								<font-awesome-icon :icon="['fas', 'xmark']" />
@@ -101,7 +101,7 @@ watch(() => value, (newValue) => {
 						</div>
 					</div>
 					<button
-							class="btn"
+							class="btn btn-primary"
 							@click="repeaterComponent.addRepeaterItem()"
 					>
 						Добавить

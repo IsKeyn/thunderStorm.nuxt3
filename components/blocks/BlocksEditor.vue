@@ -38,7 +38,7 @@ const selectBlock = (element) => {
 <template>
 	<div>
 		<button
-				class="btn"
+				class="btn btn-primary"
 				@click="toggleBlocksModal()"
 		>
 			Добавить блок

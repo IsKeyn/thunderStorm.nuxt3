@@ -251,7 +251,7 @@ const keydownHandler = (event) => {
 									v-if="showCommentBox"
 									:to="`/media/${image.id}/`"
 							>
-								<button class="btn">Оставить комментарий</button>
+								<button class="btn btn-primary">Оставить комментарий</button>
 							</router-link>
 						</div>
 					</div>

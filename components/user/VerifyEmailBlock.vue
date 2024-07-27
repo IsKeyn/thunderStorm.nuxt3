@@ -18,7 +18,7 @@ const toggleAuthModal = () => {
 <template>
 	<div class="text-center">
 		<div>Для доступа в раздел Вам необходимо подтвердить email адрес</div>
- 		<button class="btn" @click="toggleAuthModal()">
+ 		<button class="btn btn-primary" @click="toggleAuthModal()">
 			Подтверждение email адреса
 		</button>
 

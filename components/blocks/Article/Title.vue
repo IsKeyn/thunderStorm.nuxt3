@@ -29,6 +29,11 @@ const defaultStructure = {
 			value: true,
 			type: 'checkbox',
 		},
+		classes: {
+			name: 'Классы',
+			value: '',
+			type: 'text',
+		},
 		titlePosition: {
 			name: 'Позиция заголовка',
 			value: 'text-center',
@@ -65,7 +70,7 @@ setBlockStructure();
 				v-if="editMode"
 				:blockIndex="blockIndex"
 		/>
-		<span :class="blockStructure.settings.titlePosition.value">
+		<span :class="[blockStructure.settings.titlePosition.value, blockStructure.settings.classes.value, 'title']">
 			<template v-if="editMode">
 				<input v-model="blockStructure.fields.text" />
 			</template>

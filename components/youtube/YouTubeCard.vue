@@ -62,7 +62,7 @@ const imageObj = computed(() => {
 						:href="youTubeVideoUrl"
 						target="_blank"
 				>
-					<button class="btn">Открыть на YouTube <font-awesome-icon :icon="['fas', 'arrow-right']" /></button>
+					<button class="btn btn-primary">Открыть на YouTube <font-awesome-icon :icon="['fas', 'arrow-right']" /></button>
 				</a>
 			</div>
 			<div class="column-2">

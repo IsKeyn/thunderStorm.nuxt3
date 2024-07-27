@@ -215,7 +215,7 @@ const addTag = () => {
 					:labelClasses="['inline-block', 'mb-[10px]', 'mr-2']"
 					:fieldClasses="field.classes"
 			/>
-			<button class="btn" @click="addTag">Добавить</button>
+			<button class="btn btn-primary" @click="addTag">Добавить</button>
 		</div>
 	</div>
 </template>

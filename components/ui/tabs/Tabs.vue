@@ -23,15 +23,27 @@ const props = defineProps({
 
 const currentTab = ref(1);
 
+const router = useRouter();
 const route = useRoute();
 
 if (route.query?.tab) {
 	for (let key in props.tabs) {
-		if (props.tabs[key].id === route.query.tab) {
-			currentTab.value = route.query.tab;
+		if (String(props.tabs[key].id) === route.query.tab) {
+			currentTab.value = props.tabs[key].id;
 			break;
 		}
 	}
+}
+
+const setTab = (tabID) => {
+	currentTab.value = tabID;
+	router.push({
+		name: route.name,
+		query: {
+			...route.query,
+			tab: tabID,
+		},
+	});
 }
 </script>
 
@@ -41,7 +53,7 @@ if (route.query?.tab) {
 			<li
 					v-for="tab in tabs"
 					:key="tab.id"
-					@click="currentTab = tab.id"
+					@click="setTab(tab.id)"
 			>
 				<div
 						style="display: inline-flex"
