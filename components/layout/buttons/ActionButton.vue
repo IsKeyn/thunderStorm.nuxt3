@@ -17,7 +17,7 @@ const props = defineProps({
 	<button
 			@click="emit('startAction')"
 			:disabled="actionInProgress"
-			class="btn min-w-24"
+			class="btn btn-primary min-w-24"
 	>
 		<template v-if="!actionInProgress">
 			{{ buttonName }}

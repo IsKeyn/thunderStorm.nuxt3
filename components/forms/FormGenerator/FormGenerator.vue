@@ -239,7 +239,7 @@ const fileType = computed(() => {
 									class="choice-file-block"
 									:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
 							>
-								<div class="button choice-btn">Обзор...</div> {{ element.value ? element.value[0].name : '' }}
+								<div class="button btn-primary choice-btn">Обзор...</div> {{ element.value ? element.value[0].name : '' }}
 							</div>
 						</div>
 						<div class="col-span-2 text-center">
@@ -268,7 +268,7 @@ const fileType = computed(() => {
 							class="choice-file-block"
 							:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
 					>
-						<div class="button choice-btn">Обзор...</div> {{ element.value ? element.value[0].name : '' }}
+						<div class="button choice-btn btn-primary">Обзор...</div> {{ element.value ? element.value[0].name : '' }}
 					</div>
 				</template>
 			</template>

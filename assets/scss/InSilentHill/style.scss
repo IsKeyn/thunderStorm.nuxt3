@@ -25,6 +25,14 @@
     @apply
       bg-[var(--main-href-color)]
     ;
+
+    &:hover {
+      @apply bg-[var(--main-hover-color)];
+    }
+
+    &.active {
+      @apply bg-[var(--main-active-color)];
+    }
   }
 }
 

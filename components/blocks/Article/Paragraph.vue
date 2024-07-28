@@ -76,12 +76,13 @@ setBlockStructure();
 <!--			<textarea v-model="blockStructure.fields.text" />-->
 			<WysiwygEditor
 					v-model="blockStructure.fields.text"
+					:editMode="editMode"
 			/>
 
 <!--			<div contenteditable="true">{{ blockStructure.fields.text }}</div>-->
 		</template>
 		<template v-else>
-			<div contenteditable="true" v-html="blockStructure.fields.text" />
+			<div v-html="blockStructure.fields.text" />
 		</template>
 	</div>
 </template>

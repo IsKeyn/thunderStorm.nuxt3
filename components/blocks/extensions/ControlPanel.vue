@@ -30,25 +30,25 @@ const changePosition = (direction) => {
 <template>
 	<div class="control-panel">
 		<button
-				class="btn btn-primary"
+				class="btn btn-simple"
 				title="Настройки блока"
 				@click="togglePanel"
 		>
 			<font-awesome-icon :icon="['fas', 'sliders']" />
 		</button>
 		<button
-				class="btn btn-primary"
+				class="btn btn-simple"
 				@click="changePosition('top')"
 		>
 			<font-awesome-icon :icon="['fas', 'angle-up']" />
 		</button>
 		<button
-				class="btn btn-primary"
+				class="btn btn-simple"
 				@click="changePosition('bottom')"
 		>
 			<font-awesome-icon :icon="['fas', 'angle-down']" />
 		</button>
-		<button class="btn btn-primary" @click="deleteBlock"><font-awesome-icon :icon="['fas', 'xmark']" /></button>
+		<button class="btn btn-simple" @click="deleteBlock"><font-awesome-icon :icon="['fas', 'xmark']" /></button>
 	</div>
 	<FixedControlPanel
 		:showPanel="showPanel"
@@ -82,3 +82,9 @@ const changePosition = (direction) => {
 		</div>
 	</FixedControlPanel>
 </template>
+
+<style lang="scss" scoped>
+.btn {
+	@apply ml-1;
+}
+</style>

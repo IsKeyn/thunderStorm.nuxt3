@@ -40,7 +40,7 @@ const getFuncByKeyword = (keyword) => {
 		<div class="text-center">
 			<button
 					v-for="button in item.buttons"
-					class="btn mr-[8px]"
+					class="btn btn-primary mr-[8px]"
 					@click="getButtonFunc(button)"
 			>
 				{{ button.name }}
