@@ -17,27 +17,34 @@ const props = defineProps({
 const editorRef = ref(null);
 
 const history = ref([]);
-const wysiwyg = ref('');
 
+const wysiwyg = ref('');
+const editable = ref('');
 const htmlMode = ref(false);
 
 wysiwyg.value = props.modelValue;
+editable.value = props.modelValue;
+
+// watch(() => props.modelValue, (newValue) => {
+// 	value.value = toRaw(newValue);
+// }, { deep: true });
 
 watch(() => wysiwyg, (newValue) => {
 	emit('update:modelValue', newValue);
 }, { deep: true });
 
-const setHtmlMode = () => {
-	htmlMode.value = !htmlMode.value;
-}
 
-const blurHandler = (event) => {
+const inputHandler = (event) => {
 	setWysiwygValue(htmlMode.value ? event.target.innerText : event.target.innerHTML);
 }
 
 const setWysiwygValue = (value) => {
 	wysiwyg.value = value;
 	history.value.push(wysiwyg.value);
+}
+
+const setEditableValue = () => {
+	editable.value = wysiwyg.value;
 }
 
 const setItem = (changeParams) => {
@@ -70,7 +77,6 @@ const setItem = (changeParams) => {
 				}
 			}
 		} else {
-			// TODO а нужен ли этот код? И откработает он корректно? Он предназначен для старых браузеров до ie8? А Сайт вообще не поддерживает столь старые браузеры
 			if (changeParams.tag) {
 				let editableString = '';
 
@@ -84,9 +90,25 @@ const setItem = (changeParams) => {
 			}
 		}
 
+		// if (htmlMode.value) {
+		// 	editable.value = editorRef.value.innerText;
+		// }
+
+		// emit('update:modelValue', editorRef.value.innerHTML);
+
+		// if (htmlMode.value) {
+		// 	wysiwyg.value = editorRef.value.innerText;
+		// } else {
+		// 	wysiwyg.value = editorRef.value.innerHTML;
+		// }
+
 		setWysiwygValue(htmlMode.value ? editorRef.value.innerText : editorRef.value.innerHTML);
 	}
 }
+
+// Сохранять историю и сделать кнопку возврата и повтора если есть
+// Определять теги и делать отмену тега при повторном нажатии
+
 </script>
 
 <template>
@@ -118,24 +140,26 @@ const setItem = (changeParams) => {
 							'btn btn-simple',
 							htmlMode ? 'active' : ''
 					]"
-					@click.prevent="setHtmlMode"
+					@click.prevent="htmlMode = !htmlMode"
 			>html</button>
 		</div>
 		<div
 				v-if="htmlMode"
 				class="wysiwyg-content"
 				ref="editorRef"
-				@blur="blurHandler"
+				@input="inputHandler"
+				@blur="setEditableValue"
 				:contenteditable="editMode"
 		>
-			{{ wysiwyg }}
+			{{ editable }}
 		</div>
 		<div
 				v-else
 				class="wysiwyg-content"
 				ref="editorRef"
-				@blur="blurHandler"
-				v-html="wysiwyg"
+				@input="inputHandler"
+				@blur="setEditableValue"
+				v-html="editable"
 				:contenteditable="editMode"
 		/>
 	</div>
