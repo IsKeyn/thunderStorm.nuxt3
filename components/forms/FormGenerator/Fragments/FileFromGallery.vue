@@ -50,7 +50,7 @@ const selectThisElement = (element) => {
 					:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
 			>
 				<div
-						class="button choice-btn"
+						class="button choice-btn btn-primary"
 						@click="toggleGalleryModal"
 				>Обзор...</div> {{ element.value ? element.value : '' }}
 			</div>
