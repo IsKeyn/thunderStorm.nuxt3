@@ -17,11 +17,15 @@ const props = defineProps({
 const editorRef = ref(null);
 
 const history = ref([]);
+const historyCurrentStep = ref(null);
+
+const finalValue = ref('');
 const wysiwyg = ref('');
 
 const htmlMode = ref(false);
 
 wysiwyg.value = props.modelValue;
+history.value.push(wysiwyg.value);
 
 watch(() => wysiwyg, (newValue) => {
 	emit('update:modelValue', newValue);
@@ -31,13 +35,49 @@ const setHtmlMode = () => {
 	htmlMode.value = !htmlMode.value;
 }
 
+const setHistoryTimeout = ref(null); // Только для Input
+
+const inputHandler = (event) => {
+	clearTimeout(setHistoryTimeout.value);
+
+	setHistoryTimeout.value = setTimeout(() => {
+		history.value.push(htmlMode.value ? event.target.innerText : event.target.innerHTML);
+	}, 500);
+}
+
 const blurHandler = (event) => {
-	setWysiwygValue(htmlMode.value ? event.target.innerText : event.target.innerHTML);
+	if (!(event.relatedTarget && event.relatedTarget.classList.contains('js-set-button'))) {
+		setWysiwygValue(htmlMode.value ? event.target.innerText : event.target.innerHTML);
+	}
 }
 
 const setWysiwygValue = (value) => {
 	wysiwyg.value = value;
 	history.value.push(wysiwyg.value);
+}
+
+const timeMachine = (direction) => {
+	const historyLength = history.value.length;
+
+	if (historyLength > 1) {
+		if (direction === 'back') {
+			if (historyCurrentStep.value) {
+				wysiwyg.value = history.value[historyCurrentStep.value - 1]
+				historyCurrentStep.value = historyCurrentStep.value - 1;
+			} else {
+				wysiwyg.value = history.value[historyLength - 2]
+				historyCurrentStep.value = historyLength - 2;
+			}
+		}
+
+		if (direction === 'forward') {
+			if (historyCurrentStep.value && (historyCurrentStep.value + 1 <= history.value.length - 1)) {
+				wysiwyg.value = history.value[historyCurrentStep.value + 1]
+			} else {
+				// ytdjpvj;yj
+			}
+		}
+	}
 }
 
 const setItem = (changeParams) => {
@@ -80,23 +120,23 @@ const setItem = (changeParams) => {
 	<div class="wysiwyg-parent-box">
 		<div class="wysiwyg-control-panel">
 			<button
-					class="btn btn-simple"
+					class="btn btn-simple js-set-button"
 					title="Курсив"
 					@click.prevent="setItem({ tag: 'i' })"
 			>i</button>
 			<button
-					class="btn btn-simple"
+					class="btn btn-simple js-set-button"
 					title="Полужирным"
 					@click.prevent="setItem({ tag: 'b' })"
 			>b</button>
 			<button
-					class="btn btn-simple"
+					class="btn btn-simple js-set-button"
 					title="Параграф"
 					@click.prevent="setItem({ tag: 'p' })"
 			>p</button>
 
 			<button
-					class="btn btn-simple"
+					class="btn btn-simple js-set-button"
 					@click.prevent="setItem({ tag: 'span', class: 'item' })"
 			>Предмет</button>
 
@@ -107,11 +147,26 @@ const setItem = (changeParams) => {
 					]"
 					@click.prevent="setHtmlMode"
 			>html</button>
+
+			<button
+					:class="[
+							'btn btn-simple',
+					]"
+					@click.prevent="timeMachine('back')"
+			><font-awesome-icon :icon="['fas', 'rotate-left']" /></button>
+
+			<button
+					:class="[
+							'btn btn-simple',
+					]"
+					@click.prevent="timeMachine('forward')"
+			><font-awesome-icon :icon="['fas', 'rotate-right']" /></button>
 		</div>
 		<div
 				v-if="htmlMode"
 				class="wysiwyg-content"
 				ref="editorRef"
+				@input="inputHandler"
 				@blur="blurHandler"
 				:contenteditable="editMode"
 		>
@@ -121,6 +176,7 @@ const setItem = (changeParams) => {
 				v-else
 				class="wysiwyg-content"
 				ref="editorRef"
+				@input="inputHandler"
 				@blur="blurHandler"
 				v-html="wysiwyg"
 				:contenteditable="editMode"
