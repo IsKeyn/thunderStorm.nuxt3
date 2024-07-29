@@ -69,19 +69,6 @@ const setItem = (changeParams) => {
 					range.surroundContents(newNode);
 				}
 			}
-		} else {
-			// TODO а нужен ли этот код? И откработает он корректно? Он предназначен для старых браузеров до ie8? А Сайт вообще не поддерживает столь старые браузеры
-			if (changeParams.tag) {
-				let editableString = '';
-
-				if (changeParams.class) {
-					editableString = `<${changeParams.tag} class="${changeParams.class}">${select.toString()}</${changeParams.tag}>`;
-				} else {
-					editableString = `<${changeParams.tag}>${select.toString()}</${changeParams.tag}>`;
-				}
-
-				select.pasteHTML(editableString);
-			}
 		}
 
 		setWysiwygValue(htmlMode.value ? editorRef.value.innerText : editorRef.value.innerHTML);
