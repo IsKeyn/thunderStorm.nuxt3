@@ -33,6 +33,10 @@ const selectBlock = (element) => {
 			},
 	);
 }
+
+defineExpose({
+	toggleBlocksModal,
+});
 </script>
 
 <template>

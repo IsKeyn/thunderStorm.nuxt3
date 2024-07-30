@@ -6,7 +6,10 @@ import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import TagsList from '@/components/tags/TagsList.vue';
 import Tabs from '@/components/ui/tabs/Tabs.vue';
 import SeoForm from '@/components/admin/forms/SeoForm.vue';
-import BlocksEditor from  '@/components/blocks/BlocksEditor.vue';
+import BlocksEditor from '@/components/blocks/BlocksEditor.vue';
+import AdditionalControlPanel from '@/components/admin/panels/AdditionalControlPanel.vue';
+
+import { watch, ref } from "vue";
 
 const emit = defineEmits(['afterRequest']);
 
@@ -31,7 +34,6 @@ const {
 } = notifications();
 
 import { api } from '@/composables/api.js';
-import {watch} from "vue";
 
 const {
 	apiUrl,
@@ -112,17 +114,21 @@ const props = defineProps({
 	},
 });
 
+const blockEditorRef = ref(null);
+
 const sendForm = async (doType = null) => {
-	for (const formKey in props.form) {
-		props.form[formKey].validateResult = '';
-	}
+	if (!requestInProgress.value) {
+		for (const formKey in props.form) {
+			props.form[formKey].validateResult = '';
+		}
 
-	const { status, key, validateResult } = validateForm(props.form);
+		const {status, key, validateResult} = validateForm(props.form);
 
-	if (status) {
-		await sendRequest(doType);
-	} else {
-		props.form[key].validateResult = validateResult;
+		if (status) {
+			await sendRequest(doType);
+		} else {
+			props.form[key].validateResult = validateResult;
+		}
 	}
 }
 
@@ -368,6 +374,10 @@ if (props.useBlockEditor) {
 		title: 'Блочный редактор',
 	});
 }
+
+const openBlockList = () => {
+	blockEditorRef.value.toggleBlocksModal();
+}
 </script>
 
 <template>
@@ -418,9 +428,16 @@ if (props.useBlockEditor) {
 			</template>
 
 			<template v-if="useBlockEditor" #tab-block-editor>
-				<BlocksEditor />
+				<BlocksEditor ref="blockEditorRef" />
 			</template>
 		</Tabs>
+
+		<AdditionalControlPanel
+			:requestInProgress="requestInProgress"
+			:useBlockEditor="useBlockEditor"
+			@sendForm="sendForm"
+			@openBlockList="openBlockList"
+		/>
 
 		<div class="grid grid-cols-6">
 			<div

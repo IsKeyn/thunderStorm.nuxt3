@@ -8,6 +8,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showHeader: {
+		type: Boolean,
+		default: true,
+	},
 	position: {
 		type: String,
 		default: 'left',
@@ -15,7 +19,11 @@ const props = defineProps({
 	title: {
 		type: String,
 		default: 'Панель',
-	}
+	},
+	theme: {
+		type: String,
+		default: 'default',
+	},
 });
 
 const panelActive = ref(false);
@@ -36,9 +44,12 @@ const closePanel = () => {
 <template>
 	<div
 			v-if="panelActive"
-			:class="['fixed-panel', position]"
+			:class="['fixed-panel', position, theme]"
 	>
-		<div class="header">
+		<div
+				v-if="showHeader"
+				class="header"
+		>
 			<span class="title">{{ title }}</span>
 			<font-awesome-icon
 					:icon="['fas', 'xmark']"
@@ -54,11 +65,40 @@ const closePanel = () => {
 
 <style lang="scss" scoped>
 .fixed-panel {
-	@apply
-		bg-[--main-block-color] w-[20rem]
-		p-[1rem]
-		overflow-auto
-	;
+
+	&.default {
+		@apply p-[1rem] overflow-auto bg-[--main-block-color] w-[20rem];
+
+		&.top {
+			@apply fixed left-0 top-0 w-full;
+		}
+
+		&.right {
+			@apply fixed right-0 top-0 h-full;
+		}
+
+		&.bottom {
+			@apply fixed left-0 bottom-0 w-full;
+		}
+
+		&.left {
+			@apply fixed left-0 top-0 h-full pr-[1.2rem];
+
+			.header {
+				@apply pr-[1.5rem];
+
+				.close-button {
+					@apply right-0 top-[0.2rem];
+				}
+			}
+		}
+	}
+
+	&.admin-control-panel {
+		&.right {
+			@apply fixed right-0 top-[40%];
+		}
+	}
 
 	.header {
 		@apply relative;
@@ -70,30 +110,6 @@ const closePanel = () => {
 
 	.body {
 		@apply pt-[0.6rem];
-	}
-
-	&.top {
-		@apply fixed left-0 top-0 w-full;
-	}
-
-	&.right {
-		@apply fixed right-0 top-0 h-full;
-	}
-
-	&.bottom {
-		@apply fixed left-0 bottom-0 w-full;
-	}
-
-	&.left {
-		@apply fixed left-0 top-0 h-full pr-[1.2rem];
-
-		.header {
-			@apply pr-[1.5rem];
-
-			.close-button {
-				@apply right-0 top-[0.2rem];
-			}
-		}
 	}
 }
 </style>
