@@ -60,7 +60,7 @@ const changePosition = (direction) => {
 					v-for="(setting, key) in pageBlocks.blocks[blockIndex].structure.settings"
 					:key="key"
 			>
-				<div v-if="setting.type === 'checkbox' || setting.type === 'text'">
+				<div v-if="setting.type === 'checkbox' || setting.type === 'text' || setting.type === 'number'">
 					<FormGenerator
 							:name="setting.name"
 							:element="setting"

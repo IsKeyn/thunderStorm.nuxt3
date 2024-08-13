@@ -169,3 +169,21 @@ span.flip-text-box {
   text-decoration: none;
 }
 /* КОНЕЦ Заголовки */
+
+/* НАЧАЛО Списки */
+ul {
+  @apply list-disc list-inside;
+
+  &.p-1rem {
+    @apply pt-1 pb-1;
+  }
+}
+
+ol {
+  @apply list-decimal pl-[1rem];
+
+  &.p-1rem {
+    @apply pt-1 pb-1;
+  }
+}
+/* КОНЕЦ Списки */

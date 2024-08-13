@@ -31,6 +31,11 @@ const defaultStructure = {
 			value: true,
 			type: 'checkbox',
 		},
+		classes: {
+			name: 'Классы',
+			value: '',
+			type: 'text',
+		},
 		imagePosition: {
 			name: 'Позиция картинки',
 			value: 'float-right',
@@ -63,27 +68,26 @@ setBlockStructure();
 
 <template>
 	<div class="th-block paragraph-block">
-		<ControlPanel
-				v-if="editMode"
-				:blockIndex="blockIndex"
-		/>
-		<FragmentMedia
-				v-model="blockStructure.fields.image"
-				:editMode="editMode"
-				:imageClass="[blockStructure.settings.imagePosition.value, 'p-[8px] max-w-[26rem]']"
-		/>
-		<template v-if="editMode">
-<!--			<textarea v-model="blockStructure.fields.text" />-->
-			<WysiwygEditor
-					v-model="blockStructure.fields.text"
-					:editMode="editMode"
+		<div :class="[blockStructure.settings.classes.value]">
+			<ControlPanel
+					v-if="editMode"
+					:blockIndex="blockIndex"
 			/>
-
-<!--			<div contenteditable="true">{{ blockStructure.fields.text }}</div>-->
-		</template>
-		<template v-else>
-			<div v-html="blockStructure.fields.text" />
-		</template>
+			<FragmentMedia
+					v-model="blockStructure.fields.image"
+					:editMode="editMode"
+					:imageClass="[blockStructure.settings.imagePosition.value, 'p-[8px] max-w-[26rem]']"
+			/>
+			<template v-if="editMode">
+				<WysiwygEditor
+						v-model="blockStructure.fields.text"
+						:editMode="editMode"
+				/>
+			</template>
+			<template v-else>
+				<div v-html="blockStructure.fields.text" />
+			</template>
+		</div>
 	</div>
 </template>
 

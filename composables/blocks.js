@@ -1,6 +1,7 @@
 import Title from '@/components/blocks/Article/Title.vue';
 import Paragraph from '@/components/blocks/Article/Paragraph.vue';
 import Character from '@/components/blocks/Article/Character.vue';
+import Gallery from '@/components/blocks/Article/Gallery.vue';
 
 import { useBlocksStore } from '@/stores/blocks';
 
@@ -15,6 +16,7 @@ export function blocks(
             case 'Title': return Title;
             case 'Paragraph': return Paragraph;
             case 'Character': return Character;
+            case 'Gallery': return Gallery;
         }
     };
 
@@ -30,6 +32,10 @@ export function blocks(
         {
             name: 'Character',
             componentName: 'Character',
+        },
+        {
+            name: 'Gallery',
+            componentName: 'Gallery',
         },
     ];
 

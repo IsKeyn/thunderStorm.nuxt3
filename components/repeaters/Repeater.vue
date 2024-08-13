@@ -7,11 +7,18 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
-	// Дополнительные данные для построения, например списку из сущности. Пример селектор для игровых платформ (PS1, PS2, XBOX ... PC)
+	/*
+	 * Дополнительные данные для построения репитора, например списку из сущности.
+	 * Пример селектор для игровых платформ: PS1, PS2, XBOX ... PC
+	 */
 	additionalData: {
 		type: Object,
 		default: {},
 	},
+	/*
+	 * Параметры
+	 * additionalDataKeys - ключи ключей дополнительных данных (additionalData)
+	 */
 	params: {
 		type: Object,
 		default: {},
@@ -21,7 +28,6 @@ const props = defineProps({
 		default: [],
 	},
 	repeaterItem: {
-		type: Object,
 		type: Object,
 		default: {},
 	},
@@ -76,21 +82,28 @@ function repeater() {
 		if (countItemForClear) {
 			repeaterItems.value.splice(0, countItemForClear);
 		}
+
+		// TODO не сломает репитер?
+		// hasFirstLoad.value = true;
 	}
 
 	const fillRepeaterItems = (items) => {
 		items.forEach((item) => {
-			const preparedData = structuredClone(props.repeaterItem);
+			let preparedData = structuredClone(props.repeaterItem);
 
-			for (const key in item) {
-				if (preparedData[key]) {
-					preparedData[key].value = item[key];
+			if (Object.keys(props.repeaterItem).length > 0) {
+				for (const key in item) {
+					if (preparedData[key]) {
+						preparedData[key].value = item[key];
 
-					// Заполнение objectValue необходимо только для типов fileFromGallery
-					if (hasFileFromGallery) {
-						preparedData[key].objectValue = item;
+						// Заполнение objectValue необходимо только для типов fileFromGallery
+						if (hasFileFromGallery) {
+							preparedData[key].objectValue = item;
+						}
 					}
 				}
+			} else {
+				preparedData = item;
 			}
 
 			repeaterItems.value.push(preparedData);
@@ -99,6 +112,8 @@ function repeater() {
 
 	const addRepeaterItem = () => {
 		repeaterItems.value.push(structuredClone(props.repeaterItem));
+
+		// setVmodel();
 	}
 
 	const deleteRepeaterItem = (index) => {
@@ -119,8 +134,10 @@ function repeater() {
 		repeaterItems.value.forEach((item) => {
 			const preparedObj = {};
 
-			for (const key in item) {
-				preparedObj[key] = item[key].value;
+			const rawItem = toRaw(item);
+
+			for (const key in rawItem) {
+				preparedObj[key] = rawItem[key];
 			}
 
 			resultData.push(preparedObj);
@@ -129,11 +146,11 @@ function repeater() {
 		emit('update:modelValue', resultData);
 	}
 
-	// Наблюдатель за ручным добавлением, удалением элемента репитора
-	watch(repeaterItems.value, () => {
-		if (hasFirstLoad.value) {
+	// Наблюдатель за ручным добавлением и измением репитора, но удалением элемента репитора не перехватывается
+	watch(() => repeaterItems.value, () => {
+		// if (hasFirstLoad.value) {
 			setVmodel();
-		}
+		// }
 	}, { deep: true });
 
 	// Наблюдатель должен сработать один раз, при первом появлении данных v-model

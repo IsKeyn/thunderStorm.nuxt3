@@ -124,16 +124,42 @@ const setItem = (changeParams) => {
 					title="Курсив"
 					@click.prevent="setItem({ tag: 'i' })"
 			>i</button>
+
 			<button
 					class="btn btn-simple js-set-button"
 					title="Полужирным"
 					@click.prevent="setItem({ tag: 'b' })"
 			>b</button>
+
 			<button
 					class="btn btn-simple js-set-button"
 					title="Параграф"
 					@click.prevent="setItem({ tag: 'p' })"
 			>p</button>
+
+			<button
+					class="btn btn-simple js-set-button"
+					title="Параграф c центрированным по левому краю"
+					@click.prevent="setItem({ tag: 'p', class: 'text-left' })"
+			><font-awesome-icon :icon="['fas', 'align-left']" /></button>
+
+			<button
+					class="btn btn-simple js-set-button"
+					title="Параграф c центрированным текстом"
+					@click.prevent="setItem({ tag: 'p', class: 'text-center' })"
+			><font-awesome-icon :icon="['fas', 'align-center']" /></button>
+
+			<button
+					class="btn btn-simple js-set-button"
+					title="Параграф c текстом по правому"
+					@click.prevent="setItem({ tag: 'p', class: 'text-right' })"
+			><font-awesome-icon :icon="['fas', 'align-right']" /></button>
+
+			<button
+					class="btn btn-simple js-set-button"
+					title="Разрыв строки"
+					@click.prevent="setItem({ tag: 'br' })"
+			>br</button>
 
 			<button
 					class="btn btn-simple js-set-button"

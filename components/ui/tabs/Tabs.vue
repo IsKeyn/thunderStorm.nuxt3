@@ -76,7 +76,7 @@ const setTab = (tabID) => {
 
 <style lang="scss" scoped>
 ul {
-	@apply relative flex flex-nowrap mb-4;
+	@apply relative flex flex-nowrap mb-4  list-none list-inside ;
 
 	li {
 		@apply mr-6 last:mr-0;
