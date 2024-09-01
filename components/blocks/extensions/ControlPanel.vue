@@ -1,6 +1,9 @@
 <script setup>
 import FixedControlPanel from '@/components/ui/FixedControlPanel.vue';
-import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+import SettingByType from '@/components/blocks/extensions/fragments/SettingByType.vue';
+import OpeningBox from '@/components/ui/OpeningBox.vue';
+
+const emit = defineEmits(['setPreviewMode']);
 
 import { useBlocksStore } from '@/stores/blocks';
 const pageBlocks = useBlocksStore();
@@ -10,6 +13,14 @@ const props = defineProps({
 		type: Number,
 		default: null,
 	},
+	alwaysShow: {
+		type: Boolean,
+		default: false,
+	},
+	previewMode: {
+		type: Boolean,
+		default: false,
+	}
 });
 
 const deleteBlock = () => {
@@ -25,10 +36,40 @@ const togglePanel = () => {
 const changePosition = (direction) => {
 	pageBlocks.changePositionByIndexId(direction, props.blockIndex);
 }
+
+const setSettingsGroups = () => { // TODO переписать, не читаемо
+	if (pageBlocks.blocks[props.blockIndex].structure.settings) {
+		for (let key in pageBlocks.blocks[props.blockIndex].structure.settings) {
+			if (pageBlocks.blocks[props.blockIndex].structure.settings[key].group) {
+				const groupName = pageBlocks.blocks[props.blockIndex].structure.settings[key].group;
+
+				if (pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName]) {
+					if (!pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName].settingsKeys) {
+						pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName].settingsKeys = [];
+					}
+
+					if (!pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName].settingsKeys.includes(key)) {
+						pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName].settingsKeys.push(key);
+					}
+				}
+			}
+		}
+	}
+};
+
+setSettingsGroups();
 </script>
 
 <template>
-	<div class="control-panel">
+	<div :class="['control-panel', alwaysShow ? '!block' : '', 'z-10']">
+		<button
+				class="btn btn-simple"
+				title="Просмотреть блок блока"
+				@click="$emit('setPreviewMode')"
+		>
+			<font-awesome-icon v-if='previewMode' :icon="['fas', 'eye-slash']" />
+			<font-awesome-icon v-else :icon="['fas', 'eye']" />
+		</button>
 		<button
 				class="btn btn-simple"
 				title="Настройки блока"
@@ -38,17 +79,25 @@ const changePosition = (direction) => {
 		</button>
 		<button
 				class="btn btn-simple"
+				title="Переместить вверх"
 				@click="changePosition('top')"
 		>
 			<font-awesome-icon :icon="['fas', 'angle-up']" />
 		</button>
 		<button
 				class="btn btn-simple"
+				title="Переместить вниз"
 				@click="changePosition('bottom')"
 		>
 			<font-awesome-icon :icon="['fas', 'angle-down']" />
 		</button>
-		<button class="btn btn-simple" @click="deleteBlock"><font-awesome-icon :icon="['fas', 'xmark']" /></button>
+		<button
+				class="btn btn-simple"
+				title="Удалить блок"
+				@click="deleteBlock"
+		>
+			<font-awesome-icon :icon="['fas', 'xmark']" />
+		</button>
 	</div>
 	<FixedControlPanel
 		:showPanel="showPanel"
@@ -59,25 +108,24 @@ const changePosition = (direction) => {
 			<div
 					v-for="(setting, key) in pageBlocks.blocks[blockIndex].structure.settings"
 					:key="key"
+					:class="[
+							'mb-2 text-left'
+					]"
 			>
-				<div v-if="setting.type === 'checkbox' || setting.type === 'text' || setting.type === 'number'">
-					<FormGenerator
-							:name="setting.name"
-							:element="setting"
-							:showTitle="false"
-							validateErrorPosition="bottom"
-							fieldClasses="w-full"
-					/>
-				</div>
-				<div v-if="setting.type === 'select'">
-					<FormGenerator
-							:name="setting.name"
-							:element="setting"
-							:showTitle="false"
-							validateErrorPosition="bottom"
-							fieldClasses="w-full"
-					/>
-				</div>
+				<template v-if="!setting.group">
+					<SettingByType :setting="setting" />
+				</template>
+			</div>
+
+			<div v-for="(group, key) in pageBlocks.blocks[blockIndex].structure.settingGroups">
+				<OpeningBox
+						:title="group.name"
+						classes="mb-1"
+				>
+					<div v-for="(settingKey, key1) in group.settingsKeys">
+						<SettingByType :setting="pageBlocks.blocks[blockIndex].structure.settings[settingKey]" />
+					</div>
+				</OpeningBox>
 			</div>
 		</div>
 	</FixedControlPanel>

@@ -94,10 +94,14 @@ function repeater() {
 			if (Object.keys(props.repeaterItem).length > 0) {
 				for (const key in item) {
 					if (preparedData[key]) {
-						preparedData[key].value = item[key];
+						if (preparedData[key].value) {
+							preparedData[key].value = item[key];
+						} else if (preparedData[key]) {
+							preparedData[key] = item[key];
+						}
 
 						// Заполнение objectValue необходимо только для типов fileFromGallery
-						if (hasFileFromGallery) {
+						if (hasFileFromGallery.value) {
 							preparedData[key].objectValue = item;
 						}
 					}

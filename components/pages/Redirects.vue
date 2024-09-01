@@ -6,7 +6,19 @@ const redirectList = ref([
 	{
 		url: 'test',
 		redirectUrl: '/test2',
-	}
+	},
+	{
+		url: '/silent_hill/characters_sh',
+		redirectUrl: '/game/silent-hill-1/characters',
+	},
+	{
+		url: '/silent_hill/sh_ps_prohoshdenie_1',
+		redirectUrl: '/game/silent-hill-1/walkthrough',
+	},
+	{
+		url: '/silent_hill/end_of_game',
+		redirectUrl: '/game/silent-hill-1/endings',
+	},
 ]);
 
 

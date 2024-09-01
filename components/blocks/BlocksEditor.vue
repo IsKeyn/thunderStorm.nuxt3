@@ -56,11 +56,12 @@ defineExpose({
 		>
 			<BlocksList @selectBlock="selectBlock" />
 		</Modal>
-
+		
 		<component
 				v-for="(block, blockIndex) in pageBlocks.blocks"
 				:is="getBlock(block.name)"
 				:blockIndex="blockIndex"
+				:structure="block.structure"
 				:editMode="true"
 		/>
 	</div>

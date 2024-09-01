@@ -167,6 +167,18 @@ const openSendCommentForm = () => {
 						:is="getBlock(block.name)"
 						:structure="block.structure"
 				/>
+				<div
+						v-if="fetchedData.show_author && fetchedData.author"
+						class="author"
+				>
+					<b>Автор:</b> {{ fetchedData.author.name }}
+				</div>
+				<div
+						v-if="fetchedData.show_editor && fetchedData.editor"
+						class="editor"
+				>
+					<b>Редактор:</b> {{ fetchedData.editor.name }}
+				</div>
 			</div>
 			<div class="article-footer">
 				<div class="add-info">
@@ -221,7 +233,12 @@ const openSendCommentForm = () => {
 	}
 
 	.article-body {
+		@apply mb-4;
 		//@apply min-h-[350px];
+
+		.author, .editor {
+			@apply text-right;
+		}
 	}
 
 	.article-footer {

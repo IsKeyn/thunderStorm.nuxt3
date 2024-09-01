@@ -1,7 +1,8 @@
 <script setup>
 import ControlPanel from '@/components/blocks/extensions/ControlPanel.vue';
-import FragmentMedia from '@/components/blocks/fragments/FragmentMedia.vue';
-import WysiwygEditor from '@/components/ui/WysiwygEditor.vue';
+
+import OlCard from '@/components/blocks/Article/RepeaterLists/fragments/OlCard.vue';
+import UlCard from '@/components/blocks/Article/RepeaterLists/fragments/UlCard.vue';
 
 import { blocks } from '@/composables/blocks.js';
 
@@ -20,41 +21,59 @@ const props = defineProps({
 	},
 });
 
+const previewMode = ref(false);
+previewMode.value = props.editMode;
+
+const repeaterItem = {
+	item: 'Элемент списка',
+};
+
 const defaultStructure = {
 	fields: {
-		text: 'Текст параграфа',
-		image: {},
+		elements: [
+			{ ...repeaterItem },
+		],
 	},
 	settings: {
 		active: {
-			name: 'Активность',
 			value: true,
-			type: 'checkbox',
 		},
-		classes: {
-			name: 'Классы',
-			value: '',
-			type: 'text',
-		},
-		imagePosition: {
-			name: 'Позиция картинки',
-			value: 'float-right',
+		listType: {
+			name: 'Тип списка',
+			value: 'ul',
 			type: 'select',
 			options: [
 				{
-					name: 'Слева',
-					value: 'float-left',
+					name: 'Нумерованный',
+					value: 'ol',
 				},
 				{
-					name: 'Block',
-					value: '',
-				},
-				{
-					name: 'Справа',
-					value: 'float-right',
+					name: 'Обычный',
+					value: 'ul',
 				}
 			],
 		},
+		olStart: { // TODO сделать зависимоть и отображать только если listType === 'ol'
+			name: 'Первый элемент нумерованного списка',
+			value: 1,
+			type: 'number',
+		},
+		editType: {
+			name: 'Тип редактирования',
+			value: 'simple',
+			type: 'select',
+			options: [
+				{
+					name: 'Простой',
+					value: 'simple',
+				},
+				{
+					name: 'Wysiwyg',
+					value: 'wysiwyg',
+				}
+			],
+		},
+
 		overflow: {
 			name: 'overflow',
 			value: null,
@@ -348,47 +367,54 @@ setBlockStructure();
 				blockStructure.settings.paddinLeft.value,
 			]"
 	>
-		<div :class="[blockStructure.settings.classes.value]">
-			<ControlPanel
-					v-if="editMode"
-					:blockIndex="blockIndex"
-			/>
-			<FragmentMedia
-					v-model="blockStructure.fields.image"
-					:editMode="editMode"
-					:imageClass="[
-							blockStructure.settings.imagePosition.value,
-							'p-[8px] max-w-[26rem]'
-					]"
-			/>
-			<div class="whitespace-pre-wrap">
-				<template v-if="editMode">
-					<WysiwygEditor
-							v-model="blockStructure.fields.text"
-							:editMode="editMode"
-					/>
-				</template>
-				<template v-else>
-					<div v-html="blockStructure.fields.text" />
-				</template>
-			</div>
-		</div>
+		<ControlPanel
+				v-if="editMode"
+				:blockIndex="blockIndex"
+				:previewMode="previewMode"
+				@setPreviewMode="previewMode = !previewMode"
+		/>
+		<OlCard
+				v-if="blockStructure.settings.listType.value === 'ol'"
+				:repeaterItem="repeaterItem"
+				:blockStructure="blockStructure"
+				:blockIndex="blockIndex"
+				:editMode="previewMode"
+		/>
+		<UlCard
+				v-if="blockStructure.settings.listType.value === 'ul'"
+				:repeaterItem="repeaterItem"
+				:blockStructure="blockStructure"
+				:blockIndex="blockIndex"
+				:editMode="previewMode"
+		/>
 	</div>
 </template>
 
-<style lang="scss" scoped>
-textarea {
-	resize: block;
-}
-
-.paragraph-block {
-	@apply text-justify;
-}
-</style>
-
 <style lang="scss">
-.item {
-	color: var(--item-color);
-	font-weight: 600;
+.repeater-list-with-image {
+	@apply mt-4 mb-4 overflow-auto;
+
+	//img {
+	//	@apply w-[10rem];
+	//}
+
+	.header {
+		@apply text-center;
+
+		.first-title,
+		.second-title {
+			@apply block;
+		}
+
+		.first-title {
+			@apply font-bold text-[1.2rem];
+
+			color: var(--main-title-color);
+		}
+	}
+
+	.field-title {
+		@apply font-bold mr-[0.3rem];
+	}
 }
 </style>

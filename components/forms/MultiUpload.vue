@@ -1,6 +1,9 @@
 <script setup>
-import { watch } from "vue";
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+import TagsList from '@/components/tags/TagsList.vue';
+import ActionButton from '@/components/layout/buttons/ActionButton.vue';
+
+import { watch } from "vue";
 
 const files = ref([]);
 const formSample = ref(
@@ -25,6 +28,11 @@ const formSample = ref(
 				type: 'text',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+			},
+			tags: {
+				name: 'Теги',
+				value: [],
+				type: 'array',
 			},
 		}
 );
@@ -189,6 +197,10 @@ const preparedRequestBody = () => {
 		for (let formKey in rawData) {
 			if (rawData[formKey].type === 'file') {
 				formData.append(`multiFiles[${key}][${formKey}]`, rawData[formKey].value[0]);
+			} else if (rawData[formKey].type === 'array') {
+				rawData[formKey].value.forEach((item, arrKey) => {
+					formData.append(`multiFiles[${key}][${formKey}][${arrKey}]`, item);
+				});
 			} else {
 				formData.append(`multiFiles[${key}][${formKey}]`, rawData[formKey].value);
 			}
@@ -197,8 +209,6 @@ const preparedRequestBody = () => {
 
 	return formData;
 }
-
-import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 </script>
 
 <template>
@@ -234,6 +244,9 @@ import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 								validateErrorPosition="bottom"
 								:labelClasses="['block', 'mb-[10px]']"
 								:fieldClasses="field.classes"
+						/>
+						<TagsList
+								v-model="element.tags.value"
 						/>
 					</div>
 					<div class="info-block">

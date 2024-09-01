@@ -172,7 +172,7 @@ span.flip-text-box {
 
 /* НАЧАЛО Списки */
 ul {
-  @apply list-disc list-inside;
+  @apply list-disc list-outside ml-[1.5rem];
 
   &.p-1rem {
     @apply pt-1 pb-1;
@@ -180,7 +180,7 @@ ul {
 }
 
 ol {
-  @apply list-decimal pl-[1rem];
+  @apply list-decimal list-outside ml-[1.5rem];
 
   &.p-1rem {
     @apply pt-1 pb-1;

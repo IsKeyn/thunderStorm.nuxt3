@@ -74,6 +74,27 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			editor: {
+				name: 'ID редактор',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			show_author: {
+				name: 'Показывать автора',
+				value: 0,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			show_editor: {
+				name: 'Показывать редактора',
+				value: 0,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			created_at: {
 				name: 'Дата создания',
 				value: '',

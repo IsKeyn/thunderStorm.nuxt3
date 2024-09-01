@@ -31,17 +31,17 @@ export const useBlocksStore = defineStore('blocks', {
             });
         },
         changePositionByIndexId(direction, index) {
-            const currentBlock = this.blocks[index];
+            const currentBlock = {...this.blocks[index]};
             let changedBlock = {};
 
             if (direction === 'top' && index > 0) {
-                changedBlock = this.blocks[index - 1];
+                changedBlock = {...this.blocks[index - 1]};
                 this.blocks[index - 1] = currentBlock;
                 this.blocks[index] = changedBlock;
             }
 
-            if (direction === 'bottom' && this.blocks.length - 1 < index) {
-                changedBlock = this.blocks[index + 1];
+            if (direction === 'bottom' && this.blocks.length - 1 > index) {
+                changedBlock = {...this.blocks[index + 1]};
                 this.blocks[index + 1] = currentBlock;
                 this.blocks[index] = changedBlock;
             }

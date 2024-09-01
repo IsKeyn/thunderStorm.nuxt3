@@ -3,6 +3,7 @@ import ControlPanel from '@/components/blocks/extensions/ControlPanel.vue';
 import FragmentMedia from '@/components/blocks/fragments/FragmentMedia.vue';
 
 import { blocks } from '@/composables/blocks.js';
+import { watch } from "vue";
 
 const props = defineProps({
 	structure: {
@@ -17,23 +18,20 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	// structure: { // Режим редактирования
+	// 	type: Boolean,
+	// 	default: false,
+	// },
 });
+
+import defaultSettings from '@/components/blocks/defaultSettings.json';
+import defaultGroups from '@/components/blocks/defaultGroups.json';
 
 const defaultStructure = {
 	fields: {
 		text: 'Заголовок',
 	},
 	settings: {
-		active: {
-			name: 'Активность',
-			value: true,
-			type: 'checkbox',
-		},
-		classes: {
-			name: 'Классы',
-			value: '',
-			type: 'text',
-		},
 		titlePosition: {
 			name: 'Позиция заголовка',
 			value: 'text-center',
@@ -53,6 +51,10 @@ const defaultStructure = {
 				}
 			],
 		},
+		...defaultSettings,
+	},
+	settingGroups: {
+		...defaultGroups,
 	},
 };
 
@@ -61,11 +63,28 @@ const {
 	setBlockStructure,
 } = blocks(defaultStructure, props.structure, props.blockIndex, props.editMode);
 
+watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спасает от ситуации когда меняешь местами два одинаковых блока
+	setBlockStructure();
+},{ deep: true });
+
 setBlockStructure();
 </script>
 
 <template>
-	<div class="th-block paragraph-block">
+	<div
+			:class="[
+				'th-block paragraph-block',
+				blockStructure.settings.overflow.value ? blockStructure.settings.overflow.value : '',
+				blockStructure.settings.marginTop.value,
+				blockStructure.settings.marginRight.value,
+				blockStructure.settings.marginBottom.value,
+				blockStructure.settings.marginLeft.value,
+				blockStructure.settings.paddinTop.value,
+				blockStructure.settings.paddinRight.value,
+				blockStructure.settings.paddinBottom.value,
+				blockStructure.settings.paddinLeft.value,
+			]"
+	>
 		<ControlPanel
 				v-if="editMode"
 				:blockIndex="blockIndex"
