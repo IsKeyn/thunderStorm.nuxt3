@@ -1,0 +1,109 @@
+{
+  "classes": {
+    "name": "Классы",
+    "value": "",
+    "type": "text"
+  },
+  "width": {
+    "name": "Ширина",
+    "value": "w-full md:w-[200px]",
+    "type": "select",
+    "options": [
+      {
+        "name": "100px",
+        "value": "w-full md:w-[100px]"
+      },
+      {
+        "name": "150px",
+        "value": "w-full md:w-[150px]"
+      },
+      {
+        "name": "200px",
+        "value": "w-full md:w-[200px]"
+      },
+      {
+        "name": "300px",
+        "value": "w-full md:w-[300px]"
+      },
+      {
+        "name": "400px",
+        "value": "w-full md:w-[400px]"
+      },
+      {
+        "name": "500px",
+        "value": "w-full md:w-[500px]"
+      },
+      {
+        "name": "25%",
+        "value": "w-full md:w-3/12"
+      },
+      {
+        "name": "50%",
+        "value": "w-full md:w-6/12"
+      },
+      {
+        "name": "75%",
+        "value": "w-full md:w-9/12"
+      },
+      {
+        "name": "100%",
+        "value": "w-full md:w-full"
+      },
+      {
+        "name": "auto",
+        "value": "w-full md:w-[auto]"
+      }
+    ]
+  },
+  "height": {
+    "name": "Высота",
+    "value": "h-full md:h-[auto]",
+    "type": "select",
+    "options": [
+      {
+        "name": "100px",
+        "value": "h-full md:h-[100px]"
+      },
+      {
+        "name": "150px",
+        "value": "h-full md:h-[150px]"
+      },
+      {
+        "name": "200px",
+        "value": "h-full md:h-[200px]"
+      },
+      {
+        "name": "300px",
+        "value": "h-full md:h-[300px]"
+      },
+      {
+        "name": "400px",
+        "value": "h-full md:h-[400px]"
+      },
+      {
+        "name": "500px",
+        "value": "h-full md:h-[500px]"
+      },
+      {
+        "name": "25%",
+        "value": "h-full md:h-3/12"
+      },
+      {
+        "name": "50%",
+        "value": "h-full md:h-6/12"
+      },
+      {
+        "name": "75%",
+        "value": "h-full md:h-9/12"
+      },
+      {
+        "name": "100%",
+        "value": "h-full md:h-full"
+      },
+      {
+        "name": "auto",
+        "value": "h-full md:h-[auto]"
+      }
+    ]
+  }
+}

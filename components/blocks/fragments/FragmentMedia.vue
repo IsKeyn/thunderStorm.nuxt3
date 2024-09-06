@@ -1,7 +1,10 @@
 <script setup>
+import LightBox from '@/components/media/LightBox.vue'
 import Modal from '@/components/modals/Modal.vue';
 import GalleryType1Component from '@/components/media/GalleryType1Component.vue';
-import LightBox from '@/components/media/LightBox.vue'
+import FixedControlPanelWithSettings from '@/components/blocks/extensions/fragments/FixedControlPanelWithSettings.vue';
+
+import fragmentMediaSettings from '@/components/blocks/json/fragmentMediaSettings.json';
 
 import { lightBox } from '@/composables/lightBox.js';
 const {
@@ -12,7 +15,7 @@ const {
 const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps({
-	// Объект с данными поля
+	/* Объект с данными поля */
 	modelValue: {
 		type: Array,
 		default: {},
@@ -28,7 +31,6 @@ const props = defineProps({
 });
 
 const activeGalleryModal = ref(false);
-
 const toggleGalleryModal = () => {
 	activeGalleryModal.value = !activeGalleryModal.value;
 }
@@ -36,6 +38,7 @@ const toggleGalleryModal = () => {
 const selectThisElement = (element) => {
 	toggleGalleryModal();
 	const rawElement = toRaw(element);
+	rawElement.settings = fragmentMediaSettings;
 	emit('update:modelValue', rawElement);
 }
 
@@ -46,21 +49,49 @@ const imageHandler = (image) => {
 		setOpenedImage(image);
 	}
 }
+
+const fixedControlPanelWithSettingsRef = ref(null);
 </script>
 
 <template>
-	<img
-			v-if="modelValue && modelValue.src"
-			:src="modelValue.src"
-			:class="imageClass"
-			@click="imageHandler(modelValue)"
-	>
-	<img
-			v-else-if="editMode"
-			src="/images/admin/no_image.jpg"
-			:class="imageClass"
-			@click="imageHandler(modelValue)"
-	>
+	<div :class="['image-wrapper', imageClass]">
+		<img
+				v-if="modelValue && modelValue.src"
+				:src="modelValue.src"
+				:class="[
+					modelValue?.settings?.classes?.value,
+					modelValue?.settings?.width?.value,
+					modelValue?.settings?.height?.value,
+				]"
+				@click="imageHandler(modelValue)"
+		>
+		<div
+				v-else-if="editMode"
+				@click="imageHandler(modelValue)"
+		>
+			<font-awesome-icon
+					:icon="['far', 'image']"
+					:class="['!w-[200px] !h-[200px] cursor-pointer']"
+			/>
+		</div>
+
+		<div class="control-panel" v-if="editMode && modelValue && modelValue.src">
+			<button
+					class="btn btn-simple"
+					title="Настройки блока"
+					@click="fixedControlPanelWithSettingsRef.togglePanel()"
+			>
+				<font-awesome-icon :icon="['fas', 'sliders']" />
+			</button>
+		</div>
+	</div>
+
+	<FixedControlPanelWithSettings
+			v-if="editMode"
+			ref="fixedControlPanelWithSettingsRef"
+			title="Настройки медиа фрагмента"
+			:settings="modelValue.settings"
+	/>
 
 	<Modal
 			v-if="editMode"
@@ -77,6 +108,7 @@ const imageHandler = (image) => {
 				@selectThisElement="selectThisElement"
 		/>
 	</Modal>
+
 	<LightBox
 			v-if="openedImage"
 			:image="openedImage"
@@ -86,7 +118,21 @@ const imageHandler = (image) => {
 </template>
 
 <style lang="scss" scoped>
-img {
-	@apply cursor-pointer;
+.image-wrapper {
+	@apply relative;
+
+	&:hover {
+		> .control-panel {
+			@apply block;
+		}
+	}
+
+	> .control-panel {
+		@apply absolute hidden bottom-0 left-0;
+	}
+
+	img {
+		@apply cursor-pointer;
+	}
 }
 </style>

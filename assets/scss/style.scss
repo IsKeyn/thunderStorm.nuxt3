@@ -70,12 +70,12 @@ body {
   @apply relative;
 
   &:hover {
-    .control-panel {
+    > .control-panel {
       @apply block;
     }
   }
 
-  .control-panel {
+  > .control-panel {
     @apply absolute hidden right-0 top-0;
   }
 }

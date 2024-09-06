@@ -96,7 +96,7 @@ const closePanel = () => {
 
 	&.admin-control-panel {
 		&.right {
-			@apply fixed right-0 top-[40%];
+			@apply fixed right-0 top-[40%] z-[90];
 		}
 	}
 
