@@ -20,22 +20,15 @@ const props = defineProps({
 	},
 });
 
+import defaultSettings from '@/components/blocks/json/defaultSettings.json';
+import defaultGroups from '@/components/blocks/json/defaultGroups.json';
+
 const defaultStructure = {
 	fields: {
 		text: 'Текст параграфа',
 		image: {},
 	},
 	settings: {
-		active: {
-			name: 'Активность',
-			value: true,
-			type: 'checkbox',
-		},
-		classes: {
-			name: 'Классы',
-			value: '',
-			type: 'text',
-		},
 		imagePosition: {
 			name: 'Позиция картинки',
 			value: 'float-right',
@@ -55,273 +48,10 @@ const defaultStructure = {
 				}
 			],
 		},
-		overflow: {
-			name: 'overflow',
-			value: null,
-			type: 'select',
-			options: [
-				{
-					name: 'default',
-					value: null,
-				},
-				{
-					name: 'scroll',
-					value: 'overflow-scroll',
-				},
-				{
-					name: 'hidden',
-					value: 'overflow-hidden',
-				}
-			],
-		},
-		marginTop: {
-			name: 'Отступ сверху',
-			value: 'mt-0',
-			type: 'select',
-			options: [
-				{
-					name: '0',
-					value: 'mt-0',
-				},
-				{
-					name: '1',
-					value: 'mt-1',
-				},
-				{
-					name: '2',
-					value: 'mt-2',
-				},
-				{
-					name: '3',
-					value: 'mt-3',
-				},
-				{
-					name: '4',
-					value: 'mt-4',
-				},
-				{
-					name: '5',
-					value: 'mt-6',
-				},
-			],
-		},
-		marginRight: {
-			name: 'Отступ справа',
-			value: 'mr-0',
-			type: 'select',
-			options: [
-				{
-					name: '0',
-					value: 'mr-0',
-				},
-				{
-					name: '1',
-					value: 'mr-1',
-				},
-				{
-					name: '2',
-					value: 'mr-2',
-				},
-				{
-					name: '3',
-					value: 'mr-3',
-				},
-				{
-					name: '4',
-					value: 'mr-4',
-				},
-				{
-					name: '5',
-					value: 'mr-6',
-				},
-			],
-		},
-		marginBottom: {
-			name: 'Отступ снизу',
-			value: 'mb-0',
-			type: 'select',
-			options: [
-				{
-					name: '0',
-					value: 'mb-0',
-				},
-				{
-					name: '1',
-					value: 'mb-1',
-				},
-				{
-					name: '2',
-					value: 'mb-2',
-				},
-				{
-					name: '3',
-					value: 'mb-3',
-				},
-				{
-					name: '4',
-					value: 'mb-4',
-				},
-				{
-					name: '5',
-					value: 'mb-6',
-				},
-			],
-		},
-		marginLeft: {
-			name: 'Отступ слева',
-			value: 'ml-0',
-			type: 'select',
-			options: [
-				{
-					name: '0',
-					value: 'ml-0',
-				},
-				{
-					name: '1',
-					value: 'ml-1',
-				},
-				{
-					name: '2',
-					value: 'ml-2',
-				},
-				{
-					name: '3',
-					value: 'ml-3',
-				},
-				{
-					name: '4',
-					value: 'ml-4',
-				},
-				{
-					name: '5',
-					value: 'ml-6',
-				},
-			],
-		},
-		paddinTop: {
-			name: 'Внутренний отступ сверху',
-			value: 'pt-0',
-			type: 'select',
-			options: [
-				{
-					name: '0',
-					value: 'pt-0',
-				},
-				{
-					name: '1',
-					value: 'pt-1',
-				},
-				{
-					name: '2',
-					value: 'pt-2',
-				},
-				{
-					name: '3',
-					value: 'pt-3',
-				},
-				{
-					name: '4',
-					value: 'pt-4',
-				},
-				{
-					name: '5',
-					value: 'pt-6',
-				},
-			],
-		},
-		paddinRight: {
-			name: 'Внутренний отступ справа',
-			value: 'pr-0',
-			type: 'select',
-			options: [
-				{
-					name: '0',
-					value: 'pr-0',
-				},
-				{
-					name: '1',
-					value: 'pr-1',
-				},
-				{
-					name: '2',
-					value: 'pr-2',
-				},
-				{
-					name: '3',
-					value: 'pr-3',
-				},
-				{
-					name: '4',
-					value: 'pr-4',
-				},
-				{
-					name: '5',
-					value: 'pr-6',
-				},
-			],
-		},
-		paddinBottom: {
-			name: 'Внутренний отступ снизу',
-			value: 'pb-0',
-			type: 'select',
-			options: [
-				{
-					name: '0',
-					value: 'pb-0',
-				},
-				{
-					name: '1',
-					value: 'pb-1',
-				},
-				{
-					name: '2',
-					value: 'pb-2',
-				},
-				{
-					name: '3',
-					value: 'pb-3',
-				},
-				{
-					name: '4',
-					value: 'pb-4',
-				},
-				{
-					name: '5',
-					value: 'pb-6',
-				},
-			],
-		},
-		paddinLeft: {
-			name: 'Внутренний отступ слева',
-			value: 'pl-0',
-			type: 'select',
-			options: [
-				{
-					name: '0',
-					value: 'pl-0',
-				},
-				{
-					name: '1',
-					value: 'pl-1',
-				},
-				{
-					name: '2',
-					value: 'pl-2',
-				},
-				{
-					name: '3',
-					value: 'pl-3',
-				},
-				{
-					name: '4',
-					value: 'pl-4',
-				},
-				{
-					name: '5',
-					value: 'pl-6',
-				},
-			],
-		},
+		...defaultSettings,
+	},
+	settingGroups: {
+		...defaultGroups,
 	},
 };
 
@@ -354,7 +84,8 @@ setBlockStructure();
 					:blockIndex="blockIndex"
 			/>
 			<FragmentMedia
-					v-model="blockStructure.fields.image"
+					:blockIndex="blockIndex"
+					fieldName="image"
 					:editMode="editMode"
 					:imageClass="[
 							blockStructure.settings.imagePosition.value,

@@ -24,8 +24,8 @@ const props = defineProps({
 	// },
 });
 
-import defaultSettings from '@/components/blocks/defaultSettings.json';
-import defaultGroups from '@/components/blocks/defaultGroups.json';
+import defaultSettings from '@/components/blocks/json/defaultSettings.json';
+import defaultGroups from '@/components/blocks/json/defaultGroups.json';
 
 const defaultStructure = {
 	fields: {

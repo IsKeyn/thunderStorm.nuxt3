@@ -38,3 +38,10 @@ const props = defineProps({
 		</template>
 	</OpeningBox>
 </template>
+
+
+<style lang="scss" scoped>
+a {
+	@apply block;
+}
+</style>

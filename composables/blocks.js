@@ -62,7 +62,7 @@ export function blocks(
 
     const addNewFieldsToStructure = () => {
         for (let fieldName in defaultStructure.fields) {
-            if (!blockStructure.value.fields[fieldName]) {
+            if (typeof blockStructure.value.fields[fieldName] === "undefined") {
                 blockStructure.value.fields[fieldName] = defaultStructure.fields[fieldName];
             }
         }

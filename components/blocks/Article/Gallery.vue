@@ -1,11 +1,15 @@
 <script setup>
-import Repeater from '@/components/repeaters/Repeater.vue';
 import ControlPanel from '@/components/blocks/extensions/ControlPanel.vue';
+import Repeater from '@/components/repeaters/Repeater.vue';
 import FragmentMedia from '@/components/blocks/fragments/FragmentMedia.vue';
 
-const repeaterComponent = ref(null);
+import defaultSettings from '@/components/blocks/json/defaultSettings.json';
+import defaultGroups from '@/components/blocks/json/defaultGroups.json';
 
+import { watch } from "vue";
 import { blocks } from '@/composables/blocks.js';
+
+const repeaterComponent = ref(null);
 
 const props = defineProps({
 	structure: {
@@ -30,43 +34,56 @@ const defaultStructure = {
 		active: {
 			value: true,
 		},
-		position: {
+		rowCount: {
 			name: 'Количество элементов в строке',
-			value: '2',
+			value: 'md:col-span-3',
 			type: 'select',
 			options: [
 				{
 					name: '1',
-					value: 'col-span-12',
+					value: 'md:col-span-12',
 				},
 				{
 					name: '2',
-					value: 'col-span-6',
+					value: 'md:col-span-6',
 				},
 				{
 					name: '3',
-					value: 'col-span-4',
+					value: 'md:col-span-4',
 				},
 				{
 					name: '4',
-					value: 'col-span-3',
+					value: 'md:col-span-3',
 				},
 				{
 					name: '6',
-					value: 'col-span-2',
+					value: 'md:col-span-2',
 				}
 			],
 		},
 		sideIndent: {
 			name: 'Боковой отступ (rem)',
-			value: 0,
-			type: 'number',
+			value: 'md:ml-0 md-mr-0',
+			type: 'select',
+			options: [
+				{
+					name: '0',
+					value: 'md:ml-0 md-mr-0',
+				},
+				{
+					name: '50px',
+					value: 'md:ml-[50px] md:mr-[50px]',
+				},
+				{
+					name: '100px',
+					value: 'md:ml-[100px] md:mr-[100px]',
+				},
+			],
 		},
-		classes: {
-			name: 'Классы',
-			value: '',
-			type: 'text',
-		},
+		...defaultSettings,
+	},
+	settingGroups: {
+		...defaultGroups,
 	},
 };
 
@@ -75,11 +92,12 @@ const {
 	setBlockStructure,
 } = blocks(defaultStructure, props.structure, props.blockIndex, props.editMode);
 
+watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спасает от ситуации когда меняешь местами два одинаковых блока
+	setBlockStructure();
+}, { deep: true });
+
 setBlockStructure();
 
-const sideIndent = computed(() => {
-	return `ml-[${blockStructure.value.settings?.sideIndent.value}rem] mr-[${blockStructure.value.settings?.sideIndent.value}rem]`;
-});
 </script>
 
 <template>
@@ -88,7 +106,11 @@ const sideIndent = computed(() => {
 				v-if="editMode"
 				:blockIndex="blockIndex"
 		/>
-		<div :class="['gallery-main', sideIndent, blockStructure.settings.classes.value]">
+		<div :class="[
+				'gallery-main',
+				sideIndent,
+				blockStructure.settings.classes.value
+		]">
 			<Repeater
 					ref="repeaterComponent"
 					:repeaterItem="{}"
@@ -98,7 +120,7 @@ const sideIndent = computed(() => {
 				<div
 						v-for="(item, index) in repeaterItems"
 						:key="index"
-						:class="['image-item', blockStructure.settings?.position.value]"
+						:class="['image-item', blockStructure.settings?.rowCount.value]"
 				>
 					<FragmentMedia
 							v-model="repeaterItems[index]"

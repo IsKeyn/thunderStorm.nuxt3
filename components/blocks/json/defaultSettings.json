@@ -25,6 +25,22 @@
       {
         "name": "hidden",
         "value": "overflow-hidden"
+      },
+      {
+        "name": "clip",
+        "value": "overflow-clip"
+      },
+      {
+        "name": "unset",
+        "value": "overflow-unset"
+      },
+      {
+        "name": "inherit",
+        "value": "overflow-inherit"
+      },
+      {
+        "name": "auto",
+        "value": "overflow-auto"
       }
     ]
   },

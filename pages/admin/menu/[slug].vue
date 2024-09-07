@@ -19,7 +19,7 @@ const form = ref(
 				name: 'Ссылка',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, minLength_2, maxLength_200',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			target: {

@@ -90,6 +90,11 @@ const afterRequest = (params) => {
 		}
 	}
 
+	if (doType === 'saveAndAddNew') {
+		// TODO делать очистку форму
+		router.push({ path: `/${splitedPath[1]}/${splitedPath[2]}/create` });
+	}
+
 	alert('Успешно сохранено');
 }
 
@@ -217,6 +222,11 @@ const buttons = [
 		name: 'Сохранить и продолжить',
 		class: 'mr-2',
 		doType: 'saveAndContinue',
+	},
+	{
+		name: 'Сохранить и добавить ещё',
+		class: 'mr-2',
+		doType: 'saveAndAddNew',
 	},
 ];
 </script>

@@ -19,6 +19,22 @@ const redirectList = ref([
 		url: '/silent_hill/end_of_game',
 		redirectUrl: '/game/silent-hill-1/endings',
 	},
+	{
+		url: '/silent_hill/silent_hill_android',
+		redirectUrl: '/game/silent-hill-1/silent-hill-1-on-android',
+	},
+	{
+		url: '/silent_hill/silent_hill-original_soundtracks',
+		redirectUrl: '/game/silent-hill-1/ost',
+	},
+	{
+		url: '/silent_hill/conceptart_silenthill',
+		redirectUrl: '/game/silent-hill-1/media',
+	},
+	{
+		url: '/silent_hill/razrabothciki_silenthill',
+		redirectUrl: '/game/silent-hill-1/creators',
+	},
 ]);
 
 

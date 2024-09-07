@@ -1,7 +1,5 @@
 <script setup>
-import FixedControlPanel from '@/components/ui/FixedControlPanel.vue';
-import SettingByType from '@/components/blocks/extensions/fragments/SettingByType.vue';
-import OpeningBox from '@/components/ui/OpeningBox.vue';
+import FixedControlPanelWithSettings from '@/components/blocks/extensions/fragments/FixedControlPanelWithSettings.vue';
 
 const emit = defineEmits(['setPreviewMode']);
 
@@ -27,29 +25,31 @@ const deleteBlock = () => {
 	pageBlocks.deleteBlockByIndex(props.blockIndex);
 }
 
-const showPanel = ref(false);
-
-const togglePanel = () => {
-	showPanel.value = !showPanel.value;
-}
-
 const changePosition = (direction) => {
 	pageBlocks.changePositionByIndexId(direction, props.blockIndex);
 }
 
-const setSettingsGroups = () => { // TODO переписать, не читаемо
-	if (pageBlocks.blocks[props.blockIndex].structure.settings) {
-		for (let key in pageBlocks.blocks[props.blockIndex].structure.settings) {
-			if (pageBlocks.blocks[props.blockIndex].structure.settings[key].group) {
-				const groupName = pageBlocks.blocks[props.blockIndex].structure.settings[key].group;
+const copyBlock = () => {
+	pageBlocks.copyBlock(props.blockIndex);
+}
 
-				if (pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName]) {
-					if (!pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName].settingsKeys) {
-						pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName].settingsKeys = [];
+const setSettingsGroups = () => {
+	/* Распределение настроек по группам */
+	const settings = pageBlocks.blocks[props.blockIndex].structure.settings;
+	const settingGroups = pageBlocks.blocks[props.blockIndex].structure.settingGroups;
+
+	if (settings) {
+		for (let key in settings) {
+			if (settings[key].group) {
+				const groupName = settings[key].group;
+
+				if (settingGroups[groupName]) {
+					if (!settingGroups[groupName].settingsKeys) {
+						settingGroups[groupName].settingsKeys = [];
 					}
 
-					if (!pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName].settingsKeys.includes(key)) {
-						pageBlocks.blocks[props.blockIndex].structure.settingGroups[groupName].settingsKeys.push(key);
+					if (!settingGroups[groupName].settingsKeys.includes(key)) {
+						settingGroups[groupName].settingsKeys.push(key);
 					}
 				}
 			}
@@ -58,6 +58,8 @@ const setSettingsGroups = () => { // TODO переписать, не читае�
 };
 
 setSettingsGroups();
+
+const fixedControlPanelWithSettingsRef = ref(null);
 </script>
 
 <template>
@@ -73,9 +75,16 @@ setSettingsGroups();
 		<button
 				class="btn btn-simple"
 				title="Настройки блока"
-				@click="togglePanel"
+				@click="fixedControlPanelWithSettingsRef.togglePanel()"
 		>
 			<font-awesome-icon :icon="['fas', 'sliders']" />
+		</button>
+		<button
+				class="btn btn-simple"
+				title="Копировать блок"
+				@click="copyBlock"
+		>
+			<font-awesome-icon :icon="['fas', 'copy']" />
 		</button>
 		<button
 				class="btn btn-simple"
@@ -99,36 +108,13 @@ setSettingsGroups();
 			<font-awesome-icon :icon="['fas', 'xmark']" />
 		</button>
 	</div>
-	<FixedControlPanel
-		:showPanel="showPanel"
-		title="Настройки блока"
-		@togglePanel="togglePanel"
-	>
-		<div v-if="pageBlocks.blocks[blockIndex].structure.settings">
-			<div
-					v-for="(setting, key) in pageBlocks.blocks[blockIndex].structure.settings"
-					:key="key"
-					:class="[
-							'mb-2 text-left'
-					]"
-			>
-				<template v-if="!setting.group">
-					<SettingByType :setting="setting" />
-				</template>
-			</div>
 
-			<div v-for="(group, key) in pageBlocks.blocks[blockIndex].structure.settingGroups">
-				<OpeningBox
-						:title="group.name"
-						classes="mb-1"
-				>
-					<div v-for="(settingKey, key1) in group.settingsKeys">
-						<SettingByType :setting="pageBlocks.blocks[blockIndex].structure.settings[settingKey]" />
-					</div>
-				</OpeningBox>
-			</div>
-		</div>
-	</FixedControlPanel>
+	<FixedControlPanelWithSettings
+			ref="fixedControlPanelWithSettingsRef"
+			:title="`Настройки блока ${pageBlocks.blocks[blockIndex].name} [${blockIndex}]`"
+			:settings="pageBlocks.blocks[blockIndex].structure.settings"
+			:settingGroups="pageBlocks.blocks[blockIndex].structure.settingGroups"
+	/>
 </template>
 
 <style lang="scss" scoped>

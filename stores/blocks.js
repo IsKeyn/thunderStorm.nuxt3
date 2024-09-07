@@ -46,6 +46,13 @@ export const useBlocksStore = defineStore('blocks', {
                 this.blocks[index] = changedBlock;
             }
         },
+        copyBlock(index) {
+            const currentBlock = structuredClone(toRaw(this.blocks[index]));
+
+            currentBlock.id = null;
+
+            this.blocks.splice(index + 1, 0, currentBlock);
+        },
     },
     getters: {
         getBlockByDynamicId(id) {
