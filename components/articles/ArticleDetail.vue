@@ -6,6 +6,7 @@ import EntityUserActionsPanel from '@/components/actions/EntityUserActionsPanel.
 import TitleImage from '@/components/media/TitleImage.vue';
 import SimpleTagsList from '@/components/tags/SimpleTagsList.vue';
 import Head from '@/components/seo/Head.vue';
+import BlockWrapper from '@/components/blockEditor/editor/BlockWrapper.vue';
 
 const props = defineProps({
 	type: {
@@ -41,11 +42,6 @@ const {
 	publicUrl,
 	sessionCookieName,
 } = api();
-
-import { blocks } from '@/composables/blocks.js'
-const {
-	getBlock,
-} = blocks();
 
 const route = useRoute();
 
@@ -162,9 +158,9 @@ const openSendCommentForm = () => {
 			</div>
 			<div class="article-body">
 				<div v-html="fetchedData.text_full" />
-				<component
-						v-for="block in fetchedData.blocks"
-						:is="getBlock(block.name)"
+				<BlockWrapper
+						v-for="(block, blockIndex) in fetchedData.blocks"
+						:name="block.name"
 						:structure="block.structure"
 				/>
 				<div

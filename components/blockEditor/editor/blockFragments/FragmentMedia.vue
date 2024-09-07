@@ -2,9 +2,9 @@
 import LightBox from '@/components/media/LightBox.vue'
 import Modal from '@/components/modals/Modal.vue';
 import GalleryType1Component from '@/components/media/GalleryType1Component.vue';
-import FixedControlPanelWithSettings from '@/components/blocks/extensions/fragments/FixedControlPanelWithSettings.vue';
+import FixedControlPanelWithSettings from '@/components/blockEditor/editor/editorFragments/FixedControlPanelWithSettings.vue';
 
-import fragmentMediaSettings from '@/components/blocks/json/fragmentMediaSettings.json';
+import fragmentMediaSettings from '@/components/blockEditor/editor/json/fragmentMediaSettings.json';
 
 import { lightBox } from '@/composables/lightBox.js';
 const {

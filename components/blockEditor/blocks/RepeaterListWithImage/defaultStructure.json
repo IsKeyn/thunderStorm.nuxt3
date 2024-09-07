@@ -1,0 +1,84 @@
+{
+  "fields": {
+    "firstTitle": "Заголовок 1",
+    "secondTitle": "(Заголовок 2)",
+    "image": {},
+    "elements": [
+      {
+        "title": "Заголовок: ",
+        "description": "Описание"
+      }
+    ]
+  },
+  "settings": {
+    "imagePosition": {
+      "name": "Позиция картинки",
+      "value": "md:float-right",
+      "type": "select",
+      "options": [
+        {
+          "name": "Слева",
+          "value": "md:float-left"
+        },
+        {
+          "name": "md:block md:m-auto",
+          "value": ""
+        },
+        {
+          "name": "Справа",
+          "value": "md:float-right"
+        }
+      ]
+    },
+    "titlePosition": {
+      "name": "Позиция заголовка",
+      "value": "text-center",
+      "type": "select",
+      "options": [
+        {
+          "name": "Слева",
+          "value": "text-left"
+        },
+        {
+          "name": "По центру",
+          "value": "text-center"
+        },
+        {
+          "name": "Справа",
+          "value": "text-right"
+        }
+      ]
+    },
+    "marginFromTitle": {
+      "name": "Отступ от заголовков сверху",
+      "value": "mb-0",
+      "type": "select",
+      "options": [
+        {
+          "name": "0",
+          "value": "mb-0"
+        },
+        {
+          "name": "1",
+          "value": "mb-1"
+        },
+        {
+          "name": "2",
+          "value": "mb-2"
+        },
+        {
+          "name": "3",
+          "value": "mb-3"
+        },
+        {
+          "name": "4",
+          "value": "mb-4"
+        },
+        {
+          "name": "5",
+          "value": "mb-6"
+        }
+      ]
+    }
+  }
+}

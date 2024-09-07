@@ -1,27 +1,19 @@
 <script setup>
 import Modal from '@/components/modals/Modal.vue';
-import BlocksList from '@/components/blocks/BlocksList.vue';
-
-import { watch } from "vue";
+import BlocksList from '@/components/blockEditor/editor/BlocksList.vue';
+import BlockWrapper from '@/components/blockEditor/editor/BlockWrapper.vue';
 
 import { useBlocksStore } from '@/stores/blocks';
 const pageBlocks = useBlocksStore();
 
 import { blocks } from '@/composables/blocks.js'
-const {
-	getBlock,
-	blockList,
-} = blocks();
-
+const { blockList } = blocks();
 
 // Работа с модальным окном
 const blocksModal = ref(false);
-
 const toggleBlocksModal = () => {
 	blocksModal.value = !blocksModal.value;
 }
-
-const hasFirstLoad = ref(false);
 
 const selectBlock = (element) => {
 	toggleBlocksModal();
@@ -56,12 +48,12 @@ defineExpose({
 		>
 			<BlocksList @selectBlock="selectBlock" />
 		</Modal>
-		
-		<component
+
+		<BlockWrapper
 				v-for="(block, blockIndex) in pageBlocks.blocks"
-				:is="getBlock(block.name)"
-				:blockIndex="blockIndex"
+				:name="block.name"
 				:structure="block.structure"
+				:blockIndex="blockIndex"
 				:editMode="true"
 		/>
 	</div>

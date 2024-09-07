@@ -1,0 +1,26 @@
+{
+  "fields": {
+    "text": "Заголовок"
+  },
+  "settings": {
+    "titlePosition": {
+      "name": "Позиция заголовка",
+      "value": "text-center",
+      "type": "select",
+      "options": [
+        {
+          "name": "Слева",
+          "value": "text-left"
+        },
+        {
+          "name": "Центр",
+          "value": "text-center"
+        },
+        {
+          "name": "Справа",
+          "value": "text-right"
+        }
+      ]
+    }
+  }
+}

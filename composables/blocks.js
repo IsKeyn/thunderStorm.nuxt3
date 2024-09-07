@@ -1,10 +1,10 @@
-import Title from '@/components/blocks/Article/Title.vue';
-import Paragraph from '@/components/blocks/Article/Paragraph.vue';
-import Character from '@/components/blocks/Article/Character.vue';
-import Gallery from '@/components/blocks/Article/Gallery.vue';
-import Delimeter from '@/components/blocks/Article/Delimeter.vue';
-import RepeaterListWithImage from '@/components/blocks/Article/RepeaterListWithImage.vue';
-import RepeaterLists from '@/components/blocks/Article/RepeaterLists/RepeaterLists.vue';
+import Title from '@/components/blockEditor/blocks/Title/Title.vue';
+import Paragraph from '@/components/blockEditor/blocks/Paragraph/Paragraph.vue';
+import Character from '@/components/blockEditor/blocks/Character/Character.vue';
+import Gallery from '@/components/blockEditor/blocks/Gallery/Gallery.vue';
+import Delimeter from '@/components/blockEditor/blocks/Delimeter/Delimeter.vue';
+import RepeaterListWithImage from '@/components/blockEditor/blocks/RepeaterListWithImage/RepeaterListWithImage.vue';
+import RepeaterLists from '@/components/blockEditor/blocks/RepeaterLists/RepeaterLists.vue';
 
 import { useBlocksStore } from '@/stores/blocks';
 

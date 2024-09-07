@@ -1,5 +1,5 @@
 <script setup>
-import FixedControlPanelWithSettings from '@/components/blocks/extensions/fragments/FixedControlPanelWithSettings.vue';
+import FixedControlPanelWithSettings from '@/components/blockEditor/editor/editorFragments/FixedControlPanelWithSettings.vue';
 
 const emit = defineEmits(['setPreviewMode']);
 

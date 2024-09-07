@@ -1,0 +1,49 @@
+{
+  "fields": {
+    "elements": [
+      {
+        "item": "Элемент списка"
+      }
+    ]
+  },
+  "settings": {
+    "active": {
+      "value": true
+    },
+    "listType": {
+      "name": "Тип списка",
+      "value": "ul",
+      "type": "select",
+      "options": [
+        {
+          "name": "Нумерованный",
+          "value": "ol"
+        },
+        {
+          "name": "Обычный",
+          "value": "ul"
+        }
+      ]
+    },
+    "olStart": {
+      "name": "Первый элемент нумерованного списка",
+      "value": 1,
+      "type": "number"
+    },
+    "editType": {
+      "name": "Тип редактирования",
+      "value": "simple",
+      "type": "select",
+      "options": [
+        {
+          "name": "Простой",
+          "value": "simple"
+        },
+        {
+          "name": "Wysiwyg",
+          "value": "wysiwyg"
+        }
+      ]
+    }
+  }
+}

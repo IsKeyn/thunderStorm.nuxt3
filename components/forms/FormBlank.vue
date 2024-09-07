@@ -6,7 +6,7 @@ import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import TagsList from '@/components/tags/TagsList.vue';
 import Tabs from '@/components/ui/tabs/Tabs.vue';
 import SeoForm from '@/components/admin/forms/SeoForm.vue';
-import BlocksEditor from '@/components/blocks/BlocksEditor.vue';
+import BlocksEditor from '@/components/blockEditor/editor/BlocksEditor.vue';
 import AdditionalControlPanel from '@/components/admin/panels/AdditionalControlPanel.vue';
 
 import { watch, ref } from "vue";

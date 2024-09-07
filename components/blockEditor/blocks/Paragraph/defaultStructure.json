@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "text": "Текст параграфа",
+    "image": {}
+  },
+  "settings": {
+    "imagePosition": {
+      "name": "Позиция картинки",
+      "value": "float-right",
+      "type": "select",
+      "options": [
+        {
+          "name": "Слева",
+          "value": "float-left"
+        },
+        {
+          "name": "Block",
+          "value": ""
+        },
+        {
+          "name": "Справа",
+          "value": "float-right"
+        }
+      ]
+    }
+  }
+}

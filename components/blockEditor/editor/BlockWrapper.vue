@@ -1,8 +1,8 @@
 <script setup>
-import ControlPanel from '@/components/blocks/extensions/ControlPanel.vue';
+import ControlPanel from '@/components/blockEditor/editor/editorFragments/ControlPanel.vue';
 
-import defaultSettings from '@/components/blocks/json/defaultSettings.json';
-import defaultGroups from '@/components/blocks/json/defaultGroups.json';
+import defaultSettings from '@/components/blockEditor/blocks/json/defaultSettings.json';
+import defaultGroups from '@/components/blockEditor/blocks/json/defaultGroups.json';
 
 import { watch } from "vue";
 import { blocks } from '@/composables/blocks.js'
@@ -29,14 +29,37 @@ const props = defineProps({
 	},
 });
 
+const defaultStructure = {...await import(`../blocks/${props.name}/defaultStructure.json`)};
+
+defaultStructure.settings = {
+	...defaultStructure.settings,
+	...defaultSettings
+};
+
+defaultStructure.settingGroups = {
+	...defaultGroups,
+};
+
 const previewMode = ref(false);
 previewMode.value = !props.editMode;
+
+const {
+	blockStructure,
+	setBlockStructure,
+} = blocks(defaultStructure, props.structure, props.blockIndex, props.editMode);
+
+setBlockStructure();
+
+watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спасает от ситуации когда меняешь местами два одинаковых блока
+	setBlockStructure();
+}, { deep: true });
 </script>
 
 <template>
 	<div
 			:class="[
-				'th-block repeater-list-with-image',
+				'th-block',
+				name,
 				blockStructure.settings.overflow.value,
 				blockStructure.settings.marginTop.value,
 				blockStructure.settings.marginRight.value,
@@ -46,6 +69,7 @@ previewMode.value = !props.editMode;
 				blockStructure.settings.paddinRight.value,
 				blockStructure.settings.paddinBottom.value,
 				blockStructure.settings.paddinLeft.value,
+				blockStructure.settings.classes.value,
 			]"
 	>
 		<ControlPanel
@@ -57,8 +81,8 @@ previewMode.value = !props.editMode;
 		<component
 				:is="getBlock(name)"
 				:blockIndex="blockIndex"
-				:structure="structure"
-				:editMode="editMode"
+				:blockStructure="blockStructure"
+				:previewMode="previewMode"
 		/>
 	</div>
 </template>

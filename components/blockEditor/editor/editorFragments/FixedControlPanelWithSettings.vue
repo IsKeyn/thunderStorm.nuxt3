@@ -1,6 +1,6 @@
 <script setup>
 import FixedControlPanel from '@/components/ui/FixedControlPanel.vue';
-import SettingByType from '@/components/blocks/extensions/fragments/SettingByType.vue';
+import SettingByType from '@/components/blockEditor/editor/editorFragments/SettingByType.vue';
 import OpeningBox from '@/components/ui/OpeningBox.vue';
 
 const props = defineProps({
