@@ -8,13 +8,16 @@ const emit = defineEmits(['setCurrentElement', 'updateLikes', 'selectThisElement
 import { api } from '@/composables/api.js'
 const {
 	apiUrl,
+	publicUrl,
 	getCsrfCookie,
+	sessionCookieName,
+	errorHandler,
 } = api();
 
 const props = defineProps({
 	image: {
-		type: String,
-		default: '',
+		type: Object,
+		default: {},
 	},
 	prevElementKey: {
 		type: Number,
@@ -49,10 +52,66 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+
+	mediaId: {
+		type: Number,
+		default: null,
+	},
 });
 
+const media = ref({});
+const isLoading = ref(false);
+
+const getMedia = async () => {
+	isLoading.value = true;
+
+	try {
+		const sessionCookie = useCookie(sessionCookieName.value);
+
+		const response = await $fetch(
+				`${apiUrl.value}media/get/${props.mediaId}`,
+				{
+					method: 'GET',
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+						Referer: publicUrl.value,
+					},
+					onResponse({response}) {
+						isLoading.value = false;
+
+						if (response.status === 200) {
+							media.value = response._data.data;
+
+							if (process.client && !sessionStorage.getItem(`view_${media.value.entity_type}_${media.value.id}`)) {
+								sessionStorage.setItem(`view_${media.value.entity_type}_${media.value.id}`, true);
+							}
+						} else {
+							// Возарщаем ошибку
+						}
+					}
+				},
+		);
+	} catch (e) {
+		const errorsPromise = errorHandler(e);
+
+		errorsPromise.then((element) => {
+			responseErrors.value = element;
+		});
+
+		isLoading.value = false;
+	}
+}
+
+if (Object.keys(props.image).length > 0) {
+	media.value = props.image;
+} else if (props.mediaId) {
+	getMedia();
+}
+
 const setView = async () => {
-	if (props.setViewsLog && !sessionStorage.getItem(`view_${props.image.entity_type}_${props.image.id}`)) {
+	if (props.setViewsLog && !sessionStorage.getItem(`view_${media.value.entity_type}_${media.value.id}`)) {
 		try {
 			const csrfCookie = await getCsrfCookie();
 
@@ -66,21 +125,26 @@ const setView = async () => {
 							'X-XSRF-TOKEN': csrfCookie.value,
 						},
 						body: {
-							entityType: props.image.entity_type,
-							entityId: props.image.id,
+							entityType: media.value.entity_type,
+							entityId: media.value.id,
 						},
 					},
 			).then(() => {
-				sessionStorage.setItem(`view_${props.image.entity_type}_${props.image.id}`, true);
+				sessionStorage.setItem(`view_${media.value.entity_type}_${media.value.id}`, true);
 			});
 		} catch (e) {}
 	}
 }
 setView();
 
-watch(() => props.image, () => {
+watch(() => media.value, () => {
 	setView();
 });
+
+watch(() => props.image, () => {
+	media.value = props.image;
+});
+
 
 const hover = ref(false);
 
@@ -136,7 +200,7 @@ const keydownHandler = (event) => {
 	<div class="light-box" style="">
 		<img
 				class="background-img"
-				:src="image.src"
+				:src="media.src"
 		>
 		<div class="wrapper">
 			<span
@@ -151,7 +215,7 @@ const keydownHandler = (event) => {
 			<span
 					v-if="selectButton"
 					class="btn-icon select-button"
-					@click="$emit('selectThisElement', image)"
+					@click="$emit('selectThisElement', media)"
 			>
 				<font-awesome-icon :icon="['fas', 'check']"/>
 			</span>
@@ -163,9 +227,9 @@ const keydownHandler = (event) => {
 				<font-awesome-icon :icon="['fas', 'angle-left']" />
 			</span>
 			<img
-					:src="image.src"
-					:alt="image.name"
-					:title="image.name"
+					:src="media.src"
+					:alt="media.name"
+					:title="media.name"
 			>
 			<span
 					v-if="Number.isInteger(nextElementKey)"
@@ -175,11 +239,11 @@ const keydownHandler = (event) => {
 				<font-awesome-icon :icon="['fas', 'angle-right']" />
 			</span>
 			<Likes
-					v-if="image.entity_type && image.id"
+					v-if="media.entity_type && media.id"
 					theme="forLightBox"
-					:entityType="image.entity_type"
-					:entityId="image.id"
-					:voted="image.already_voted"
+					:entityType="media.entity_type"
+					:entityId="media.id"
+					:voted="media.already_voted"
 					@updateLikes="$emit('updateLikes', $event)"
 			/>
 			<div
@@ -193,63 +257,63 @@ const keydownHandler = (event) => {
 						<div class="column">
 							<span
 									class="info-line"
-									v-if="image.description"
-									v-html="image.description"
+									v-if="media.description"
+									v-html="media.description"
 							/>
 							<span
-									v-if="image.comments_count !== null && image.comments_count !== undefined"
+									v-if="media.comments_count !== null && media.comments_count !== undefined"
 									class="info-line"
 							>
-								Количество комментариев: {{ image.comments_count }}
+								Количество комментариев: {{ media.comments_count }}
 							</span>
 							<span
-									v-if="image.views"
+									v-if="media.views"
 									class="info-line"
 							>
-								Просмотров: {{ image.views }}
+								Просмотров: {{ media.views }}
 							</span>
 							<span
-									v-if="image.likes"
+									v-if="media.likes"
 									class="info-line"
 							>
-								Лайкнули: {{ image.likes }} раз
+								Лайкнули: {{ media.likes }} раз
 							</span>
 						</div>
 						<div class="column text-center">
 							<span
-									v-if="image.name"
+									v-if="media.name"
 									class="info-line"
 							>
-								{{ image.name }}
+								{{ media.name }}
 							</span>
 							<span
-									v-if="!hidenFields.includes('user_info.name') && image.user_info?.name"
+									v-if="!hidenFields.includes('user_info.name') && media.user_info?.name"
 									class="info-line"
 							>
-								<router-link :to="`/profile/${image.user_info.name}/`">{{ image.user_info.name }}</router-link>
+								<router-link :to="`/profile/${media.user_info.name}/`">{{ media.user_info.name }}</router-link>
 							</span>
 							<span
-									v-if="!hidenFields.includes('user_info.name') && image.created_at"
+									v-if="!hidenFields.includes('user_info.name') && media.created_at"
 									class="info-line"
 							>
-								{{ getFormattedDate('d.m.Y H:i:s', image.created_at) }}
+								{{ getFormattedDate('d.m.Y H:i:s', media.created_at) }}
 							</span>
 						</div>
 						<div class="column">
 							<SimpleTagsList
-									:tags="image.tags"
+									:tags="media.tags"
 									parentClasses="text-right"
 							/>
 						</div>
 					</div>
 					<div
-							v-if="image.id"
+							v-if="media.id"
 							class="line-2"
 					>
 						<div class="column">
 							<router-link
 									v-if="showCommentBox"
-									:to="`/media/${image.id}/`"
+									:to="`/media/${media.id}/`"
 							>
 								<button class="btn btn-primary">Оставить комментарий</button>
 							</router-link>

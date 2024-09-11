@@ -4,6 +4,7 @@ import Notifications from '@/components/notifications/Notifications.vue';
 import FloatHeader from '@/components/headers/FloatHeader.vue';
 import MainBackground from '@/components/layout/MainBackground.vue';
 import Footer from '@/components/footers/Footer.vue';
+import MediaById from '@/components/media/MediaById.vue';
 
 import('~/assets/scss/vars.scss');
 import('~/assets/scss/style.scss');
@@ -39,6 +40,7 @@ const theme = computed(() => {
 				<slot />
 			</article>
 			<Notifications />
+			<MediaById />
 			<Footer />
 		</div>
 	</div>

@@ -68,9 +68,14 @@ const props = defineProps({
 
 const label = ref(null);
 
+const previewImage = ref('');
 watch(() => props.element.value, (newValue) => {
 	if (newValue && props.name === 'phone') {
 		props.element.value = newValue.replace(/[^+\(\)\d]/g, '');
+	}
+
+	if (props.element.type === 'file' && typeof newValue === 'object') {
+		previewImage.value = URL.createObjectURL(newValue[0]);
 	}
 }, { deep: true });
 
@@ -255,20 +260,27 @@ const fileType = computed(() => {
 					</div>
 				</template>
 				<template v-else>
-					<input
-							type="file"
-							:accept="element.accept"
-							:name="name"
-							:friendly-name="element.name"
-							:placeholder="element.placeholder"
-							class="hidden"
-							@change="element.value = $event.target.files"
-					/>
-					<div
-							class="choice-file-block"
-							:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
-					>
-						<div class="button choice-btn btn-primary">Обзор...</div> {{ element.value ? element.value[0].name : '' }}
+					<div class="grid grid-cols-4">
+						<div class="col-span-2">
+							<input
+									type="file"
+									:accept="element.accept"
+									:name="name"
+									:friendly-name="element.name"
+									:placeholder="element.placeholder"
+									class="hidden"
+									@change="element.value = $event.target.files"
+							/>
+							<div
+									class="choice-file-block"
+									:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+							>
+								<div class="button btn-primary choice-btn">Обзор...</div> {{ element.value ? element.value[0].name : '' }}
+							</div>
+						</div>
+						<div class="col-span-2 text-center">
+							<img v-if="previewImage" :src="previewImage" class="inline-block max-w-[500px] max-h-[500px]" />
+						</div>
 					</div>
 				</template>
 			</template>

@@ -1,6 +1,7 @@
 <script setup>
 import SystemComponents from '@/components/system/SystemComponents.vue';
 import Notifications from '@/components/notifications/Notifications.vue';
+import MediaById from '@/components/media/MediaById.vue';
 
 import('~/assets/scss/vars.scss');
 import('~/assets/scss/style.scss');
@@ -100,6 +101,7 @@ import Menu from '@/components/admin/Menu.vue';
 				</template>
 			</article>
 			<Notifications />
+			<MediaById />
 		</div>
 	</div>
 </template>

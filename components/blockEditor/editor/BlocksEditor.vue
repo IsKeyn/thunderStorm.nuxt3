@@ -11,23 +11,35 @@ const { blockList } = blocks();
 
 // Работа с модальным окном
 const blocksModal = ref(false);
+
+const blockPosition = ref('endOfList');
+const blockIndex = ref(null);
+
+const addBlock = (params = {position: 'endOfList', index: null}) => {
+	blockPosition.value = params.position;
+	blockIndex.value = params.index;
+
+	toggleBlocksModal();
+}
+
 const toggleBlocksModal = () => {
 	blocksModal.value = !blocksModal.value;
 }
 
 const selectBlock = (element) => {
 	toggleBlocksModal();
-
-	pageBlocks.blocks.push(
+		pageBlocks.addBlockWithPosition(
 			{
 				name: element,
 				structure: {},
 			},
-	);
+			blockPosition.value,
+			blockIndex.value
+		);
 }
 
 defineExpose({
-	toggleBlocksModal,
+	addBlock,
 });
 </script>
 
@@ -35,7 +47,7 @@ defineExpose({
 	<div>
 		<button
 				class="btn btn-primary"
-				@click="toggleBlocksModal()"
+				@click="addBlock()"
 		>
 			Добавить блок
 		</button>
@@ -55,6 +67,7 @@ defineExpose({
 				:structure="block.structure"
 				:blockIndex="blockIndex"
 				:editMode="true"
+				@addBlock="addBlock($event)"
 		/>
 	</div>
 </template>

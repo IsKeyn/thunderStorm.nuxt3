@@ -8,6 +8,7 @@ import Tabs from '@/components/ui/tabs/Tabs.vue';
 import SeoForm from '@/components/admin/forms/SeoForm.vue';
 import BlocksEditor from '@/components/blockEditor/editor/BlocksEditor.vue';
 import AdditionalControlPanel from '@/components/admin/panels/AdditionalControlPanel.vue';
+import EntityMenuEditor from '@/components/admin/forms/EntityMenuEditor.vue'
 
 import { watch, ref } from "vue";
 
@@ -83,6 +84,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showMenu: {
+		type: Boolean,
+		default: false,
+	},
 	useBlockEditor: {
 		type: Boolean,
 		default: false,
@@ -96,6 +101,10 @@ const props = defineProps({
 		default: [],
 	},
 	seoForProp: {
+		type: Object,
+		default: {},
+	},
+	menuForProp: {
 		type: Object,
 		default: {},
 	},
@@ -355,16 +364,19 @@ const tabsElements = [
 		id: 2,
 		title: 'Дополнительные поля',
 	},
-	{
-		id: 4,
-		title: 'Меню',
-	},
 ];
 
 if (props.showSeo) {
 	tabsElements.push({
 		id:	'seo',
 		title: 'SEO',
+	});
+}
+
+if (props.showMenu) {
+	tabsElements.push({
+		id:	'menu',
+		title: 'Меню',
 	});
 }
 
@@ -376,7 +388,7 @@ if (props.useBlockEditor) {
 }
 
 const openBlockList = () => {
-	blockEditorRef.value.toggleBlocksModal();
+	blockEditorRef.value.addBlock();
 }
 </script>
 
@@ -423,8 +435,10 @@ const openBlockList = () => {
 				<SeoForm v-if="showSeo" v-model="seo" />
 			</template>
 
-			<template #tab-4>
-				Редактор меню
+			<template #tab-menu>
+				<EntityMenuEditor
+					:menu="menuForProp"
+				/>
 			</template>
 
 			<template v-if="useBlockEditor" #tab-block-editor>

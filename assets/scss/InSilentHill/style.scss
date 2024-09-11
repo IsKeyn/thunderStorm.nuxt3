@@ -45,6 +45,10 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.media-obj {
+  @apply cursor-pointer;
+}
 /* КОНЕЦ кнопки и ссылки */
 
 /* НАЧАЛО Поля ввода */

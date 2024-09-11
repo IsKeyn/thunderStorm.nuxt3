@@ -1,6 +1,7 @@
 <script setup>
 import Repeater from '@/components/repeaters/Repeater.vue';
 import FragmentMedia from '@/components/blockEditor/editor/blockFragments/FragmentMedia.vue';
+import WysiwygEditor from '@/components/ui/WysiwygEditor.vue';
 
 const repeaterComponent = ref(null);
 
@@ -25,6 +26,7 @@ const defaultStructure = await import(`./defaultStructure.json`);
 
 <template>
 	<FragmentMedia
+			v-if="blockStructure.settings.imageVerticalPosition.value === 'header'"
 			v-model="blockStructure.fields.image"
 			:editMode="!previewMode"
 			:imageClass="[blockStructure.settings.imagePosition.value, 'p-[8px]']"
@@ -54,6 +56,12 @@ const defaultStructure = await import(`./defaultStructure.json`);
 		</span>
 	</div>
 	<div>
+		<FragmentMedia
+				v-if="blockStructure.settings.imageVerticalPosition.value === 'body'"
+				v-model="blockStructure.fields.image"
+				:editMode="!previewMode"
+				:imageClass="[blockStructure.settings.imagePosition.value, 'p-[8px]']"
+		/>
 		<Repeater
 				ref="repeaterComponent"
 				:repeaterItem="defaultStructure.fields.elements[0]"
@@ -63,7 +71,7 @@ const defaultStructure = await import(`./defaultStructure.json`);
 			<div
 					v-for="(item, index) in repeaterItems"
 					:key="index"
-					class="mb-1"
+					:class="[blockStructure.settings.marginBetweenTitle.value]"
 			>
 				<span class="field-title">
 					<template v-if="!previewMode">
@@ -74,10 +82,13 @@ const defaultStructure = await import(`./defaultStructure.json`);
 					</template>
 				</span>
 				<template v-if="!previewMode">
-					<textarea v-model="repeaterItems[index].description" />
+					<WysiwygEditor
+							v-model="repeaterItems[index].description"
+							:editMode="!previewMode"
+					/>
 				</template>
 				<template v-else-if="repeaterItems[index].description">
-					{{ repeaterItems[index].description }}
+					<span v-html="repeaterItems[index].description" />
 				</template>
 				<button
 						v-if="!previewMode && repeaterItems.length > 1"

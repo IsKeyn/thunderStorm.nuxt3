@@ -58,7 +58,6 @@ watch(files, async () => {
 		const rawSampleObj = toRaw(formSample.value);
 		for (var i = 0; i < files._value.length; i++) {
 			const newObj = {};
-			// newObj['preview'] = '';
 
 			Object.keys(rawSampleObj).forEach((key) => {
 				newObj[key] = {...rawSampleObj[key]};
@@ -67,12 +66,7 @@ watch(files, async () => {
 			newObj[fileKeyName.value] = {...fileSample.value};
 			newObj[fileKeyName.value].value = [ files._value[i] ];
 
-			// const reader = new FileReader();
-			//
-			// reader.onload = (event) => {
-			// 	newObj['preview'] = event.target.result;
-			// };
-			// await reader.readAsDataURL(files._value[i]);
+			newObj['preview'] = URL.createObjectURL(files._value[i]);
 
 			form.value.push(newObj);
 		}
@@ -108,7 +102,9 @@ const sendData = async () => {
 
 	form.value.forEach((item) => {
 		for (const formKey in item) {
-			item[formKey].validateResult = '';
+			if (formKey !== 'preview') {
+				item[formKey].validateResult = '';
+			}
 		}
 
 		const { status, key, validateResult } = validateForm(item);
@@ -217,18 +213,6 @@ const preparedRequestBody = () => {
 
 	return formData;
 }
-
-// const fileData = ref(null);
-// const readFile = (file) => {
-// 	// let fileData = null;
-//
-// 	const reader = new FileReader();
-// 	reader.readAsDataURL(file);
-// 	reader.onload = (event) => {
-// 		fileData.value = event.target.result;
-// 	};
-// 	// console.log(111, fileData);
-// }
 </script>
 
 <template>
@@ -270,7 +254,7 @@ const preparedRequestBody = () => {
 						/>
 					</div>
 					<div class="info-block">
-						<img :src="element.preview">
+						<img v-if="element.preview" :src="element.preview">
 						<div class="mb-2 font-bold">Информация о файле</div>
 						<div>Название файла: {{ element[fileKeyName].value[0].name }}</div>
 						<div>Размер: {{ matchMbCount(element[fileKeyName].value[0].size) }}</div>

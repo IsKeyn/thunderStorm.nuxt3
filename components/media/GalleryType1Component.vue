@@ -48,7 +48,11 @@ const props = defineProps({
 	loadOnScroll: {
 		type: Boolean,
 		default: true,
-	}
+	},
+	galleryType: {
+		type: String,
+		default: 'waterfall',
+	},
 });
 
 const fetchedData = ref([]);
@@ -208,29 +212,30 @@ const updateLikes = (params) => {
 		<EntityFilter
 			@setNewFilters="setNewFilters"
 		/>
-		<VueFlexWaterfall
-				v-if="fetchedData.length > 0"
-				id="main-gallery"
-				align-content="center"
-				col="4"
-				col-spacing="15"
-				:break-at="{ 900: 3, 600: 2, 300: 1 }"
-				break-by-container: true
-				ref="waterFall"
-				@order-updated="onOrderUpdated"
-		>
+		<template v-if="fetchedData.length > 0">
+			<VueFlexWaterfall
+					v-if="galleryType === 'waterfall'"
+					id="main-gallery"
+					align-content="center"
+					col="4"
+					col-spacing="15"
+					:break-at="{ 900: 3, 600: 2, 300: 1 }"
+					break-by-container: true
+					ref="waterFall"
+					@order-updated="onOrderUpdated"
+			>
 				<div
 						v-for="(element, key) in fetchedData"
 						:key="key"
 						class="element"
 				>
-					<span
-							v-if="selectButton"
-							class="btn-icon select-button"
-							@click="$emit('selectThisElement', element)"
-					>
-						<font-awesome-icon :icon="['fas', 'check']"/>
-					</span>
+						<span
+								v-if="selectButton"
+								class="btn-icon select-button"
+								@click="$emit('selectThisElement', element)"
+						>
+							<font-awesome-icon :icon="['fas', 'check']"/>
+						</span>
 					<img
 							@click="setCurrentElement(key)"
 							class="img"
@@ -238,7 +243,32 @@ const updateLikes = (params) => {
 							:alt="element.name"
 					/>
 				</div>
-		</VueFlexWaterfall>
+			</VueFlexWaterfall>
+			<div
+					v-if="galleryType === 'simple'"
+					class="simple"
+			>
+				<div
+						v-for="(element, key) in fetchedData"
+						:key="key"
+						class="element"
+				>
+						<span
+								v-if="selectButton"
+								class="btn-icon select-button"
+								@click="$emit('selectThisElement', element)"
+						>
+							<font-awesome-icon :icon="['fas', 'check']"/>
+						</span>
+					<img
+							@click="setCurrentElement(key)"
+							class="img"
+							:src="element.src"
+							:alt="element.name"
+					/>
+				</div>
+			</div>
+		</template>
 		<LightBox
 			v-if="currentElement"
 			:image="currentElement"
@@ -287,6 +317,14 @@ const updateLikes = (params) => {
 		&:hover {
 			@apply bg-[var(--second-hover-color)];
 		}
+	}
+}
+
+.simple {
+	@apply grid grid-cols-12;
+
+	.element {
+		@apply col-span-4;
 	}
 }
 </style>

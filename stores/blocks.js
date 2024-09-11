@@ -53,6 +53,19 @@ export const useBlocksStore = defineStore('blocks', {
 
             this.blocks.splice(index + 1, 0, currentBlock);
         },
+        addBlockWithPosition(structure, position, index) {
+            if (position === 'endOfList') {
+                this.blocks.push(structure);
+            }
+
+            if (position === 'top' && index !== null) {
+                this.blocks.splice(index, 0, structure);
+            }
+
+            if (position === 'bottom' && index !== null) {
+                this.blocks.splice(index + 1, 0, structure);
+            }
+        },
     },
     getters: {
         getBlockByDynamicId(id) {

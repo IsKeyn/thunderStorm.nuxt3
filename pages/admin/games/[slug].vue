@@ -147,6 +147,7 @@ const defaultValuesForAdditionalFields = [
 				:defaultValuesForAdditionalFields="defaultValuesForAdditionalFields"
 				:showTags="true"
 				:showSeo="true"
+				:showMenu="true"
 				:hasResource="true"
 				:useAdditionalData="true"
 				:extensions="extensions"

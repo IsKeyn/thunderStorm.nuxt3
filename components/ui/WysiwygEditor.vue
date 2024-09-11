@@ -1,4 +1,7 @@
 <script setup>
+import Modal from '@/components/modals/Modal.vue';
+import GalleryType1Component from '@/components/media/GalleryType1Component.vue';
+
 import { watch } from "vue";
 
 const emit = defineEmits(['update:modelValue']);
@@ -81,7 +84,7 @@ const timeMachine = (direction) => {
 }
 
 const setItem = (changeParams) => {
-	const select = window.getSelection ? window.getSelection() : document.selection.createRange();
+	const select = selectedItem.value ? selectedItem.value : (window.getSelection ? window.getSelection() : document.selection.createRange());
 
 	if (select !== '') {
 		if (select.getRangeAt) {
@@ -109,15 +112,63 @@ const setItem = (changeParams) => {
 					range.surroundContents(newNode);
 				}
 			}
+
+			if (changeParams.bbCode) {
+				let editableString = '';
+
+				editableString = `[${changeParams.bbCode}=${changeParams.id}]`;
+
+				if (editableItem) { // TODO временный костыль, добавляет в конец строки, убрать когда будет решение по корректной выборки поля ввода
+					editableItem.value.append(editableString);
+					editableItem.value = null;
+				} else {
+					range.deleteContents();
+					range.insertNode(document.createTextNode(editableString));
+				}
+			}
 		}
 
+		if (selectedItem.value) {
+			selectedItem.value = null;
+		}
 		setWysiwygValue(htmlMode.value ? editorRef.value.innerText : editorRef.value.innerHTML);
 	}
 }
+
+const selectedItem = ref(null);
+const editableItem = ref(null);
+
+const activeGalleryModal = ref(false);
+
+const setImageFromLib = (event) => {
+	// selectedItem.value = window.getSelection ? window.getSelection() : document.selection.createRange();
+	editableItem.value = event.target.closest('.wysiwyg-parent-box').querySelector('.wysiwyg-content');
+	toggleGalleryModal();
+}
+
+
+const toggleGalleryModal = () => {
+	activeGalleryModal.value = !activeGalleryModal.value;
+}
+
+const selectThisElement = (element) => {
+	toggleGalleryModal();
+	setItem({bbCode: 'lightBox', id: element.id});
+}
+
+const mediaFromLib = () => {
+	toggleGalleryModal();
+}
+
 </script>
 
 <template>
-	<div class="wysiwyg-parent-box">
+	<div
+			:class="[
+					'wysiwyg-parent-box',
+					editMode ? 'edit-mode' : ''
+			]"
+	>
 		<div class="wysiwyg-control-panel">
 			<button
 					class="btn btn-simple js-set-button"
@@ -165,6 +216,11 @@ const setItem = (changeParams) => {
 					class="btn btn-simple js-set-button"
 					@click.prevent="setItem({ tag: 'span', class: 'item' })"
 			>Предмет</button>
+			<button
+					class="btn btn-simple js-set-button"
+					title="Медиа из медиабиблиотеки"
+					@click.prevent="setImageFromLib"
+			><font-awesome-icon :icon="['fas', 'images']" /></button>
 
 			<button
 					:class="[
@@ -208,14 +264,36 @@ const setItem = (changeParams) => {
 				:contenteditable="editMode"
 		/>
 	</div>
+
+	<Modal
+			v-if="editMode"
+			:showOpenModal="activeGalleryModal"
+			size="full-width"
+			modal-id="gallery-modal"
+			:fullCloseModal="true"
+			@toggleModal="toggleGalleryModal"
+	>
+		<GalleryType1Component
+				:selectButton="true"
+				:hideBodyScrollLine="false"
+				:setViewsLog="false"
+				@selectThisElement="selectThisElement"
+		/>
+	</Modal>
 </template>
 
 <style lang="scss" scoped>
 .wysiwyg-parent-box {
+	@apply relative;
+
 	&:hover {
 		.wysiwyg-control-panel {
 			@apply block;
 		}
+	}
+
+	&.edit-mode {
+		@apply min-w-[5rem];
 	}
 
 	.wysiwyg-control-panel {

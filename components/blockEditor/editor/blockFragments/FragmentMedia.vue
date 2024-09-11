@@ -105,6 +105,7 @@ const fixedControlPanelWithSettingsRef = ref(null);
 				:selectButton="true"
 				:hideBodyScrollLine="false"
 				:setViewsLog="false"
+				galleryType="simple"
 				@selectThisElement="selectThisElement"
 		/>
 	</Modal>

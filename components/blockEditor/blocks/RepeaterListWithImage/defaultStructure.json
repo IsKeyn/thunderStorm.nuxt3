@@ -11,8 +11,23 @@
     ]
   },
   "settings": {
+    "imageVerticalPosition": {
+      "name": "Вертикальная позиция картинки",
+      "value": "header",
+      "type": "select",
+      "options": [
+        {
+          "name": "В шапке блока",
+          "value": "header"
+        },
+        {
+          "name": "В теле блока",
+          "value": "body"
+        }
+      ]
+    },
     "imagePosition": {
-      "name": "Позиция картинки",
+      "name": "Горизонтальная позиция картинки",
       "value": "md:float-right",
       "type": "select",
       "options": [
@@ -52,6 +67,37 @@
     "marginFromTitle": {
       "name": "Отступ от заголовков сверху",
       "value": "mb-0",
+      "type": "select",
+      "options": [
+        {
+          "name": "0",
+          "value": "mb-0"
+        },
+        {
+          "name": "1",
+          "value": "mb-1"
+        },
+        {
+          "name": "2",
+          "value": "mb-2"
+        },
+        {
+          "name": "3",
+          "value": "mb-3"
+        },
+        {
+          "name": "4",
+          "value": "mb-4"
+        },
+        {
+          "name": "5",
+          "value": "mb-6"
+        }
+      ]
+    },
+    "marginBetweenTitle": {
+      "name": "Margin между репиторами",
+      "value": "mb-1",
       "type": "select",
       "options": [
         {

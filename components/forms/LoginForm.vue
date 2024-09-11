@@ -196,7 +196,7 @@ const getUserData = async () => {
 </script>
 
 <template>
-	<div>
+	<form @submit.prevent="sendForm()">
 		<template v-if="userStore.user && Object.keys(userStore.user).length > 0">
 			<template v-if="userStore.user.email_verified_at">
 				Вы залогинены
@@ -245,9 +245,9 @@ const getUserData = async () => {
 			<div class="grid grid-cols-6">
 				<div class="col-span-3">
 					<button
-							@click="sendForm()"
-							:disabled="requestInProgress"
+							type="submit"
 							class="btn btn-primary min-w-24"
+							:disabled="requestInProgress"
 					>
 						<template v-if="!requestInProgress">
 							Войти
@@ -277,7 +277,7 @@ const getUserData = async () => {
 				</div>
 			</div>
 		</template>
-	</div>
+	</form>
 </template>
 
 <style lang="scss">

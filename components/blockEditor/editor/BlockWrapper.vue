@@ -10,6 +10,8 @@ const {
 	getBlock,
 } = blocks();
 
+const emit = defineEmits(['addBlock']);
+
 const props = defineProps({
 	name: {
 		type: String,
@@ -58,7 +60,7 @@ watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спа�
 <template>
 	<div
 			:class="[
-				'th-block',
+				'th-block relative',
 				name,
 				blockStructure.settings.overflow.value,
 				blockStructure.settings.marginTop.value,
@@ -72,6 +74,12 @@ watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спа�
 				blockStructure.settings.classes.value,
 			]"
 	>
+		<font-awesome-icon
+				v-if="editMode"
+				:icon="['fas', 'circle-plus']"
+				class="up-add-block"
+				@click="emit('addBlock', {position: 'top', index: blockIndex})"
+		/>
 		<ControlPanel
 				v-if="editMode"
 				:blockIndex="blockIndex"
@@ -79,10 +87,47 @@ watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спа�
 				@setPreviewMode="previewMode = !previewMode"
 		/>
 		<component
+				v-if="blockStructure"
 				:is="getBlock(name)"
 				:blockIndex="blockIndex"
 				:blockStructure="blockStructure"
 				:previewMode="previewMode"
 		/>
+		<font-awesome-icon
+				v-if="editMode"
+				:icon="['fas', 'circle-plus']"
+				class="down-add-block"
+				@click="emit('addBlock', {position: 'bottom', index: blockIndex})"
+		/>
 	</div>
 </template>
+
+<style lang="scss" scoped>
+.th-block {
+	> .up-add-block, > .down-add-block {
+		@apply absolute hidden text-[1.4rem] cursor-pointer;
+	}
+
+	&:hover {
+		> .up-add-block {
+			@apply block;
+		}
+	}
+
+	> .up-add-block {
+		@apply top-0;
+		left: calc(50% - 0.7rem);
+	}
+
+	&:hover {
+		> .down-add-block {
+			@apply block;
+		}
+	}
+
+	> .down-add-block {
+		@apply bottom-0;
+		left: calc(50% - 0.7rem);
+	}
+}
+</style>

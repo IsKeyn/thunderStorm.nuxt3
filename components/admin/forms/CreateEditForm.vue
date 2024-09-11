@@ -38,6 +38,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showMenu: {
+		type: Boolean,
+		default: false,
+	},
 	useBlockEditor: {
 		type: Boolean,
 		default: false,
@@ -108,6 +112,7 @@ const fetchedData = ref(null);
 const dataForAdditionalFields = ref([]);
 const tagsForProp = ref([]);
 const seoForProp = ref({});
+const menuForProp = ref({});
 const dataForExt = ref({});
 const additionalData = ref({});
 
@@ -144,6 +149,10 @@ const sendRequest = async () => {
 						props.form[formKey].value = fetchedData.value[formKey];
 					}
 				}
+			}
+
+			if (props.showMenu && fetchedData.value.menu) {
+				menuForProp.value = fetchedData.value.menu;
 			}
 
 			if (props.additionalFieldsEnable && fetchedData.value.additional_fields	) {
@@ -242,12 +251,14 @@ const buttons = [
 
 				:showTags="showTags"
 				:showSeo="showSeo"
+				:showMenu="showSeo"
 				:additionalFieldsEnable="additionalFieldsEnable"
 				:useBlockEditor="useBlockEditor"
 
 				:defaultValuesForAdditionalFields="defaultValuesForAdditionalFields"
 				:tagsForProp="tagsForProp"
 				:seoForProp="seoForProp"
+				:menuForProp="menuForProp"
 				:dataForAdditionalFields="dataForAdditionalFields"
 				:additionalData="additionalData"
 
