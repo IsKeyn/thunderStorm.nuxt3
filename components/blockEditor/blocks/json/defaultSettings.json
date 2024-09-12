@@ -9,6 +9,11 @@
     "value": "",
     "type": "text"
   },
+  "anchor": {
+    "name": "Якорь",
+    "value": "",
+    "type": "text"
+  },
   "overflow": {
     "name": "overflow",
     "value": null,

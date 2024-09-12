@@ -1,16 +1,16 @@
 <script setup>
+import { watch } from "vue";
+const emit = defineEmits(['addBlock']);
+
 import ControlPanel from '@/components/blockEditor/editor/editorFragments/ControlPanel.vue';
 
 import defaultSettings from '@/components/blockEditor/blocks/json/defaultSettings.json';
 import defaultGroups from '@/components/blockEditor/blocks/json/defaultGroups.json';
 
-import { watch } from "vue";
 import { blocks } from '@/composables/blocks.js'
 const {
 	getBlock,
 } = blocks();
-
-const emit = defineEmits(['addBlock']);
 
 const props = defineProps({
 	name: {
@@ -31,15 +31,19 @@ const props = defineProps({
 	},
 });
 
-const defaultStructure = {...await import(`../blocks/${props.name}/defaultStructure.json`)};
+/* Забираем структуру блока по-умолчанию */
+const defaultBlockStructure = await import(`../blocks/${props.name}/defaultStructure.json`);
 
+const defaultStructure = {};
+
+/* Составляем структуру блока из структуры блока, настроек блока, общих настроек и групп настроек */
+defaultStructure.fields = structuredClone(defaultBlockStructure.fields);
 defaultStructure.settings = {
-	...defaultStructure.settings,
-	...defaultSettings
+	...structuredClone(defaultBlockStructure.settings),
+	...structuredClone(defaultSettings)
 };
-
 defaultStructure.settingGroups = {
-	...defaultGroups,
+	...structuredClone(defaultGroups),
 };
 
 const previewMode = ref(false);
@@ -59,6 +63,8 @@ watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спа�
 
 <template>
 	<div
+			v-if="blockStructure"
+			:id="blockStructure.settings.anchor.value"
 			:class="[
 				'th-block relative',
 				name,
@@ -87,7 +93,6 @@ watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спа�
 				@setPreviewMode="previewMode = !previewMode"
 		/>
 		<component
-				v-if="blockStructure"
 				:is="getBlock(name)"
 				:blockIndex="blockIndex"
 				:blockStructure="blockStructure"

@@ -95,6 +95,44 @@
         }
       ]
     },
+    "excretion": {
+      "name": "Выделение заголовка репитора",
+      "value": "font-bold",
+      "type": "select",
+      "options": [
+        {
+          "name": "Без выделения",
+          "value": null
+        },
+        {
+          "name": "Полужирным",
+          "value": "font-bold"
+        },
+        {
+          "name": "Курсивгый",
+          "value": "italic"
+        }
+      ]
+    },
+    "color": {
+      "name": "Цвет заголовка репитора",
+      "value": null,
+      "type": "select",
+      "options": [
+        {
+          "name": "По-умолчанию",
+          "value": null
+        },
+        {
+          "name": "Основной цвет заголовка",
+          "value": "text-[var(--main-title-color)]"
+        },
+        {
+          "name": "Цвет предмета",
+          "value": "text-[var(--item-color)]"
+        }
+      ]
+    },
     "marginBetweenTitle": {
       "name": "Margin между репиторами",
       "value": "mb-1",

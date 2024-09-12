@@ -38,7 +38,7 @@ const toggleGalleryModal = () => {
 const selectThisElement = (element) => {
 	toggleGalleryModal();
 	const rawElement = toRaw(element);
-	rawElement.settings = fragmentMediaSettings;
+	rawElement.settings = structuredClone(fragmentMediaSettings);
 	emit('update:modelValue', rawElement);
 }
 

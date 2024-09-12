@@ -73,7 +73,13 @@ const defaultStructure = await import(`./defaultStructure.json`);
 					:key="index"
 					:class="[blockStructure.settings.marginBetweenTitle.value]"
 			>
-				<span class="field-title">
+				<span
+						:class="[
+								'field-title',
+								blockStructure.settings.excretion.value,
+								blockStructure.settings.color.value
+						]"
+				>
 					<template v-if="!previewMode">
 						<input v-model="repeaterItems[index].title">
 					</template>
@@ -125,7 +131,7 @@ const defaultStructure = await import(`./defaultStructure.json`);
 	}
 
 	.field-title {
-		@apply font-bold mr-[0.3rem];
+		@apply mr-[0.3rem];
 	}
 }
 </style>

@@ -48,9 +48,7 @@ const repeaterComponent = ref(null);
 							v-model="repeaterItems[index].item"
 					/>
 				</template>
-				<template v-else-if="repeaterItems[index].item">
-					{{ repeaterItems[index].item }}
-				</template>
+				<span v-else-if="repeaterItems[index].item" v-html="repeaterItems[index].item" />
 				<button
 						v-if="editMode && repeaterItems.length > 1"
 						class="btn btn-primary"
