@@ -39,6 +39,11 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	// Отображать или скрывать кнопку очистки формы
+	clearButtom: {
+		type: Boolean,
+		default: false,
+	},
 	// Отображать ошибки или нет
 	showValidateError: {
 		type: Boolean,
@@ -56,6 +61,10 @@ const props = defineProps({
 	},
 	// Дополнительные классы для тега <label>
 	labelClasses: {
+		type: [String, Array],
+		default: '',
+	},
+	wrapClasses: {
 		type: [String, Array],
 		default: '',
 	},
@@ -166,7 +175,7 @@ const fileType = computed(() => {
 					element.type === 'datetime-local'
 				"
 		>
-			<span class="input-wrap">
+			<span :class="['input-wrap', wrapClasses]">
 				<input
 						v-model="element.value"
 						:type="element.type"
@@ -201,6 +210,17 @@ const fileType = computed(() => {
 							rotation=90
 							class="additional-action-icon"
 							:title='`Заполнить поле "${element.name ? element.name : name}" значением из поля "${element.autoFill.sourceFieldKey && form[element.autoFill.sourceFieldKey].name ? form[element.autoFill.sourceFieldKey].name : element.autoFill.sourceFieldKey}" ${element.autoFill.rule ? " по правилу " + element.autoFill.rule : ""}`'
+					/>
+				</span>
+				<span
+						v-if="clearButtom"
+						class="additional-action-wrap"
+						@click="element.value = null"
+				>
+					<font-awesome-icon
+							:icon="['fas', 'circle-xmark']"
+							class="additional-action-icon"
+							title="Очистить поле"
 					/>
 				</span>
 			</span>

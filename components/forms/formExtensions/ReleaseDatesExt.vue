@@ -40,6 +40,12 @@ const repeaterItem = {
 		value: null,
 		placeholder: 'Платформа',
 	},
+	addInfo: {
+		name: 'addInfo',
+		type: 'text',
+		value: '',
+		placeholder: 'Дополнительная информация',
+	},
 };
 
 const repeaterItems = ref ([]);
@@ -191,11 +197,11 @@ updateItems(props.modelValue);
 		@apply grid grid-cols-12 mb-[15px];
 
 		.input-box {
-			@apply col-span-5  mr-[15px];
+			@apply col-span-3  mr-[15px];
 		}
 
 		.buttons-box {
-			@apply col-span-2;
+			@apply col-span-3;
 
 			.btn {
 				@apply mt-0 mr-[3px] mb-0;

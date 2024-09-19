@@ -37,7 +37,10 @@ const defaultBlockStructure = await import(`../blocks/${props.name}/defaultStruc
 const defaultStructure = {};
 
 /* Составляем структуру блока из структуры блока, настроек блока, общих настроек и групп настроек */
-defaultStructure.fields = structuredClone(defaultBlockStructure.fields);
+defaultStructure.fields = {
+	title: 'Заголовок',
+	...structuredClone(defaultBlockStructure.fields),
+};
 defaultStructure.settings = {
 	...structuredClone(defaultBlockStructure.settings),
 	...structuredClone(defaultSettings)
@@ -80,6 +83,29 @@ watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спа�
 				blockStructure.settings.classes.value,
 			]"
 	>
+		<hr
+				v-if="blockStructure.settings.delimeterStatus.value && blockStructure.settings.delimeterPosition.value === 'top'"
+				:class="[
+						blockStructure.settings.delimeterMarginTop.value,
+						blockStructure.settings.delimeterMarginBottom.value,
+				]"
+		>
+		<span
+				v-if="blockStructure.settings.titleStatus.value"
+				:class="[
+					'title',
+					blockStructure.settings.blockTitlePosition.value,
+					blockStructure.settings.titleMarginTop.value,
+					blockStructure.settings.titleMarginBottom.value,
+				]"
+		>
+			<template v-if="!previewMode">
+				<input v-model="blockStructure.fields.title" />
+			</template>
+			<template v-else>
+				{{ blockStructure.fields.title }}
+			</template>
+		</span>
 		<font-awesome-icon
 				v-if="editMode"
 				:icon="['fas', 'circle-plus']"
@@ -104,6 +130,13 @@ watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спа�
 				class="down-add-block"
 				@click="emit('addBlock', {position: 'bottom', index: blockIndex})"
 		/>
+		<hr
+				v-if="blockStructure.settings.delimeterStatus.value && blockStructure.settings.delimeterPosition.value === 'bottom'"
+				:class="[
+						blockStructure.settings.delimeterMarginTop.value,
+						blockStructure.settings.delimeterMarginBottom.value,
+				]"
+		>
 	</div>
 </template>
 
@@ -133,6 +166,14 @@ watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спа�
 	> .down-add-block {
 		@apply bottom-0;
 		left: calc(50% - 0.7rem);
+	}
+
+	span.title {
+		display: block;
+	}
+
+	hr {
+		@apply border-[1px] border-[var(--second-border-color)];
 	}
 }
 </style>

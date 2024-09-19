@@ -5,6 +5,8 @@ import Gallery from '@/components/blockEditor/blocks/Gallery/Gallery.vue';
 import Delimeter from '@/components/blockEditor/blocks/Delimeter/Delimeter.vue';
 import RepeaterListWithImage from '@/components/blockEditor/blocks/RepeaterListWithImage/RepeaterListWithImage.vue';
 import RepeaterLists from '@/components/blockEditor/blocks/RepeaterLists/RepeaterLists.vue';
+import VideoList from '@/components/blockEditor/blocks/VideoList/VideoList.vue';
+import RecommendedMaterials from '@/components/blockEditor/blocks/RecommendedMaterials/RecommendedMaterials.vue';
 
 import { useBlocksStore } from '@/stores/blocks';
 
@@ -23,6 +25,8 @@ export function blocks(
             case 'Delimeter': return Delimeter;
             case 'RepeaterListWithImage': return RepeaterListWithImage;
             case 'RepeaterLists': return RepeaterLists;
+            case 'VideoList': return VideoList;
+            case 'RecommendedMaterials': return RecommendedMaterials;
         }
     };
 
@@ -54,6 +58,14 @@ export function blocks(
         {
             name: 'RepeaterLists',
             componentName: 'RepeaterLists',
+        },
+        {
+            name: 'VideoList',
+            componentName: 'VideoList',
+        },
+        {
+            name: 'RecommendedMaterials',
+            componentName: 'RecommendedMaterials',
         },
     ];
 

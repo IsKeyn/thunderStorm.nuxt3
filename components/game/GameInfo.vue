@@ -39,8 +39,15 @@ const releaseDates = computed(() => {
 	const obj = props.game.release_dates;
 
 	for (let key in obj) {
-		if (key > 0) returnData += ', ';
+		if (key > 0) {
+			returnData += ', ';
+		}
 		returnData += `<span title="${obj[key].description ? obj[key].description : ''}">${getFormattedDate('d ru_mouths_name Y', obj[key].date)} (${obj[key]?.game_platform?.name})</span>`;
+
+		if (obj[key].addInfo) {
+			returnData += ` (${obj[key].addInfo})`;
+		}
+
 	}
 
 	return returnData;
@@ -72,7 +79,9 @@ const stringTransfer = (obj) => {
 					class="field">
 				<b>{{ field.name }}:</b> {{ field.value }}
 			</span>
-			<span class="field"><b>Ссылки:</b>
+			<span
+					v-if="game.links.length > 0"
+					class="field"><b>Ссылки:</b>
 				<ul>
 					<li v-for="(link, key) in game.links" :key="key"><a :href="link.url" target="_blank" rel="nofollow">{{ link.name }}</a></li>
 				</ul>

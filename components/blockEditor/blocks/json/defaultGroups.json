@@ -1,8 +1,14 @@
 {
+  "title": {
+    "name": "Заголовок"
+  },
   "marginGroup": {
     "name": "Внешние отступы"
   },
   "paddingGroup": {
     "name": "Внутренние отступы"
+  },
+  "delimeter": {
+    "name": "Разделитель"
   }
 }

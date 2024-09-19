@@ -1,6 +1,4 @@
 <script setup>
-import { blocks } from '@/composables/blocks.js';
-
 const props = defineProps({
 	blockStructure: {
 		type: Object,
@@ -18,19 +16,7 @@ const props = defineProps({
 </script>
 
 <template>
-	<div class="th-block paragraph-block">
-		<ControlPanel
-				v-if="previewMode"
-				:blockIndex="blockIndex"
-				:alwaysShow="true"
-		/>
-		<div :class="[
-				blockStructure.value.settings?.marginTop.value,
-				blockStructure.value.settings?.marginBottom.value
-			]">
-			<hr/>
-		</div>
-	</div>
+	<hr/>
 </template>
 
 <style lang="scss" scoped>

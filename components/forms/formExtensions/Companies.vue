@@ -1,5 +1,5 @@
 <script setup>
-import Repeater from '@/components/repeaters/Repeater.vue';
+import RepeaterOld from '@/components/repeaters/RepeaterOld.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { watch } from "vue";
@@ -71,7 +71,7 @@ watch(() => value, (newValue) => {
 
 <template>
 	<div>
-		<Repeater
+		<RepeaterOld
 				ref="repeaterComponent"
 				:repeaterItem="repeaterItem"
 				:additionalData="additionalData"
@@ -119,7 +119,7 @@ watch(() => value, (newValue) => {
 					Добавить
 				</button>
 			</div>
-		</Repeater>
+		</RepeaterOld>
 	</div>
 </template>
 

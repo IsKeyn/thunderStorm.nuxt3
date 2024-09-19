@@ -125,6 +125,10 @@ await useAsyncData(
 const getTagClasses = (key) => {
 	let classes = 'tag';
 
+	if (!filteredTagsList.value.includes(tagsList.value[key].name.toLowerCase())) {
+		classes += ' !hidden';
+	}
+
 	if (tagsList.value[key].selected) {
 		classes += ' selected';
 	}
@@ -193,17 +197,52 @@ const addTag = () => {
 		form.value[key].validateResult = validateResult;
 	}
 }
+
+const search = ref({
+	name: 'Поиск',
+	value: '',
+	type: 'text',
+	classes: ['w-full', 'mt-[5px]'],
+});
+
+const filteredTagsList = computed(() => {
+	const arTags = [];
+
+	tagsList.value.forEach((tag) => {
+		arTags.push(tag.name.toLowerCase());
+	});
+
+	if (search.value.value) {
+		return arTags.filter((tag) => {
+			return tag.includes(search.value.value.toLowerCase());
+		});
+	} else {
+		return arTags;
+	}
+});
 </script>
 
 <template>
 	<div>
-		<span
-				v-for="(tag, key) in tagsList"
-				:class="getTagClasses(key)"
-				@click="toggleTag(key)"
-		>
-			{{ tag.name }}
-		</span>
+		<FormGenerator
+				v-if="search"
+				name="search"
+				:element="search"
+				:showTitle="true"
+				:clearButtom = "true"
+				wrapClasses="w-full md:w-3/12"
+				labelClasses="mr-4"
+				:fieldClasses="search.classes"
+		/>
+		<div>
+			<span
+					v-for="(tag, key) in tagsList"
+					:class="[getTagClasses(key)]"
+					@click="toggleTag(key)"
+			>
+				{{ tag.name }}
+			</span>
+		</div>
 		<div v-if="canAddTags">
 			<FormGenerator
 					v-for="(field, index) in form"

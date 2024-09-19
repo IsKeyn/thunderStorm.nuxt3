@@ -1,0 +1,71 @@
+{
+  "fields": {
+    "videos": [
+      {
+        "currentSource": 0,
+        "sources": [
+          {
+            "url": "",
+            "videoData": {}
+          },
+          {
+            "url": "",
+            "videoData": {}
+          },
+          {
+            "url": "",
+            "videoData": {}
+          }
+        ]
+      }
+    ]
+  },
+  "settings": {
+    "rowCount": {
+      "name": "Количество элементов в строке",
+      "value": "md:col-span-3",
+      "type": "select",
+      "options": [
+        {
+          "name": "1",
+          "value": "md:col-span-12"
+        },
+        {
+          "name": "2",
+          "value": "md:col-span-6"
+        },
+        {
+          "name": "3",
+          "value": "md:col-span-4"
+        },
+        {
+          "name": "4",
+          "value": "md:col-span-3"
+        },
+        {
+          "name": "6",
+          "value": "md:col-span-2"
+        }
+      ]
+    },
+    "sideIndent": {
+      "name": "Боковой отступ (rem)",
+      "value": "md:ml-0 md-mr-0",
+      "type": "select",
+      "options": [
+        {
+          "name": "0",
+          "value": "md:ml-0 md-mr-0"
+        },
+        {
+          "name": "50px",
+          "value": "md:ml-[50px] md:mr-[50px]"
+        },
+        {
+          "name": "100px",
+          "value": "md:ml-[100px] md:mr-[100px]"
+        }
+      ]
+    }
+  }
+}

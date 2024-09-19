@@ -24,7 +24,7 @@ const props = defineProps({
 			:editMode="!previewMode"
 			:imageClass="[
 					blockStructure.settings.imagePosition.value,
-					'p-[8px] max-w-[26rem]'
+					'p-[8px]'
 			]"
 	/>
 	<div class="whitespace-pre-wrap">

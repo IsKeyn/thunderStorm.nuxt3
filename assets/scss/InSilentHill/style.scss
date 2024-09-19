@@ -40,6 +40,10 @@
 a {
   color: var(--main-href-color);
   text-decoration: none;
+
+  &.non-color {
+    color: var(--main-text-color);
+  }
 }
 
 a:hover {

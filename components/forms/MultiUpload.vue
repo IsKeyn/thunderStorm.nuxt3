@@ -213,6 +213,19 @@ const preparedRequestBody = () => {
 
 	return formData;
 }
+
+const setAllElementsFromThis = (index) => {
+	form.value.forEach((element, key) => {
+		if (key !== index) {
+
+			for (const key in element) {
+				if (key !== 'src' && key !== 'preview') {
+					element[key].value = form.value[index][key].value;
+				}
+			};
+		}
+	});
+}
 </script>
 
 <template>
@@ -239,6 +252,13 @@ const preparedRequestBody = () => {
 				<h3>Файл для загрузки {{ inx + 1 }}</h3>
 				<div class="wrapper">
 					<div class="col-span-8">
+						<button
+								v-if="inx === 0"
+								class="btn btn-primary"
+								@click="setAllElementsFromThis(inx)"
+						>
+							Заполнить все медия, значениями из данной формы
+						</button>
 						<FormGenerator
 								v-for="(field, index) in element"
 								:key="index"

@@ -1,9 +1,7 @@
 <script setup>
-
+import GameList from '@/components/game/GameList.vue';
 </script>
 
 <template>
-	<div>
-		Списочная игр
-	</div>
+	<GameList />
 </template>

@@ -1,10 +1,10 @@
 <script setup>
-import Modal from '@/components/modals/Modal.vue';
-import GalleryType1Component from '@/components/media/GalleryType1Component.vue';
-
 import { watch } from "vue";
 
 const emit = defineEmits(['update:modelValue']);
+
+import Modal from '@/components/modals/Modal.vue';
+import GalleryType1Component from '@/components/media/GalleryType1Component.vue';
 
 const props = defineProps({
 	modelValue: {
@@ -31,7 +31,11 @@ wysiwyg.value = props.modelValue;
 history.value.push(wysiwyg.value);
 
 watch(() => wysiwyg, (newValue) => {
-	emit('update:modelValue', newValue);
+	emit('update:modelValue', newValue.value);
+}, { deep: true });
+
+watch(() => props.modelValue, (newValue) => {
+	setWysiwygValue(newValue);
 }, { deep: true });
 
 const setHtmlMode = () => {

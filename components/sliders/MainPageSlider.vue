@@ -4,19 +4,19 @@ import ThunderSlider from '@/components/sliders/ThunderSlider.vue';
 const slides = ref([
 	{
 		type: 'img',
-		source: '/slides/header_1.jpg',
-		title: 'А ты точно подписан на KeynTR?',
+		source: '/slides/top.png',
+		title: 'Город, покрытый туманом',
 	},
-	{
-		type: 'video',
-		source: '/slides/HoM&M_V.mp4',
-		title: 'Увлекательные прохождения на YouTube канале',
-	},
-	{
-		type: 'video',
-		source: '/slides/EldenRing.mp4',
-		title: 'Стримы каждые выходные на Twitch',
-	},
+	// {
+	// 	type: 'video',
+	// 	source: '/slides/HoM&M_V.mp4',
+	// 	title: 'Увлекательные прохождения на YouTube канале',
+	// },
+	// {
+	// 	type: 'video',
+	// 	source: '/slides/EldenRing.mp4',
+	// 	title: 'Стримы каждые выходные на Twitch',
+	// },
 ]);
 </script>
 

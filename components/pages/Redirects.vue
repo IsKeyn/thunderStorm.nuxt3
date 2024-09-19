@@ -35,6 +35,22 @@ const redirectList = ref([
 		url: '/silent_hill/razrabothciki_silenthill',
 		redirectUrl: '/game/silent-hill-1/creators',
 	},
+	{
+		url: '/silent_hill_3/item_in_silenthill3_ch1',
+		redirectUrl: '/game/silent-hill-3/items',
+	},
+	{
+		url: '/silent_hill_3/item_in_silenthill3_ch2',
+		redirectUrl: '/game/silent-hill-3/items',
+	},
+	{
+		url: '/silent_hill_3/text_and_letter',
+		redirectUrl: '/game/silent-hill-3/text-and-letter',
+	},
+	{
+		url: '/silent_hill_3/text_and_letter2',
+		redirectUrl: '/game/silent-hill-3/text-and-letter',
+	},
 ]);
 
 
