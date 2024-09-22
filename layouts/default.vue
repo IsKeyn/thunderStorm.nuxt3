@@ -1,4 +1,33 @@
 <script setup>
+// useHead({
+// 	link: [
+// 		{
+// 			rel: 'stylesheet',
+// 			href: '/assets/scss/vars.scss'
+// 		},
+// 		{
+// 			rel: 'stylesheet',
+// 			href: '/assets/scss/style.scss'
+// 		},
+// 		{
+// 			rel: 'stylesheet',
+// 			href: '/assets/scss/InSilentHill/vars.scss'
+// 		},
+// 		{
+// 			rel: 'stylesheet',
+// 			href: '/assets/scss/InSilentHill/style.scss'
+// 		},
+// 		{
+// 			rel: 'stylesheet',
+// 			href: '/assets/scss/InSilentHill/fonts.scss'
+// 		},
+// 		{
+// 			rel: 'stylesheet',
+// 			href: '/assets/scss/InSilentHill/imports.scss'
+// 		},
+// 	]
+// })
+
 import SystemComponents from '@/components/system/SystemComponents.vue';
 import Notifications from '@/components/notifications/Notifications.vue';
 import FloatHeader from '@/components/headers/FloatHeader.vue';
@@ -6,8 +35,8 @@ import MainBackground from '@/components/layout/MainBackground.vue';
 import Footer from '@/components/footers/Footer.vue';
 import MediaById from '@/components/media/MediaById.vue';
 
-import('~/assets/scss/vars.scss');
-import('~/assets/scss/style.scss');
+// import('~/assets/scss/vars.scss');
+// import('~/assets/scss/style.scss');
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -18,10 +47,10 @@ import(`~/assets/scss/${runtimeConfig.public.theme}/style.scss`);
 import(`~/assets/scss/${runtimeConfig.public.theme}/imports.scss`);
 */
 
-import('~/assets/scss/InSilentHill/vars.scss');
-import('~/assets/scss/InSilentHill/style.scss');
-import('~/assets/scss/InSilentHill/fonts.scss');
-import('~/assets/scss/InSilentHill/imports.scss');
+// import('../assets/scss/InSilentHill/vars.scss');
+// import('../assets/scss/InSilentHill/style.scss');
+// import('../assets/scss/InSilentHill/fonts.scss');
+// import('../assets/scss/InSilentHill/imports.scss');
 
 const theme = computed(() => {
 	return `${runtimeConfig.public.theme}_theme`;
@@ -45,3 +74,12 @@ const theme = computed(() => {
 		</div>
 	</div>
 </template>
+
+<style lang="scss">
+@import url('~/assets/scss/vars.scss');
+@import url('~/assets/scss/style.scss');
+@import url('~/assets/scss/InSilentHill/vars.scss');
+@import url('~/assets/scss/InSilentHill/style.scss');
+@import url('~/assets/scss/InSilentHill/fonts.scss');
+@import url('~/assets/scss/InSilentHill/imports.scss');
+</style>
