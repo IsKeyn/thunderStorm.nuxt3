@@ -105,6 +105,7 @@ const getMaterial = async (id) => {
 				<ArticleCard
 						v-if="fetchedData[index]"
 						:cardData="fetchedData[index]"
+						:showTags="false"
 				/>
 				<button
 						v-if="!previewMode && repeaterItems.length > 1"

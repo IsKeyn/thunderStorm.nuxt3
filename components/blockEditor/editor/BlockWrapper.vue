@@ -39,6 +39,7 @@ const defaultStructure = {};
 /* Составляем структуру блока из структуры блока, настроек блока, общих настроек и групп настроек */
 defaultStructure.fields = {
 	title: 'Заголовок',
+	subtitle: 'Подзаголовок',
 	...structuredClone(defaultBlockStructure.fields),
 };
 defaultStructure.settings = {
@@ -104,6 +105,22 @@ watch(() => props.structure, (newValue) => { // TODO костылИЩЕ! Спа�
 			</template>
 			<template v-else>
 				{{ blockStructure.fields.title }}
+			</template>
+		</span>
+		<span
+				v-if="blockStructure.settings.subtitleStatus.value"
+				:class="[
+					'title',
+					blockStructure.settings.blockSubtitlePosition.value,
+					blockStructure.settings.subtitleMarginTop.value,
+					blockStructure.settings.subtitleMarginBottom.value,
+				]"
+		>
+			<template v-if="!previewMode">
+				<input v-model="blockStructure.fields.subtitle" />
+			</template>
+			<template v-else>
+				{{ blockStructure.fields.subtitle }}
 			</template>
 		</span>
 		<font-awesome-icon

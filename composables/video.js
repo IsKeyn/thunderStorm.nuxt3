@@ -1,4 +1,4 @@
-vexport function video() {
+export function video() {
     const getVideoData = (videoUrl) => {
         const videoData = {};
 

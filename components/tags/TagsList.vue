@@ -34,7 +34,7 @@ const form = ref({
 		name: 'Новый тег',
 		value: '',
 		type: 'text',
-		validateRules: 'required, minLength_3, maxLength_40',
+		validateRules: 'required, minLength_2, maxLength_40',
 		classes: ['w-full', 'mt-[5px]'],
 	},
 });

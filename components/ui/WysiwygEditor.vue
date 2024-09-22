@@ -220,6 +220,22 @@ const mediaFromLib = () => {
 					class="btn btn-simple js-set-button"
 					@click.prevent="setItem({ tag: 'span', class: 'item' })"
 			>Предмет</button>
+
+			<button
+					class="btn btn-simple js-set-button"
+					@click.prevent="setItem({ tag: 'span', class: 'heal' })"
+			>Аптечка</button>
+
+			<button
+					class="btn btn-simple js-set-button"
+					@click.prevent="setItem({ tag: 'span', class: 'ammo' })"
+			>Амуниция</button>
+
+			<button
+					class="btn btn-simple js-set-button"
+					@click.prevent="setItem({ tag: 'span', class: 'epic' })"
+			>Эпик</button>
+
 			<button
 					class="btn btn-simple js-set-button"
 					title="Медиа из медиабиблиотеки"

@@ -27,7 +27,7 @@ const props = defineProps({
 					'p-[8px]'
 			]"
 	/>
-	<div class="whitespace-pre-wrap">
+	<div :class="['whitespace-pre-wrap']">
 		<template v-if="!previewMode">
 			<WysiwygEditor
 					v-model="blockStructure.fields.text"
@@ -41,6 +41,8 @@ const props = defineProps({
 </template>
 
 <style lang="scss" scoped>
+.whitespace-pre-wrap {}
+
 textarea {
 	resize: block;
 }
@@ -53,6 +55,21 @@ textarea {
 
 .item {
 	color: var(--item-color);
+	font-weight: 600;
+}
+
+.heal {
+	color: var(--heal-color);
+	font-weight: 600;
+}
+
+.ammo {
+	color: var(--ammo-color);
+	font-weight: 600;
+}
+
+.epic {
+	color: var(--epic-color);
 	font-weight: 600;
 }
 </style>

@@ -51,6 +51,59 @@ const redirectList = ref([
 		url: '/silent_hill_3/text_and_letter2',
 		redirectUrl: '/game/silent-hill-3/text-and-letter',
 	},
+	{
+		url: '/silent_hill_downpour/walkthrough',
+		redirectUrl: '/game/silent-hill-downpour/walkthrough',
+	},
+	{
+		url: '/silent_hill_homecoming/prohshh1',
+		redirectUrl: '/game/silent-hill-homecoming/walkthrough',
+	},
+	{
+		url: '/silent_hill_homecoming/prohshh2',
+		redirectUrl: '/game/silent-hill-homecoming/walkthrough',
+	},
+	{
+		url: '/silent_hill_homecoming/prohshh3',
+		redirectUrl: '/game/silent-hill-homecoming/walkthrough',
+	},
+	{
+		url: '/silent_hill_4_the_room/proxoshden1',
+		redirectUrl: '/game/silent-hill-4-the-room/walkthrough',
+	},
+	{
+		url: '/silent_hill_4_the_room/proh2',
+		redirectUrl: '/game/silent-hill-4-the-room/walkthrough',
+	},
+	{
+		url: '/silent_hill_4_the_room/prox3',
+		redirectUrl: '/game/silent-hill-4-the-room/walkthrough',
+	},
+	{
+		url: '/silent_hill_4_the_room/прохождение-silent-hill-4-the-room-часть-iv',
+		redirectUrl: '/game/silent-hill-4-the-room/walkthrough',
+	},
+	{
+		url: '/silent_hill_4_the_room/personashi',
+		redirectUrl: '/game/silent-hill-4-the-room/characters',
+	},
+	{
+		url: '/silent_hill_2/scan_manual',
+		redirectUrl: '/game/silent-hill-2/manual-scans',
+	},
+	{
+		url: '/silent_hill_3/secret_weapont',
+		redirectUrl: '/game/silent-hill-3/secret-weapons',
+	},
+	{
+		url: '/silent_hill_3/amyn_sh3',
+		redirectUrl: '/game/silent-hill-3/ammunition',
+	},
+
+	{
+		url: '/silent_hill_3/ending',
+		redirectUrl: '/game/silent-hill-3/endings',
+	},
 ]);
 
 
