@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 
-import FileFromGallery from '@/composables/forms/FormGenerator/fragments/FileFromGallery.vue';
+import FileFromGallery from '@/components/forms/FormGenerator/fragments/FileFromGallery.vue';
 
 import { file } from '@/composables/file.js'
 const {
