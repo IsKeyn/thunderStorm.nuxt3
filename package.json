@@ -9,7 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "serve": "(export $(cat .env | egrep -v '#|^$' | xargs) && node .output/server/index.mjs)",
-    "inshprod": "NUXT_PUBLIC_THEME=InSilentHill NUXT_PUBLIC_URL=issilenthill.ru NUXT_PUBLIC_API_URL=http://backend.issilenthill.ru NUXT_PUBLIC_SESSION_COOKIE_NAME=insilenthill_session node .output/server/index.mjs"
+    "inshprod": "NUXT_PUBLIC_THEME=InSilentHill NUXT_PUBLIC_URL=issilenthill.ru NUXT_PUBLIC_API_URL=https://backend.issilenthill.ru NUXT_PUBLIC_SESSION_COOKIE_NAME=insilenthill_session node .output/server/index.mjs"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.10.4",
