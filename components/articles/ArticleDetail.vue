@@ -83,6 +83,7 @@ const { refresh } = await useAsyncData(
 						query,
 						headers: {
 							Accept: 'application/json',
+							'X-Requested-With': 'XMLHttpRequest',
 							Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
 							Referer: publicUrl.value,
 						},
