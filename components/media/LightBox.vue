@@ -12,6 +12,7 @@ const {
 	getCsrfCookie,
 	sessionCookieName,
 	errorHandler,
+	handleBackendUrl,
 } = api();
 
 const props = defineProps({
@@ -200,7 +201,7 @@ const keydownHandler = (event) => {
 	<div class="light-box" style="">
 		<img
 				class="background-img"
-				:src="media.src"
+				:src="handleBackendUrl(media.src)"
 		>
 		<div class="wrapper">
 			<span
@@ -227,7 +228,7 @@ const keydownHandler = (event) => {
 				<font-awesome-icon :icon="['fas', 'angle-left']" />
 			</span>
 			<img
-					:src="media.src"
+					:src="handleBackendUrl(media.src)"
 					:alt="media.name"
 					:title="media.name"
 			>

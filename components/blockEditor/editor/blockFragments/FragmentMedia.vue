@@ -12,6 +12,9 @@ const {
 	setOpenedImage,
 } = lightBox();
 
+import { api } from '@/composables/api.js'
+const { handleBackendUrl } = api();
+
 const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps({
@@ -38,6 +41,9 @@ const toggleGalleryModal = () => {
 const selectThisElement = (element) => {
 	toggleGalleryModal();
 	const rawElement = toRaw(element);
+
+	rawElement.src = handleBackendUrl(rawElement.src, true);
+
 	rawElement.settings = structuredClone(fragmentMediaSettings);
 	emit('update:modelValue', rawElement);
 }
@@ -57,7 +63,7 @@ const fixedControlPanelWithSettingsRef = ref(null);
 	<div :class="['image-wrapper', imageClass]">
 		<img
 				v-if="modelValue && modelValue.src"
-				:src="modelValue.src"
+				:src="handleBackendUrl(modelValue.src)"
 				:class="[
 					modelValue?.settings?.classes?.value,
 					modelValue?.settings?.width?.value,

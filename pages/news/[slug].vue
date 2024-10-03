@@ -6,5 +6,6 @@ import ArticleDetail from '@/components/articles/ArticleDetail.vue';
 	<ArticleDetail
 			title="Новости"
 			:type="1"
+			:sendFullPath="false"
 	/>
 </template>

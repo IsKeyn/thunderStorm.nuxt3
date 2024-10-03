@@ -16,7 +16,7 @@ const emit = defineEmits(['showHideMobileSearch']);
 <style lang="scss" scoped>
 .search-panel {
 	@apply
-		absolute z-[1]
+		fixed z-[701]
 		w-full
 		p-[var(--main-mobile-padding)]
 		bg-[var(--main-block-color)]

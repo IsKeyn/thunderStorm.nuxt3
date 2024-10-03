@@ -149,10 +149,10 @@ const showHideMobileSearch = () => {
 
 <style lang="scss" scoped>
 header {
-	@apply lg:min-h-[80px];
+	@apply min-h-[80px];
 
 	.float-header {
-		@apply min-[1400px]:w-[var(--main-block-width)] bg-[var(--main-block-color)];
+		@apply w-full min-[1400px]:w-[var(--main-block-width)] bg-[var(--main-block-color)];
 
 		.wrapper {
 			@apply
@@ -227,7 +227,7 @@ header {
 
 		&.fixed-head {
 			@apply
-				lg:fixed
+				fixed
 				top-[0]
 				z-[700];
 		}

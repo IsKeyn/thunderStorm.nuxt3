@@ -13,6 +13,10 @@ const props = defineProps({
 		type: Number,
 		default: 0,
 	},
+	sendFullPath: {
+		type: Boolean,
+		default: true,
+	},
 	title: {
 		type: String,
 		default: 'Статьи',
@@ -62,6 +66,9 @@ const { refresh } = await useAsyncData(
 
 			if (Number.isInteger(props.type)) {
 				query.type = props.type;
+			}
+
+			if (props.sendFullPath) {
 				query.full_path = route.fullPath;
 			}
 

@@ -49,6 +49,11 @@ const updateLikes = (params) => {
 		</div>
 
 		<div class="body">
+			<ImageBlock
+					v-if="cardData.image"
+					:image="cardData.image"
+					class="column-2"
+			/>
 			<div
 					class="column-1"
 			>
@@ -60,11 +65,6 @@ const updateLikes = (params) => {
 						theme="string"
 				/>
 			</div>
-			<ImageBlock
-					v-if="cardData.image"
-					:image="cardData.image"
-					class="column-2"
-			/>
 		</div>
 		<div class="footer">
 			<div class="column-1">
@@ -106,10 +106,10 @@ const updateLikes = (params) => {
 
 	.header {
 		.header-line {
-			@apply grid grid-cols-12;
+			@apply md:grid md:grid-cols-12;
 
 			.card-title {
-				@apply col-span-10;
+				@apply md:col-span-10 mb-[0.5rem];
 
 				a.title {
 					@apply text-[var(--main-href-color)];
@@ -117,19 +117,19 @@ const updateLikes = (params) => {
 			}
 
 			.published-time {
-				@apply col-span-2 text-right;
+				@apply mb-[0.5rem] block md:col-span-2 md:text-right ;
 			}
 		}
 	}
 
 	.body {
 		@apply
-			grid grid-cols-12
+			//grid grid-cols-12
 			min-h-[140px] pt-[10px] pb-[10px]
 		;
 
 		.column-1 {
-			@apply col-span-10 flex flex-col;
+			@apply flex flex-col;
 
 			.tags-list {
 				@apply mt-auto;
@@ -137,7 +137,10 @@ const updateLikes = (params) => {
 		}
 
 		.column-2 {
-			@apply col-span-2;
+			@apply
+				mb-[1rem]
+				md:float-right
+			;
 		}
 	}
 

@@ -123,6 +123,10 @@ export function api() {
         }
     }
 
+    const handleBackendUrl = (src, reverse = false) => {
+        return reverse ? src.replace(backendUrl.value, '{backend-url}') : src.replace('http://localhost:8000', backendUrl.value).replace('{backend-url}', backendUrl.value);
+    }
+
     return {
         apiUrl,
         backendUrl,
@@ -132,6 +136,7 @@ export function api() {
         sendApiRequest,
         responseErrors,
         errorHandler,
-        preparedRequestBody
+        preparedRequestBody,
+        handleBackendUrl
     };
 }

@@ -170,7 +170,7 @@ const returnToFirstPosition = () => {
 		}
 
 		.message-box {
-			@apply pb-[10px] pt-[10px] whitespace-pre-wrap;
+			@apply pb-[10px] pt-[10px] whitespace-pre-wrap break-words;
 
 			border-top: 1px solid var(--second-border-color);
 		}

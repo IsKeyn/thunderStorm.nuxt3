@@ -4,10 +4,6 @@ const router = useRouter();
 
 const redirectList = ref([
 	{
-		url: 'test',
-		redirectUrl: '/test2',
-	},
-	{
 		url: '/silent_hill/characters_sh',
 		redirectUrl: '/game/silent-hill-1/characters',
 	},
@@ -109,6 +105,7 @@ const redirectList = ref([
 
 for (let key in redirectList.value) {
 	let preparedUrl = route.fullPath;
+	let redirectPreparedUrl = redirectList.value[key].url;
 
 	if (preparedUrl[0] === '/') {
 		preparedUrl = preparedUrl.slice(1);
@@ -118,14 +115,19 @@ for (let key in redirectList.value) {
 		preparedUrl = preparedUrl.slice(0, -1);
 	}
 
-	if (redirectList.value[key].url === preparedUrl) {
+	if (redirectPreparedUrl[0] === '/') {
+		redirectPreparedUrl = redirectPreparedUrl.slice(1);
+	}
+
+	if (redirectPreparedUrl[preparedUrl.length - 1] === '/') {
+		redirectPreparedUrl = preparedUrl.slice(0, -1);
+	}
+
+	if (redirectPreparedUrl === preparedUrl) {
 		router.push({ path: redirectList.value[key].redirectUrl });
 		break;
 	}
 }
-
-// TODO Перенаправление на 404
 </script>
 
-<template>
-</template>
+<template />

@@ -80,6 +80,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .tooltip {
-	@apply absolute opacity-0 z-[5];
+	@apply hidden md:block absolute opacity-0 z-[5];
 }
 </style>

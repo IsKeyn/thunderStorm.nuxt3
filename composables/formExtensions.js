@@ -3,6 +3,8 @@ import MultiImages from '@/components/forms/formExtensions/MultiImages.vue';
 import Genres from '@/components/forms/formExtensions/Genres.vue';
 import Companies from '@/components/forms/formExtensions/Companies.vue';
 import Links from '@/components/forms/formExtensions/Links.vue';
+import Groups from '@/components/forms/formExtensions/Groups.vue';
+import AnonsDates from '@/components/forms/formExtensions/AnonsDates.vue';
 
 export function formExtensions() {
     const getFormExt = (name) => {
@@ -12,6 +14,8 @@ export function formExtensions() {
             case 'Genres': return Genres;
             case 'Companies': return Companies;
             case 'Links': return Links;
+            case 'Groups': return Groups;
+            case 'AnonsDates': return AnonsDates;
         }
     };
 

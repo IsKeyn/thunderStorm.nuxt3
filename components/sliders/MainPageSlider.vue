@@ -23,9 +23,9 @@ const slides = ref([
 <template>
 	<ThunderSlider
 			:autoLoop="{
-          delay: 3000,
-          restart: 10000,
-        }"
+				delay: 3000,
+				restart: 10000,
+			}"
 			sliderHeight="406px"
 			:withoutBorder="true"
 	>

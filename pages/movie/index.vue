@@ -4,9 +4,8 @@ import EntertainmentEntityList from '@/components/entertainment/EntertainmentEnt
 
 <template>
 	<EntertainmentEntityList
-		entity="game"
-		name="Игры"
-		title="Игры серии"
-		:useGroups="true"
+			entity="movie"
+			name="Фильмы"
+			title="Фильмы"
 	/>
 </template>

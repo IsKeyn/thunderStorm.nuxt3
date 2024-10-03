@@ -1,6 +1,9 @@
 /* НАЧАЛО границы и марджины */
 .without-border {
-  @apply mr-[var(--main-without-right-padding)] ml-[var(--main-without-left-padding)];
+  @apply
+    mr-[--main-mobile-without-right-padding] md:mr-[var(--main-without-right-padding)]
+    ml-[--main-mobile-without-left-padding] md:ml-[var(--main-without-left-padding)]
+  ;
 }
 /* КОНЕЦ границы и марджины */
 
@@ -116,22 +119,24 @@ textarea {
 
 span.flip-text-box {
   @apply
-  absolute bottom-[30px]
-  bg-[var(--main-bg-color)]
-  text-[25px] uppercase
+    absolute bottom-[30px]
+    bg-[var(--main-bg-color)]
+    text-[1rem] md:text-[25px] uppercase
+    w-full md:w-auto
+    text-center md:text-left
   ;
 
   &.right {
     @apply
-    right-[0]
-    pt-[10px] pr-[15px] pb-[10px] pl-[5px]
+      right-[0]
+      pt-[10px] pr-[5px] md:pr-[15px] pb-[10px] md:pl-[5px]
     ;
   }
 
   &.left {
     @apply
-    left-[0]
-    pt-[10px] pr-[50px] pb-[10px] pl-[15px]
+      left-[0]
+      pt-[10px] pr-[15px] md:pr-[50px] pb-[10px] pl-[15px] md:pl-[15px]
     ;
   }
 }

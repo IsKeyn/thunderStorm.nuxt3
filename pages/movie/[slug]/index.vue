@@ -4,7 +4,7 @@ import EntertainmentDetail from '@/components/entertainment/EntertainmentDetail.
 
 <template>
 	<EntertainmentDetail
-			entity="game"
-			title="Игры серии"
+			entity="movie"
+			title="Фильмы"
 	/>
 </template>

@@ -34,6 +34,7 @@ import FloatHeader from '@/components/headers/FloatHeader.vue';
 import MainBackground from '@/components/layout/MainBackground.vue';
 import Footer from '@/components/footers/Footer.vue';
 import MediaById from '@/components/media/MediaById.vue';
+import SideButton from '@/components/ui/SideButton.vue';
 
 // import('~/assets/scss/vars.scss');
 // import('~/assets/scss/style.scss');
@@ -70,6 +71,10 @@ const theme = computed(() => {
 			</article>
 			<Notifications />
 			<MediaById />
+			<SideButton
+				title="Старая версия сайта"
+				url="https://old.insilenthill.ru"
+			/>
 			<Footer />
 		</div>
 	</div>

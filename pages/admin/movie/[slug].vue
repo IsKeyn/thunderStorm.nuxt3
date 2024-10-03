@@ -77,7 +77,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игры',
+			name: 'Фильмы',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -89,13 +89,6 @@ const breadCrumbsArray = computed(() => {
 
 const extensions = [
 	{
-		name: 'Groups',
-		keyForBackend: 'groups',
-		params: {
-			additionalDataKeys: ['group'],
-		},
-	},
-	{
 		name: 'Genres',
 		keyForBackend: 'genres',
 		params: {
@@ -105,11 +98,6 @@ const extensions = [
 	{
 		name: 'MultiImages',
 		keyForBackend: 'covers',
-		params: null,
-	},
-	{
-		name: 'AnonsDates',
-		keyForBackend: 'anons_dates',
 		params: null,
 	},
 	{
@@ -154,7 +142,7 @@ const defaultValuesForAdditionalFields = [
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/game"
+				fetchUrl="admin/movie"
 				:additionalFieldsEnable="true"
 				:defaultValuesForAdditionalFields="defaultValuesForAdditionalFields"
 				:showTags="true"

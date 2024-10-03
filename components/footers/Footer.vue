@@ -41,12 +41,12 @@ const toggleSendBugModal = () => {
 			<span>
         Автор и разработчик: <a href="#" title="Написать письмо администратору сайта" @click.prevent="toggleFeedbackModal()">{{ getSettingFirstValue('creator') }}</a>
       </span>
-			<span class="mt-4">
-				<a href="#" title="Написать письмо администратору сайта" @click.prevent="toggleFeedbackModal()">Обратная связь</a>
-			</span>
-			<span>
-				<a href="#" title="Сообщить администрации об ошибке на сайте" @click.prevent="toggleSendBugModal()">Сообщить об ошибке</a>
-			</span>
+<!--			<span class="mt-4">-->
+<!--				<a href="#" title="Написать письмо администратору сайта" @click.prevent="toggleFeedbackModal()">Обратная связь</a>-->
+<!--			</span>-->
+<!--			<span>-->
+<!--				<a href="#" title="Сообщить администрации об ошибке на сайте" @click.prevent="toggleSendBugModal()">Сообщить об ошибке</a>-->
+<!--			</span>-->
 		</div>
 		<div class="cutting" />
 		<MenuByTypes

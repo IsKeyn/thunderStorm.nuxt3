@@ -1,13 +1,17 @@
 <script setup>
 import PageHeader from '@/components/layout/PageHeader.vue';
 import TitleImage from '@/components/media/TitleImage.vue';
-import GameInfo from '@/components/game/GameInfo.vue';
+import EntertainmentInfo from '@/components/entertainment/EntertainmentInfo.vue';
 import EntityUserActionsPanel from '@/components/actions/EntityUserActionsPanel.vue';
 import SimpleTagsList from '@/components/tags/SimpleTagsList.vue';
 import Head from '@/components/seo/Head.vue';
 import MenuColumns from '@/components/menu/MenuColumns.vue';
 
 const props = defineProps({
+	entity: {
+		type: String,
+		required: true,
+	},
 	title: {
 		type: String,
 		default: 'Игры',
@@ -30,12 +34,15 @@ const fetchedData = ref();
 
 const { refresh } = await useAsyncData(
 		async () => {
-			let request = `${apiUrl.value}game`;
+			let request = `${apiUrl.value}${props.entity}`;
 
 			if (route.params.slug) {
 				request += `/${route.params.slug}`;
 			} else {
-				// Возвращаем 404
+				throw createError({
+					statusCode: 404,
+					statusMessage: 'Page Not Found'
+				});
 			}
 
 			const query = {};
@@ -122,15 +129,13 @@ const openSendCommentForm = () => {
 				:withoutBorder="true"
 				parentClass="mb-[30px]"
 		/>
-		<GameInfo
+		<EntertainmentInfo
 			:game="fetchedData"
 		/>
 
 		<div class="additional-info">
 			<div class="left-box">
-				<div class="line-block">
-					{{ fetchedData.description }}
-				</div>
+				<div class="line-block" v-html="fetchedData.description" />
 <!--				<ShortGallery-->
 <!--						class="line-block"-->
 <!--				/>-->
@@ -200,7 +205,7 @@ const openSendCommentForm = () => {
 
 <style lang="scss" scoped>
 .additional-info {
-	@apply grid grid-cols-5 pt-[var(--main-padding)];
+	@apply md:grid grid-cols-5 pt-[var(--main-padding)];
 
 	.left-box {
 		@apply col-span-4 pr-[15px];

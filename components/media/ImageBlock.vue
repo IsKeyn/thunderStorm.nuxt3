@@ -45,7 +45,7 @@ const props = defineProps({
 .parent-box {
 	@apply
 		relative
-		w-[250px] h-[250px]
+		md:w-[250px] md:h-[250px]
 	;
 
 	&:hover {
@@ -58,10 +58,10 @@ const props = defineProps({
 
 	.image-box {
 		@apply
-			absolute top-0 left-0 z-[2]
+			md:absolute top-0 left-0 z-[2]
 			flex justify-center items-center
-			h-[190px]
-			w-[190px]
+			md:h-[190px]
+			md:w-[190px]
 			truncate
 			cursor-pointer
 		;
@@ -79,9 +79,10 @@ const props = defineProps({
 
 	.empty-square {
 		@apply
+			hidden md:block
 			absolute bottom-0 right-0 z-[1]
-			h-[190px]
-			w-[190px]
+			md:h-[190px]
+			md:w-[190px]
 		;
 
 		border: 20px solid var( --second-hover-color);

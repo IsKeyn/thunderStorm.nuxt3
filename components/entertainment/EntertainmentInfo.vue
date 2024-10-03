@@ -131,7 +131,7 @@ const stringTransfer = (obj) => {
 
 <style lang="scss" scoped>
 .main-info {
-	@apply grid grid-cols-5;
+	@apply md:grid grid-cols-5;
 
 	.left-box {
 		@apply col-span-4;

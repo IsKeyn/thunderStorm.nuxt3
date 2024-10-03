@@ -12,28 +12,13 @@ const titles = ref(
 				name: 'id',
 			},
 			name: {
-				name: 'Имя автора',
+				name: 'Название',
 			},
-			email: {
-				name: 'e-mail',
+			slug: {
+				name: 'Slug',
 			},
-			// message: {
-			// 	name: 'Сообщение',
-			// },
-			ip: {
-				name: 'ip',
-			},
-			user_agent: {
-				name: 'user_agent',
-			},
-			created_by: {
-				name: 'ID автора',
-			},
-			entity_type: {
-				name: 'Сущность',
-			},
-			entity_id: {
-				name: 'ID элемента',
+			description: {
+				name: 'Описание',
 			},
 		}
 );
@@ -56,7 +41,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Типы меню',
+			name: 'Фильмы',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -67,7 +52,7 @@ const breadCrumbsArray = computed(() => {
 	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 	<ListTable
 		:titles="titles"
-		titleKey="message"
-		fetchUrl="admin/entity/Comments"
+		titleKey="title"
+		fetchUrl="admin/movie"
 	/>
 </template>
