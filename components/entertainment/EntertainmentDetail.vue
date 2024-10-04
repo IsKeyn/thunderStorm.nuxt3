@@ -6,6 +6,7 @@ import EntityUserActionsPanel from '@/components/actions/EntityUserActionsPanel.
 import SimpleTagsList from '@/components/tags/SimpleTagsList.vue';
 import Head from '@/components/seo/Head.vue';
 import MenuColumns from '@/components/menu/MenuColumns.vue';
+import BlockWrapper from '@/components/blockEditor/editor/BlockWrapper.vue';
 
 const props = defineProps({
 	entity: {
@@ -142,6 +143,11 @@ const openSendCommentForm = () => {
 
 <!--				<ArticleShortList-->
 <!--						class="line-block"/>-->
+				<BlockWrapper
+						v-for="(block, blockIndex) in fetchedData.blocks"
+						:name="block.name"
+						:structure="block.structure"
+				/>
 			</div>
 			<div class="right-block">
 				<div v-if="fetchedData.menu">

@@ -77,7 +77,6 @@ const { refresh } = await useAsyncData(
 						:loadOnScroll="false"
 				/>
 			</div>
-			{{ fetchedData }}
 		</div>
 		<ArticleDetail v-else-if="getArticle" />
 	</template>

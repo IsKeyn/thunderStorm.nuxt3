@@ -64,13 +64,14 @@ const selectThisElement = (element) => {
 			:showOpenModal="activeGalleryModal"
 			size="full-width"
 			modal-id="gallery-modal"
+			:fullCloseModal="true"
 			@toggleModal="toggleGalleryModal"
 	>
 		<GalleryType1Component
 				:selectButton="true"
 				:hideBodyScrollLine="false"
 				:setViewsLog="false"
-				:fullCloseModal="true"
+				galleryType="simple"
 				@selectThisElement="selectThisElement"
 		/>
 	</Modal>

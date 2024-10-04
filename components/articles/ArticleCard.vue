@@ -129,7 +129,7 @@ const updateLikes = (params) => {
 		;
 
 		.column-1 {
-			@apply flex flex-col;
+			@apply flex flex-col md:min-h-[17rem];
 
 			.tags-list {
 				@apply mt-auto;

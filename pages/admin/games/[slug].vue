@@ -162,6 +162,7 @@ const defaultValuesForAdditionalFields = [
 				:showMenu="true"
 				:hasResource="true"
 				:useAdditionalData="true"
+				:useBlockEditor="true"
 				:extensions="extensions"
 		/>
 	</div>

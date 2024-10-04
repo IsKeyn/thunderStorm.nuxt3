@@ -60,6 +60,7 @@ const props = defineProps({
 		@apply
 			md:absolute top-0 left-0 z-[2]
 			flex justify-center items-center
+			max-h-[16rem]
 			md:h-[190px]
 			md:w-[190px]
 			truncate

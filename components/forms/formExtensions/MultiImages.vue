@@ -140,7 +140,7 @@ updateItems(props.modelValue);
 			:title="params?.title"
 	>
 		<div class="release-date">
-			<span class="form-title">Дата выхода в связке с платформой</span>
+			<span class="form-title">Медиа в данной галерии</span>
 			<div
 					v-for="(item, index) in repeaterItems"
 					:key="index"

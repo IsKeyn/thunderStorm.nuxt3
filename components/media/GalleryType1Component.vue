@@ -209,9 +209,9 @@ const updateLikes = (params) => {
 </script>
 
 <template>
-		<EntityFilter
-			@setNewFilters="setNewFilters"
-		/>
+<!--		<EntityFilter-->
+<!--			@setNewFilters="setNewFilters"-->
+<!--		/>-->
 		<template v-if="fetchedData.length > 0">
 			<VueFlexWaterfall
 					v-if="galleryType === 'waterfall'"
