@@ -46,6 +46,11 @@ const sendRequest = async () => {
 				`${apiUrl.value}auth/forgot-password`,
 				{
 					method: 'POST',
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'X-XSRF-TOKEN': csrfCookie.value,
+					},
 					body: {
 						email: form.value.email.value,
 					}
