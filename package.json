@@ -24,6 +24,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.5",
     "@pinia/nuxt": "^0.5.1",
+    "nuxt-yandex-metrika": "^1.2.9",
     "pinia": "^2.1.7",
     "sass": "^1.69.7",
     "vue-flex-waterfall": "^2.3.0"

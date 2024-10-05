@@ -3,11 +3,25 @@ export default defineNuxtConfig({
   modules: [
       '@pinia/nuxt',
       '@nuxtjs/tailwindcss',
+      'nuxt-yandex-metrika',
   ],
   devtools: { enabled: true },
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css'
   ],
+  yandexMetrika: {
+    id: '53288371',
+    // debug: process.env.NODE_ENV !== "production",
+    // delay: 0,
+    // cdn: false,
+    // verification: null, // Verification in Yandex Webmaster
+    options: {
+      webvisor: true,
+      clickmap: true,
+      trackLinks: true,
+      accurateTrackBounce: true,
+    },
+  },
   ssr: true,
   build: {
     transpile: ['@fortawesome/vue-fontawesome'],
