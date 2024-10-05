@@ -311,13 +311,13 @@ const getLinkForOldSite = computed(() => {
 					Или она осталась на старой версии сайта,<br/>
 					попробуйсте перейти на старый сайт с помощью кнопки ниже.
 				</p>
+				<div class="button-block">
+					<!--			<p class="mt-7">{{error.message}}</p>-->
+					<a class="btn btn-primary mt-7 block" href="/">Вернуться на главную страницу</a>
+					<a class="btn btn-primary mt-7 block" target="_blank" :href="getLinkForOldSite">Посмотреть страницу на старом сайте</a>
+				</div>
 			</div>
 			<p class="mt-7 text-6xl" v-else>Произошла ошибка...</p>
-			<div class="button-block">
-				<!--			<p class="mt-7">{{error.message}}</p>-->
-				<a class="btn btn-primary mt-7 block" href="/">Вернуться на главную страницу</a>
-				<a class="btn btn-primary mt-7 block" target="_blank" :href="getLinkForOldSite">Посмотреть страницу на старом сайте</a>
-			</div>
 		</div>
 	</NuxtLayout>
 </template>

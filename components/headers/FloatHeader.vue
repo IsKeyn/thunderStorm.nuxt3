@@ -118,7 +118,7 @@ const showHideMobileSearch = () => {
 							class="icon search-icon"
 							@click="showHideMobileSearch"
 					/>
-					<div class="w-[25px] mr-[25px]">
+					<div class="w-[25px]">
 						<font-awesome-icon
 								v-if="!showBurger"
 								:icon="['fas', 'bars']"
@@ -133,7 +133,8 @@ const showHideMobileSearch = () => {
 						/>
 					</div>
 					<AuthIconComponent
-							class="ml-[10px]"
+							v-if="route.query.dev === 'true'"
+							class="ml-[25px]"
 							@showHideMenu="showHideMenu"
 					/>
 				</div>

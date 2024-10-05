@@ -93,83 +93,84 @@ const toggleUserMenu = () => {
 
 <template>
 	<div>
-		<template v-if="requestInProgress">
-			<font-awesome-icon
-				:icon="['fas', 'spinner']"
-				spin-pulse
-				class="menu-element icon"
-			/>
-		</template>
-		<template v-else-if="userStore.user && Object.keys(userStore.user).length > 0">
-			<div
-					class="user-profile-actions"
-					@click="toggleUserMenu"
-			>
-				<img
-						v-if="userStore.user.avatar"
-						:src="userStore.user.avatar"
+		<div>
+			<template v-if="requestInProgress">
+				<font-awesome-icon
+					:icon="['fas', 'spinner']"
+					spin-pulse
+					class="menu-element icon"
 				/>
-				<span v-else>
-					<font-awesome-icon
-							:icon="['far', 'user']"
-					/>
-				</span>
-			</div>
-		</template>
-		<template v-else>
-			<div
-					class="user-profile-actions"
-					@click="toggleAuthModal()"
-			>
-				<span>
-					<font-awesome-icon
-							:icon="['fas', 'right-to-bracket']"
-					/>
-				</span>
-			</div>
-
-			<Modal
-					:showOpenModal="activeAuthModal"
-					size="small"
-					modal-id="login-modal"
-					:re-calc-height="reCalc"
-					@setReCalcValue="reCalcHeight"
-					@toggleModal="toggleAuthModal"
-			>
-				<AuthComponent
-						@reCalcHeight="reCalcHeight"
-						@closeModal="toggleAuthModal"
-				/>
-			</Modal>
-		</template>
-	</div>
-	<div
-			class="user-menu"
-			v-if="userStore.user && Object.keys(userStore.user).length > 0"
-			v-show="showUserMenu"
-	>
-		<ul>
-			<li>
-				<router-link
-						to="/profile/"
-						@click="$emit('showHideMenu', false)"
+			</template>
+			<template v-else-if="userStore.user && Object.keys(userStore.user).length > 0">
+				<div
+						class="user-profile-actions"
+						@click="toggleUserMenu"
 				>
-					<font-awesome-icon
-							:icon="['far', 'user']"
-							class=""
-					/> Профиль
-				</router-link>
-			</li>
-			<li>
-				<a href="#" @click.prevent="logout()">
-					<font-awesome-icon
-							:icon="['fas', 'right-from-bracket']"
-							class=""
-					/> Выход
-				</a>
-			</li>
-		</ul>
+					<img
+							v-if="userStore.user.avatar"
+							:src="userStore.user.avatar"
+					/>
+					<span v-else>
+						<font-awesome-icon
+								:icon="['far', 'user']"
+						/>
+					</span>
+				</div>
+			</template>
+			<template v-else>
+				<div
+						class="user-profile-actions"
+						@click="toggleAuthModal()"
+				>
+					<span>
+						<font-awesome-icon
+								:icon="['fas', 'right-to-bracket']"
+						/>
+					</span>
+				</div>
 
+				<Modal
+						:showOpenModal="activeAuthModal"
+						size="small"
+						modal-id="login-modal"
+						:re-calc-height="reCalc"
+						@setReCalcValue="reCalcHeight"
+						@toggleModal="toggleAuthModal"
+				>
+					<AuthComponent
+							@reCalcHeight="reCalcHeight"
+							@closeModal="toggleAuthModal"
+					/>
+				</Modal>
+			</template>
+		</div>
+		<div
+				class="user-menu"
+				v-if="userStore.user && Object.keys(userStore.user).length > 0"
+				v-show="showUserMenu"
+		>
+			<ul>
+				<li>
+					<router-link
+							to="/profile/"
+							@click="$emit('showHideMenu', false)"
+					>
+						<font-awesome-icon
+								:icon="['far', 'user']"
+								class=""
+						/> Профиль
+					</router-link>
+				</li>
+				<li>
+					<a href="#" @click.prevent="logout()">
+						<font-awesome-icon
+								:icon="['fas', 'right-from-bracket']"
+								class=""
+						/> Выход
+					</a>
+				</li>
+			</ul>
+		</div>
 	</div>
 </template>
 
