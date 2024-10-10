@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
 
+import { api } from '@/composables/api.js'
+const { apiUrl } = api();
+
 definePageMeta({
 	layout: 'errors',
 })
@@ -265,9 +268,7 @@ for (let key in redirectList.value) {
 	}
 
 	if (redirectPreparedUrl === preparedUrl) {
-		console.log( redirectList.value[key].redirectUrl);
-
-		location.href = '/' + redirectList.value[key].redirectUrl;
+		location.href = apiUrl + '/' + redirectList.value[key].redirectUrl;
 		// router.push({path: redirectList.value[key].redirectUrl});
 		break;
 	}
