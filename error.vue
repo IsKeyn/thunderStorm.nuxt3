@@ -2,7 +2,7 @@
 import type { NuxtError } from '#app'
 
 import { api } from '@/composables/api.js'
-const { apiUrl } = api();
+const { publicUrl } = api();
 
 definePageMeta({
 	layout: 'errors',
@@ -268,7 +268,8 @@ for (let key in redirectList.value) {
 	}
 
 	if (redirectPreparedUrl === preparedUrl) {
-		location.href = apiUrl + '/' + redirectList.value[key].redirectUrl;
+		// TODO получить текущий протокой сайта
+		location.href = 'https://' + publicUrl.value + '/' + redirectList.value[key].redirectUrl;
 		// router.push({path: redirectList.value[key].redirectUrl});
 		break;
 	}
