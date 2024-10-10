@@ -268,8 +268,14 @@ for (let key in redirectList.value) {
 	}
 
 	if (redirectPreparedUrl === preparedUrl) {
+		let preparedRedirectUlr =  redirectList.value[key].redirectUrl;
+
+		if (preparedRedirectUlr[0] === '/') {
+			preparedRedirectUlr = preparedRedirectUlr.slice(1);
+		}
+
 		// TODO получить текущий протокой сайта
-		location.href = 'https://' + publicUrl.value + '/' + redirectList.value[key].redirectUrl;
+		location.href = 'https://' + publicUrl.value + '/' + preparedRedirectUlr;
 		// router.push({path: redirectList.value[key].redirectUrl});
 		break;
 	}
