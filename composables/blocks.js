@@ -7,6 +7,7 @@ import RepeaterListWithImage from '@/components/blockEditor/blocks/RepeaterListW
 import RepeaterLists from '@/components/blockEditor/blocks/RepeaterLists/RepeaterLists.vue';
 import VideoList from '@/components/blockEditor/blocks/VideoList/VideoList.vue';
 import RecommendedMaterials from '@/components/blockEditor/blocks/RecommendedMaterials/RecommendedMaterials.vue';
+import ArticleListByType from '@/components/blockEditor/blocks/ArticleListByType/ArticleListByType.vue';
 
 import { useBlocksStore } from '@/stores/blocks';
 
@@ -27,6 +28,7 @@ export function blocks(
             case 'RepeaterLists': return RepeaterLists;
             case 'VideoList': return VideoList;
             case 'RecommendedMaterials': return RecommendedMaterials;
+            case 'ArticleListByType': return ArticleListByType;
         }
     };
 
@@ -66,6 +68,10 @@ export function blocks(
         {
             name: 'RecommendedMaterials',
             componentName: 'RecommendedMaterials',
+        },
+        {
+            name: 'ArticleListByType',
+            componentName: 'ArticleListByType',
         },
     ];
 

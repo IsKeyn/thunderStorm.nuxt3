@@ -10,12 +10,23 @@ const props = defineProps({
 		default: {},
 		required: true,
 	},
+	simpleImage: {
+		type: Boolean,
+		default: false,
+	},
 });
 </script>
 
 <template>
 	<div>
-		<div class="parent-box">
+		<img
+				v-if="simpleImage && Object.keys(image).length > 0"
+				class="simple-article-image"
+				:src="image.src"
+				:alt="image.name"
+				:name="image.name"
+		/>
+		<div v-else class="parent-box">
 			<div
 					v-if="Object.keys(image).length > 0"
 					class="image-box"
@@ -31,7 +42,6 @@ const props = defineProps({
 			<div class="empty-square" />
 		</div>
 
-
 		<LightBox
 				v-if="openedImage"
 				:image="openedImage"
@@ -42,6 +52,10 @@ const props = defineProps({
 </template>
 
 <style lang="scss" scoped>
+.simple-article-image {
+	@apply md:w-[12rem] md:h-[12rem];
+}
+
 .parent-box {
 	@apply
 		relative

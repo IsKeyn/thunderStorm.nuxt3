@@ -89,7 +89,6 @@ const { refresh } = await useAsyncData(
 							body,
 							onResponse({response}) {
 								if (response.status === 200) {
-									console.log(response);
 									fetchedData.value = fetchedData.value.concat(response._data.data);
 
 									meta.value = response._data.meta;

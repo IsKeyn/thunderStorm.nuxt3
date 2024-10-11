@@ -17,6 +17,14 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	showFooter: {
+		type: Boolean,
+		default: true,
+	},
+	simpleImage: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const articleUrl = computed(() => {
@@ -53,6 +61,7 @@ const updateLikes = (params) => {
 					v-if="cardData.image"
 					:image="cardData.image"
 					class="column-2"
+					:simpleImage="simpleImage"
 			/>
 			<div
 					class="column-1"
@@ -66,7 +75,10 @@ const updateLikes = (params) => {
 				/>
 			</div>
 		</div>
-		<div class="footer">
+		<div
+				v-if="showFooter"
+				class="footer"
+		>
 			<div class="column-1">
 				<router-link :to=articleUrl>
 					<button class="btn btn-primary">Читать полностью <font-awesome-icon :icon="['fas', 'arrow-right']" /></button>
