@@ -39,6 +39,12 @@ const form = ref(
 				type: 'text',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			page: {
+				name: 'ID страницы',
+				value: '',
+				type: 'text',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 

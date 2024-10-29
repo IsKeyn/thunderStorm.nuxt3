@@ -87,7 +87,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/entity/Page"
+				fetchUrl="admin/pages"
 		/>
 	</div>
 </template>

@@ -15,6 +15,20 @@ const props = defineProps({
 		default: false,
 	},
 });
+
+const getResizeImg = (size) => {
+	if (props.image.resized && Object.keys(props.image.resized).length > 0) {
+		const key = size ? `r_${size}` : Object.keys(props.image.resized)[0];
+
+		return props.image.resized[key];
+	} else {
+		return null;
+	}
+}
+
+const getImageUrl = computed(() => {
+	return getResizeImg(500) ? getResizeImg(500) : (props.image.webp ? props.image.webp : props.image.src);
+});
 </script>
 
 <template>
@@ -22,7 +36,7 @@ const props = defineProps({
 		<img
 				v-if="simpleImage && Object.keys(image).length > 0"
 				class="simple-article-image"
-				:src="image.src"
+				:src="getImageUrl"
 				:alt="image.name"
 				:name="image.name"
 		/>
@@ -34,7 +48,7 @@ const props = defineProps({
 			>
 				<img
 						class="article-image"
-						:src="image.src"
+						:src="getImageUrl"
 						:alt="image.name"
 						:name="image.name"
 				/>

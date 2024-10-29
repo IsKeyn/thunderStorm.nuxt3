@@ -23,28 +23,28 @@
   "settings": {
     "rowCount": {
       "name": "Количество элементов в строке",
-      "value": "md:col-span-3",
+      "value": "col-span-12 md:col-span-3",
       "type": "select",
       "options": [
         {
           "name": "1",
-          "value": "md:col-span-12"
+          "value": "col-span-12 md:col-span-12"
         },
         {
           "name": "2",
-          "value": "md:col-span-6"
+          "value": "col-span-12 md:col-span-6"
         },
         {
           "name": "3",
-          "value": "md:col-span-4"
+          "value": "col-span-12 md:col-span-4"
         },
         {
           "name": "4",
-          "value": "md:col-span-3"
+          "value": "col-span-12 md:col-span-3"
         },
         {
           "name": "6",
-          "value": "md:col-span-2"
+          "value": "col-span-12 md:col-span-2"
         }
       ]
     },

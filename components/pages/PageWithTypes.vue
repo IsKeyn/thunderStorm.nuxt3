@@ -73,7 +73,8 @@ const { refresh } = await useAsyncData(
 		<div v-if="fetchedData">
 			<div v-if="fetchedData.type === 3">
 				<GalleryType1Component
-						groupID="1"
+						v-if="fetchedData.mediaGroup"
+						:groupID="fetchedData.mediaGroup"
 						:loadOnScroll="false"
 				/>
 			</div>

@@ -1,6 +1,12 @@
 {
   "fields": {
-    "images": []
+    "elements": [
+      {
+        "entity": "",
+        "id": "",
+        "data": {}
+      }
+    ]
   },
   "settings": {
     "rowCount": {

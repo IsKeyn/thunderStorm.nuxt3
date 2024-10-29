@@ -58,6 +58,10 @@ const props = defineProps({
 		type: Number,
 		default: null,
 	},
+	selected: {
+		type: Boolean,
+		default: false,
+	}
 });
 
 const media = ref({});
@@ -201,7 +205,7 @@ const keydownHandler = (event) => {
 	<div class="light-box" style="">
 		<img
 				class="background-img"
-				:src="handleBackendUrl(media.src)"
+				:src="handleBackendUrl(media.webp ? media.webp : media.src)"
 		>
 		<div class="wrapper">
 			<span
@@ -215,7 +219,7 @@ const keydownHandler = (event) => {
 			</span>
 			<span
 					v-if="selectButton"
-					class="btn-icon select-button"
+					:class="['btn-icon select-button', selected ? 'selected' : '']"
 					@click="$emit('selectThisElement', media)"
 			>
 				<font-awesome-icon :icon="['fas', 'check']"/>
@@ -228,7 +232,7 @@ const keydownHandler = (event) => {
 				<font-awesome-icon :icon="['fas', 'angle-left']" />
 			</span>
 			<img
-					:src="handleBackendUrl(media.src)"
+					:src="handleBackendUrl(media.webp ? media.webp : media.src)"
 					:alt="media.name"
 					:title="media.name"
 			>
@@ -361,6 +365,10 @@ const keydownHandler = (event) => {
 				w-[60px] h-[60px]
 				rounded-full
 			;
+
+			&.selected {
+				@apply bg-[var(--second-active-color)];
+			}
 
 			&:hover {
 				@apply bg-[var(--second-hover-color)];

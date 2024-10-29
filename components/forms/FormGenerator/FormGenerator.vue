@@ -1,7 +1,9 @@
 <script setup>
+import FileFromGallery from './fragments/FileFromGallery.vue';
+
 import { watch } from 'vue'
 
-import FileFromGallery from './fragments/FileFromGallery.vue';
+const emit = defineEmits(['update:modelValue']);
 
 import { file } from '@/composables/file.js'
 const {
@@ -19,6 +21,27 @@ const {
 } = stringActions();
 
 const props = defineProps({
+
+	modelValue: {},
+
+	/*
+	* Тип работы формы
+	*
+	* 0 - дефолтное значение, value находится в элементе
+	* 1 - новый формат работы, value отдельный пропс
+	* 2
+	*
+	*/
+	formHandlerType: {
+		type: Number,
+		default: 1,
+	},
+	// Ключ value
+	valueKey: {
+		type: String,
+		default: null,
+	},
+
 	// Отображаемое имя поля
 	name: {
 		type: [String, Number],
@@ -40,7 +63,7 @@ const props = defineProps({
 		default: true,
 	},
 	// Отображать или скрывать кнопку очистки формы
-	clearButtom: {
+	clearButton: {
 		type: Boolean,
 		default: false,
 	},
@@ -78,6 +101,7 @@ const props = defineProps({
 const label = ref(null);
 
 const previewImage = ref('');
+
 watch(() => props.element.value, (newValue) => {
 	if (newValue && props.name === 'phone') {
 		props.element.value = newValue.replace(/[^+\(\)\d]/g, '');
@@ -152,6 +176,24 @@ const fillField = () => {
 const fileType = computed(() => {
 	return getFileType(props.element.value);
 });
+
+const formValue = ref(null);
+
+if (props.formHandlerType === 1) {
+	formValue.value = props.modelValue;
+
+	watch(() => props.modelValue, (newValue, oldValue) => {
+		if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
+			formValue.value = newValue;
+		}
+	}, { deep: true });
+
+	watch(() => formValue, (newValue, oldValue) => {
+		if (JSON.stringify(newValue.value) !== JSON.stringify(oldValue.value)) {
+			emit('update:modelValue', newValue);
+		}
+	}, { deep: true });
+}
 </script>
 
 <template>
@@ -213,7 +255,7 @@ const fileType = computed(() => {
 					/>
 				</span>
 				<span
-						v-if="clearButtom"
+						v-if="clearButton"
 						class="additional-action-wrap"
 						@click="element.value = null"
 				>
@@ -330,6 +372,9 @@ const fileType = computed(() => {
 					:name="name"
 					:element="element"
 					:getFieldClasses="getFieldClasses"
+					:formHandlerType="formHandlerType"
+					v-model="formValue"
+					:valueKey="valueKey"
 			/>
 		</template>
 		<template v-else-if="element.type === 'checkbox'">

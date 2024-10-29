@@ -35,6 +35,7 @@ const props = defineProps({
 
 const {
 	repeaterItems,
+	reload,
 	updateItems,
 	addRepeaterItem,
 	deleteRepeaterItem,
@@ -48,8 +49,8 @@ defineExpose({
 updateItems(props.modelValue);
 
 function repeater() {
-	const repeaterItems = ref ([]); // Массив с элементами репитора
-	const hasFirstLoad = ref(false);
+	const repeaterItems = ref([]); // Массив с элементами репитора
+	const reload = ref(false);
 
 	const hasFileFromGallery = computed(() => {
 		let returnData = false;
@@ -82,9 +83,6 @@ function repeater() {
 		if (countItemForClear) {
 			repeaterItems.value.splice(0, countItemForClear);
 		}
-
-		// TODO не сломает репитер?
-		// hasFirstLoad.value = true;
 	}
 
 	const fillRepeaterItems = (items) => {
@@ -98,12 +96,12 @@ function repeater() {
 						} else {
 							preparedData[key] = item[key];
 						}
-
-						// Заполнение objectValue необходимо только для типов fileFromGallery
-						if (hasFileFromGallery.value) {
-							preparedData[key].objectValue = item;
-						}
 					}
+				}
+
+				// Заполнение objectValue необходимо только для типов fileFromGallery
+				if (hasFileFromGallery.value && typeof preparedData['objectValue'] !== "undefined") {
+					preparedData.objectValue = item;
 				}
 			} else {
 				preparedData = item;
@@ -115,17 +113,19 @@ function repeater() {
 
 	const addRepeaterItem = () => {
 		repeaterItems.value.push(structuredClone(props.repeaterItem));
-
-		// setVmodel();
 	}
 
 	const deleteRepeaterItem = (index) => {
 		if (repeaterItems.value.length > 1) {
+			// reload.value = true;
+
 			repeaterItems.value = repeaterItems.value.filter((item, inx) => {
 				if (index !== inx) {
 					return item;
 				}
 			});
+
+			// reload.value = false;
 
 			setVmodel();
 		}
@@ -149,22 +149,19 @@ function repeater() {
 		emit('update:modelValue', resultData);
 	}
 
-	// Наблюдатель за ручным добавлением и измением репитора, но удалением элемента репитора не перехватывается
+	/* Наблюдатель за ручным добавлением и измением репитора, TODO: но удалением элемента репитора не перехватывается */
 	watch(() => repeaterItems.value, () => {
-		// if (hasFirstLoad.value) {
-			setVmodel();
-		// }
+		setVmodel();
 	}, { deep: true });
 
-	// Наблюдатель должен сработать один раз, при первом появлении данных v-model
-	watch(() => props.modelValue, (newValue) => {
-		if (!hasFirstLoad.value) {
+	/* Наблюдатель должен сработать один раз, при первом появлении данных v-model */
+	watch(() => props.modelValue, (newValue, oldValue) => {
+		if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
 			updateItems(toRaw(newValue));
-			hasFirstLoad.value = true;
 		}
 	}, { deep: true });
 
-	// Наблюдатель должен сработать, при появлении данных заполнения списков (select)
+	/* Наблюдатель должен сработать, при появлении данных заполнения списков (select) */
 	watch(() => props.additionalData, (newValue) => {
 		if (newValue && props.params?.additionalDataKeys) {
 			props.params.additionalDataKeys.forEach((additionalKeys) => {
@@ -185,15 +182,17 @@ function repeater() {
 
 	return {
 		repeaterItems,
+		reload,
 		updateItems,
 		addRepeaterItem,
 		deleteRepeaterItem,
 	};
-}
+};
 </script>
 
 <template>
 	<slot
 			:repeaterItems="repeaterItems"
+			:reload="reload"
 	/>
 </template>

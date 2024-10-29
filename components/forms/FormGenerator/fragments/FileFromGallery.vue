@@ -2,7 +2,28 @@
 import Modal from '@/components/modals/Modal.vue';
 import GalleryType1Component from '@/components/media/GalleryType1Component.vue';
 
+import { watch } from "vue";
+
+const emit = defineEmits(['update:modelValue']);
+
 const props = defineProps({
+	modelValue: {},
+	/*
+	* Тип работы формы
+	*
+	* 0 - дефолтное значение, value находится в элементе
+	* 1 - новый формат работы, value отдельный пропс
+	*
+	*/
+	formHandlerType: {
+		type: Number,
+		default: 1,
+	},
+	// Ключ value
+	valueKey: {
+		type: String,
+		default: null,
+	},
 	// Отображаемое имя поля
 	name: {
 		type: [String, Number],
@@ -30,8 +51,36 @@ const selectThisElement = (element) => {
 	toggleGalleryModal();
 	const rawElement = toRaw(element);
 
-	props.element.value = rawElement.id;
+	if (props.formHandlerType === 1) {
+		formValue.value = props.valueKey ? rawElement[props.valueKey] : rawElement;
+		emit('update:modelValue', rawElement);
+	} else {
+		props.element.value = rawElement.id;
+	}
+
 	props.element.objectValue = rawElement;
+}
+
+const formValue = ref(null);
+
+if (props.formHandlerType === 1) {
+	if (props.modelValue) {
+		formValue.value = props.valueKey ? props.modelValue[props.valueKey] : props.modelValue;
+
+		props.element.objectValue = props.modelValue;
+	}
+
+	watch(() => props.modelValue, (newValue, oldValue) => {
+		if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
+			if (newValue) {
+				formValue.value = props.valueKey ? newValue[props.valueKey] : newValue;
+			}
+		}
+	}, { deep: true });
+
+	watch(() => formValue, (newValue, oldValue) => {
+			emit('update:modelValue', { id: newValue });
+	}, { deep: true });
 }
 </script>
 
@@ -39,6 +88,15 @@ const selectThisElement = (element) => {
 	<div class="grid grid-cols-4">
 		<div class="col-span-2">
 			<input
+					v-if="formHandlerType === 1"
+					v-model="formValue"
+					type="text"
+					:name="name"
+					:friendly-name="element.name"
+					:placeholder="element.placeholder"
+			/>
+			<input
+					v-else
 					v-model="element.value"
 					type="text"
 					:name="name"

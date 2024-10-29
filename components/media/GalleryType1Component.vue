@@ -32,6 +32,15 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	/* Тип выбора: single-select , multi-select */
+	selectType: {
+		type: String,
+		default: 'single-select',
+	},
+	selected: {
+		type: Array,
+		default: [],
+	},
 	/* Скрывать/показывать полосу прокрутки на элементе body при вызове LightBox.vue */
 	hideBodyScrollLine: {
 		type: Boolean,
@@ -183,8 +192,7 @@ const setCurrentElement = (key) => {
 			getNextPage();
 		}
 	} else {
-		currentElement.value = null;
-		currentElementKey.value = null;
+		hideLightBox();
 	}
 }
 
@@ -206,6 +214,55 @@ const updateLikes = (params) => {
 	}
 }
 
+const selectedIds = ref([]);
+
+const createSelectedIdsArray = () => {
+	selectedIds.value = [];
+
+	if (props.selected) {
+		for (let key in props.selected) {
+			if (props.selected[key]?.id) {
+				selectedIds.value.push(props.selected[key].id);
+			}
+		}
+	}
+}
+
+createSelectedIdsArray();
+
+watch(() => props.selected, () => {
+	createSelectedIdsArray();
+}, { deep: true });
+
+const hasSelecter = (item) => {
+	if (item?.id) {
+		return selectedIds.value.includes(item.id);
+	}
+
+	return false;
+}
+
+const getSelectedKey = (item) => {
+	if (item?.id) {
+		return selectedIds.value.indexOf(item.id);
+	}
+
+	return false;
+}
+
+const selectFormLightBox = (event) => {
+	if (hasSelecter(event)) {
+		emit('unselectThisElement', getSelectedKey(event))
+	} else {
+		emit('selectThisElement', event);
+		hideLightBox();
+	}
+}
+
+const hideLightBox = () => {
+	currentElement.value = null;
+	currentElementKey.value = null;
+}
 </script>
 
 <template>
@@ -255,8 +312,8 @@ const updateLikes = (params) => {
 				>
 						<span
 								v-if="selectButton"
-								class="btn-icon select-button"
-								@click="$emit('selectThisElement', element)"
+								:class="['btn-icon select-button', hasSelecter(element) ? 'selected' : '']"
+								@click="hasSelecter(element) ? $emit('unselectThisElement', getSelectedKey(element)) : $emit('selectThisElement', element)"
 						>
 							<font-awesome-icon :icon="['fas', 'check']"/>
 						</span>
@@ -276,9 +333,10 @@ const updateLikes = (params) => {
 			:nextElementKey="currentElementKey + 2 <= fetchedData.length ? currentElementKey + 1 : null"
 			:setViewsLog="setViewsLog"
 			:selectButton="selectButton"
+			:selected="hasSelecter(currentElement)"
 			:hideBodyScrollLine="hideBodyScrollLine"
 			@setCurrentElement="setCurrentElement"
-			@selectThisElement="$emit('selectThisElement', $event)"
+			@selectThisElement="selectFormLightBox($event)"
 			@updateLikes="updateLikes"
 		/>
 
@@ -307,6 +365,10 @@ const updateLikes = (params) => {
 			w-[45px] h-[45px]
 			rounded-full
 		;
+
+		&.selected {
+			@apply bg-[var(--second-active-color)];
+		}
 
 		&.select-button {
 			@apply

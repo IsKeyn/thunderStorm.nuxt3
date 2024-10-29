@@ -88,6 +88,20 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			active: {
+				name: 'Активность',
+				value: 1,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			published_at: {
+				name: 'Дата публикации',
+				value: '',
+				type: 'datetime-local',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			show_editor: {
 				name: 'Показывать редактора',
 				value: 0,
