@@ -18,6 +18,14 @@ const props = defineProps({
 		type: String,
 		default: 'all',
 	},
+	fetchTags: {
+		type: Boolean,
+		default: true,
+	},
+	tags: {
+		type: Array,
+		default: [],
+	},
 });
 
 
@@ -39,6 +47,17 @@ const form = ref({
 	},
 });
 
+const setTags = (tags) => {
+	tags.forEach((item) => {
+		const selected = toRaw(props.modelValue).includes(item.name);
+
+		tagsList.value.push({
+			name: item.name,
+			selected,
+		});
+	});
+}
+
 // Получаем с бека теги
 import { api } from '@/composables/api.js'
 const { apiUrl } = api();
@@ -50,40 +69,43 @@ const fetchedData = ref('');
 await useAsyncData(
 		'tags',
 		async () => {
-			let request = `${apiUrl.value}tag/get`;
+			if (props.fetchTags) {
+				let request = `${apiUrl.value}tag/get`;
 
-			if (props.type) {
-				request += `/${props.type}`;
-			}
+				if (props.type) {
+					request += `/${props.type}`;
+				}
 
-			await $fetch(
-					request,
-					{
-						method: 'GET',
-						headers: {
-							Authorization: Authorization.value,
-							Accept: 'application/json',
-							'X-Requested-With': 'XMLHttpRequest',
-						},
-						onResponse({response}) {
-							if (response.status === 200) {
-								fetchedData.value = response._data.data;
+				await $fetch(
+						request,
+						{
+							method: 'GET',
+							headers: {
+								Authorization: Authorization.value,
+								Accept: 'application/json',
+								'X-Requested-With': 'XMLHttpRequest',
+							},
+							onResponse({response}) {
+								if (response.status === 200) {
+									fetchedData.value = response._data.data;
 
-								fetchedData.value.forEach((item) => {
 									// Данный select не отрабатывает (в большинстве случаев), так как данные props.modelValue ещё не получены от бека на данном этапе
-									const selected = toRaw(props.modelValue).includes(item.name);
-
-									tagsList.value.push({
-										name: item.name,
-										selected,
-									});
-								});
+									setTags(fetchedData.value);
+								}
 							}
-						}
-					},
-			)
+						},
+				)
+			}
 		}
 )
+
+if (!props.fetchTags) {
+	setTags(props.tags);
+
+	watch(() => props.tags, (newValue) => {
+		setTags(newValue);
+	}, { deep: true });
+}
 
 //
 // const fetchedData = ref();

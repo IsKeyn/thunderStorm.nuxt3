@@ -56,7 +56,22 @@ watch(files, async () => {
 	if (files._value.length > 0) {
 		form.value = [];
 		const rawSampleObj = toRaw(formSample.value);
-		for (var i = 0; i < files._value.length; i++) {
+
+		let forCount = 0;
+
+		if (files._value.length > Number(maxFileUpload.value)) {
+			forCount = Number(maxFileUpload.value);
+
+			alert(
+					`Максимальное количество файлов для загрузки ${maxFileUpload.value}, файлы больше этого количества были усечены`,
+					10000,
+					'#004d42',
+			);
+		} else {
+			forCount = files._value.length;
+		}
+
+		for (var i = 0; i < forCount; i++) {
 			const newObj = {};
 
 			Object.keys(rawSampleObj).forEach((key) => {
@@ -130,7 +145,13 @@ const responseErrors = ref({});
 const requestInProgress = ref(false);
 
 import { api } from '@/composables/api.js';
-const { apiUrl, backendUrl, errorHandler } = api();
+const {
+	apiUrl,
+	backendUrl,
+	errorHandler,
+	publicUrl,
+	sessionCookieName,
+} = api();
 
 const Authorization = useCookie('Authorization');
 
@@ -226,10 +247,70 @@ const setAllElementsFromThis = (index) => {
 		}
 	});
 }
+
+/*
+ * Загружаем данные необходимые для работы формы
+ */
+
+const isLoading = ref(false);
+const maxFileUpload = ref(20);
+const tags = ref(null);
+
+const { refresh } = await useAsyncData(
+		async () => {
+			isLoading.value = true;
+
+			let request = `${apiUrl.value}admin/param-value/max_file_uploads`;
+
+			const query = {};
+
+			const sessionCookie = useCookie(sessionCookieName.value);
+
+			await $fetch(
+					request,
+					{
+						method: 'GET',
+						credentials: 'include',
+						query,
+						headers: {
+							Accept: 'application/json',
+							Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+							Referer: publicUrl.value,
+						},
+						onResponse({response}) {
+							isLoading.value = false;
+
+							if (response.status === 200) {
+								maxFileUpload.value = response._data;
+							}
+						}
+					},
+			);
+
+			request = `${apiUrl.value}tag/get/all`;
+
+			await $fetch(
+					request,
+					{
+						method: 'GET',
+						headers: {
+							Authorization: Authorization.value,
+							Accept: 'application/json',
+							'X-Requested-With': 'XMLHttpRequest',
+						},
+						onResponse({response}) {
+							if (response.status === 200) {
+								tags.value = response._data.data;
+							}
+						}
+					},
+			)
+		}
+);
 </script>
 
 <template>
-	<div>
+	<div v-if="!isLoading">
 		<label>
 			<div class="multi-upload-block">
 				Выберите несколько файлов для загрузки
@@ -237,9 +318,15 @@ const setAllElementsFromThis = (index) => {
 			<input
 					@change="files = $event.target.files"
 					type="file"
+					accept="image/*"
 					multiple
 			>
 		</label>
+		<div class="mt-5">
+			Максимальное количество файлов для загрузки составляет {{ maxFileUpload }},
+			это значение меняется в php.ini вашего сервера, параметра max_file_uploads,
+			обратитесь к вашему системному администратору для изменения данного значения
+		</div>
 
 		<div
 				v-if="form.length > 0"
@@ -271,6 +358,8 @@ const setAllElementsFromThis = (index) => {
 						/>
 						<TagsList
 								v-model="element.tags.value"
+								:fetchTags="false"
+								:tags="tags"
 						/>
 					</div>
 					<div class="info-block">
