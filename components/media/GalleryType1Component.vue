@@ -66,7 +66,7 @@ const props = defineProps({
 
 const fetchedData = ref([]);
 const meta = ref({});
-const perPage = ref(12);
+const perPage = ref(4);
 const page = ref(1);
 const filters = ref({});
 const dataCollectType = ref('show_more');
@@ -77,7 +77,7 @@ const waterFall = ref();
 
 const { refresh } = await useAsyncData(
 		async () => {
-			let request = `${apiUrl.value}media/get`;
+			let request = props.groupID ? `${apiUrl.value}media-group/get` : `${apiUrl.value}media/get`;
 
 			const body = {
 				perPage: perPage.value,

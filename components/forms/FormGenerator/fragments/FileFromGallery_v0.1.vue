@@ -32,23 +32,48 @@ watch(() => props.modelValue, (newValue, oldValue) => {
 
 watch(() => formValue.value, (newValue, oldValue) => {
 	if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
+		// TODO почему не срабатывает при изменении sort?
 		emit('update:modelValue', newValue);
 	}
 }, { deep: true });
 
 const setNewValue = () => {
-	formValue.value = { id: Number(formValue.value.id) };
+	formValue.value = {
+		id: Number(formValue.value.id),
+		sort: formValue.value.sort,
+	};
+}
+
+const setNewSort = () => {
+	emit('update:modelValue', formValue.value);
 }
 </script>
 
 <template>
 	<div class="grid grid-cols-4">
 		<div class="col-span-2">
+
+			<label>
+				Сортировка
+				<input
+						v-model="formValue.sort"
+						type="text"
+						class="block"
+						placeholder="Сортировка"
+						@change="setNewSort"
+				/>
+			</label>
+
+			<!--					:friendly-name="formValue.name"-->
+			<!--					@change="setNewValue"-->
+
 			<input
 					v-model="formValue.id"
 					type="text"
+					class="block"
+					placeholder="ID изображения"
 					:friendly-name="formValue.name"
-					@change="setNewValue"
+
 			/>
 			<div class="choice-file-block">
 				<div
