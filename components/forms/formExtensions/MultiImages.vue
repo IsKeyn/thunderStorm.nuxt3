@@ -59,9 +59,8 @@ watch(() => selectedData.value, (newValue, oldValue) => {
 	 * фигня какая-то
 	 * Пример console.log(1, newValue, oldValue) имеет отличные от данные console.log(2, JSON.stringify(newValue), JSON.stringify(oldValue));
 	 * Пример 2 structuredClone(toRaw(newValue)) и structuredClone(toRaw(oldValue)) также отличаются от newValue, oldValue
+	 * console.log(111, !isEqual(newValue, oldValue), JSON.stringify(newValue) !== JSON.stringify(oldValue), JSON.stringify(rawNew) !== JSON.stringify(rawOld)); результат одинаковый
 	 */
-
-	/* Костыль на обработку сортировки, причина рождения в TO DO выше */
 
 	if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
 		emit('update:modelValue', newValue);
@@ -83,11 +82,7 @@ const calcSort = (event) => {
 		item.sort = key;
 	});
 
-
 	emit('update:modelValue', selectedData);
-
-	console.log(selectedData.value);
-	// console.log(111, event);
 }
 </script>
 
