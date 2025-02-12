@@ -1,4 +1,6 @@
 <script setup>
+import draggable from "vuedraggable";
+
 import Repeater from '@/components/repeaters/Repeater.vue';
 import OpeningBox from '@/components/ui/OpeningBox.vue';
 import Modal from '@/components/modals/Modal.vue';
@@ -52,6 +54,15 @@ watch(() => props.modelValue, (newValue, oldValue) => {
 }, { deep: true });
 
 watch(() => selectedData.value, (newValue, oldValue) => {
+	/*
+	 * TODO
+	 * фигня какая-то
+	 * Пример console.log(1, newValue, oldValue) имеет отличные от данные console.log(2, JSON.stringify(newValue), JSON.stringify(oldValue));
+	 * Пример 2 structuredClone(toRaw(newValue)) и structuredClone(toRaw(oldValue)) также отличаются от newValue, oldValue
+	 */
+
+	/* Костыль на обработку сортировки, причина рождения в TO DO выше */
+
 	if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
 		emit('update:modelValue', newValue);
 	}
@@ -65,6 +76,18 @@ const toggleGalleryModal = () => {
 
 const setRepeatorItems = (event) => {
 	selectedData.value = event;
+}
+
+const calcSort = (event) => {
+	selectedData.value.forEach((item, key) => {
+		item.sort = key;
+	});
+
+
+	emit('update:modelValue', selectedData);
+
+	console.log(selectedData.value);
+	// console.log(111, event);
 }
 </script>
 
@@ -83,26 +106,58 @@ const setRepeatorItems = (event) => {
 					v-model="selectedData"
 					#default="{ repeaterItems, reload }"
 			>
-					<div
-							v-for="(item, index) in repeaterItems"
-							:key="index"
-							:class="['form']"
-					>
-						<div class="input-box">
-							<FileFromGallery
-									v-model="repeaterItems[index]"
-							/>
+				<draggable
+						tag="div"
+						:list="repeaterItems"
+						handle=".handle"
+						item-key="name"
+						@end="calcSort"
+				>
+					<template #item="{ element, index }">
+						<div :class="['form']">
+							<div class="input-box">
+								<FileFromGallery
+										v-model="repeaterItems[index]"
+								/>
+							</div>
+							<div class="buttons-box">
+								<button
+										v-if="repeaterItems.length > 1"
+										class="btn btn-primary"
+										@click="repeaterComponent.deleteRepeaterItem(index)"
+								>
+									<font-awesome-icon :icon="['fas', 'xmark']" />
+								</button>
+								<button class="btn btn-primary handle">
+									<font-awesome-icon :icon="['fas', 'bars']" />
+								</button>
+							</div>
 						</div>
-						<div class="buttons-box">
-							<button
-									v-if="repeaterItems.length > 1"
-									class="btn btn-primary"
-									@click="repeaterComponent.deleteRepeaterItem(index)"
-							>
-								<font-awesome-icon :icon="['fas', 'xmark']" />
-							</button>
-						</div>
-					</div>
+					</template>
+				</draggable>
+
+					<!--	Старое решение		-->
+<!--					<div-->
+<!--							v-for="(item, index) in repeaterItems"-->
+<!--							:key="index"-->
+<!--							:class="['form']"-->
+<!--					>-->
+<!--						<div class="input-box">-->
+<!--							<FileFromGallery-->
+<!--									v-model="repeaterItems[index]"-->
+<!--							/>-->
+<!--						</div>-->
+<!--						<div class="buttons-box">-->
+<!--							<button-->
+<!--									v-if="repeaterItems.length > 1"-->
+<!--									class="btn btn-primary"-->
+<!--									@click="repeaterComponent.deleteRepeaterItem(index)"-->
+<!--							>-->
+<!--								<font-awesome-icon :icon="['fas', 'xmark']" />-->
+<!--							</button>-->
+<!--						</div>-->
+<!--					</div>-->
+
 				<button
 						class="btn btn-primary block"
 						@click="repeaterComponent.addRepeaterItem()"
