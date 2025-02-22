@@ -4,6 +4,13 @@ import { watch } from "vue";
 import OpeningBox from '@/components/ui/OpeningBox.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
+const props = defineProps({
+	excludedTags: {
+		type: Array,
+		default: [],
+	},
+});
+
 const contentStatus = ref(false);
 
 const toggleContent = (newStatus) => {
@@ -52,39 +59,60 @@ const sort = ref([
 						sort: 'asc',
 					},
 				},
-				// {
-				// 	name: 'Наиболее понравившиеся',
-				// 	value: {
-				// 		field: 'likes',
-				// 		sort: 'desc',
-				// 	},
-				// },
-				// {
-				// 	name: 'Наименее понравившиеся',
-				// 	value: {
-				// 		field: 'likes',
-				// 		sort: 'asc',
-				// 	},
-				// },
-				// {
-				// 	name: 'Наиболее просматриваемые',
-				// 	value: {
-				// 		field: 'views',
-				// 		sort: 'desc',
-				// 	},
-				// },
-				// {
-				// 	name: 'Наименее просматриваемые',
-				// 	value: {
-				// 		field: 'views',
-				// 		sort: 'asc',
-				// 	},
-				// },
 				{
-					name: 'По названию',
+					name: 'Наиболее понравившиеся',
+					value: {
+						field: 'likes',
+						sort: 'desc',
+					},
+				},
+				{
+					name: 'Наименее понравившиеся',
+					value: {
+						field: 'likes',
+						sort: 'asc',
+					},
+				},
+				{
+					name: 'Наиболее просматриваемые',
+					value: {
+						field: 'views',
+						sort: 'desc',
+					},
+				},
+				{
+					name: 'Наименее просматриваемые',
+					value: {
+						field: 'views',
+						sort: 'asc',
+					},
+				},
+				{
+					name: 'По названию ↑',
 					value: {
 						field: 'name',
 						sort: 'asc',
+					},
+				},
+				{
+					name: 'По названию ↓',
+					value: {
+						field: 'name',
+						sort: 'desc',
+					},
+				},
+				{
+					name: 'По умолчанию ↑',
+					value: {
+						field: 'pivot.sort',
+						sort: 'asc',
+					},
+				},
+				{
+					name: 'По умолчанию ↓',
+					value: {
+						field: 'pivot.sort',
+						sort: 'desc',
 					},
 				}
 			],
@@ -108,6 +136,8 @@ watch(sort.value, (newValue) => {
 		<TagsList
 				class="col-span-8"
 				:canAddTags="false"
+				:fetchTags="excludedTags.length ? false : false"
+				:tags="excludedTags"
 				type="media"
 				v-model="filters.tags"
 		/>

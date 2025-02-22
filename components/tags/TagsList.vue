@@ -26,6 +26,10 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
+	tagsCountForShowSearchLine: { // Минимальное количество тегов для отображения строки поиска
+ 		type: Number,
+		default: 15,
+	},
 });
 
 
@@ -47,7 +51,11 @@ const form = ref({
 	},
 });
 
-const setTags = (tags) => {
+const setTags = (tags, handlerType = 'new-list') => {
+	if (handlerType === 'new-list') {
+		tagsList.value = [];
+	}
+
 	tags.forEach((item) => {
 		const selected = toRaw(props.modelValue).includes(item.name);
 
@@ -224,6 +232,7 @@ const search = ref({
 	name: 'Поиск',
 	value: '',
 	type: 'text',
+	placeholder: 'Вводите название тега',
 	classes: ['w-full', 'mt-[5px]'],
 });
 
@@ -247,7 +256,7 @@ const filteredTagsList = computed(() => {
 <template>
 	<div>
 		<FormGenerator
-				v-if="search"
+				v-if="search && tagsCountForShowSearchLine <= tagsList.length"
 				name="search"
 				:element="search"
 				:showTitle="true"

@@ -76,6 +76,7 @@ const { refresh } = await useAsyncData(
 						v-if="fetchedData.mediaGroup"
 						:groupID="fetchedData.mediaGroup"
 						:loadOnScroll="false"
+						:useFilter="true"
 				/>
 			</div>
 		</div>

@@ -62,11 +62,20 @@ const props = defineProps({
 		type: String,
 		default: 'waterfall',
 	},
+	useFilter: {
+		type: Boolean,
+		default: false,
+	},
+	perPage: {
+		type: Number,
+		default: 16,
+	},
 });
 
 const fetchedData = ref([]);
 const meta = ref({});
-const perPage = ref(4);
+const tags = ref([]);
+
 const page = ref(1);
 const filters = ref({});
 const dataCollectType = ref('show_more');
@@ -80,7 +89,7 @@ const { refresh } = await useAsyncData(
 			let request = props.groupID ? `${apiUrl.value}media-group/get` : `${apiUrl.value}media/get`;
 
 			const body = {
-				perPage: perPage.value,
+				perPage: props.perPage,
 				page: page.value,
 				filter: {},
 			};
@@ -126,6 +135,7 @@ const { refresh } = await useAsyncData(
 									}
 
 									meta.value = response._data.meta;
+									tags.value = response._data.tags;
 
 									// TODO Обновляет waterfall?
 									if (waterFall.value) {
@@ -266,9 +276,11 @@ const hideLightBox = () => {
 </script>
 
 <template>
-<!--		<EntityFilter-->
-<!--			@setNewFilters="setNewFilters"-->
-<!--		/>-->
+		<EntityFilter
+				v-if="useFilter"
+				:excludedTags="tags"
+				@setNewFilters="setNewFilters"
+		/>
 		<template v-if="fetchedData.length > 0">
 			<VueFlexWaterfall
 					v-if="galleryType === 'waterfall'"
