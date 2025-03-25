@@ -15,6 +15,12 @@ const {
 	handleBackendUrl,
 } = api();
 
+import { mobile } from '@/composables/mobile.js'
+const {
+	isMobile,
+	onWindowResize,
+} = mobile();
+
 const props = defineProps({
 	image: {
 		type: Object,
@@ -151,7 +157,7 @@ watch(() => props.image, () => {
 });
 
 
-const hover = ref(false);
+const activeInfoBlock = ref(false);
 
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
@@ -164,6 +170,9 @@ onMounted(() => {
 	}
 
 	document.addEventListener('keydown', keydownHandler);
+
+	onWindowResize();
+	window.addEventListener('resize', onWindowResize);
 });
 
 onUnmounted(() => {
@@ -173,6 +182,7 @@ onUnmounted(() => {
 	}
 
 	document.removeEventListener('keydown', keydownHandler);
+	window.removeEventListener("resize", onWindowResize );
 });
 
 const isPined = ref(false);
@@ -181,15 +191,32 @@ const togglePin = () => {
 	isPined.value = !isPined.value;
 
 	if (isPined.value) {
-		hover.value = true;
+		activeInfoBlock.value = true;
 	}
 }
 
-const setHover = (value) => {
-	if (!isPined.value) {
-		hover.value = value;
+const activeInfoBlockTimeout = ref(null);
+
+const setActiveInfoBlock = (value, useTimeout = false) => {
+	if (isMobile.value) {
+		activeInfoBlock.value = value;
+	} else {
+		if (value && activeInfoBlockTimeout.value) {
+			clearTimeout(activeInfoBlockTimeout.value);
+		}
+
+		if (value && useTimeout && !activeInfoBlockTimeout.value) {
+			activeInfoBlockTimeout.value = setTimeout(() => {
+				activeInfoBlock.value = false;
+			}, 3000);
+		}
+
+		if (!isPined.value) {
+			activeInfoBlock.value = value;
+		}
 	}
 }
+
 const keydownHandler = (event) => {
 	switch (event.key) {
 		case 'Escape': emit('setCurrentElement'); break;
@@ -214,6 +241,15 @@ const keydownHandler = (event) => {
 			>
 				<font-awesome-icon
 						:icon="['fas', 'xmark']"
+						class="icon"
+				/>
+			</span>
+			<span
+					class="btn-icon info-button"
+					@click="setActiveInfoBlock(!activeInfoBlock, true)"
+			>
+				<font-awesome-icon
+						:icon="['fas', 'info']"
 						class="icon"
 				/>
 			</span>
@@ -253,9 +289,9 @@ const keydownHandler = (event) => {
 			/>
 			<div
 					class="item-info-block"
-					:class="hover ? 'active' : ''"
-					@mouseenter="setHover(true)"
-					@mouseleave="setHover(false)"
+					:class="activeInfoBlock ? 'active' : ''"
+					@mouseenter="setActiveInfoBlock(true)"
+					@mouseleave="setActiveInfoBlock(false)"
 			>
 				<div class="content">
 					<div class="line-1">
@@ -333,6 +369,13 @@ const keydownHandler = (event) => {
 							@click="togglePin"
 					/>
 				</div>
+
+				<div class="btn-icon btn-close-mobile-more-info">
+					<font-awesome-icon
+							:icon="['fas', 'xmark']"
+							@click="setActiveInfoBlock(false)"
+					/>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -387,6 +430,12 @@ const keydownHandler = (event) => {
 			;
 		}
 
+		.info-button {
+			@apply
+				top-[20px] left-[10px]
+			;
+		}
+
 		.btn-nav {
 			top: calc(50% - 30px);
 		}
@@ -413,6 +462,7 @@ const keydownHandler = (event) => {
 
 		.btn-pin {
 			@apply
+				hidden md:block
 				absolute top-[20px] right-[28px]
 				cursor-pointer text-[30px]
 			;
@@ -437,51 +487,100 @@ const keydownHandler = (event) => {
 			}
 		}
 
+		.btn-close-mobile-more-info {
+			@apply
+				md:hidden
+				absolute top-[20px] right-[28px]
+				cursor-pointer text-[30px]
+			;
+
+			height: unset;
+			width: unset;
+
+			&:hover {
+				@apply bg-inherit;
+			}
+
+			svg {
+				&:hover {
+					color: var(--main-hover-color);
+				}
+			}
+		}
+
 		img {
-			@apply h-full w-full max-h-[100vw] object-contain mb-0 relative;
+			@apply h-full w-full lg:max-h-[100vw] object-contain mb-0 relative;
 		}
 
 		.item-info-block {
 			@apply
-				absolute z-[700]
+				absolute z-[800]
 				bottom-0
+				h-full md:h-[unset]
+				hidden md:block
 				w-full min-h-[90px]
-				bg-[#000000] opacity-0
+				bg-[#000000]
+				opacity-100 md:opacity-0
 			;
 
 			transition: 1s;
 
 			&.active {
-				@apply opacity-80;
+				@apply
+					opacity-100 md:opacity-80
+					block
+				;
 			}
 
 			.content {
 				@apply
-					w-[var(--main-block-width)] min-h-[60px]
+					min-[1400px]:w-[var(--main-block-width)] min-h-[60px]
 					m-auto
 				;
 
 				.line-1,
 				.line-2 {
 					@apply
-					pr-[var(--main-right-padding)] pb-[10px] pl-[var(--main-left-padding)]
-						grid grid-cols-12
+						pr-[2rem] md:pr-[var(--main-right-padding)]
+						pb-[10px]
+						pl-[2rem] md:pl-[var(--main-left-padding)]
+						md:grid grid-cols-12
 					;
 				}
 
 				.line-1 {
-					@apply pt-[10px] pb-[10px];
+					@apply grid grid-cols-12 pt-[10px] pb-[10px];
 				}
 
-				.line-1 {
-					@apply pb-[10px];
+				.line-2 {
+					@apply absolute md:static bottom-0;
 				}
 
 				.column {
-					@apply col-span-4;
+					@apply col-span-12 md:col-span-4 grid-cols-12;
 
 					.info-line {
 						display: block;
+					}
+
+					&:nth-child(1) {
+						@apply order-2 md:order-1;
+
+						.info-line {
+							@apply md:text-[1rem] mb-2;
+						}
+					}
+
+					&:nth-child(2) {
+						@apply order-1 md:order-2;
+
+						.info-line {
+							@apply text-[2rem] md:text-[1rem] mb-2;
+						}
+					}
+
+					&:nth-child(3) {
+						@apply order-3 md:order-3;
 					}
 				}
 			}

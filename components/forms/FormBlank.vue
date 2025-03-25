@@ -408,6 +408,7 @@ const openBlockList = () => {
 						validateErrorPosition="bottom"
 						:labelClasses="['block', 'mb-[10px]']"
 						:fieldClasses="field.classes"
+						:formHandlerType="field.formHandlerType"
 				/>
 				<TagsList
 						v-if="showTags"

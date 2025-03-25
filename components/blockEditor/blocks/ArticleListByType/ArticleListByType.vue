@@ -77,7 +77,7 @@ const { refresh } = await useAsyncData(
 				} catch (e) {
 					const errorsPromise = errorHandler(e);
 
-					errorsPromise.then((element) => {i
+					errorsPromise.then((element) => {
 						responseErrors.value = element;
 					});
 					requestInProgress.value = false;

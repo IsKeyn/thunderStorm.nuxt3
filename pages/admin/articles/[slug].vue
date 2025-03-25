@@ -47,6 +47,7 @@ const form = ref(
 				type: 'fileFromGallery',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+				formHandlerType: 0,
 			},
 			type: {
 				name: 'Тип статьи',

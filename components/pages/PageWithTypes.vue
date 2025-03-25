@@ -75,6 +75,7 @@ const { refresh } = await useAsyncData(
 				<GalleryType1Component
 						v-if="fetchedData.mediaGroup"
 						:groupID="fetchedData.mediaGroup"
+						:galleryType="fetchedData.theme"
 						:loadOnScroll="false"
 						:useFilter="true"
 				/>

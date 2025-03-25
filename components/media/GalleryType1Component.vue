@@ -70,6 +70,10 @@ const props = defineProps({
 		type: Number,
 		default: 16,
 	},
+	usedResize: {
+		type: String,
+		default: '300',
+	},
 });
 
 const fetchedData = ref([]);
@@ -273,6 +277,20 @@ const hideLightBox = () => {
 	currentElement.value = null;
 	currentElementKey.value = null;
 }
+
+const getImgSrc = (img) => {
+	let src = '';
+
+	if (img.resized && Object.keys(img.resized).length > 0) {
+		const key = props.usedResize ? `r_${props.usedResize}` : Object.keys(img.resized)[0];
+
+		src = img.resized[key] ? img.resized[key] : img.src;
+	} else {
+		src = img.src;
+	}
+
+	return src;
+}
 </script>
 
 <template>
@@ -283,7 +301,7 @@ const hideLightBox = () => {
 		/>
 		<template v-if="fetchedData.length > 0">
 			<VueFlexWaterfall
-					v-if="galleryType === 'waterfall'"
+					v-if="galleryType === 'waterfall' || galleryType === 0"
 					id="main-gallery"
 					align-content="center"
 					col="4"
@@ -308,13 +326,13 @@ const hideLightBox = () => {
 					<img
 							@click="setCurrentElement(key)"
 							class="img"
-							:src="element.src"
+							:src="getImgSrc(element)"
 							:alt="element.name"
 					/>
 				</div>
 			</VueFlexWaterfall>
 			<div
-					v-if="galleryType === 'simple'"
+					v-if="galleryType === 'simple' || galleryType === 1"
 					class="simple"
 			>
 				<div
@@ -332,7 +350,7 @@ const hideLightBox = () => {
 					<img
 							@click="setCurrentElement(key)"
 							class="img"
-							:src="element.src"
+							:src="getImgSrc(element)"
 							:alt="element.name"
 					/>
 				</div>
@@ -395,10 +413,14 @@ const hideLightBox = () => {
 }
 
 .simple {
-	@apply grid grid-cols-12;
+	@apply grid grid-cols-12 gap-2;
 
 	.element {
-		@apply col-span-4;
+		@apply col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3 w-full ;
+
+		img {
+			@apply w-full;
+		}
 	}
 }
 </style>

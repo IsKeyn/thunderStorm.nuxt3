@@ -45,6 +45,22 @@ const form = ref(
 				type: 'text',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			theme: {
+				name: 'Тема',
+				type: 'select',
+				options: [
+					{
+						name: 'Waterfall',
+						value: 0,
+					},
+					{
+						name: 'Simple',
+						value: 1,
+					},
+				],
+				value: '0',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 
