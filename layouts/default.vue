@@ -35,6 +35,7 @@ import MainBackground from '@/components/layout/MainBackground.vue';
 import Footer from '@/components/footers/Footer.vue';
 import MediaById from '@/components/media/MediaById.vue';
 import SideButton from '@/components/ui/SideButton.vue';
+import SideFixMenu from '@/components/menu/SideFixMenu.vue';
 
 // import('~/assets/scss/vars.scss');
 // import('~/assets/scss/style.scss');
@@ -65,6 +66,7 @@ const theme = computed(() => {
 		<div class="main">
 			<div id="modals"></div>
 			<FloatHeader />
+			<SideFixMenu />
 			<article>
 <!--				<NuxtLoadingIndicator /> // Прочитать про кастомизацию и кастомизировать -->
 				<slot />

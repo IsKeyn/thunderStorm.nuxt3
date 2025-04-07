@@ -26,6 +26,12 @@ const titles = ref(
 			link_type: {
 				name: 'Тип ссылки',
 			},
+			icon: {
+				name: 'Иконка',
+			},
+			active: {
+				name: 'Активность',
+			},
 		}
 );
 

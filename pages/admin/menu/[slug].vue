@@ -43,6 +43,20 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			icon: {
+				name: 'Иконка',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			active: {
+				name: 'Активность',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 
