@@ -1,0 +1,19 @@
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="icon icon-tabler icon-tabler-brand-rutube svg-block"
+        width="50"
+        height="50"
+        viewBox="0 0 24 24"
+        stroke-width="1.6"
+        stroke="#FF0000"  <!-- Красный цвет как у лого Rutube -->
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        title="Rutube"
+        >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <!-- Основной треугольник (play) -->
+<path d="M15 12l-8 -4v8l8 -4z" fill="#FF0000" stroke="none"/>
+        <!-- Внешняя рамка (опционально) -->
+<rect x="4" y="5" width="16" height="14" rx="2" stroke="#FF0000" fill="none"/>
+        </svg>
