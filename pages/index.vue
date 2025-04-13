@@ -18,13 +18,15 @@ useHead({
 </script>
 
 <template>
-	<TitleImage
-			:image="{ src: '/slides/top.png', name: 'Город, покрытый туманом' }"
-			title="Город, покрытый туманом"
-			:withoutBorder="true"
-			parentClass="mb-[30px]"
-	/>
-<!--	<MainPageSlider />-->
+	<MainPageSlider />
+
+<!--	<TitleImage-->
+<!--			:image="{ src: '/slides/top.png', name: 'Город, покрытый туманом' }"-->
+<!--			title="Город, покрытый туманом"-->
+<!--			:withoutBorder="true"-->
+<!--			parentClass="mb-[30px]"-->
+<!--	/>-->
+
 	<ArticlesList
 			title="Новости"
 			:type="1"
