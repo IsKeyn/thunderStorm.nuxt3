@@ -28,7 +28,7 @@ const form = ref(
 				name: 'Ссылка',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			type: {
