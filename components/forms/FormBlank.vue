@@ -92,6 +92,14 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showTabs: {
+		type: Boolean,
+		default: true,
+	},
+	showAdditionControlPanel: {
+		type: Boolean,
+		default: true,
+	},
 	dataForAdditionalFields: {
 		type: Array,
 		default: [],
@@ -396,7 +404,10 @@ const openBlockList = () => {
 	<div>
 		<ResponseErrorsComponent :responseErrors="responseErrors" />
 
-		<Tabs :tabs="tabsElements">
+		<Tabs
+				:tabs="tabsElements"
+				:showTabs="showTabs"
+		>
 			<template #tab-1>
 				<FormGenerator
 						v-for="(field, index) in form"
@@ -448,10 +459,11 @@ const openBlockList = () => {
 		</Tabs>
 
 		<AdditionalControlPanel
-			:requestInProgress="requestInProgress"
-			:useBlockEditor="useBlockEditor"
-			@sendForm="sendForm"
-			@openBlockList="openBlockList"
+				v-if="showAdditionControlPanel"
+				:requestInProgress="requestInProgress"
+				:useBlockEditor="useBlockEditor"
+				@sendForm="sendForm"
+				@openBlockList="openBlockList"
 		/>
 
 		<div class="grid grid-cols-6">

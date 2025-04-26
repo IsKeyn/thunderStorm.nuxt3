@@ -66,8 +66,9 @@ import VerifyEmailBlock from "@/components/user/VerifyEmailBlock.vue";
 import Modal from '@/components/modals/Modal.vue';
 import AuthComponent from '@/components/user/AuthComponent.vue';
 
-
 import { onMounted } from "vue";
+
+const activeAuthModal = ref(false);
 
 // Открытие модального окна
 onMounted(() => {

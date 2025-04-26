@@ -101,7 +101,7 @@ export function api() {
         const request = `${apiUrl.value}${url}`;
         const headers = { Accept: 'application/json' };
 
-        if (method === 'POST') {
+        if (method === 'POST' || method === 'DELETE') {
             const csrfCookie = await getCsrfCookie();
             headers['X-XSRF-TOKEN'] = csrfCookie.value;
         }
@@ -112,7 +112,7 @@ export function api() {
             headers,
         };
 
-        if (method === 'POST') {
+        if (method === 'POST' || method === 'DELETE') {
             opts.body = body;
         }
 

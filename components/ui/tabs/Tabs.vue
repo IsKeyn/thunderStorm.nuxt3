@@ -19,6 +19,10 @@ const props = defineProps({
 			},
 		],
 	},
+	showTabs: {
+		type: Boolean,
+		default: true,
+	}
 });
 
 const currentTab = ref(1);
@@ -49,7 +53,7 @@ const setTab = (tabID) => {
 
 <template>
 	<div>
-		<ul>
+		<ul v-if="showTabs">
 			<li
 					v-for="tab in tabs"
 					:key="tab.id"

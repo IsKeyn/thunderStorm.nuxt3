@@ -129,6 +129,7 @@ const getCardType = (cardName) => {
 					:showOpenModal="choiceAlert.active"
 					:canClose="false"
 					size="small"
+					overlayClasses="z-[1000]"
 			>
 				<component
 						:is="getCardType(choiceAlert.card)"

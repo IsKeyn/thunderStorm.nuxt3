@@ -317,7 +317,11 @@ if (props.formHandlerType === 1) {
 							>
 								Sorry, your browser doesn't support embedded videos
 							</video>
-							<img v-if="fileType === 'image'" :src="element.value" class="inline-block max-w-[500px] max-h-[500px]" />
+							<img
+									v-if="fileType === 'image'"
+									:src="element.value"
+									:class="`inline-block ${element.imagePreviewClasses ? element.imagePreviewClasses : 'max-w-[500px] max-h-[500px]'}`"
+							/>
 						</div>
 					</div>
 				</template>
@@ -341,7 +345,11 @@ if (props.formHandlerType === 1) {
 							</div>
 						</div>
 						<div class="col-span-2 text-center">
-							<img v-if="previewImage" :src="previewImage" class="inline-block max-w-[500px] max-h-[500px]" />
+							<img
+									v-if="previewImage"
+									:src="previewImage"
+									:class="`inline-block ${element.imagePreviewClasses ? element.imagePreviewClasses : 'max-w-[500px] max-h-[500px]'}`"
+							/>
 						</div>
 					</div>
 				</template>
@@ -382,7 +390,9 @@ if (props.formHandlerType === 1) {
 			<input
 					v-model="element.value"
 					:type="element.type"
-			> {{ element.name }}
+			>
+				<span v-if="element.html" v-html="element.html" />
+				<span v-else>{{ element.name }}</span>
 			</span>
 		</template>
 		<span

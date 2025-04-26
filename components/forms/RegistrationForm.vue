@@ -7,7 +7,15 @@ import { api } from '@/composables/api.js';
 import { useUserStore } from '@/stores/user';
 
 const { validateElement } = validate();
-const { apiUrl, errorHandler, getCsrfCookie } = api();
+const {
+	apiUrl,
+	errorHandler,
+	getCsrfCookie,
+	sendApiRequest,
+} = api();
+
+import { notifications } from '@/composables/notifications.js';
+const { alert, error } = notifications();
 
 const userStore = useUserStore();
 
@@ -43,6 +51,15 @@ const form = ref(
 				showChangeTypeButton: true,
 				classes: ['w-full', 'pr-[25px]', 'mt-[5px]'],
 			},
+			// show_author: {
+			// 	name: 'Согласие на политики обработки персональных данных',
+			// 	showTitle: false,
+			// 	html: 'Я соглашаюсь с уловиями обработки персональных данных',
+			// 	value: 0,
+			// 	type: 'checkbox',
+			// 	validateRules: 'required',
+			// 	classes: ['w-full', 'mt-[5px]'],
+			// },
 		}
 );
 
@@ -120,31 +137,49 @@ const getUserData = async () => {
 	requestInProgress.value = true;
 
 	try {
-		const response = await $fetch(
-				`${apiUrl.value}auth/user`,
-				{
-					method: 'GET',
-					headers: {
-						Authorization: Authorization.value,
-						Accept: 'application/json',
-						'X-Requested-With': 'XMLHttpRequest',
-					},
-				},
-		);
+		const body = {}
+
+		const response = await sendApiRequest('auth/user', 'GET', body);
 
 		if (response) {
 			userStore.user = response.data;
 			requestInProgress.value = false;
 		}
 	} catch (e) {
-		const errorsPromise = errorHandler(e);
-
-		errorsPromise.then((element) => {
-			responseErrors.value = element;
-		});
+		error(e);
 		requestInProgress.value = false;
 	}
 }
+//
+// const getUserData = async () => {
+// 	requestInProgress.value = true;
+//
+// 	try {
+// 		const response = await $fetch(
+// 				`${apiUrl.value}auth/user`,
+// 				{
+// 					method: 'GET',
+// 					headers: {
+// 						Authorization: Authorization.value,
+// 						Accept: 'application/json',
+// 						'X-Requested-With': 'XMLHttpRequest',
+// 					},
+// 				},
+// 		);
+//
+// 		if (response) {
+// 			userStore.user = response.data;
+// 			requestInProgress.value = false;
+// 		}
+// 	} catch (e) {
+// 		const errorsPromise = errorHandler(e);
+//
+// 		errorsPromise.then((element) => {
+// 			responseErrors.value = element;
+// 		});
+// 		requestInProgress.value = false;
+// 	}
+// }
 </script>
 
 <template>
@@ -175,6 +210,7 @@ const getUserData = async () => {
 					:name="index"
 					:element="field"
 					:showValidateError=true
+					:showTitle="field.hasOwnProperty('showTitle') ? field.showTitle : true"
 					validateErrorPosition="bottom"
 					:labelClasses="['block', 'mb-[10px]']"
 					:fieldClasses="field.classes"

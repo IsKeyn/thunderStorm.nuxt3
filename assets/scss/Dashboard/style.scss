@@ -1,0 +1,32 @@
+:root {
+  --color1: #171e13;
+  --color1-hov: #202819;
+  --color2: #424b35;
+  --color2-hov: #49533c;
+  --color4: #b47c4b;
+  --color4-hov: #be8553;
+  --color5: #561d18;
+}
+
+body {
+  .main {
+    @apply w-full;
+  }
+}
+
+.btn-board {
+  @apply bg-[var(--color1)] mr-2;
+
+  &:hover {
+    @apply bg-[var(--color2)];
+  }
+}
+
+// Переопределние стилей Notification
+.alert-box {
+  @apply w-full;
+
+  .message {
+    width: calc(100% - 60px);
+  }
+}
