@@ -1,6 +1,6 @@
 <script setup>
 import Modal from '@/components/modals/Modal.vue';
-import InventoryInterface from '@/components/boardGame/Inventory/InventoryInterface.vue';
+import InventoryInterface from '@/components/boardGame/inventory/InventoryInterface.vue';
 
 const emit = defineEmits(['fetchLogs']);
 
