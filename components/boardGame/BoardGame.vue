@@ -1,0 +1,146 @@
+<script setup>
+import UserInterface from '@/components/boardGame/UserInterface.vue';
+import Logs from '@/components/boardGame/bg-logs/Logs.vue';
+import Players from '@/components/boardGame/user/Players.vue';
+import Board from '@/components/boardGame/Board.vue';
+
+import { ref } from "vue";
+
+import { api } from '@/composables/api.js'
+const {
+	apiUrl,
+	publicUrl,
+	sessionCookieName,
+	errorHandler,
+	sendApiRequest,
+} = api();
+
+const route = useRoute();
+
+const requestInProgress = ref(false);
+const fetchedData = ref();
+
+const { refresh } = await useAsyncData(
+		async () => {
+			let request = `${apiUrl.value}board-game/get/${route.params.slug}`;
+
+			const query = {};
+			const sessionCookie = useCookie(sessionCookieName.value);
+
+			requestInProgress.value = true;
+
+			try {
+				await $fetch(
+						request,
+						{
+							method: 'GET',
+							credentials: 'include',
+							query,
+							headers: {
+								Accept: 'application/json',
+								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+								Referer: publicUrl.value,
+							},
+							onResponse({response}) {
+								if (response.status === 200) {
+									fetchedData.value = response._data.data;
+								} else {
+									error('Request error', 5000);
+								}
+
+								requestInProgress.value = false;
+							}
+						},
+				);
+			} catch (e) {
+				errorHandler(e);
+				requestInProgress.value = false;
+			}
+		}
+);
+
+const logListBlock = ref(null);
+
+const updateLogs = () => {
+	logListBlock.value.updateLogs();
+}
+
+const updateBoardGameInfo = () => {
+	refresh();
+}
+</script>
+
+<template>
+	<Preloader v-if="requestInProgress" />
+	<div v-if="fetchedData && fetchedData.active === 1">
+		<header class="without-border">
+			<span class="title" v-if="fetchedData.name">{{ fetchedData.name }}</span>
+		</header>
+		<div class="main-dashboard-box">
+			<div class="user-interface-box">
+				<UserInterface
+						:boardGameId="fetchedData.id"
+						:boardGameInfo="fetchedData"
+						@fetchLogs="fetchLogs"
+						@updateBoardGameInfo="updateBoardGameInfo"
+				/>
+			</div>
+			<div class="board-box">
+				<Board
+						:boardGameId="fetchedData.id"
+						:boardGameInfo="fetchedData"
+				/>
+				<Comments
+						entityType="App\Models\BoardGame"
+						:entityId="fetchedData.id"
+						class="mt-5"
+						ref="commentsRef"
+						@refresh="refresh"
+				/>
+			</div>
+			<div class="info-box">
+				<Players
+						:boardGameId="fetchedData.id"
+						:boardGameInfo="fetchedData"
+				/>
+				<Logs
+						ref="logListBlock"
+						:boardGameId="fetchedData.id"
+						:boardGameInfo="fetchedData"
+				/>
+			</div>
+		</div>
+	</div>
+	<div v-else>
+		Данная игра не активна
+	</div>
+</template>
+
+<style lang="scss" scoped>
+header {
+	@apply
+		mb-[1rem]
+		pt-[1rem] pb-[1rem] pl-[var(--main-left-padding)] pr-[var(--main-right-padding)]
+	;
+
+	border-bottom: 1px solid var(--second-border-color);
+}
+
+.main-dashboard-box {
+	@apply grid grid-cols-12;
+
+	.user-interface-box {
+		@apply col-span-2;
+	}
+
+	.board-box {
+		@apply col-span-8;
+
+		margin: 0 auto;
+	}
+
+	.info-box {
+		@apply col-span-2;
+	}
+}
+</style>

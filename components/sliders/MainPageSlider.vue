@@ -1,28 +1,76 @@
 <script setup>
 import 'vue3-carousel/carousel.css'
+
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+import Preloader from '@/components/ui/Preloader.vue';
+import LightBox from '@/components/media/LightBox.vue'
 
-import ThunderSlider from '@/components/sliders/ThunderSlider.vue';
-import {ref} from "vue";
+import { lightBox } from '@/composables/lightBox.js';
+const {
+	openedImage,
+	setOpenedImage,
+} = lightBox();
 
-const slides = ref([
-	{
-		type: 'img',
-		source: '/slides/top.png',
-		title: 'Город, покрытый туманом',
-	},
-	{
-		type: 'img',
-		source: '/slides/sh2-remake.jpg',
-		title: 'Silent Hill 2 Remake 4k скриншоты',
-		url: '/game/silent-hill-2-remake/media/',
-	},
-	// {
-	// 	type: 'img',
-	// 	source: '/slides/top.png',
-	// 	title: 'Город, покрытый туманом3',
-	// },
-]);
+const notificationsModule = await import("@/composables/notifications.js");
+const { alert, error } = notificationsModule.notifications();
+
+import { api } from '@/composables/api.js'
+import { ref } from "vue";
+const {
+	apiUrl,
+	publicUrl,
+	sessionCookieName,
+	errorHandler,
+} = api();
+
+const {
+	isMobile,
+	onWindowResize,
+} = mobile();
+
+const fetchedData = ref([]);
+const requestInProgress = ref(false);
+
+const { refresh } = await useAsyncData(
+		async () => {
+			let request = `${apiUrl.value}slide/listByType`;
+
+			const query = {
+				type: 1,
+			};
+			const sessionCookie = useCookie(sessionCookieName.value);
+
+			requestInProgress.value = true;
+
+			try {
+				await $fetch(
+						request,
+						{
+							method: 'GET',
+							credentials: 'include',
+							query,
+							headers: {
+								Accept: 'application/json',
+								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+								Referer: publicUrl.value,
+							},
+							onResponse({response}) {
+								if (response.status === 200) {
+									fetchedData.value = response._data.data;
+								} else {
+									error('Slider request error', 5000);
+								}
+
+								requestInProgress.value = false;
+							}
+						},
+				);
+			} catch (e) {
+				errorHandler(e);
+				requestInProgress.value = false;
+			}
+		}
+);
 
 const carouselConfig = {
 	itemsToShow: 1,
@@ -33,54 +81,69 @@ const carouselRef = ref()
 
 const next = () => carouselRef.value.next();
 const prev = () => carouselRef.value.prev();
+
+const router = useRouter();
+
+const routeTo = (url) => {
+	router.push({
+		path: url,
+	});
+}
 </script>
 
 <template>
-	<div class="slider without-border">
+	<div v-if="fetchedData.length > 0" class="slider without-border">
 	<Carousel
 			ref="carouselRef"
 			v-bind="carouselConfig"
 			class=""
+			:height="406"
 			:autoplay="3000"
 			:pauseAutoplayOnHover="true"
 			:transition="750"
 			:wrapAround="true"
 	>
+		<Slide v-if="requestInProgress" class="cap flex justify-center items-center text-[5rem]">
+			<Preloader />
+		</Slide>
 		<Slide
-				v-for="(slide, index) in slides"
+				v-for="(slide, index) in fetchedData"
 				:key="index"
 				class="slide w-full"
 		>
-			<template v-if="slide.type === 'video'">
-				<video :src="slide.source" autoplay loop muted></video>
-				<span
-						v-if="slide.title"
-						class="flip-text-box left"
-				>
-					{{ slide.title }}
-				</span>
-			</template>
-			<template v-else>
-				<a v-if="slide.url" :href="slide.url">
-					<img :src="slide.source"
-							 :alt="slide.title"
+			<template v-if="slide.image">
+				<template v-if="slide.image.mime_type === 'mp4'">
+					<video
+							:src="slide.image.src"
+							autoplay loop muted
+					></video>
+					<span
+							v-if="slide.title"
+							class="flip-text-box left"
+					>
+						{{ slide.title }}
+					</span>
+				</template>
+				<template v-else>
+					<img
+							v-if="slide.url"
+							:src="slide.image.src"
+							:alt="slide.title"
+							@click="routeTo(slide.url)"
+					>
+					<img
+							v-else
+							:src="slide.image.src"
+							:alt="slide.name"
+							@click="setOpenedImage(slide.image)"
 					>
 					<span
 							v-if="slide.title"
 							class="flip-text-box left"
 					>
-					{{ slide.title }}
-				</span>
-				</a>
-				<img v-else :src="slide.source"
-						 :alt="slide.title"
-				>
-				<span
-						v-if="slide.title"
-						class="flip-text-box left"
-				>
-					{{ slide.title }}
-				</span>
+							{{ slide.name }}
+						</span>
+				</template>
 			</template>
 		</Slide>
 
@@ -106,56 +169,26 @@ const prev = () => carouselRef.value.prev();
 	</div>
 	</div>
 
-<!--	<ThunderSlider-->
-<!--			:autoLoop="{-->
-<!--				delay: 3000,-->
-<!--				restart: 10000,-->
-<!--			}"-->
-<!--			sliderHeight="406px"-->
-<!--			:withoutBorder="true"-->
-<!--	>-->
-<!--		<div-->
-<!--				class="slide w-full"-->
-<!--				v-for="(slide, index) in slides"-->
-<!--				:key="index"-->
-<!--		>-->
-<!--			<template v-if="slide.type === 'video'">-->
-<!--				<video :src="slide.source" autoplay loop muted></video>-->
-<!--				<span-->
-<!--						v-if="slide.title"-->
-<!--						class="flip-text-box left"-->
-<!--				>-->
-<!--						{{ slide.title }}-->
-<!--					</span>-->
-<!--			</template>-->
-<!--			<template v-else>-->
-<!--				<img :src="slide.source"-->
-<!--						 :alt="slide.title"-->
-<!--				>-->
-<!--				<span-->
-<!--						v-if="slide.title"-->
-<!--						class="flip-text-box left"-->
-<!--				>-->
-<!--						{{ slide.title }}-->
-<!--					</span>-->
-<!--			</template>-->
-<!--		</div>-->
-<!--	</ThunderSlider>-->
+	<LightBox
+			v-if="openedImage"
+			:image="openedImage"
+			:setViewsLog="true"
+			@setCurrentElement="setOpenedImage"
+	/>
 </template>
 
 <style lang="scss" scoped>
-.slide {
-	@apply relative overflow-hidden;
+.slider {
+	@apply
+		relative
+		overflow-hidden
+	;
 
 	a,
 	img,
 	video {
 		@apply w-full;
 	}
-}
-
-.slider {
-	@apply relative;
 
 	.nav-next,
 	.nav-prev {

@@ -51,7 +51,24 @@
     }
   }
 
-  &.medium {}
+  &.medium {
+    @media (min-width: 640px) { // sm
+      margin-left: calc(var(--modal-medium-width) / 2 - var(--modal-medium-width) );
+    }
+
+    @media (min-width: 768px) {
+      margin-left: calc(0px - var(--modal-medium-width) / 2);
+    }
+
+    .modal-inner-wrapper {
+      @apply
+      w-[100%] sm:w-[var(--modal-medium-width)]
+      pt-[var(--mod-pt)] pr-[var(--mod-pr)] pb-[var(--mod-pb)] pl-[var(--mod-pl)]
+      md:mr-[60px]
+      ;
+    }
+  }
+
   &.huge {}
   &.full-width {
     @apply

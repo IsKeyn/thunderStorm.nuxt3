@@ -44,7 +44,11 @@ const props = defineProps({
 	fullCloseModal: { // Удаление модального окна из DOM дерева при закрытии
 		type: Boolean,
 		default: false,
-	}
+	},
+	overlayClasses: {
+		type: String,
+		default: 'z-[999]',
+	},
 });
 
 const id = ref(null);
@@ -178,6 +182,7 @@ const closeModal = () => {
 		<teleport :to="modalsContainerSelector">
 			<Overlay
 					v-if="modalActive && size !== 'full-screen'"
+					:classes="overlayClasses"
 					@click="closeModal()"
 			/>
 			<template v-if="wasOpen">

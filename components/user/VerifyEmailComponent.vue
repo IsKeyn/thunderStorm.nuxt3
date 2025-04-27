@@ -10,7 +10,7 @@ import { useUserStore } from '@/stores/user';
 import { api } from '@/composables/api.js';
 
 const userStore = useUserStore();
-const { apiUrl, errorHandler } = api();
+const { apiUrl, errorHandler, sendApiRequest } = api();
 
 const route = useRoute();
 const router = useRouter();
@@ -61,22 +61,14 @@ const verifyEmail = () => {
 }
 
 const sendVerifyEmailRequest = async (params) => {
-	const { userId, userHash } = params;
+	// const { userId, userHash } = params;
 
 	requestInProgress.value = true;
 
 	try {
-		const response = await $fetch(
-				`${apiUrl.value}${route.fullPath.slice(1)}`,
-				{
-					method: 'GET',
-					headers: {
-						Authorization: Authorization.value,
-						Accept: 'application/json',
-						'X-Requested-With': 'XMLHttpRequest',
-					},
-				},
-		);
+		const body = {}
+
+		const response = await sendApiRequest(`${route.fullPath.slice(1)}`, 'GET', body);
 
 		if (response) {
 			userStore.user = response.data;
@@ -90,14 +82,49 @@ const sendVerifyEmailRequest = async (params) => {
 			);
 		}
 	} catch (e) {
-		const errorsPromise = errorHandler(e);
-
-		errorsPromise.then((element) => {
-			responseErrors.value = element;
-		});
+		error(e);
 		requestInProgress.value = false;
 	}
 }
+
+// const sendVerifyEmailRequest = async (params) => {
+// 	const { userId, userHash } = params;
+//
+// 	requestInProgress.value = true;
+//
+// 	try {
+// 		const response = await $fetch(
+// 				`${apiUrl.value}${route.fullPath.slice(1)}`,
+// 				{
+// 					method: 'GET',
+// 					headers: {
+// 						Authorization: Authorization.value,
+// 						Accept: 'application/json',
+// 						'X-Requested-With': 'XMLHttpRequest',
+// 					},
+// 				},
+// 		);
+//
+// 		if (response) {
+// 			userStore.user = response.data;
+// 			alert(
+// 					'Ваш email подтверждён',
+// 					3000,
+// 					'#004d42',
+// 					() => {
+// 						router.push({ path: '/' })
+// 					}
+// 			);
+// 		}
+// 	} catch (e) {
+// 		const errorsPromise = errorHandler(e);
+//
+// 		errorsPromise.then((element) => {
+// 			responseErrors.value = element;
+// 		});
+// 		requestInProgress.value = false;
+// 	}
+// }
 
 const reloadPage = () => {
 	location.reload();

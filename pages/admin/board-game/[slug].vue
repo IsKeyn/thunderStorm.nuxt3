@@ -9,11 +9,29 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 const form = ref(
 		{
 			name: {
-				name: 'Заголовок',
+				name: 'Название',
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
+			},
+			slug: {
+				name: 'Slug',
+				value: '',
+				type: 'text',
+				validateRules: 'required, minLength_3, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+				autoFill: {
+					sourceFieldKey: 'name',
+					rule: 'slug',
+				},
+			},
+			description: {
+				name: 'Описание',
+				value: '',
+				type: 'textarea',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			media_id: {
 				name: 'Медиа',
@@ -21,20 +39,6 @@ const form = ref(
 				keyValueFromObject: 'id',
 				objectValue: null,
 				type: 'fileFromGallery',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			url: {
-				name: 'Ссылка',
-				value: '',
-				type: 'text',
-				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			type: {
-				name: 'Тип слайда',
-				value: '',
-				type: 'text',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -73,7 +77,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Слайды',
+			name: 'Настольная игра',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -89,8 +93,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/slides"
-				:showTags="true"
+				fetchUrl="admin/BoardGame/BoardGame"
 				:hasResource="true"
 		/>
 	</div>

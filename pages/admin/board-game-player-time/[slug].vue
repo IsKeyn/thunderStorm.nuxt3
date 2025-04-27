@@ -8,48 +8,32 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
-			name: {
-				name: 'Заголовок',
+			user_id: {
+				name: 'ID пользователя',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			media_id: {
-				name: 'Медиа',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			url: {
-				name: 'Ссылка',
+			time_start: {
+				name: 'Старт таймера',
 				value: '',
 				type: 'text',
-				validateRules: 'maxLength_255',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			type: {
-				name: 'Тип слайда',
+			time_stop: {
+				name: 'Остановка таймера',
 				value: '',
 				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			active: {
-				name: 'Активность',
-				value: '',
-				type: 'text',
-				validateRules: '',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			created_by: {
-				name: 'ID автора',
+				name: 'created_by',
 				value: '',
 				type: 'text',
-				validateRules: '',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -73,7 +57,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Слайды',
+			name: 'Игровое время',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -89,7 +73,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/slides"
+				fetchUrl="admin/BoardGamePlayerTimer"
 				:showTags="true"
 				:hasResource="true"
 		/>

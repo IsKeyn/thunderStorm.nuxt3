@@ -84,19 +84,27 @@ const afterRequest = (params) => {
 	const { response, doType } = params;
 	const splitedPath = route.path.split('/');
 
+	let path = '';
+
+	splitedPath.forEach((item, key) => {
+		if (key !== 0 && key !== splitedPath.length - 1) {
+			path += '/' + item;
+		}
+	});
+
 	if (doType === 'save') {
-		router.push({ path: `/${splitedPath[1]}/${splitedPath[2]}` });
+		router.push({ path: path });
 	}
 
 	if (doType === 'saveAndContinue') {
 		if (formMode.value === 'create') {
-			router.push({path: `/${splitedPath[1]}/${splitedPath[2]}/${response.id}`});
+			router.push({path: `${path}/${response.id}`});
 		}
 	}
 
 	if (doType === 'saveAndAddNew') {
 		// TODO делать очистку форму
-		router.push({ path: `/${splitedPath[1]}/${splitedPath[2]}/create` });
+		router.push({ path: `${path}/create` });
 	}
 
 	alert('Успешно сохранено');

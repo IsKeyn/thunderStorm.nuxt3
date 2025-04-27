@@ -9,13 +9,38 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 const form = ref(
 		{
 			name: {
-				name: 'Заголовок',
+				name: 'Название',
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			media_id: {
+			slug: {
+				name: 'Slug',
+				value: '',
+				type: 'text',
+				validateRules: 'required, minLength_3, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+				autoFill: {
+					sourceFieldKey: 'name',
+					rule: 'slug',
+				},
+			},
+			description: {
+				name: 'Описание',
+				value: '',
+				type: 'textarea',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+			},
+			board_game_id: {
+				name: 'ID настолькой игры',
+				value: '',
+				type: 'text',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			image: {
 				name: 'Медиа',
 				value: '',
 				keyValueFromObject: 'id',
@@ -24,29 +49,8 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			url: {
-				name: 'Ссылка',
-				value: '',
-				type: 'text',
-				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			type: {
-				name: 'Тип слайда',
-				value: '',
-				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
 			active: {
 				name: 'Активность',
-				value: '',
-				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			created_by: {
-				name: 'ID автора',
 				value: '',
 				type: 'text',
 				validateRules: '',
@@ -73,7 +77,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Слайды',
+			name: 'Предметы в настолке',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -89,8 +93,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/slides"
-				:showTags="true"
+				fetchUrl="admin/BoardGame/BoardGameItem"
 				:hasResource="true"
 		/>
 	</div>
