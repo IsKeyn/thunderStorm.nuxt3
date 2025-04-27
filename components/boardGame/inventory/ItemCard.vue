@@ -35,7 +35,10 @@ const props = defineProps({
 				{{ element.description }}
 			</span>
 		</div>
-		<div v-if="showControlPanel">
+		<div
+				v-if="showControlPanel"
+				class="control-panel"
+		>
 			<span
 					class="use-button"
 					@click="emit('useItem', element)"
@@ -55,7 +58,7 @@ const props = defineProps({
 <style lang="scss" scoped>
 
 .item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex;
+	@apply p-2 pr-[3rem] mb-2 bg-[var(--second-bg-color)] rounded flex relative;
 
 	&:hover {
 		@apply bg-[var(--second-active-color)];
@@ -77,12 +80,16 @@ const props = defineProps({
 		}
 	}
 
-	.use-button {
-		@apply bg-[var(--success-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center mb-[0.3rem];
-	}
+	.control-panel {
+		@apply absolute right-[1rem];
 
-	.close-button {
-		@apply bg-[var(--error-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center;
+		.use-button {
+			@apply bg-[var(--success-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center mb-[0.3rem];
+		}
+
+		.close-button {
+			@apply bg-[var(--error-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center;
+		}
 	}
 }
 </style>

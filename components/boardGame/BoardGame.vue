@@ -130,7 +130,7 @@ header {
 	@apply grid grid-cols-12;
 
 	.user-interface-box {
-		@apply col-span-2;
+		@apply col-span-2 mr-[2rem];
 	}
 
 	.board-box {
@@ -140,7 +140,7 @@ header {
 	}
 
 	.info-box {
-		@apply col-span-2;
+		@apply col-span-2 ml-[2rem];
 	}
 }
 </style>

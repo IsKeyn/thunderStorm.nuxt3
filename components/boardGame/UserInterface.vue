@@ -5,6 +5,7 @@ import VerifyEmailBlock from "@/components/user/VerifyEmailBlock.vue";
 import UserInfo from '@/components/boardGame/user/UserInfo.vue';
 import GoInThisGame from '@/components/boardGame/user/GoInThisGame.vue';
 import Inventory from '@/components/boardGame/inventory/Inventory.vue';
+import Dices from '@/components/boardGame/Dices.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -52,7 +53,9 @@ const alreadyInGame = computed(() => {
 <template>
 	<div v-if="userStore.user && Object.keys(userStore.user).length > 0">
 		<template v-if="userStore.user.email_verified_at">
-			<UserInfo @updateBoardGameInfo="emit('updateBoardGameInfo')" />
+			<UserInfo
+					@updateBoardGameInfo="emit('updateBoardGameInfo')"
+			/>
 			<GoInThisGame
 					v-if="!alreadyInGame"
 					:boardGameId="boardGameId"
@@ -60,7 +63,12 @@ const alreadyInGame = computed(() => {
 					@updateBoardGameInfo="emit('updateBoardGameInfo')"
 			/>
 			<template v-else>
+				<span class="user-interface-title">Инвентарь</span>
 				<Inventory
+						:boardGameId="boardGameId"
+						@fetchLogs="emit('fetchLogs')"
+				/>
+				<Dices
 						:boardGameId="boardGameId"
 						@fetchLogs="emit('fetchLogs')"
 				/>
