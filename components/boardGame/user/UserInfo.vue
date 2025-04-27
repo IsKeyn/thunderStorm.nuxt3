@@ -25,6 +25,7 @@ const openCloseBoxFunc = () => {
 			v-if="userStore.user && Object.keys(userStore.user).length > 0"
 			class="wrapper"
 	>
+		<span class="user-interface-title">{{ userStore.user.name }}</span>
 		<div class="avatar">
 			<img
 					:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
@@ -33,8 +34,6 @@ const openCloseBoxFunc = () => {
 			/>
 			<font-awesome-icon :icon="['fas', 'camera']" class="change-avatar" @click="openCloseBoxFunc()" />
 		</div>
-
-		<span class="nickname">{{ userStore.user.name }}</span>
 	</div>
 	<Modal
 			:showOpenModal="boxOpen"
@@ -52,8 +51,7 @@ const openCloseBoxFunc = () => {
 
 <style lang="scss" scoped>
 .wrapper {
-	@apply text-center pl-[1rem] pr-[1rem] pb-[1rem];
-	border-bottom: 1px solid var(--second-border-color);
+	@apply text-center pl-[1rem] pr-[1rem];
 
 	.avatar {
 		@apply
@@ -74,10 +72,6 @@ const openCloseBoxFunc = () => {
 		&:hover .change-avatar {
 			@apply block;
 		}
-	}
-
-	.nickname {
-		@apply block pt-2 text-[1.5rem];
 	}
 }
 </style>

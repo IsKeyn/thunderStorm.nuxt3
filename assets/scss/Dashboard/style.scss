@@ -30,3 +30,9 @@ body {
     width: calc(100% - 60px);
   }
 }
+
+.user-interface-title {
+  @apply pb-[1rem] mt-[2rem] mb-[1.5rem] block text-[1.5rem] text-center;
+
+  border-bottom: 1px solid var(--second-border-color);
+}

@@ -1,4 +1,6 @@
 <script setup>
+import { onMounted } from 'vue'
+
 import LogCard from '@/components/boardGame/bg-logs/LogCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
 
@@ -79,9 +81,11 @@ const updateLogs = () => {
 	refresh();
 }
 
-setTimeout(() => {
-	updateLogs();
-}, 10000);
+onMounted(() => {
+	setTimeout(() => {
+		updateLogs();
+	}, 10000);
+})
 
 defineExpose({
 	updateLogs,
