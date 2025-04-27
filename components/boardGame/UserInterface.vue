@@ -4,7 +4,7 @@ import AuthComponent from '@/components/user/AuthComponent.vue';
 import VerifyEmailBlock from "@/components/user/VerifyEmailBlock.vue";
 import UserInfo from '@/components/boardGame/user/UserInfo.vue';
 import GoInThisGame from '@/components/boardGame/user/GoInThisGame.vue';
-import Inventory from '@/components/boardGame/Inventory/Inventory.vue';
+import Inventory from '@/components/boardGame/inventory/Inventory.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
