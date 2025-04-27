@@ -6,7 +6,7 @@
 
 import Draggable from 'vuedraggable'
 
-import ItemCard from '@/components/boardGame/Inventory/ItemCard.vue';
+import ItemCard from '@/components/boardGame/inventory/ItemCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
 
 import { ref } from 'vue'
