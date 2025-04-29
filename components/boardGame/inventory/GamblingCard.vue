@@ -15,15 +15,15 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
-	cutDescription: {
-		type: Boolean,
-		default: false,
+	classes: {
+		type: String,
+		default: '',
 	},
 });
 </script>
 
 <template>
-	<div :class="['item-box', showControlPanel ? 'show-control-panel' : '']">
+	<div :class="['item-box', classes]">
 		<img
 				v-if="element.image"
 				:src="getResizeImg(element.image)"
@@ -35,12 +35,7 @@ const props = defineProps({
 			<span class="name">
 				{{ element.name }}
 			</span>
-			<span
-					:class="[
-							'description',
-							cutDescription ? 'cut-description' : '',
-					]"
-			>
+			<span class="description">
 				{{ element.description }}
 			</span>
 		</div>
@@ -65,20 +60,15 @@ const props = defineProps({
 </template>
 
 <style lang="scss" scoped>
-
 .item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative;
+	@apply p-2 pr-[3rem] mb-2 bg-[var(--second-bg-color)] rounded flex relative w-full h-full;
 
-	&.show-control-panel {
-		@apply pr-[3rem];
-	}
-
-	&:hover {
+	&.active {
 		@apply bg-[var(--second-active-color)];
 	}
 
 	img {
-		@apply w-[70px] h-[70px] cursor-pointer;
+		@apply w-[70px] h-[70px];
 	}
 
 	.info {
@@ -91,13 +81,10 @@ const props = defineProps({
 		.description {
 			@apply block;
 
-			&.cut-description {
-				@apply w-[15ch];
-
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
+			width: 110ch; /* примерно 30 символов */
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 

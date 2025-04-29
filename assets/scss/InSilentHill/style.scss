@@ -37,6 +37,10 @@
       @apply bg-[var(--main-active-color)];
     }
   }
+
+  &.btn-disable {
+    @apply bg-gradient-to-r from-[var(--second-border-color)] to-[var(--third-border-color)];
+  }
 }
 
 

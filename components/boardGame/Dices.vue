@@ -15,8 +15,8 @@ const props = defineProps({
 	},
 });
 
-const d6Result = ref(1)
-const d20Result = ref(1)
+const d6Result = ref(6)
+const d20Result = ref(20)
 
 const isRollingD6 = ref(false)
 const isRollingD20 = ref(false)
