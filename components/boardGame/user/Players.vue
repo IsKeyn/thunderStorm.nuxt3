@@ -1,6 +1,16 @@
 <script setup>
 import PlayerCard from '@/components/boardGame/user/PlayerCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
+import Modal from '@/components/modals/Modal.vue';
+import UserProfile from '@/components/boardGame/user/UserProfile.vue';
+
+import { api } from '@/composables/api.js'
+const {
+	sendApiRequest,
+} = api();
+
+import { notifications } from '@/composables/notifications.js';
+const { alert, error } = notifications();
 
 const props = defineProps({
 	boardGameId: {
@@ -14,10 +24,44 @@ const props = defineProps({
 });
 
 import { lightBox } from '@/composables/lightBox.js';
+import {ref} from "vue";
 const {
 	openedImage,
 	setOpenedImage
 } = lightBox();
+
+const modalOpen = ref(false);
+
+const openCloseModalFunc = () => {
+	modalOpen.value = !modalOpen.value;
+};
+
+const userIdForInfo = ref(null);
+
+const showPlayerInfo = (id) => {
+	getPlayerInfo(id);
+	openCloseModalFunc();
+}
+
+const requestInProgress = ref(false);
+const fetchData = ref({});
+
+const getPlayerInfo = async (id) => {
+	requestInProgress.value = true;
+
+	try {
+		const response = await sendApiRequest(`board-game/player/get/${id}?board_game_id=${props.boardGameId}`, 'GET', {});
+
+		if (response) {
+			requestInProgress.value = false;
+
+			fetchData.value = response;
+		}
+	} catch (e) {
+		error(e);
+		requestInProgress.value = false;
+	}
+};
 </script>
 
 <template>
@@ -31,6 +75,7 @@ const {
 				:element="player"
 				:place="key"
 				@setOpenedImage="setOpenedImage"
+				@showPlayerInfo="showPlayerInfo"
 			/>
 		</div>
 	</div>
@@ -41,6 +86,23 @@ const {
 			:setViewsLog="true"
 			@setCurrentElement="setOpenedImage"
 	/>
+
+	<Modal
+			:showOpenModal="modalOpen"
+			size="full-width"
+			:fullCloseModal="true"
+			@toggleModal="openCloseModalFunc"
+	>
+		<div class="modal-parent">
+			<h3 class="modal-title">Профиль пользователя</h3>
+			<div class="link-parent-box">
+				<UserProfile
+					:userInfo="fetchData"
+					@setOpenedImage="setOpenedImage"
+				/>
+			</div>
+		</div>
+	</Modal>
 </template>
 
 <style lang="scss" scoped>

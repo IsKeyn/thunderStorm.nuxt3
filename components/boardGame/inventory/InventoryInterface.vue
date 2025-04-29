@@ -319,13 +319,19 @@ const deleteItemRequest = async (inventory_id, name) => {
 };
 
 const addItemToInventoryEmit = (data) => {
-	addItem(data.id, data.name);
+	let id = Date.now() + Math.random();
+
+	lastElementId.value = id;
 
 	ItemList.value.forEach((item) => {
 		if (item.id === data.id) {
+			item.inventory_id = id;
+			item.id = id;
 			UserItems.value.unshift(item);
 		}
 	});
+
+	addItem(data.id, data.name);
 }
 </script>
 
