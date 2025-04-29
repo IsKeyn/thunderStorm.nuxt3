@@ -3,6 +3,8 @@ import UserInterface from '@/components/boardGame/UserInterface.vue';
 import Logs from '@/components/boardGame/bg-logs/Logs.vue';
 import Players from '@/components/boardGame/user/Players.vue';
 import Board from '@/components/boardGame/Board.vue';
+import Head from '@/components/seo/Head.vue';
+import Rules from '@/components/boardGame/Rules.vue';
 
 import { ref } from "vue";
 
@@ -73,9 +75,9 @@ const updateBoardGameInfo = () => {
 <template>
 	<Preloader v-if="requestInProgress" />
 	<div v-if="fetchedData && fetchedData.active === 1">
-		<header class="without-border">
-			<span class="title" v-if="fetchedData.name">{{ fetchedData.name }}</span>
-		</header>
+<!--		<header class="without-border">-->
+<!--			<span class="title" v-if="fetchedData.name">{{ fetchedData.name }}</span>-->
+<!--		</header>-->
 		<div class="main-dashboard-box">
 			<div class="user-interface-box">
 				<UserInterface
@@ -89,6 +91,7 @@ const updateBoardGameInfo = () => {
 				<Board
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
+						@updateBoardGameInfo="updateBoardGameInfo"
 				/>
 				<Comments
 						entityType="App\Models\BoardGame"
@@ -103,6 +106,10 @@ const updateBoardGameInfo = () => {
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 				/>
+				<Rules
+						:boardGameId="fetchedData.id"
+						:boardGameInfo="fetchedData"
+				/>
 				<Logs
 						ref="logListBlock"
 						:boardGameId="fetchedData.id"
@@ -110,6 +117,11 @@ const updateBoardGameInfo = () => {
 				/>
 			</div>
 		</div>
+		<Head
+				:seo="{
+					title: fetchedData.name,
+			}"
+		/>
 	</div>
 	<div v-else>
 		Данная игра не активна

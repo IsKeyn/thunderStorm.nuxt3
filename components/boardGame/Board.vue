@@ -26,7 +26,7 @@ const {
 	setLog,
 } = boardGameLog();
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const emit = defineEmits(['fetchLogs']);
 
@@ -162,7 +162,6 @@ const fields = ref(
 					{
 						name: '27',
 						index: 27,
-						description: 'Ты попал на Иммортал!',
 						useThisField: true,
 					},
 					{
@@ -174,6 +173,7 @@ const fields = ref(
 						name: '25',
 						index: 25,
 						useThisField: true,
+						description: 'Шаг на 28 клетку',
 					},
 					{
 						name: '24',
@@ -189,6 +189,7 @@ const fields = ref(
 						name: '22',
 						index: 22,
 						useThisField: true,
+						description: 'Возьмите из инвентаря предмет крыса',
 					},
 					{
 						name: '21',
@@ -199,6 +200,7 @@ const fields = ref(
 						name: '20',
 						index: 20,
 						useThisField: true,
+						description: 'Игра в ТМNT 4 c другим стримером за 20 очков',
 					},
 					{
 						name: '19',
@@ -214,6 +216,7 @@ const fields = ref(
 						name: '17',
 						index: 17,
 						useThisField: true,
+						description: 'Возврат на 14 клетку',
 					},
 					{
 						name: '16',
@@ -284,6 +287,7 @@ const fields = ref(
 						name: '30',
 						index: 30,
 						useThisField: true,
+						description: 'Игра в Track & Field с другим стримером за 15 очков',
 					},
 					{
 						name: '31',
@@ -299,6 +303,7 @@ const fields = ref(
 						name: '33',
 						index: 33,
 						useThisField: true,
+						description: 'Получи 5 очков',
 					},
 					{
 						name: '34',
@@ -400,6 +405,7 @@ const fields = ref(
 						name: '40',
 						index: 40,
 						useThisField: true,
+						description: 'Игра в Bomberman II с другим стримером за 35 очков',
 					},
 					{
 						name: '39',
@@ -428,6 +434,7 @@ const fields = ref(
 						name: '90',
 						index: 90,
 						useThisField: true,
+						description: 'Игра в Ike Ike! Nekketsu Hockey-bu - Subette Koronde Dairantou с другим стримером за 20 очков',
 					},
 					{
 						name: '89',
@@ -463,6 +470,7 @@ const fields = ref(
 						name: '42',
 						index: 42,
 						useThisField: true,
+						description: 'Минус 5 очков',
 					},
 					{
 						useThisField: false,
@@ -559,6 +567,7 @@ const fields = ref(
 						name: '81',
 						index: 81,
 						useThisField: true,
+						description: 'Шагай на 79 клетку',
 					},
 					{
 						name: '82',
@@ -632,6 +641,7 @@ const fields = ref(
 						name: '54',
 						index: 54,
 						useThisField: true,
+						description: 'Получи предмет "Сохрани в жопу"',
 					},
 					{
 						name: '53',
@@ -652,6 +662,7 @@ const fields = ref(
 						name: '50',
 						index: 50,
 						useThisField: true,
+						description: 'Игра в Circus Charlie с другим стримером за 30 очков',
 					},
 					{
 						useThisField: false,
@@ -665,6 +676,7 @@ const fields = ref(
 						name: '75',
 						index: 75,
 						useThisField: true,
+						description: 'Игра в Eliminator Boat Duel с другим стримером 15 очков',
 					},
 					{
 						name: '74',
@@ -733,6 +745,7 @@ const fields = ref(
 						name: '70',
 						index: 70,
 						useThisField: true,
+						description: 'Получи 10 очков',
 					},
 				],
 			},
@@ -758,6 +771,7 @@ const fields = ref(
 						name: '60',
 						index: 60,
 						useThisField: true,
+						description: 'Игра в UMK 3 c другим стримером за 45 очков',
 					},
 					{
 						name: '61',
@@ -768,6 +782,7 @@ const fields = ref(
 						name: '62',
 						index: 62,
 						useThisField: true,
+						description: 'Шагай на 65 клетку',
 					},
 					{
 						name: '63',
@@ -874,11 +889,17 @@ const { refresh } = await useAsyncData(
 									}
 
 									for (const key in fetchedData.value.otherPlayers) {
-										if (!otherPlayers.value[fetchedData.value.otherPlayers[key].position]) {
-											otherPlayers.value[fetchedData.value.otherPlayers[key].position] = [];
+										let position = 1;
+
+										if (fetchedData.value.otherPlayers[key].position) {
+											position = fetchedData.value.otherPlayers[key].position;
 										}
 
-										otherPlayers.value[fetchedData.value.otherPlayers[key].position].push(fetchedData.value.otherPlayers[key]);
+										if (!otherPlayers.value[position]) {
+											otherPlayers.value[position] = [];
+										}
+
+										otherPlayers.value[position].push(fetchedData.value.otherPlayers[key]);
 									}
 								} else {
 									error('Log request error', 5000);
@@ -928,6 +949,8 @@ const addPlayerPosition = async (position) => {
 				message: `перешел на ячейку №"${position}"`
 			};
 			setLog(logBody);
+
+			emit('updateBoardGameInfo');
 		}
 	} catch (e) {
 		error(e);
@@ -966,11 +989,42 @@ const boxOpen = ref(false);
 const openCloseBoxFunc = () => {
 	boxOpen.value = !boxOpen.value;
 };
+
+onMounted(() => {
+	getThemeConst();
+});
+
+const currentTheme = ref('theme-1');
+
+const getThemeConst = () => {
+	if (process.client) {
+		const boardTheme = sessionStorage.getItem('board-theme');
+
+		if (boardTheme) {
+			currentTheme.value = boardTheme;
+		}
+	}
+}
+
+const setTheme = (theme) => {
+	sessionStorage.setItem('board-theme', theme);
+	currentTheme.value = theme;
+}
 </script>
 
 <template>
 	<div>
-		<table>
+		<span class="user-interface-title">Игровая доска</span>
+		<div class="choice-theme-box">
+			<span>Цветовая схема</span>
+			<div class="theme-control">
+				<div @click="setTheme('theme-1')" :class="['choice-theme theme-1', currentTheme === 'theme-1' ? 'active' : '']" />
+				<div @click="setTheme('theme-2')" :class="['choice-theme theme-2', currentTheme === 'theme-2' ? 'active' : '']" />
+				<div @click="setTheme('theme-3')" :class="['choice-theme theme-3', currentTheme === 'theme-3' ? 'active' : '']" />
+				<div @click="setTheme('theme-4')" :class="['choice-theme theme-4', currentTheme === 'theme-4' ? 'active' : '']" />
+			</div>
+		</div>
+		<table :class="[currentTheme]">
 			<tr
 					v-for="(row, rowNumber) in fields"
 					:key="rowNumber"
@@ -1004,16 +1058,17 @@ const openCloseBoxFunc = () => {
 								class="other-players"
 						>
 							<img
-									v-for="(player, key) in otherPlayers[col.index]"
+									v-for="(player, key) in otherPlayers[col.index].slice(0, 3)"
 									:key="key"
 									:src="player.info.avatar ? getResizeImg(player.info.avatar) : '/images/system/no-avatar.png'"
 									:alt="player.info.name"
 									:title="player.info.name"
 							>
-<!--							<font-awesome-icon-->
-<!--									:icon="['fas', 'ellipsis']"-->
-<!--									class="more-players"-->
-<!--							/>-->
+							<font-awesome-icon
+									v-if="otherPlayers[col.index].length > 3"
+									:icon="['fas', 'ellipsis']"
+									class="more-players"
+							/>
 						</div>
 					</template>
 				</td>
@@ -1036,6 +1091,222 @@ const openCloseBoxFunc = () => {
 </template>
 
 <style lang="scss" scoped>
+.choice-theme-box {
+	@apply flex items-center mb-[1rem];
+
+	span {
+		@apply mr-[1rem];
+	}
+
+	.choice-theme {
+		@apply w-[2rem] h-[2rem] mr-[1rem] cursor-pointer;
+
+		&.theme-1 {
+			@apply bg-[var(--color4-or)];
+		}
+
+		&.theme-2 {
+			@apply bg-[var(--color1)];
+		}
+
+		&.theme-3 {
+			@apply bg-[var(--color1-t2)];
+		}
+
+		&.theme-4 {
+			@apply bg-[var(--color1-t3)];
+		}
+
+		&.active {
+			border: 3px solid var(--second-active-color);
+		}
+	}
+}
+
+.theme-control {
+	@apply flex;
+}
+
+.theme-1 {
+	td {
+		&.color4 {
+			@apply bg-[var(--color4-or)];
+
+			&:hover {
+				@apply bg-[var(--color4-hov-or)];
+			}
+		}
+
+		&.color2 {
+			@apply bg-[var(--color1-or)];
+
+			&:hover {
+				@apply bg-[var(--color1-hov-or)];
+			}
+		}
+
+		&.color3 {
+			@apply bg-[var(--color2-or)];
+
+			&:hover {
+				@apply bg-[var(--color2-hov-or)];
+			}
+		}
+
+		&.playable-field {
+			border: 1px solid var(--color1-or);
+		}
+
+		.player-token {
+			@apply bg-[var(--color5-or)];
+
+			border: 2px solid var(--color5-or);
+		}
+
+		img,
+		.more-players {
+			@apply bg-[var(--color5-or)];
+
+			border: 2px solid var(--color5-or);
+		}
+	}
+}
+
+.theme-2 {
+	td {
+		&.color4 {
+			@apply bg-[var(--color4)];
+
+			&:hover {
+				@apply bg-[var(--color4-hov)];
+			}
+		}
+
+		&.color2 {
+			@apply bg-[var(--color1)];
+
+			&:hover {
+				@apply bg-[var(--color1-hov)];
+			}
+		}
+
+		&.color3 {
+			@apply bg-[var(--color2)];
+
+			&:hover {
+				@apply bg-[var(--color2-hov)];
+			}
+		}
+
+		&.playable-field {
+			border: 1px solid var(--color1);
+		}
+
+		.player-token {
+			@apply bg-[var(--color5)];
+
+			border: 2px solid var(--color5);
+		}
+
+		img,
+		.more-players {
+			@apply bg-[var(--color5)];
+
+			border: 2px solid var(--color5);
+		}
+	}
+}
+
+.theme-3 {
+	td {
+		&.color4 {
+			@apply bg-[var(--color4-t2)];
+
+			&:hover {
+				@apply bg-[var(--color4-hov-t2)];
+			}
+		}
+
+		&.color2 {
+			@apply bg-[var(--color1-t2)];
+
+			&:hover {
+				@apply bg-[var(--color1-hov-t2)];
+			}
+		}
+
+		&.color3 {
+			@apply bg-[var(--color2-t2)];
+
+			&:hover {
+				@apply bg-[var(--color2-hov-t2)];
+			}
+		}
+
+		&.playable-field {
+			border: 1px solid var(--color1-t2);
+		}
+
+		.player-token {
+			@apply bg-[var(--color5-t2)];
+
+			border: 2px solid var(--color5-t2);
+		}
+
+		img,
+		.more-players {
+			@apply bg-[var(--color5-t2)];
+
+			border: 2px solid var(--color5-t2);
+		}
+	}
+}
+
+.theme-4 {
+	td {
+		&.color4 {
+			@apply bg-[var(--color4-t3)];
+
+			&:hover {
+				@apply bg-[var(--color4-hov-t3)];
+			}
+		}
+
+		&.color2 {
+			@apply bg-[var(--color1-t3)];
+
+			&:hover {
+				@apply bg-[var(--color1-hov-t3)];
+			}
+		}
+
+		&.color3 {
+			@apply bg-[var(--color2-t3)];
+
+			&:hover {
+				@apply bg-[var(--color2-hov-t3)];
+			}
+		}
+
+		&.playable-field {
+			border: 1px solid var(--color1-t3);
+		}
+
+		.player-token {
+			@apply bg-[var(--color5-t3)];
+
+			border: 2px solid var(--color5-t3);
+		}
+
+		img,
+		.more-players {
+			@apply bg-[var(--color5-t3)];
+
+			border: 2px solid var(--color5-t3);
+		}
+	}
+}
+
 td {
 	@apply
 		w-[100px] h-[100px]
@@ -1051,32 +1322,6 @@ td {
 
 	&.playable-field {
 		@apply relative;
-
-		 border: 1px solid var(--color1);
-	 }
-
-	&.color4 {
-		@apply bg-[var(--color4)];
-
-		&:hover {
-			@apply bg-[var(--color4-hov)];
-		}
-	}
-
-	&.color2 {
-		@apply bg-[var(--color1)];
-
-		&:hover {
-			@apply bg-[var(--color1-hov)];
-		}
-	}
-
-	&.color3 {
-		@apply bg-[var(--color2)];
-
-		&:hover {
-			@apply bg-[var(--color2-hov)];
-		}
 	}
 
 	&.dropping {
@@ -1087,7 +1332,6 @@ td {
 
 	.player-token {
 		@apply
-			bg-[var(--color5)]
 			object-cover
 			w-[68px] h-[68px]
 			rounded-full
@@ -1095,7 +1339,6 @@ td {
 			cursor-grab
 		;
 
-		border: 2px solid var(--color5);
 		transition: top 0.3s ease, left 0.3s ease, transform 0.2s ease;
 	}
 
@@ -1112,13 +1355,7 @@ td {
 
 		img,
 		.more-players {
-			@apply
-				bg-[var(--color5)]
-				object-cover
-				rounded-full
-			;
-
-			border: 2px solid var(--color5);
+			@apply object-cover rounded-full;
 
 			&:nth-child(2),
 			&:nth-child(3),

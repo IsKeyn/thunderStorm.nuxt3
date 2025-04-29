@@ -6,6 +6,7 @@ import UserInfo from '@/components/boardGame/user/UserInfo.vue';
 import GoInThisGame from '@/components/boardGame/user/GoInThisGame.vue';
 import Inventory from '@/components/boardGame/inventory/Inventory.vue';
 import Dices from '@/components/boardGame/Dices.vue';
+import Points from '@/components/boardGame/user/Points.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -63,12 +64,18 @@ const alreadyInGame = computed(() => {
 					@updateBoardGameInfo="emit('updateBoardGameInfo')"
 			/>
 			<template v-else>
-				<span class="user-interface-title">Инвентарь</span>
-				<Inventory
+				<Dices
 						:boardGameId="boardGameId"
 						@fetchLogs="emit('fetchLogs')"
 				/>
-				<Dices
+				<Points
+						:boardGameId="boardGameId"
+						:boardGameInfo="boardGameInfo"
+						@updateBoardGameInfo="emit('updateBoardGameInfo')"
+						@fetchLogs="emit('fetchLogs')"
+				/>
+				<span class="user-interface-title">Инвентарь</span>
+				<Inventory
 						:boardGameId="boardGameId"
 						@fetchLogs="emit('fetchLogs')"
 				/>

@@ -8,10 +8,11 @@ import Draggable from 'vuedraggable'
 
 import ItemCard from '@/components/boardGame/inventory/ItemCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
+import GamblingGame from '@/components/boardGame/inventory/GamblingGame.vue'
 
 import { ref } from 'vue'
 
-const emit = defineEmits(['fetchLogs']);
+const emit = defineEmits(['fetchLogs', 'updateUserItems']);
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -23,7 +24,11 @@ const {
 } = lightBox();
 
 import { notifications } from '@/composables/notifications.js';
-const { alert, error, choiceAlert } = notifications();
+const {
+	alert,
+	error,
+	choiceAlert
+} = notifications();
 
 import { api } from '@/composables/api.js'
 const {
@@ -44,65 +49,81 @@ const props = defineProps({
 		type: Number,
 		default: 1,
 	},
+	ItemList: {
+		type: Array,
+		default: [],
+	},
+	UserItems: {
+		type: Array,
+		default: [],
+	},
+	UsedItems: {
+		type: Array,
+		default: [],
+	},
 });
 
 const ItemList = ref([]);
 const UserItems = ref([]);
 const UsedItems = ref([]);
 
+ItemList.value = props.ItemList;
+UserItems.value = props.UserItems;
+UsedItems.value = props.UsedItems;
+
 /* Получение данных */
 const requestInProgress = ref(false);
-
-const { refresh } = await useAsyncData(
-		async () => {
-			let request = `${apiUrl.value}board-game/getItemAndInventory`;
-
-			const query = {
-				board_game_id: props.boardGameId,
-			};
-			const sessionCookie = useCookie(sessionCookieName.value);
-
-			requestInProgress.value = true;
-
-			try {
-				await $fetch(
-						request,
-						{
-							method: 'GET',
-							credentials: 'include',
-							query,
-							headers: {
-								Accept: 'application/json',
-								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-								Referer: publicUrl.value,
-							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									ItemList.value = response._data.items;
-
-									if (response._data.inventory) {
-										response._data.inventory.forEach((item) => {
-											if (item.has_used === 1) {
-												UsedItems.value.push({ ...item.item, inventory_id: item.id });
-											} else {
-												UserItems.value.push({ ...item.item, inventory_id: item.id });
-											}
-										})
-									}
-								} else {
-									error('Request error', 5000);
-								}
-
-								requestInProgress.value = false;
-							}
-						},
-				);
-			} catch (e) {
-				errorHandler(e);
-				requestInProgress.value = false;
-			}
-		}
-);
+//
+// const { refresh } = await useAsyncData(
+// 		async () => {
+// 			let request = `${apiUrl.value}board-game/getItemAndInventory`;
+//
+// 			const query = {
+// 				board_game_id: props.boardGameId,
+// 			};
+// 			const sessionCookie = useCookie(sessionCookieName.value);
+//
+// 			requestInProgress.value = true;
+//
+// 			try {
+// 				await $fetch(
+// 						request,
+// 						{
+// 							method: 'GET',
+// 							credentials: 'include',
+// 							query,
+// 							headers: {
+// 								Accept: 'application/json',
+// 								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+// 								Referer: publicUrl.value,
+// 							},
+// 							onResponse({response}) {
+// 								if (response.status === 200) {
+// 									ItemList.value = response._data.items;
+//
+// 									if (response._data.inventory) {
+// 										response._data.inventory.forEach((item) => {
+// 											if (item.has_used === 1) {
+// 												UsedItems.value.push({ ...item.item, inventory_id: item.id });
+// 											} else {
+// 												UserItems.value.push({ ...item.item, inventory_id: item.id });
+// 											}
+// 										})
+// 									}
+// 								} else {
+// 									error('Request error', 5000);
+// 								}
+//
+// 								requestInProgress.value = false;
+// 							}
+// 						},
+// 				);
+// 			} catch (e) {
+// 				errorHandler(e);
+// 				requestInProgress.value = false;
+// 			}
+// 		}
+// );
 
 const addItemToInventory = async (itemId, name) => {
 	requestInProgress.value = true;
@@ -147,11 +168,15 @@ const cloneItem = (original) => {
 	return { ...original, id }
 }
 
-const addItem = (event) => {
+const addItemDragAndDropEvent = (event) => {
 	const original = event.item.__draggable_context.element
 
+	addItem(original.id, original.name);
+}
+
+const addItem = (id, name) => {
 	if (userStore.user && Object.keys(userStore.user).length > 0) {
-		const response = addItemToInventory(original.id, original.name);
+		const response = addItemToInventory(id, name);
 
 		if (!response) {
 			error('Ошибка добавления предмета в инвентарь');
@@ -159,6 +184,7 @@ const addItem = (event) => {
 		} else {
 			response.then((element) => {
 				setInventoryId(lastElementId.value, element);
+				emit('updateUserItems', UserItems.value);
 			});
 		}
 	} else {
@@ -251,6 +277,7 @@ const useItemRequest = async (inventory_id, name) => {
 			});
 
 			UserItems.value = UserItems.value.filter(item => item.inventory_id !== inventory_id);
+			emit('updateUserItems', UserItems.value);
 		}
 	} catch (e) {
 		error(e);
@@ -283,15 +310,34 @@ const deleteItemRequest = async (inventory_id, name) => {
 			emit('fetchLogs');
 
 			UserItems.value = UserItems.value.filter(item => item.inventory_id !== inventory_id);
+			emit('updateUserItems', UserItems.value);
 		}
 	} catch (e) {
 		error(e);
 		requestInProgress.value = false;
 	}
 };
+
+const addItemToInventoryEmit = (data) => {
+	addItem(data.id, data.name);
+
+	ItemList.value.forEach((item) => {
+		if (item.id === data.id) {
+			UserItems.value.unshift(item);
+		}
+	});
+}
 </script>
 
 <template>
+	<h2 class="inv-title">Рулетка предметов</h2>
+	<GamblingGame
+			v-if="ItemList.length > 0"
+			:items="ItemList"
+			:boardGameId="boardGameId"
+			@setOpenedImage="setOpenedImage"
+			@addItemToInventory="addItemToInventoryEmit"
+	/>
 	<div v-if="ItemList.length > 0" class="inventory">
 		<div class="user-items">
 			<h2 class="inv-title">Ваш инвентарь</h2>
@@ -299,8 +345,8 @@ const deleteItemRequest = async (inventory_id, name) => {
 					v-model="UserItems"
 					:group="{ name: 'shared', pull: false, put: true }"
 					item-key="id"
-					@add="addItem"
-					class="h-full"
+					@add="addItemDragAndDropEvent"
+					class="wrapper"
 			>
 				<span v-if="UserItems.length === 0">Предметов нет</span>
 				<template #item="{ element }">
@@ -322,7 +368,7 @@ const deleteItemRequest = async (inventory_id, name) => {
 					:group="{ name: 'shared', pull: 'clone', put: false }"
 					:clone="cloneItem"
 					item-key="id"
-					class="h-full"
+					class="wrapper"
 			>
 				<span v-if="ItemList.length === 0">Предметов нет</span>
 				<template #item="{ element }">
@@ -338,13 +384,15 @@ const deleteItemRequest = async (inventory_id, name) => {
 	<div class="inventory">
 		<div class="used-items">
 			<h2 class="inv-title">Использованные предметы</h2>
+			<div class="wrapper">
 				<span v-if="UsedItems.length === 0">Предметов нет</span>
-					<ItemCard
-							v-for="(element, key) in UsedItems"
-							:key="key"
-							:element="element"
-							@setOpenedImage="setOpenedImage"
-					/>
+				<ItemCard
+						v-for="(element, key) in UsedItems"
+						:key="key"
+						:element="element"
+						@setOpenedImage="setOpenedImage"
+				/>
+			</div>
 		</div>
 	</div>
 
@@ -357,20 +405,28 @@ const deleteItemRequest = async (inventory_id, name) => {
 </template>
 
 <style lang="scss" scoped>
+.inv-title {
+	@apply font-bold mb-4 uppercase;
+}
+
 .inventory {
 	@apply flex gap-4 cursor-pointer;
-
-	.inv-title {
-		@apply font-bold mb-4 uppercase;
-	}
 
 	.user-items,
 	.chest-with-items {
 		@apply w-1/2 p-4;
+
+		.wrapper {
+			@apply h-[600px] overflow-auto;
+		}
 	}
 
 	.used-items {
 		@apply w-full p-4;
+
+		.wrapper {
+			@apply max-h-[600px] overflow-auto;
+		}
 	}
 }
 </style>

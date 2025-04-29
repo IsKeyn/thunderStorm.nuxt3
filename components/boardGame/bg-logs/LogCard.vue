@@ -7,6 +7,9 @@ const {
 	getResizeImg,
 } = media();
 
+import { date } from '@/composables/date.js';
+const { getFormattedDate } = date();
+
 const emit = defineEmits(['setOpenedImage', 'deleteItem', 'useItem']);
 
 const props = defineProps({
@@ -51,7 +54,7 @@ const props = defineProps({
 <!--		>-->
 		<div class="info">
 			<span class="name">
-				{{ element.id }} {{ element.user.name }}
+				{{ element.id }}: {{ element.user.name }} [{{ getFormattedDate('d.m.Y H:i', element.created_at) }}]
 			</span>
 			<span class="description">
 				{{ element.message }}

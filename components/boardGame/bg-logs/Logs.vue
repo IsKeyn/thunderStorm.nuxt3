@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 
 import LogCard from '@/components/boardGame/bg-logs/LogCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
+import AddLogs from '@/components/boardGame/bg-logs/AddLogs.vue';
 
 import { lightBox } from '@/composables/lightBox.js';
 const {
@@ -20,6 +21,9 @@ const {
 	sessionCookieName,
 	errorHandler,
 } = api();
+
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
 
 const props = defineProps({
 	boardGameId: {
@@ -82,7 +86,7 @@ const updateLogs = () => {
 }
 
 onMounted(() => {
-	setTimeout(() => {
+	setInterval(() => {
 		updateLogs();
 	}, 10000);
 })
@@ -90,11 +94,27 @@ onMounted(() => {
 defineExpose({
 	updateLogs,
 });
+
+const alreadyInGame = computed(() => {
+	const player = props.boardGameInfo.players.filter((item) => {
+		if (item.user.id === userStore.user.id) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+
+	return player.length > 0;
+});
 </script>
 
 <template>
+	<span class="user-interface-title">Логи игры</span>
+	<AddLogs
+			v-if="alreadyInGame"
+			@fetchLogs="updateLogs"
+	/>
 	<div v-if="fetchedData.length > 0" class="log-box">
-<!--		<span class="log-title">Логи</span>-->
 		<LogCard
 				v-for="(log, key) in fetchedData"
 				:key="key"
@@ -116,6 +136,12 @@ defineExpose({
 .log-box {
 	overflow: auto;
 	max-height: 700px;
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* IE и Edge */
+
+	&::-webkit-scrollbar {
+		display: none; /* Chrome, Safari, Opera */
+	}
 
 	.log-title {
 		@apply block mb-2 text-[1.5rem];
