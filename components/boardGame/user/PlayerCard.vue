@@ -27,7 +27,10 @@ const getPlaceColor = (place) => {
 </script>
 
 <template>
-	<div class="item-box">
+	<div
+			class="item-box"
+			@click="emit('showPlayerInfo', element.user.id)"
+	>
 		<img
 				v-if="element.user.avatar"
 				:src="getResizeImg(element.user.avatar)"
@@ -60,7 +63,7 @@ const getPlaceColor = (place) => {
 <style lang="scss" scoped>
 
 .item-box {
-	@apply p-2 pr-[3rem] mb-2 bg-[var(--second-bg-color)] rounded flex relative;
+	@apply p-2 pr-[3rem] mb-2 bg-[var(--second-bg-color)] rounded flex relative cursor-pointer;
 
 	&:hover {
 		@apply bg-[var(--second-active-color)];

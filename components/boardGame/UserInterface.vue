@@ -86,13 +86,16 @@ const alreadyInGame = computed(() => {
 		</template>
 	</div>
 	<div v-else>
+		<span class="user-interface-title">Авторизация</span>
 		Пользовательский интерфейс доступен для авторизованного пользователя
-		<button
-				class="btn btn-primary block"
-				@click="openCloseBoxFunc"
-		>
-			Авторизоваться
-		</button>
+		<div class="text-center">
+			<button
+					class="btn btn-primary block"
+					@click="openCloseBoxFunc"
+			>
+				Авторизоваться
+			</button>
+		</div>
 		<Modal
 				:showOpenModal="activeAuthModal"
 				size="small"

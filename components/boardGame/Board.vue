@@ -641,7 +641,7 @@ const fields = ref(
 						name: '54',
 						index: 54,
 						useThisField: true,
-						description: 'Получи предмет "Сохрани в жопу"',
+						description: 'Получи предмет "Сохрани жопу"',
 					},
 					{
 						name: '53',
