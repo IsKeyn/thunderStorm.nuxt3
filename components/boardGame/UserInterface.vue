@@ -90,7 +90,7 @@ const alreadyInGame = computed(() => {
 		Пользовательский интерфейс доступен для авторизованного пользователя
 		<div class="text-center">
 			<button
-					class="btn btn-primary block"
+					class="btn btn-primary"
 					@click="openCloseBoxFunc"
 			>
 				Авторизоваться

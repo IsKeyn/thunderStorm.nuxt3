@@ -98,6 +98,7 @@ const getPlayerInfo = async (id) => {
 			<div class="link-parent-box">
 				<UserProfile
 					:userInfo="fetchData"
+					:boardGameInfo="boardGameInfo"
 					@setOpenedImage="setOpenedImage"
 				/>
 			</div>
