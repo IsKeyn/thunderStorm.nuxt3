@@ -884,7 +884,7 @@ const { refresh } = await useAsyncData(
 								if (response.status === 200) {
 									fetchedData.value = response._data;
 
-									tokenPosition.value = null;
+									tokenPosition.value = 1;
 									otherPlayers.value = [];
 
 									if (fetchedData.value && fetchedData.value?.player?.position) {
