@@ -25,51 +25,25 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
-	theme: {
-		type: String,
-		default: 'default',
+	prevStep: {
+		type: Object,
+		default: {},
 	},
 });
-
-// const avatar = computed(() => {
-// 	const player = props.boardGameInfo.players.filter((item) => {
-// 		if (item.user.id === props.element.user.id) {
-// 			return true;
-// 		} else {
-// 			return false;
-// 		}
-// 	});
-//
-// 	if (player.length > 0) {
-// 		return player[0].user.avatar;
-// 	}
-// });
-
 </script>
 
 <template>
 	<div class="item-box">
-<!--		<img-->
-<!--				v-if="avatar"-->
-<!--				:src="getResizeImg(avatar)"-->
-<!--				:alt="element.user.name"-->
-<!--				:title="element.user.name"-->
-<!--				@click="emit('setOpenedImage', element.image)"-->
-<!--		>-->
 		<div class="info">
-			<template v-if="theme === 'default'">
-				<span class="name">
-					{{ element.id }}: {{ element.user.name }} [{{ getFormattedDate('d.m.Y H:i', element.created_at) }}]
-				</span>
-					<span class="description">
-					{{ element.message }}
-				</span>
-			</template>
-			<template v-if="theme === 'simple'">
-				<span class="description">
-					{{ getFormattedDate('d.m.Y H:i', element.created_at) }} : {{ element.message }}
-				</span>
-			</template>
+			<span class="description">
+				{{ getFormattedDate('d.m.Y H:i', element.created_at) }} : Шаг №{{ element.id }}.
+				<template v-if="Object.keys(prevStep).length > 0">
+					Перешел с {{ prevStep.position }} на клетку {{ element.position }}
+				</template>
+				<template>
+					Перешел на клетку {{ element.position }}
+				</template>
+			</span>
 		</div>
 		<div v-if="showControlPanel">
 			<span

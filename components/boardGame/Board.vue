@@ -884,6 +884,9 @@ const { refresh } = await useAsyncData(
 								if (response.status === 200) {
 									fetchedData.value = response._data;
 
+									tokenPosition.value = null;
+									otherPlayers.value = [];
+
 									if (fetchedData.value && fetchedData.value?.player?.position) {
 										tokenPosition.value = fetchedData.value.player.position;
 									}
@@ -990,6 +993,7 @@ const openCloseBoxFunc = () => {
 	boxOpen.value = !boxOpen.value;
 };
 
+
 onMounted(() => {
 	getThemeConst();
 });
@@ -1010,6 +1014,16 @@ const setTheme = (theme) => {
 	sessionStorage.setItem('board-theme', theme);
 	currentTheme.value = theme;
 }
+
+/*
+* Наблюдает за данными о пользователе, когда пользователь авторизуется
+* обновляем данные доски, чтобы корректно выставить его позицию
+*/
+watch(() => userStore.user, () => {
+	if (userStore.user && Object.keys(userStore.user).length > 0) {
+		refresh();
+	}
+});
 </script>
 
 <template>
