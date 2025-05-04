@@ -75,7 +75,7 @@ const { refresh } = await useAsyncData(
 <template>
 	<span class="user-interface-title">Участники онлайн</span>
 	<div
-			v-if="fetchedData"
+			v-if="fetchedData.length > 0"
 			class="streamers-online"
 	>
 		<ThunderSlider
