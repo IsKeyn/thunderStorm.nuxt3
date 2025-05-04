@@ -28,36 +28,36 @@ const isRollingD20 = ref(false)
 const diceSound = ref(null)
 
 const d6Dots = {
-	1: [{ top: 'calc(50% - ' + props.size/20 + 'px)', left: 'calc(50% - ' + props.size/20 + 'px)' }],
+	1: [{ top: 'calc(50% - 5px)', left: 'calc(50% - 5px)' }],
 	2: [
-		{ top: 'calc(30% - ' + props.size/20 + 'px)', left: 'calc(30% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(70% - ' + props.size/20 + 'px)', left: 'calc(70% - ' + props.size/20 + 'px)' },
+		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
+		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
 	],
 	3: [
-		{ top: 'calc(30% - ' + props.size/20 + 'px)', left: 'calc(30% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(50% - ' + props.size/20 + 'px)', left: 'calc(50% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(70% - ' + props.size/20 + 'px)', left: 'calc(70% - ' + props.size/20 + 'px)' },
+		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
+		{ top: 'calc(50% - 5px)', left: 'calc(50% - 5px)' },
+		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
 	],
 	4: [
-		{ top: 'calc(30% - ' + props.size/20 + 'px)', left: 'calc(30% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(30% - ' + props.size/20 + 'px)', left: 'calc(70% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(70% - ' + props.size/20 + 'px)', left: 'calc(30% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(70% - ' + props.size/20 + 'px)', left: 'calc(70% - ' + props.size/20 + 'px)' },
+		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
+		{ top: 'calc(30% - 5px)', left: 'calc(70% - 5px)' },
+		{ top: 'calc(70% - 5px)', left: 'calc(30% - 5px)' },
+		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
 	],
 	5: [
-		{ top: 'calc(30% - ' + props.size/20 + 'px)', left: 'calc(30% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(30% - ' + props.size/20 + 'px)', left: 'calc(70% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(50% - ' + props.size/20 + 'px)', left: 'calc(50% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(70% - ' + props.size/20 + 'px)', left: 'calc(30% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(70% - ' + props.size/20 + 'px)', left: 'calc(70% - ' + props.size/20 + 'px)' },
+		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
+		{ top: 'calc(30% - 5px)', left: 'calc(70% - 5px)' },
+		{ top: 'calc(50% - 5px)', left: 'calc(50% - 5px)' },
+		{ top: 'calc(70% - 5px)', left: 'calc(30% - 5px)' },
+		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
 	],
 	6: [
-		{ top: 'calc(30% - ' + props.size/20 + 'px)', left: 'calc(30% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(30% - ' + props.size/20 + 'px)', left: 'calc(70% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(50% - ' + props.size/20 + 'px)', left: 'calc(30% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(50% - ' + props.size/20 + 'px)', left: 'calc(70% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(70% - ' + props.size/20 + 'px)', left: 'calc(30% - ' + props.size/20 + 'px)' },
-		{ top: 'calc(70% - ' + props.size/20 + 'px)', left: 'calc(70% - ' + props.size/20 + 'px)' },
+		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
+		{ top: 'calc(30% - 5px)', left: 'calc(70% - 5px)' },
+		{ top: 'calc(50% - 5px)', left: 'calc(30% - 5px)' },
+		{ top: 'calc(50% - 5px)', left: 'calc(70% - 5px)' },
+		{ top: 'calc(70% - 5px)', left: 'calc(30% - 5px)' },
+		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
 	],
 }
 
@@ -100,27 +100,17 @@ function rollDice(type) {
 	}
 }
 
-const getLabelClasses = computed(() => {
-	const classes = [];
-
-	if (props.labelClasses) {
-		classes.push(props.labelClasses);
-	}
-
-	return classes;
-});
-
-const getD6SizeClasses = computed(() => {
+const getD6SizeClasses = () => {
 	return `w-[${props.size}px] h-[${props.size}px]`;
-});
+}
 
-const getD20SizeClasses = computed(() => {
+const getD20SizeClasses = () => {
 	return `w-[${props.size}px] h-[${props.size + props.size/10}px]`;
-});
+}
 
-const getDotSizeClasses = computed(() => {
-	return `w-[${props.size/10}px] h-[${props.size/10}px]`;
-});
+const getDotSizeClasses = () => {
+
+}
 </script>
 
 <template>
@@ -128,8 +118,8 @@ const getDotSizeClasses = computed(() => {
 	<div class="dice-container">
 		<!-- D20 -->
 		<div
-				:class="['dice-d20', getD20SizeClasses, isRollingD20 ? 'rolling' : '']"
-				:style='`background: url("/images/board-games/d20.png") center center / ${size}px no-repeat;`'
+				:class="dice-d20"
+				:class="{ rolling: isRollingD20 }"
 				@click="rollDice('d20')"
 		>
 			<div class="face d20-face">
@@ -139,7 +129,8 @@ const getDotSizeClasses = computed(() => {
 
 		<!-- D6 -->
 		<div
-				:class="['dice-d6', getD6SizeClasses, isRollingD6 ? 'rolling' : '']"
+				class="dice-d6"
+				:class="{ rolling: isRollingD6 }"
 				@click="rollDice('d6')"
 		>
 			<div class="face">
@@ -147,7 +138,7 @@ const getDotSizeClasses = computed(() => {
 						v-for="(dot, index) in d6Dots[d6Result]"
 						:key="index"
 				>
-					<div :class="['dot', getDotSizeClasses]" :style="dot"></div>
+					<div class="dot" :style="dot"></div>
 				</template>
 			</div>
 		</div>
@@ -170,10 +161,12 @@ const getDotSizeClasses = computed(() => {
 
 	.dice-d20 {
 		@apply
+			w-[100px] h-[110px]
 			cursor-pointer
 		;
 
 		transition: transform 0.5s;
+		background: url("/images/board-games/d20.png") center center / 100px no-repeat;
 
 		&.rolling {
 			animation: roll 1s ease;
@@ -191,6 +184,7 @@ const getDotSizeClasses = computed(() => {
 	.dice-d6 {
 		@apply
 			flex
+			w-[100px] h-[100px]
 			cursor-pointer
 			bg-[var(--error-color)]
 			justify-center items-center
@@ -207,6 +201,7 @@ const getDotSizeClasses = computed(() => {
 
 		.dot {
 			@apply
+				w-[10px] h-[10px]
 				bg-[var(--main-text-color)]
 				absolute
 			;
