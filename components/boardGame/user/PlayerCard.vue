@@ -14,7 +14,15 @@ const props = defineProps({
 	place: {
 		type: Number,
 		default: null,
-	}
+	},
+	theme: {
+		type: String,
+		default: 'default',
+	},
+	useLightBox: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const getPlaceColor = (place) => {
@@ -36,21 +44,31 @@ const getPlaceColor = (place) => {
 				:src="getResizeImg(element.user.avatar)"
 				:alt="element.user.name"
 				:title="element.user.name"
-				@click="emit('setOpenedImage', element.user.avatar)"
+				@click="useLightBox ? emit('setOpenedImage', element.user.avatar) : false"
 		>
 		<div class="info">
-			<span class="name">
-				{{ element.user.name }}
-			</span>
-			<span class="description">
-				Количество очков: {{ element.points }}
-			</span>
-			<span class="description">
-				Позиция на поле: {{ element.position ? element.position : 'Не делал ходов' }}
-			</span>
-			<span class="description">
-				Итоговый результат: {{ element.full_points }}
-			</span>
+			<template v-if="theme === 'short'">
+				<span class="name">
+					{{ element.user.name }}
+				</span>
+				<span class="description">
+					Итоговый результат: {{ element.full_points }}
+				</span>
+			</template>
+			<template v-else>
+				<span class="name">
+					{{ element.user.name }}
+				</span>
+				<span class="description">
+					Количество очков: {{ element.points }}
+				</span>
+					<span class="description">
+					Позиция на поле: {{ element.position ? element.position : 'Не делал ходов' }}
+				</span>
+					<span class="description">
+					Итоговый результат: {{ element.full_points }}
+				</span>
+			</template>
 		</div>
 		<div class="control-panel">
 			<span :class="['place', getPlaceColor(place + 1)]">

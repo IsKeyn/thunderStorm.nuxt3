@@ -19,6 +19,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	useLightBox: {
+		type: Boolean,
+		default: false,
+	},
 });
 </script>
 
@@ -29,7 +33,7 @@ const props = defineProps({
 				:src="getResizeImg(element.image)"
 				:alt="element.name"
 				:title="element.name"
-				@click="emit('setOpenedImage', element.image)"
+				@click="useLightBox ? emit('setOpenedImage', element.image) : false"
 		>
 		<div class="info">
 			<span class="name">
@@ -67,7 +71,7 @@ const props = defineProps({
 <style lang="scss" scoped>
 
 .item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative;
+	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative cursor-pointer;
 
 	&.show-control-panel {
 		@apply pr-[3rem];
@@ -78,7 +82,7 @@ const props = defineProps({
 	}
 
 	img {
-		@apply w-[70px] h-[70px] cursor-pointer;
+		@apply w-[70px] h-[70px];
 	}
 
 	.info {

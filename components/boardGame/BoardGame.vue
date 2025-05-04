@@ -5,6 +5,7 @@ import Players from '@/components/boardGame/user/Players.vue';
 import Board from '@/components/boardGame/Board.vue';
 import Head from '@/components/seo/Head.vue';
 import Rules from '@/components/boardGame/Rules.vue';
+import StreamersOnline from '@/components/boardGame/StreamersOnline.vue';
 
 import { ref } from "vue";
 
@@ -75,9 +76,23 @@ const updateBoardGameInfo = () => {
 <template>
 	<Preloader v-if="requestInProgress" />
 	<div v-if="fetchedData && fetchedData.active === 1">
-<!--		<header class="without-border">-->
-<!--			<span class="title" v-if="fetchedData.name">{{ fetchedData.name }}</span>-->
-<!--		</header>-->
+		<header class="without-border">
+			<span class="title" v-if="fetchedData.name">{{ fetchedData.name }}</span>
+			<div class="menu-block">
+				<Rules
+						:boardGameId="fetchedData.id"
+						:boardGameInfo="fetchedData"
+				/>
+				<a
+						href="https://t.me/game_events_tr"
+						target="_blank"
+						class="btn btn-primary ml-[1rem]"
+						@click="openCloseModalFunc"
+				>
+					Телеграм <font-awesome-icon :icon="['fab', 'telegram']" />
+				</a>
+			</div>
+		</header>
 		<div class="main-dashboard-box">
 			<div class="user-interface-box">
 				<UserInterface
@@ -106,9 +121,8 @@ const updateBoardGameInfo = () => {
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 				/>
-				<Rules
+				<StreamersOnline
 						:boardGameId="fetchedData.id"
-						:boardGameInfo="fetchedData"
 				/>
 				<Logs
 						ref="logListBlock"
@@ -131,11 +145,19 @@ const updateBoardGameInfo = () => {
 <style lang="scss" scoped>
 header {
 	@apply
-		mb-[1rem]
 		pt-[1rem] pb-[1rem] pl-[var(--main-left-padding)] pr-[var(--main-right-padding)]
+		flex items-center gap-2
 	;
 
 	border-bottom: 1px solid var(--second-border-color);
+
+	.title {
+		@apply w-1/2;
+	}
+
+	.menu-block {
+		@apply w-1/2 flex justify-end;
+	}
 }
 
 .main-dashboard-box {

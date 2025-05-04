@@ -74,6 +74,7 @@ const getPlayerInfo = async (id) => {
 			<PlayerCard
 				:element="player"
 				:place="key"
+				theme="short"
 				@setOpenedImage="setOpenedImage"
 				@showPlayerInfo="showPlayerInfo"
 			/>
@@ -108,7 +109,7 @@ const getPlayerInfo = async (id) => {
 
 <style lang="scss" scoped>
 .wrapper {
-	@apply max-h-[500px];
+	@apply max-h-[300px];
 
 	overflow: auto;
 	scrollbar-width: none; /* Firefox */

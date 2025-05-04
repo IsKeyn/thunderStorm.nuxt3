@@ -116,6 +116,7 @@ const updateUserItems = (items) => {
 						@setOpenedImage="setOpenedImage"
 						@deleteItem="deleteItem"
 						@useItem="useItem"
+						@click="openCloseModalFunc"
 				/>
 			</div>
 		</div>
