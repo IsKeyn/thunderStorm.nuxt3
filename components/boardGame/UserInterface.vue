@@ -64,14 +64,14 @@ const alreadyInGame = computed(() => {
 					@updateBoardGameInfo="emit('updateBoardGameInfo')"
 			/>
 			<template v-else>
-				<Dices
-						:boardGameId="boardGameId"
-						@fetchLogs="emit('fetchLogs')"
-				/>
 				<Points
 						:boardGameId="boardGameId"
 						:boardGameInfo="boardGameInfo"
 						@updateBoardGameInfo="emit('updateBoardGameInfo')"
+						@fetchLogs="emit('fetchLogs')"
+				/>
+				<Dices
+						:boardGameId="boardGameId"
 						@fetchLogs="emit('fetchLogs')"
 				/>
 				<span class="user-interface-title">Инвентарь</span>

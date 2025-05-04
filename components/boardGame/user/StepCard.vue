@@ -29,6 +29,10 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
+	stepNumber: {
+		type: Number,
+		default: 0,
+	},
 });
 </script>
 
@@ -36,11 +40,11 @@ const props = defineProps({
 	<div class="item-box">
 		<div class="info">
 			<span class="description">
-				{{ getFormattedDate('d.m.Y H:i', element.created_at) }} : Шаг №{{ element.id }}.
+				{{ getFormattedDate('d.m.Y H:i', element.created_at) }} : Шаг №{{ stepNumber }}.
 				<template v-if="Object.keys(prevStep).length > 0">
 					Перешел с {{ prevStep.position }} на клетку {{ element.position }}
 				</template>
-				<template>
+				<template v-else>
 					Перешел на клетку {{ element.position }}
 				</template>
 			</span>

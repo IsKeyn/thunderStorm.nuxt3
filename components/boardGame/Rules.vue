@@ -28,7 +28,7 @@ const openCloseModalFunc = () => {
 				class="btn btn-primary"
 				@click="openCloseModalFunc"
 		>
-			Правила и описание
+			Правила и описание <font-awesome-icon :icon="['fas', 'book-open-reader']" />
 		</button>
 	</div>
 	<Modal

@@ -27,6 +27,18 @@ const props = defineProps({
 		default: {},
 	},
 });
+
+const twitch = computed(() => {
+	if (props.userInfo.player_info && props.userInfo.player_info.user && props.userInfo.player_info.user.additional_fields) {
+		const twitchField = props.userInfo.player_info.user.additional_fields.filter((item) => item.slug === 'twitch_channel');
+
+		if (twitchField.length > 0 && twitchField[0]) {
+			return twitchField[0];
+		}
+	}
+
+	return false;
+});
 </script>
 
 <template>
@@ -48,6 +60,12 @@ const props = defineProps({
 			<div class="box">
 				<h2 v-if="userInfo.player_info.user" class="inv-title">{{ userInfo.player_info.user.name }}</h2>
 				<div class="info">
+					<span
+							v-if="twitch"
+							class="field"
+					>
+						Канал на twitch: <a :href="`${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.player_info.user.name}`">{{ twitch.value }}</a>
+					</span>
 					<span class="field">
 						Участвует в игре с {{ getFormattedDate('d.m.Y H:i', userInfo.player_info.created_at) }}
 					</span>
@@ -120,6 +138,7 @@ const props = defineProps({
 					<StepCard
 							v-for="(step, key) in userInfo.steps"
 							:key="key"
+							:stepNumber="userInfo.steps.length - key"
 							:element="step"
 							:prevStep="userInfo.steps[key + 1] ? userInfo.steps[key + 1] : {}"
 							:boardGameInfo="boardGameInfo"
