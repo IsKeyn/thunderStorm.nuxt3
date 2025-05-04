@@ -156,7 +156,7 @@ const { refresh } = await useAsyncData(
 
 	iframe {
 		width: 100%;
-		min-height: 245px;
+		min-height: 200px;
 	}
 }
 </style>
