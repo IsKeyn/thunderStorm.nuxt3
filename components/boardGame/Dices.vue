@@ -118,7 +118,7 @@ const getDotSizeClasses = () => {
 	<div class="dice-container">
 		<!-- D20 -->
 		<div
-				:class="dice-d20"
+				class="dice-d20"
 				:class="{ rolling: isRollingD20 }"
 				@click="rollDice('d20')"
 		>
