@@ -11,7 +11,10 @@ const {
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
 
-const emit = defineEmits(['setOpenedImage']);
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
+
+const emit = defineEmits(['setOpenedImage', 'sendNotification']);
 
 const props = defineProps({
 	userInfo: {
@@ -60,24 +63,37 @@ const twitch = computed(() => {
 			<div class="box">
 				<h2 v-if="userInfo.player_info.user" class="inv-title">{{ userInfo.player_info.user.name }}</h2>
 				<div class="info">
-					<span
-							v-if="twitch"
-							class="field"
-					>
-						Канал на twitch: <a :href="`${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.player_info.user.name}`">{{ twitch.value }}</a>
-					</span>
-					<span class="field">
-						Участвует в игре с {{ getFormattedDate('d.m.Y H:i', userInfo.player_info.created_at) }}
-					</span>
-					<span class="field">
-						Количество очков: {{ userInfo.player_info.points }}
-					</span>
-					<span class="field">
-						Позиция на поле: {{ userInfo.player_info.position ? userInfo.player_info.position : 'Не делал ходов' }}
-					</span>
-					<span class="field">
-						Итоговый результат: {{ userInfo.player_info.full_points }}
-					</span>
+					<div class="column1">
+						<span
+								v-if="twitch"
+								class="field"
+						>
+							Канал на twitch: <a :href="`${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.player_info.user.name}`">{{ twitch.value }}</a>
+						</span>
+						<span class="field">
+							Участвует в игре с {{ getFormattedDate('d.m.Y H:i', userInfo.player_info.created_at) }}
+						</span>
+						<span class="field">
+							Количество очков: {{ userInfo.player_info.points }}
+						</span>
+						<span class="field">
+							Позиция на поле: {{ userInfo.player_info.position ? userInfo.player_info.position : 'Не делал ходов' }}
+						</span>
+						<span class="field">
+							Итоговый результат: {{ userInfo.player_info.full_points }}
+						</span>
+						<button
+								v-if="userInfo.player_info.user_id !== userStore.user.id"
+								class="btn btn-primary"
+								@click="emit('sendNotification', userInfo.player_info.user_id)"
+						>
+							Отправить уведомление
+						</button>
+					</div>
+					<div class="column2">
+
+					</div>
+
 				</div>
 			</div>
 		</div>
@@ -94,6 +110,7 @@ const twitch = computed(() => {
 							v-for="(element, key) in userInfo.inventory.filter(item => !item.has_used)"
 							:key="key"
 							:element="element.item"
+							:useLightBox="true"
 							@setOpenedImage="emit('setOpenedImage', $event)"
 					/>
 				</div>
@@ -106,6 +123,7 @@ const twitch = computed(() => {
 							v-for="(element, key) in userInfo.inventory.filter(item => item.has_used)"
 							:key="key"
 							:element="element.item"
+							:useLightBox="true"
 							@setOpenedImage="emit('setOpenedImage', $event)"
 					/>
 				</div>
@@ -158,6 +176,18 @@ const twitch = computed(() => {
 		span {
 			&.field {
 				@apply block mb-[0.2rem];
+			}
+		}
+
+		.info {
+			@apply flex;
+
+			.column1 {
+				//@apply w-1/3;
+			}
+
+			.column1 {
+				//@apply w-2/3;
 			}
 		}
 	}

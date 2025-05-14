@@ -8,7 +8,14 @@ const { getFormattedDate } = date();
 export function notifications() {
     const useNotifications = useNotificationsStore();
 
-    const alert = (message, time = null, color = null, func = null) => {
+    const alert = (
+        message,
+        time = null,
+        color = null,
+        func = null,
+        sound = false,          // Воспроизводить или нет звук уведомления
+        onClickFunc = null,        // Фнукция, которая срабатывает при нажатии на
+    ) => {
         if (message) {
             const params = {
                 type: 'alert',
@@ -16,13 +23,24 @@ export function notifications() {
                 time: time ? time : 3000,
                 color: color,
                 func,
+                sound,
+                onClickFunc,
             };
 
             useNotifications.addNotification(params);
         }
     };
 
-    const error = async(message, time = null, color = null, saveError = false, from = null, func = null) => {
+    const error = async(
+        message,                        // Сообщение
+        time = null,               // Время отображения сообщения
+        color = null,              // Цвет блока отображения
+        saveError = false,      // Сохранить сообщение в лог ошибок
+        from = null,               // Источник сообщения
+        func = null,               // Функция, выполняемая вместе с
+        sound = false,          // Воспроизводить или нет звук уведомления
+        onClickFunc = null,        // Фнукция, которая срабатывает при нажатии на
+    ) => {
         if (message) {
             const currentTime = getFormattedDate('d.m.Y H:i:s');
             const params = {
@@ -32,6 +50,8 @@ export function notifications() {
                 color: color,
                 currentTime,
                 func,
+                sound,
+                onClickFunc,
             };
 
             if (saveError) {
@@ -68,5 +88,9 @@ export function notifications() {
         }
     }
 
-    return { alert, error, choiceAlert };
+    return {
+        alert,
+        error,
+        choiceAlert
+    };
 }

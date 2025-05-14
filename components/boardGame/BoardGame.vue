@@ -5,6 +5,7 @@ import Players from '@/components/boardGame/user/Players.vue';
 import Board from '@/components/boardGame/Board.vue';
 import Head from '@/components/seo/Head.vue';
 import Rules from '@/components/boardGame/Rules.vue';
+import Items from '@/components/boardGame/Items.vue';
 import StreamersOnline from '@/components/boardGame/StreamersOnline.vue';
 
 import { ref } from "vue";
@@ -83,10 +84,13 @@ const updateBoardGameInfo = () => {
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 				/>
+				<Items
+						:boardGameId="fetchedData.id"
+				/>
 				<a
 						href="https://t.me/game_events_tr"
 						target="_blank"
-						class="btn btn-primary ml-[1rem]"
+						class="btn btn-simple-1 ml-[1rem]"
 						@click="openCloseModalFunc"
 				>
 					Телеграм <font-awesome-icon :icon="['fab', 'telegram']" />

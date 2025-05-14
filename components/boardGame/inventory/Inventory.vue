@@ -28,6 +28,10 @@ const props = defineProps({
 		type: Number,
 		default: 1,
 	},
+	boardGameInfo: {
+		type: Object,
+		default: {},
+	},
 });
 
 const modalOpen = ref(false);
@@ -142,8 +146,10 @@ const updateUserItems = (items) => {
 						:ItemList="ItemList"
 						:UserItems="UserItems"
 						:UsedItems="UsedItems"
+						:boardGameInfo="boardGameInfo"
 						@fetchLogs="emit('fetchLogs')"
 						@updateUserItems="updateUserItems"
+						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 				/>
 			</div>
 		</div>

@@ -3,6 +3,7 @@ import PlayerCard from '@/components/boardGame/user/PlayerCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
 import Modal from '@/components/modals/Modal.vue';
 import UserProfile from '@/components/boardGame/user/UserProfile.vue';
+import SendNotificationForm from '@/components/user/notifications/SendNotificationForm.vue';
 
 import { api } from '@/composables/api.js'
 const {
@@ -24,7 +25,7 @@ const props = defineProps({
 });
 
 import { lightBox } from '@/composables/lightBox.js';
-import {ref} from "vue";
+import { ref } from "vue";
 const {
 	openedImage,
 	setOpenedImage
@@ -62,6 +63,24 @@ const getPlayerInfo = async (id) => {
 		requestInProgress.value = false;
 	}
 };
+
+const notificationModalOpen = ref(false);
+
+const openCloseNotificationModal = () => {
+	notificationModalOpen.value = !notificationModalOpen.value;
+};
+
+const notificationForUserWithId = ref(null);
+
+const sendNotification = (id) => {
+	notificationForUserWithId.value = id;
+	openCloseNotificationModal();
+}
+
+const afterSendNotification = () => {
+	notificationForUserWithId.value = null;
+	openCloseNotificationModal();
+}
 </script>
 
 <template>
@@ -101,6 +120,25 @@ const getPlayerInfo = async (id) => {
 					:userInfo="fetchData"
 					:boardGameInfo="boardGameInfo"
 					@setOpenedImage="setOpenedImage"
+					@sendNotification="sendNotification"
+				/>
+			</div>
+		</div>
+	</Modal>
+
+	<Modal
+			:showOpenModal="notificationModalOpen"
+			size="medium"
+			:fullCloseModal="true"
+			overlayClasses="z-[1000]"
+			@toggleModal="openCloseNotificationModal"
+	>
+		<div class="modal-parent">
+			<h3 class="modal-title">Отправить уведомление</h3>
+			<div class="link-parent-box">
+				<SendNotificationForm
+					:userId="notificationForUserWithId"
+					@afterSendForm="afterSendNotification"
 				/>
 			</div>
 		</div>

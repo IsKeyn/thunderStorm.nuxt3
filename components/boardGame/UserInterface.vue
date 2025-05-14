@@ -7,6 +7,7 @@ import GoInThisGame from '@/components/boardGame/user/GoInThisGame.vue';
 import Inventory from '@/components/boardGame/inventory/Inventory.vue';
 import Dices from '@/components/boardGame/Dices.vue';
 import Points from '@/components/boardGame/user/Points.vue';
+import StatusEffects from '@/components/boardGame/user/StatusEffects.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -64,6 +65,11 @@ const alreadyInGame = computed(() => {
 					@updateBoardGameInfo="emit('updateBoardGameInfo')"
 			/>
 			<template v-else>
+				<StatusEffects
+						:boardGameId="boardGameId"
+						:boardGameInfo="boardGameInfo"
+						@updateBoardGameInfo="emit('updateBoardGameInfo')"
+				/>
 				<Points
 						:boardGameId="boardGameId"
 						:boardGameInfo="boardGameInfo"
@@ -73,11 +79,14 @@ const alreadyInGame = computed(() => {
 				<Dices
 						:boardGameId="boardGameId"
 						@fetchLogs="emit('fetchLogs')"
+						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 				/>
 				<span class="user-interface-title">Инвентарь</span>
 				<Inventory
 						:boardGameId="boardGameId"
+						:boardGameInfo="boardGameInfo"
 						@fetchLogs="emit('fetchLogs')"
+						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 				/>
 			</template>
 		</template>

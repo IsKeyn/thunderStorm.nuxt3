@@ -112,6 +112,10 @@ const sendRequest = async () => {
 		requestInProgress.value = false;
 	}
 }
+
+watch(() => props.boardGameInfo.players, () => {
+	setPoints();
+}, { deep: true });
 </script>
 
 <template>

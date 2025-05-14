@@ -6,7 +6,23 @@ const {
 	setLog,
 } = boardGameLog();
 
-const emit = defineEmits(['fetchLogs']);
+import { notifications } from '@/composables/notifications.js';
+const {
+	alert,
+	error,
+	choiceAlert
+} = notifications();
+
+import { api } from '@/composables/api.js'
+const {
+	apiUrl,
+	publicUrl,
+	sessionCookieName,
+	errorHandler,
+	sendApiRequest,
+} = api();
+
+const emit = defineEmits(['updateBoardGameInfo', 'fetchLogs']);
 
 const props = defineProps({
 	boardGameId: {
@@ -24,6 +40,9 @@ const d20Result = ref(20)
 
 const isRollingD6 = ref(false)
 const isRollingD20 = ref(false)
+
+// const isRollingD6Interval = ref(false)
+// const isRollingD20Interval = ref(false)
 
 const diceSound = ref(null)
 
@@ -72,33 +91,78 @@ function rollDice(type) {
 	playSound();
 
 	if (type === 'd6') {
-		isRollingD6.value = true
-		setTimeout(() => {
-			d6Result.value = Math.floor(Math.random() * 6) + 1
+		isRollingD6.value = true;
+		d6Result.value = '?';
+		// isRollingD6Interval.value = setInterval(() => {
+		// 	clearInterval(isRollingD6Interval.value);
+		// 	d6Result.value = Math.floor(Math.random() * 6) + 1;
+		// }, 100);
 
-			const logBody = {
-				board_game_id: props.boardGameId,
-				message: `бросил кубик D6, выпало ${d6Result.value}`
-			};
-			setLog(logBody);
-
-			isRollingD6.value = false
-		}, 1000)
+		rollDiceRequest(6);
 	} else if (type === 'd20') {
-		isRollingD20.value = true
-		setTimeout(() => {
-			d20Result.value = Math.floor(Math.random() * 20) + 1
+		isRollingD20.value = true;
+		d20Result.value = '?';
+		// isRollingD20Interval.value = setInterval(() => {
+		// 	clearInterval(isRollingD20Interval.value);
+		// 	d20Result.value = Math.floor(Math.random() * 20) + 1;
+		// }, 100);
 
-			const logBody = {
-				board_game_id: props.boardGameId,
-				message: `бросил кубик D20, выпало ${d20Result.value}`
-			};
-			setLog(logBody);
-
-			isRollingD20.value = false
-		}, 1000)
+		rollDiceRequest(20);
 	}
 }
+
+const requestInProgress = ref(false);
+
+const rollDiceRequest = async (dice) => {
+	requestInProgress.value = true;
+
+	try {
+		const body = {
+			dice,
+		}
+
+		const response = await sendApiRequest('board-game/roll-dice', 'POST', body);
+
+		if (response) {
+			requestInProgress.value = false;
+
+			if (dice === 6) {
+				setTimeout(() => {
+					// clearInterval(isRollingD6Interval.value);
+					d6Result.value = response.rollResult;
+
+					const logBody = {
+						board_game_id: props.boardGameId,
+						message: `бросил кубик D6, выпало ${d6Result.value}`
+					};
+					setLog(logBody);
+
+					isRollingD6.value = false;
+				}, 1000)
+			} else if (dice === 20) {
+				setTimeout(() => {
+					// clearInterval(isRollingD20Interval.value);
+					d20Result.value = response.rollResult;
+
+					const logBody = {
+						board_game_id: props.boardGameId,
+						message: `бросил кубик D20, выпало ${d20Result.value}`
+					};
+					setLog(logBody);
+
+					isRollingD20.value = false;
+				}, 1000)
+			}
+
+			if (response.updateData) {
+				emit('updateBoardGameInfo');
+			}
+		}
+	} catch (e) {
+		error(e);
+		requestInProgress.value = false;
+	}
+};
 
 const getD6SizeClasses = () => {
 	return `w-[${props.size}px] h-[${props.size}px]`;
@@ -133,8 +197,12 @@ const getDotSizeClasses = () => {
 				:class="{ rolling: isRollingD6 }"
 				@click="rollDice('d6')"
 		>
-			<div class="face">
-				<template
+
+			<div :class="['face', d6Result === '?' ? 'd6-face' : '']">
+				<template v-if="d6Result === '?'">
+					{{ d6Result }}
+				</template>
+				<template v-else
 						v-for="(dot, index) in d6Dots[d6Result]"
 						:key="index"
 				>
@@ -207,6 +275,14 @@ const getDotSizeClasses = () => {
 			;
 
 			border-radius: 50%;
+		}
+
+		.d6-face {
+			@apply
+			text-[2rem] text-[var(--main-text-color)]
+			flex
+			justify-center items-center
+			;
 		}
 	}
 }

@@ -54,6 +54,14 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showAdditionControlPanel: {
+		type: Boolean,
+		default: true,
+	},
+	showAdditionalData: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const route = useRoute();
@@ -146,7 +154,12 @@ const sendRequest = async () => {
 			fetchedData.value = props.hasResource ? response.data : response;
 
 			for (const formKey in props.form) {
-				if (fetchedData.value[formKey]) {
+				if (
+						formKey
+						&& fetchedData.value.hasOwnProperty(formKey)
+						&& fetchedData.value[formKey] !== null
+						&& fetchedData.value[formKey] !== undefined
+				) {
 					if (typeof fetchedData.value[formKey] === 'object' && props.form[formKey].keyValueFromObject) {
 						props.form[formKey].value = fetchedData.value[formKey][props.form[formKey].keyValueFromObject];
 
@@ -268,6 +281,8 @@ const buttons = [
 				:seoForProp="seoForProp"
 				:menuForProp="menuForProp"
 				:dataForAdditionalFields="dataForAdditionalFields"
+				:showAdditionControlPanel="showAdditionControlPanel"
+				:showAdditionalData="showAdditionalData"
 				:additionalData="additionalData"
 
 				:extensions="extensions"

@@ -9,10 +9,14 @@ import Draggable from 'vuedraggable'
 import ItemCard from '@/components/boardGame/inventory/ItemCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
 import GamblingGame from '@/components/boardGame/inventory/GamblingGame.vue'
+import Modal from '@/components/modals/Modal.vue';
+import UseItem from '@/components/boardGame/inventory/UseItem';
+import ItemsList from '@/components/boardGame/inventory/ItemsList.vue';
+import OpeningBox from '@/components/ui/OpeningBox.vue';
 
 import { ref } from 'vue'
 
-const emit = defineEmits(['fetchLogs', 'updateUserItems']);
+const emit = defineEmits(['fetchLogs', 'updateUserItems', 'updateBoardGameInfo']);
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -60,6 +64,10 @@ const props = defineProps({
 	UsedItems: {
 		type: Array,
 		default: [],
+	},
+	boardGameInfo: {
+		type: Object,
+		default: {},
 	},
 });
 
@@ -201,26 +209,38 @@ const setInventoryId = (oldId, newId) => {
 	});
 }
 
+const modalOpen = ref(false);
+
+const openCloseModalFunc = () => {
+	modalOpen.value = !modalOpen.value;
+};
+
+const itemForUse = ref();
+
 const useItem = (item) => {
-	choiceAlert(
-			{
-				title: 'Использовать предмет',
-				message: `Использовать предмет "${item.name}"?`,
-				buttons: [
-					{
-						name: 'Да',
-						func: () => {
-							useItemRequest(item.inventory_id, item.name);
-						},
-						additionalKeywordFunc: 'close',
-					},
-					{
-						name: 'Нет',
-						additionalKeywordFunc: 'close',
-					},
-				],
-			}
-	);
+	openCloseModalFunc();
+
+	itemForUse.value = item;
+
+	// choiceAlert(
+	// 		{
+	// 			title: 'Использовать предмет',
+	// 			message: `Использовать предмет "${item.name}"?`,
+	// 			buttons: [
+	// 				{
+	// 					name: 'Да',
+	// 					func: () => {
+	// 						useItemRequest(item.inventory_id, item.name);
+	// 					},
+	// 					additionalKeywordFunc: 'close',
+	// 				},
+	// 				{
+	// 					name: 'Нет',
+	// 					additionalKeywordFunc: 'close',
+	// 				},
+	// 			],
+	// 		}
+	// );
 }
 
 const deleteItem = (item) => {
@@ -245,13 +265,19 @@ const deleteItem = (item) => {
 	);
 }
 
-const useItemRequest = async (inventory_id, name) => {
+const useItemFromEmit = (params) => {
+	// openCloseModalFunc();
+	useItemRequest(params.item.inventory_id, params.item.name, params.additionalParams);
+}
+
+const useItemRequest = async (inventory_id, name, additionalParams = {}) => {
 	requestInProgress.value = true;
 
 	try {
 		const body = {
 			id: inventory_id,
 			board_game_id: props.boardGameId,
+			additionalParams,
 		}
 
 		const response = await sendApiRequest('board-game/inventory/use', 'POST', body);
@@ -259,25 +285,30 @@ const useItemRequest = async (inventory_id, name) => {
 		if (response) {
 			requestInProgress.value = false;
 
-			alert(`Предмет "${name}" был использован`);
+			if (response.error) {
+				error(response.error);
+			} else {
+				alert(`Предмет "${name}" был использован`);
 
-			const logBody = {
-				board_game_id: props.boardGameId,
-				message: `использовал предмет "${name}"`
-			};
-			setLog(logBody);
+				const logBody = {
+					board_game_id: props.boardGameId,
+					message: `использовал предмет "${name}"`
+				};
+				setLog(logBody);
 
-			emit('fetchLogs');
+				emit('fetchLogs');
 
-			// TODO заменить на for, чтобы выходить из цикла при нахождении элемента
-			UserItems.value.forEach((item) => {
-				if (item.inventory_id === inventory_id) {
-					UsedItems.value.unshift(item);
-				}
-			});
+				// TODO заменить на for, чтобы выходить из цикла при нахождении элемента
+				UserItems.value.forEach((item) => {
+					if (item.inventory_id === inventory_id) {
+						UsedItems.value.unshift(item);
+					}
+				});
 
-			UserItems.value = UserItems.value.filter(item => item.inventory_id !== inventory_id);
-			emit('updateUserItems', UserItems.value);
+				UserItems.value = UserItems.value.filter(item => item.inventory_id !== inventory_id);
+				emit('updateUserItems', UserItems.value);
+				emit('updateBoardGameInfo');
+			}
 		}
 	} catch (e) {
 		error(e);
@@ -359,6 +390,7 @@ const addItemToInventoryEmit = (data) => {
 					<ItemCard
 							:element="element"
 							:showControlPanel="true"
+							:useLightBox="true"
 							@setOpenedImage="setOpenedImage"
 							@deleteItem="deleteItem"
 							@useItem="useItem"
@@ -380,6 +412,7 @@ const addItemToInventoryEmit = (data) => {
 				<template #item="{ element }">
 					<ItemCard
 							:element="element"
+							:useLightBox="true"
 							@setOpenedImage="setOpenedImage"
 					/>
 				</template>
@@ -387,20 +420,52 @@ const addItemToInventoryEmit = (data) => {
 		</div>
 	</div>
 
-	<div class="inventory">
-		<div class="used-items">
-			<h2 class="inv-title">Использованные предметы</h2>
-			<div class="wrapper">
-				<span v-if="UsedItems.length === 0">Предметов нет</span>
-				<ItemCard
-						v-for="(element, key) in UsedItems"
-						:key="key"
-						:element="element"
-						@setOpenedImage="setOpenedImage"
+	<OpeningBox
+			v-if="ItemList.length > 0"
+			title="Все предметы"
+			classes="pb-[1rem] pl-[1rem] pr-[1rem]"
+	>
+		<ItemsList
+				:itemList="ItemList"
+				@setOpenedImage="setOpenedImage"
+		/>
+	</OpeningBox>
+
+	<OpeningBox
+			v-if="ItemList.length > 0"
+			title="Использованные предметы"
+			classes="pb-[1rem] pl-[1rem] pr-[1rem]"
+	>
+		<div class="wrapper">
+			<span v-if="UsedItems.length === 0">Предметов нет</span>
+			<ItemCard
+					v-for="(element, key) in UsedItems"
+					:key="key"
+					:element="element"
+					:useLightBox="true"
+					@setOpenedImage="setOpenedImage"
+			/>
+		</div>
+	</OpeningBox>
+
+	<Modal
+			:showOpenModal="modalOpen"
+			size="full-width"
+			:fullCloseModal="true"
+			@toggleModal="openCloseModalFunc"
+	>
+		<div class="modal-parent">
+			<h3 class="modal-title">Применение предмета</h3>
+			<div class="link-parent-box">
+				<UseItem
+					:item="itemForUse"
+					:boardGameInfo="boardGameInfo"
+					@openCloseModalFunc="openCloseModalFunc"
+					@useItemFromEmit="useItemFromEmit"
 				/>
 			</div>
 		</div>
-	</div>
+	</Modal>
 
 	<LightBox
 			v-if="openedImage"

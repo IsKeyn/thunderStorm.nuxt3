@@ -22,6 +22,13 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			board_game_id: {
+				name: 'ID настольной игры',
+				value: '',
+				type: 'text',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			created_by: {
 				name: 'created_by',
 				value: '',
@@ -50,7 +57,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Логи настолки',
+			name: 'Позиции игроков',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -66,9 +73,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/BoardGamePlayerPosition"
-				:showTags="true"
-				:hasResource="true"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/BoardGame/BoardGamePlayerPosition"
 		/>
 	</div>
 </template>

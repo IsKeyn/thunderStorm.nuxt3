@@ -129,6 +129,10 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
+	showAdditionalData: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const blockEditorRef = ref(null);
@@ -368,11 +372,14 @@ const tabsElements = [
 		id: 1,
 		title: 'Основная информация',
 	},
-	{
-		id: 2,
-		title: 'Дополнительные поля',
-	},
 ];
+
+if (props.showAdditionalData) {
+	tabsElements.push({
+		id:	'additionalData',
+		title: 'Дополнительные поля',
+	});
+}
 
 if (props.showSeo) {
 	tabsElements.push({
@@ -420,6 +427,7 @@ const openBlockList = () => {
 						:labelClasses="['block', 'mb-[10px]']"
 						:fieldClasses="field.classes"
 						:formHandlerType="field.formHandlerType"
+						:showTitle="field.showTitle"
 				/>
 				<TagsList
 						v-if="showTags"
@@ -427,7 +435,7 @@ const openBlockList = () => {
 				/>
 			</template>
 
-			<template #tab-2>
+			<template #tab-additionalData>
 				<AdditionalFieldsComponent
 						v-if="additionalFieldsEnable"
 						:defaultValues="defaultValuesForAdditionalFields"

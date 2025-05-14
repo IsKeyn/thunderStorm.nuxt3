@@ -200,7 +200,7 @@ export function validate() {
     }
 
     const validateRequired = (value) => {
-        return !!value;
+        return value !== null && value !== false && value !== undefined && value !== '';
     }
 
     const validateEmail = (value) => {

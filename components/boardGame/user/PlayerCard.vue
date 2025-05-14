@@ -70,7 +70,10 @@ const getPlaceColor = (place) => {
 				</span>
 			</template>
 		</div>
-		<div class="control-panel">
+		<div
+				v-if="place !== null"
+				class="control-panel"
+		>
 			<span :class="['place', getPlaceColor(place + 1)]">
 				{{ place + 1 }}
 			</span>

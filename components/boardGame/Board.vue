@@ -1002,7 +1002,7 @@ const currentTheme = ref('theme-1');
 
 const getThemeConst = () => {
 	if (process.client) {
-		const boardTheme = sessionStorage.getItem('board-theme');
+		const boardTheme = localStorage.getItem('board-theme');
 
 		if (boardTheme) {
 			currentTheme.value = boardTheme;
@@ -1011,7 +1011,7 @@ const getThemeConst = () => {
 }
 
 const setTheme = (theme) => {
-	sessionStorage.setItem('board-theme', theme);
+	localStorage.setItem('board-theme', theme);
 	currentTheme.value = theme;
 }
 

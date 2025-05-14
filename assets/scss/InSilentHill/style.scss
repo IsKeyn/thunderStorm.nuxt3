@@ -38,6 +38,18 @@
     }
   }
 
+  &.btn-simple-1 {
+    @apply bg-[var(--error-color)];
+
+    &:hover {
+      @apply bg-[var(--main-hover-color)];
+    }
+
+    &.active {
+      @apply bg-[var(--main-active-color)];
+    }
+  }
+
   &.btn-disable {
     @apply bg-gradient-to-r from-[var(--second-border-color)] to-[var(--third-border-color)];
   }
