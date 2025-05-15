@@ -1,9 +1,12 @@
 <script setup>
+import 'vue3-carousel/carousel.css'
+
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import ThunderSlider from '@/components/sliders/ThunderSlider.vue';
 import Preloader from '@/components/ui/Preloader.vue';
 import TwitchCard from '@/components/twitch/TwitchCard.vue';
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
@@ -70,6 +73,33 @@ const { refresh } = await useAsyncData(
 			}
 		}
 );
+
+const carouselConfig = {
+	wrapAround: true,
+	itemsToShow: 1,
+	pauseAutoplayOnHover: true,
+	autoplay: 15000,
+	mouseWheel: true,
+	transition: 750,
+}
+
+const carouselRef = ref()
+
+const next = () => carouselRef.value.next();
+const prev = () => carouselRef.value.prev();
+
+const scriptTwitchIsOnline = ref(false);
+
+onMounted(() => {
+	if (process.client) {
+		const script = document.createElement('script');
+		script.src = 'https://player.twitch.tv/js/embed/v1.js';
+		document.body.appendChild(script);
+		script.onload = () => {
+			scriptTwitchIsOnline.value = true;
+		};
+	}
+});
 </script>
 
 <template>
@@ -78,32 +108,38 @@ const { refresh } = await useAsyncData(
 			v-if="fetchedData.length > 0"
 			class="streamers-online"
 	>
-		<ThunderSlider
-				:autoLoop="{
-						delay: 12000,
-						restart: 12000,
-					}"
+		<Carousel
+				v-if="scriptTwitchIsOnline"
+				ref="carouselRef"
+				v-bind="carouselConfig"
+				class="w-full"
 		>
-			<template #nav-prev>
-				<div id="nav-prev" class="nav-prev">
-					<span><font-awesome-icon :icon="['fas', 'angle-left']" /></span>
-				</div>
-			</template>
-
-			<template #nav-next>
-				<div id="nav-next" class="nav-next">
-					<span><font-awesome-icon :icon="['fas', 'angle-right']" /></span>
-				</div>
-			</template>
-
-			<div
-					class="slide w-full"
+			<Slide
 					v-for="(channel, index) in fetchedData"
 					:key="index"
+					class="slide w-full"
 			>
 				<TwitchCard :channel="channel" />
-			</div>
-		</ThunderSlider>
+			</Slide>
+			<template #addons>
+<!--				<Navigation />-->
+				<Pagination />
+			</template>
+		</Carousel>
+		<div>
+					<span
+							class="nav-prev"
+							@click="prev"
+					>
+				<font-awesome-icon :icon="['fas', 'angle-left']" />
+			</span>
+			<span
+					class="nav-next"
+					@click="next"
+			>
+					<font-awesome-icon :icon="['fas', 'angle-right']" />
+				</span>
+		</div>
 	</div>
 	<div v-else>
 		Сейчас никто не стримит *(
@@ -112,51 +148,69 @@ const { refresh } = await useAsyncData(
 
 <style lang="scss">
 .streamers-online {
-	.slider {
-		.slide {
-			@apply cursor-pointer;
+	@apply relative;
+
+	.slide {
+		@apply cursor-pointer;
+	}
+
+	.nav-next,
+	.nav-prev {
+		@apply
+		absolute z-[1]
+		cursor-pointer hidden
+		text-[2rem]
+		;
+
+		top: calc(50% - 2rem);
+		color: var(--main-text-color);
+
+		&:hover {
+			color: var(--third-hover-color);
 		}
 
-		.nav-next,
-		.nav-prev {
+		span {
 			@apply
-			absolute z-[1]
-			cursor-pointer hidden
-			text-[2rem]
-			;
-
-			top: calc(50% - 2rem);
-			color: var(--main-text-color);
-
-			&:hover {
-				color: var(--third-hover-color);
-			}
-
-			span {
-				@apply
-				flex justify-center items-center
-				bg-[var(--body-bg-color)]
-				w-[3rem] h-[3rem] rounded-full;
-			}
+			flex justify-center items-center
+			bg-[var(--body-bg-color)]
+			w-[3rem] h-[3rem] rounded-full;
 		}
+	}
 
-		.nav-prev {
-			@apply left-[10px];
-		}
+	.nav-prev {
+		@apply left-[10px];
+	}
 
-		.nav-next {
-			@apply right-[10px];
-		}
+	.nav-next {
+		@apply right-[10px];
+	}
 
-		&:hover .nav-prev,
-		&:hover .nav-next {
-			@apply block;
-		}
+	&:hover .nav-prev,
+	&:hover .nav-next {
+		@apply block;
 	}
 
 	iframe {
 		width: 100%;
 		min-height: 200px;
+	}
+}
+</style>
+
+<style lang="scss">
+.streamers-online {
+	.carousel__prev,
+	.carousel__next,
+	.carousel__pagination-button {
+		@apply text-[var(--main-dark-text-color)];
+	}
+
+	.carousel__pagination-button {
+		@apply bg-[var(--second-border-color)];
+	}
+
+	.carousel__pagination-button--active {
+		@apply bg-[var(--main-dark-text-color)];
 	}
 }
 </style>

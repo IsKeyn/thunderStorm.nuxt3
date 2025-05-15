@@ -9,6 +9,10 @@
       ;
     }
   }
+
+  .checkbox-name {
+    @apply ml-[0.5rem];
+  }
 }
 
 .field-error-message {

@@ -4,8 +4,8 @@ import { onMounted, onUnmounted, watch } from 'vue'
 import Overlay from "@/components/layout/Overlay.vue";
 
 import { notifications } from '@/composables/notifications.js';
-
 const { alert, error } = notifications();
+
 const emit = defineEmits(['toggleModal', 'setReCalcValue']);
 
 const props = defineProps({

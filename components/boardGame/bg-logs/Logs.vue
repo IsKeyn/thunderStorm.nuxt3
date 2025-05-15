@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted } from 'vue'
 
+const emit = defineEmits(['showPlayer']);
+
 import LogCard from '@/components/boardGame/bg-logs/LogCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
 import AddLogs from '@/components/boardGame/bg-logs/AddLogs.vue';
@@ -121,6 +123,7 @@ const alreadyInGame = computed(() => {
 				:element="log"
 				:boardGameInfo="boardGameInfo"
 				@setOpenedImage="setOpenedImage"
+				@showPlayer="$emit('showPlayer', $event)"
 		/>
 	</div>
 

@@ -71,7 +71,7 @@ const props = defineProps({
 <style lang="scss" scoped>
 
 .item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative cursor-pointer min-h-[86px];
+	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative cursor-pointer;
 
 	&.show-control-panel {
 		@apply pr-[3rem];

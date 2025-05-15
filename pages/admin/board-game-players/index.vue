@@ -8,17 +8,20 @@ import ListTable from '@/components/admin/list/ListTable.vue';
 
 const titles = ref(
 		{
-			user_id: {
-				name: 'ID пользователя',
+			id: {
+				name: 'id',
 			},
-			position: {
-				name: 'Позиция',
+			user_id: {
+				name: 'User ID',
 			},
 			board_game_id: {
 				name: 'ID настольной игры',
 			},
+			points: {
+				name: 'Количество очков',
+			},
 			created_by: {
-				name: 'created_by',
+				name: 'Создан',
 			},
 		}
 );
@@ -41,7 +44,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Позиции игроков',
+			name: 'Игроки настольной игры',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -53,6 +56,6 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/entity/BoardGame/BoardGamePlayerPosition"
+		fetchUrl="admin/entity/BoardGame/BoardGamePlayer"
 	/>
 </template>

@@ -1,4 +1,7 @@
 <script setup>
+import 'vue3-carousel/carousel.css'
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+
 import Modal from '@/components/modals/Modal.vue';
 import InventoryInterface from '@/components/boardGame/inventory/InventoryInterface.vue';
 import ItemCard from '@/components/boardGame/inventory/ItemCard.vue';
@@ -27,6 +30,10 @@ const props = defineProps({
 	boardGameId: {
 		type: Number,
 		default: 1,
+	},
+	boardGameInfo: {
+		type: Object,
+		default: {},
 	},
 });
 
@@ -69,6 +76,10 @@ const { refresh } = await useAsyncData(
 							},
 							onResponse({response}) {
 								if (response.status === 200) {
+									UserItems.value = [];
+									SmallUserItems.value = [];
+									UsedItems.value = [];
+
 									ItemList.value = response._data.items;
 
 									if (response._data.inventory) {
@@ -99,31 +110,57 @@ const { refresh } = await useAsyncData(
 const updateUserItems = (items) => {
 	SmallUserItems.value = items;
 }
+
+const updateInventory = () => {
+	refresh();
+}
+
+const carouselConfig = {
+	dir: 'ttb',
+	wrapAround: true,
+	itemsToShow: 2,
+	snapAlign: 'center',
+	height: '180px',
+	gap: 2,
+	pauseAutoplayOnHover: true,
+	autoplay: 5000,
+	mouseWheel: true,
+}
 </script>
 
 <template>
 	<div>
 		<div class="user-items">
-			<div
-					v-for="(element, key) in SmallUserItems"
-					class="wrapper"
-					:key="key"
+			<Carousel
+					v-if="SmallUserItems.length > 0"
+					v-bind="carouselConfig"
+					class="w-full"
 			>
-				<span v-if="SmallUserItems.length === 0">Предметов нет</span>
-				<ItemCard
-						:element="element"
-						:cutDescription="true"
-						@setOpenedImage="setOpenedImage"
-						@deleteItem="deleteItem"
-						@useItem="useItem"
-						@click="openCloseModalFunc"
-				/>
-			</div>
-		</div>
+				<Slide
+						v-for="(element, key) in SmallUserItems"
+						:key="key"
+						class="slide"
+				>
+					<ItemCard
+							class="w-full"
+							:element="element"
+							:cutDescription="true"
+							@setOpenedImage="setOpenedImage"
+							@deleteItem="deleteItem"
+							@useItem="useItem"
+							@click="openCloseModalFunc"
+					/>
+				</Slide>
 
+				<template #addons>
+					<Navigation />
+					<Pagination />
+				</template>
+			</Carousel>
+		</div>
 		<div class="button-block">
 			<button
-					class="btn btn-primary"
+					class="btn btn-simple-1 w-full"
 					@click="openCloseModalFunc"
 			>
 				Открыть инвентарь
@@ -142,8 +179,11 @@ const updateUserItems = (items) => {
 						:ItemList="ItemList"
 						:UserItems="UserItems"
 						:UsedItems="UsedItems"
+						:boardGameInfo="boardGameInfo"
 						@fetchLogs="emit('fetchLogs')"
 						@updateUserItems="updateUserItems"
+						@updateBoardGameInfo="emit('updateBoardGameInfo')"
+						@updateInventory="updateInventory"
 				/>
 			</div>
 		</div>
@@ -171,6 +211,24 @@ const updateUserItems = (items) => {
 }
 
 .button-block {
-	@apply text-center mt-[1rem];
+	@apply text-center;
+}
+</style>
+
+<style lang="scss">
+.user-items {
+	.carousel__prev,
+	.carousel__next,
+	.carousel__pagination-button {
+		@apply text-[var(--main-dark-text-color)];
+	}
+
+	.carousel__pagination-button {
+		@apply bg-[var(--second-border-color)];
+	}
+
+	.carousel__pagination-button--active {
+		@apply bg-[var(--main-dark-text-color)];
+	}
 }
 </style>

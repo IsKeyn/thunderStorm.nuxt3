@@ -389,10 +389,11 @@ if (props.formHandlerType === 1) {
 			<span class="input-wrap">
 			<input
 					v-model="element.value"
+					:checked="element.value"
 					:type="element.type"
 			>
-				<span v-if="element.html" v-html="element.html" />
-				<span v-else>{{ element.name }}</span>
+				<span class="checkbox-name" v-if="element.html" v-html="element.html" />
+				<span class="checkbox-name" v-else>{{ element.name }}</span>
 			</span>
 		</template>
 		<span

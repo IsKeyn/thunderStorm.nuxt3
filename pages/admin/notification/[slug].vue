@@ -8,63 +8,30 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
-			name: {
-				name: 'Название',
+			user_id: {
+				name: 'UserId',
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			slug: {
-				name: 'Slug',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-				autoFill: {
-					sourceFieldKey: 'name',
-					rule: 'slug',
-				},
-			},
-			description: {
-				name: 'Описание',
+			message: {
+				name: 'Сообщение',
 				value: '',
 				type: 'textarea',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			actions: {
-				name: 'Действия JSON',
-				value: '',
-				type: 'textarea',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			board_game_id: {
-				name: 'ID настолькой игры',
-				value: '',
-				type: 'text',
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			type: {
-				name: 'Тип',
-				value: '',
-				type: 'text',
-				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			image: {
-				name: 'Медиа',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
+			viewed: {
+				name: 'Просмотрено',
+				value: 1,
+				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
 			},
-			active: {
-				name: 'Активность',
+			created_by: {
+				name: 'ID автора',
 				value: '',
 				type: 'text',
 				validateRules: '',
@@ -91,7 +58,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Предметы в настолке',
+			name: 'Оповещения',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -107,8 +74,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/BoardGame/BoardGameItem"
-				:hasResource="true"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/user/Notification"
 		/>
 	</div>
 </template>

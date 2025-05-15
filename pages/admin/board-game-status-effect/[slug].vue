@@ -8,6 +8,13 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
+			type: {
+				name: 'Тип',
+				value: '',
+				type: 'text',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			name: {
 				name: 'Название',
 				value: '',
@@ -34,41 +41,26 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			actions: {
-				name: 'Действия JSON',
+				name: 'Действие',
 				value: '',
 				type: 'textarea',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			board_game_id: {
-				name: 'ID настолькой игры',
-				value: '',
-				type: 'text',
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			type: {
-				name: 'Тип',
-				value: '',
-				type: 'text',
-				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			image: {
-				name: 'Медиа',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			active: {
-				name: 'Активность',
+				name: 'ID настольной игры',
 				value: '',
 				type: 'text',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+			},
+			debuff: {
+				name: 'Дебаф',
+				value: 0,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
 			},
 		}
 );
@@ -91,7 +83,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Предметы в настолке',
+			name: 'Эффекты статуса',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -107,8 +99,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/BoardGame/BoardGameItem"
-				:hasResource="true"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/BoardGame/StatusEffect"
 		/>
 	</div>
 </template>

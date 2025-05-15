@@ -8,63 +8,37 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
-			name: {
-				name: 'Название',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			slug: {
-				name: 'Slug',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-				autoFill: {
-					sourceFieldKey: 'name',
-					rule: 'slug',
-				},
-			},
-			description: {
-				name: 'Описание',
-				value: '',
-				type: 'textarea',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			actions: {
-				name: 'Действия JSON',
-				value: '',
-				type: 'textarea',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			board_game_id: {
-				name: 'ID настолькой игры',
+			user_id: {
+				name: 'UserId',
 				value: '',
 				type: 'text',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			type: {
-				name: 'Тип',
+			board_game_id: {
+				name: 'ID настольной игры',
 				value: '',
 				type: 'text',
-				validateRules: 'maxLength_255',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			image: {
-				name: 'Медиа',
+			status_effect_id: {
+				name: 'ID эффекта статуса',
 				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
+				type: 'text',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			active: {
 				name: 'Активность',
+				value: 1,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
+			created_by: {
+				name: 'ID автора',
 				value: '',
 				type: 'text',
 				validateRules: '',
@@ -91,7 +65,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Предметы в настолке',
+			name: 'Эффекты статуса игрока',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -107,8 +81,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/BoardGame/BoardGameItem"
-				:hasResource="true"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/BoardGame/PlayerStatusEffect"
 		/>
 	</div>
 </template>

@@ -5,6 +5,7 @@ import Players from '@/components/boardGame/user/Players.vue';
 import Board from '@/components/boardGame/Board.vue';
 import Head from '@/components/seo/Head.vue';
 import Rules from '@/components/boardGame/Rules.vue';
+import Items from '@/components/boardGame/Items.vue';
 import StreamersOnline from '@/components/boardGame/StreamersOnline.vue';
 
 import { ref } from "vue";
@@ -71,6 +72,12 @@ const updateLogs = () => {
 const updateBoardGameInfo = () => {
 	refresh();
 }
+
+const playersComponent = ref(null);
+
+const showPlayer = (id) => {
+	playersComponent.value.showPlayerInfo(id);
+}
 </script>
 
 <template>
@@ -83,10 +90,13 @@ const updateBoardGameInfo = () => {
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 				/>
+				<Items
+						:boardGameId="fetchedData.id"
+				/>
 				<a
 						href="https://t.me/game_events_tr"
 						target="_blank"
-						class="btn btn-primary ml-[1rem]"
+						class="btn btn-simple-1 ml-[1rem]"
 						@click="openCloseModalFunc"
 				>
 					Телеграм <font-awesome-icon :icon="['fab', 'telegram']" />
@@ -107,6 +117,7 @@ const updateBoardGameInfo = () => {
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 						@updateBoardGameInfo="updateBoardGameInfo"
+						@showPlayer="showPlayer"
 				/>
 				<Comments
 						entityType="App\Models\BoardGame"
@@ -118,6 +129,7 @@ const updateBoardGameInfo = () => {
 			</div>
 			<div class="info-box">
 				<Players
+						ref="playersComponent"
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 				/>
@@ -128,6 +140,7 @@ const updateBoardGameInfo = () => {
 						ref="logListBlock"
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
+						@showPlayer="showPlayer"
 				/>
 			</div>
 		</div>

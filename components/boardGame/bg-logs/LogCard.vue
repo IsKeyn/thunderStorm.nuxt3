@@ -10,7 +10,7 @@ const {
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
 
-const emit = defineEmits(['setOpenedImage', 'deleteItem', 'useItem']);
+const emit = defineEmits(['setOpenedImage', 'deleteItem', 'useItem', 'showPlayer']);
 
 const props = defineProps({
 	element: {
@@ -48,7 +48,7 @@ const props = defineProps({
 </script>
 
 <template>
-	<div class="item-box">
+	<div class="item-box" @click="emit('showPlayer', element.user.id)">
 <!--		<img-->
 <!--				v-if="avatar"-->
 <!--				:src="getResizeImg(avatar)"-->
@@ -91,7 +91,7 @@ const props = defineProps({
 <style lang="scss" scoped>
 
 .item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex;
+	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex cursor-pointer;
 
 	&:hover {
 		@apply bg-[var(--second-active-color)];

@@ -20,6 +20,12 @@ const titles = ref(
 			description: {
 				name: 'Описание',
 			},
+			actions: {
+				name: 'Действия (json)',
+			},
+			type: {
+				name: 'Тип',
+			},
 			board_game_id: {
 				name: 'ID настолькой игры',
 			},

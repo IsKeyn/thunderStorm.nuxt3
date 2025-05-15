@@ -2,9 +2,17 @@
 import Modal from '@/components/modals/Modal.vue';
 import ChangeAvatar from '@/components/user/avatar/ChangeAvatar.vue';
 import SetTwitchUrl from '@/components/boardGame/user/SetTwitchUrl.vue';
+import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
+
+import { userNotification } from '@/composables/userNotification.js';
+const {
+	useNotifications,
+	userNotificationModalRef,
+	showNotificationModal,
+} = userNotification();
 
 import { media } from '@/composables/media.js'
 const {
@@ -13,7 +21,7 @@ const {
 
 const emit = defineEmits(['updateBoardGameInfo']);
 
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const boxOpen = ref(false);
 const openCloseBoxFunc = () => {
@@ -26,18 +34,19 @@ const openCloseBoxFunc = () => {
 			v-if="userStore.user && Object.keys(userStore.user).length > 0"
 			class="wrapper"
 	>
-		<span class="user-interface-title">Игрок</span>
+		<span class="user-interface-title">{{ userStore.user.name }}</span>
+		<div class="avatar" @click="showNotificationModal">
+			<img
+					:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
+					:alt="userStore.user.name"
+					:title="userStore.user.name"
+			/>
+			<span v-if="useNotifications && useNotifications.currentUserNotificationCount" class="notifications">{{ useNotifications.currentUserNotificationCount }}</span>
+			<!--				<font-awesome-icon :icon="['fas', 'camera']" class="change-avatar" />-->
+		</div>
 		<div class="user-info-wrap">
-			<div class="avatar" @click="openCloseBoxFunc()">
-				<img
-						:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
-						:alt="userStore.user.name"
-						:title="userStore.user.name"
-				/>
-				<font-awesome-icon :icon="['fas', 'camera']" class="change-avatar" />
-			</div>
-			<span class="name">{{ userStore.user.name }}</span>
-			<button class="btn btn-primary" @click="openCloseBoxFunc()"><font-awesome-icon :icon="['fas', 'pen']" /></button>
+			<button class="btn btn-simple-1 mr-2" @click="openCloseBoxFunc()"><font-awesome-icon :icon="['fas', 'pen']" /></button>
+			<button class="btn btn-simple-1 mr-2" @click="showNotificationModal"><font-awesome-icon :icon="['fas', 'bell']" /></button>
 		</div>
 	</div>
 	<Modal
@@ -55,6 +64,7 @@ const openCloseBoxFunc = () => {
 			</div>
 		</div>
 	</Modal>
+	<UserNotificationModal ref="userNotificationModalRef" />
 </template>
 
 <style lang="scss" scoped>
@@ -78,17 +88,26 @@ const openCloseBoxFunc = () => {
 			cursor-pointer
 		;
 
+		.notifications {
+			@apply
+				w-[2rem] h-[2rem]
+				flex rounded-full justify-center items-center
+				bg-[var(--second-block-color)]
+				absolute right-0 bottom-[-0.5rem]
+			;
+		}
+
 		img {
 			@apply w-[5rem] h-[5rem] rounded-full object-cover;
 		}
 
-		.change-avatar {
-			@apply absolute text-[2rem] top-[1.5rem] left-[1.5rem] hidden cursor-pointer;
-		}
-
-		&:hover .change-avatar {
-			@apply block;
-		}
+		//.change-avatar {
+		//	@apply absolute text-[2rem] top-[1.5rem] left-[1.5rem] hidden cursor-pointer;
+		//}
+		//
+		//&:hover .change-avatar {
+		//	@apply block;
+		//}
 	}
 }
 

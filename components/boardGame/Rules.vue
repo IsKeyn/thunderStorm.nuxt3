@@ -25,7 +25,7 @@ const openCloseModalFunc = () => {
 <template>
 	<div class="text-center">
 		<button
-				class="btn btn-primary"
+				class="btn btn-simple-1 ml-[1rem]"
 				@click="openCloseModalFunc"
 		>
 			Правила и описание <font-awesome-icon :icon="['fas', 'book-open-reader']" />

@@ -29,7 +29,7 @@ const form = ref(
 				value: '',
 				type: 'textarea',
 				placeholder: 'Текст, добавляемый в лог',
-				validateRules: 'required, minLength_2, maxLength_50',
+				validateRules: 'required, minLength_2, maxLength_500',
 				classes: 'min-w-[30%]',
 			},
 		},
@@ -99,6 +99,7 @@ const sendRequest = async () => {
 		/>
 		<div class="text-center">
 			<ActionButton
+					buttonClasses="btn btn-simple-1 w-full"
 					buttonName="Добавить"
 					:actionInProgress="requestInProgress"
 					@startAction="sendForm()"

@@ -1,5 +1,5 @@
 <script setup>
-import { watch } from 'vue'
+import {ref, watch} from 'vue'
 
 import Modal from '@/components/modals/Modal.vue';
 import ChoiceAlertCard1 from '@/components/notifications/cards/ChoiceAlertCard1.vue';
@@ -43,6 +43,15 @@ watch(useNotifications.notifications, async (newValue) => {
 
 				const rawItem = toRaw(item);
 
+				if (rawItem.sound) {
+					setTimeout(() => {
+						if (notificationSound.value) {
+							notificationSound.value.currentTime = 0
+							notificationSound.value.play()
+						}
+					}, 1000);
+				}
+
 				if (rawItem.time) {
 					setTimeout(() => {
 						useNotifications.changeNotification({ key: index, prop: 'active', value: false });
@@ -84,6 +93,17 @@ const getCardType = (cardName) => {
 		case 'ChoiceAlertCard1': return ChoiceAlertCard1;
 	}
 }
+
+const notificationSound = ref(null);
+
+const onClickHandler = (item) => {
+	if (item.onClickFunc) {
+		hideNotification(item.id);
+		item.onClickFunc();
+	} else {
+		hideNotification(item.id);
+	}
+}
 </script>
 
 <template>
@@ -104,7 +124,7 @@ const getCardType = (cardName) => {
 				<font-awesome-icon
 						:icon="['fass', 'xmark']"
 						class="cursor-pointer"
-						@click="hideNotification(alert.id)"
+						@click="onClickHandler(alert)"
 				/>
 			</span>
 		</div>
@@ -114,7 +134,7 @@ const getCardType = (cardName) => {
 					v-for="error in errors"
 					v-show="error.active"
 					class="wrap"
-					@click="hideNotification(error.id)"
+					@click="onClickHandler(error)"
 					:style=setStyle(error.id)
 			>
 				<font-awesome-icon :icon="['fas', 'circle-exclamation']" beat-fade size="2xl" />{{ error.currentTime }} : {{ error.message }}
@@ -134,9 +154,11 @@ const getCardType = (cardName) => {
 				<component
 						:is="getCardType(choiceAlert.card)"
 						:item="choiceAlert"
-						@close="hideNotification(choiceAlert.id)"
+						@click="onClickHandler(choiceAlert)"
 				/>
 			</Modal>
 		</div>
+
+		<audio ref="notificationSound" src="/sounds/sh2-recieve-item.mp3"></audio>
 	</div>
 </template>
