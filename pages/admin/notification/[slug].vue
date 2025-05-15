@@ -75,7 +75,7 @@ const breadCrumbsArray = computed(() => {
 		<CreateEditForm
 				:form="form"
 				:showAdditionalData="false"
-				fetchUrl="admin/entity/user/Notification"
+				fetchUrl="admin/entity/User/Notification"
 		/>
 	</div>
 </template>
