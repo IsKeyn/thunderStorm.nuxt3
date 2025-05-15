@@ -72,6 +72,12 @@ const updateLogs = () => {
 const updateBoardGameInfo = () => {
 	refresh();
 }
+
+const playersComponent = ref(null);
+
+const showPlayer = (id) => {
+	playersComponent.value.showPlayerInfo(id);
+}
 </script>
 
 <template>
@@ -111,6 +117,7 @@ const updateBoardGameInfo = () => {
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 						@updateBoardGameInfo="updateBoardGameInfo"
+						@showPlayer="showPlayer"
 				/>
 				<Comments
 						entityType="App\Models\BoardGame"
@@ -122,6 +129,7 @@ const updateBoardGameInfo = () => {
 			</div>
 			<div class="info-box">
 				<Players
+						ref="playersComponent"
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 				/>
@@ -132,6 +140,7 @@ const updateBoardGameInfo = () => {
 						ref="logListBlock"
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
+						@showPlayer="showPlayer"
 				/>
 			</div>
 		</div>

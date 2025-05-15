@@ -35,6 +35,7 @@ const currentPlayer = computed(() => {
 		<div class="wrapper">
 			<StatusEffectCard
 					v-for="(statusEffect, key) in currentPlayer.status_effects.filter((item) => item.active)"
+					class="w-full"
 					:element="statusEffect.statusEffect"
 					:key="key"
 			/>

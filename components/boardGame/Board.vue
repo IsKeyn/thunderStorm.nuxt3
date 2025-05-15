@@ -28,7 +28,7 @@ const {
 
 import { onMounted, ref } from 'vue'
 
-const emit = defineEmits(['fetchLogs']);
+const emit = defineEmits(['fetchLogs', 'showPlayer']);
 
 const props = defineProps({
 	boardGameId: {
@@ -1059,6 +1059,7 @@ watch(() => userStore.user, () => {
 								@dragstart="onDragStart"
 								@dragend="onDragEnd"
 								:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
+								@click="emit('showPlayer', userStore.user.id)"
 						>
 						<span class="field-number">{{ col.name }}</span>
 						<font-awesome-icon
@@ -1073,10 +1074,12 @@ watch(() => userStore.user, () => {
 						>
 							<img
 									v-for="(player, key) in otherPlayers[col.index].slice(0, 3)"
+									class="other-player-token"
 									:key="key"
 									:src="player.info.avatar ? getResizeImg(player.info.avatar) : '/images/system/no-avatar.png'"
 									:alt="player.info.name"
 									:title="player.info.name"
+									@click="emit('showPlayer', player.info.id)"
 							>
 							<font-awesome-icon
 									v-if="otherPlayers[col.index].length > 3"
@@ -1366,6 +1369,10 @@ td {
 
 	.other-players {
 		@apply flex absolute bottom-[5px] left-[5px];
+
+		.other-player-token {
+			@apply cursor-pointer;
+		}
 
 		img,
 		.more-players {

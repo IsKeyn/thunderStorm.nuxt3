@@ -6,6 +6,10 @@ const props = defineProps({
 		type: String,
 		default: '',
 	},
+	buttonClasses: {
+		type: String,
+		default: 'btn btn-primary min-w-24',
+	},
 	actionInProgress: {
 		type: Boolean,
 		default: false,
@@ -17,7 +21,7 @@ const props = defineProps({
 	<button
 			@click="emit('startAction')"
 			:disabled="actionInProgress"
-			class="btn btn-primary min-w-24"
+			:class="buttonClasses"
 	>
 		<template v-if="!actionInProgress">
 			{{ buttonName }}

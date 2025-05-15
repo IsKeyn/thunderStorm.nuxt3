@@ -47,36 +47,36 @@ const isRollingD20 = ref(false)
 const diceSound = ref(null)
 
 const d6Dots = {
-	1: [{ top: 'calc(50% - 5px)', left: 'calc(50% - 5px)' }],
+	1: [{ top: `calc(50% - ${props.size/20}px)`, left: `calc(50% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, }],
 	2: [
-		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
-		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
+		{ top: `calc(30% - ${props.size/20}px)`, left: `calc(30% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(70% - ${props.size/20}px)`, left: `calc(70% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
 	],
 	3: [
-		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
-		{ top: 'calc(50% - 5px)', left: 'calc(50% - 5px)' },
-		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
+		{ top: `calc(30% - ${props.size/20}px)`, left: `calc(30% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(50% - ${props.size/20}px)`, left: `calc(50% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(70% - ${props.size/20}px)`, left: `calc(70% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
 	],
 	4: [
-		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
-		{ top: 'calc(30% - 5px)', left: 'calc(70% - 5px)' },
-		{ top: 'calc(70% - 5px)', left: 'calc(30% - 5px)' },
-		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
+		{ top: `calc(30% - ${props.size/20}px)`, left: `calc(30% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(30% - ${props.size/20}px)`, left: `calc(70% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(70% - ${props.size/20}px)`, left: `calc(30% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(70% - ${props.size/20}px)`, left: `calc(70% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
 	],
 	5: [
-		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
-		{ top: 'calc(30% - 5px)', left: 'calc(70% - 5px)' },
-		{ top: 'calc(50% - 5px)', left: 'calc(50% - 5px)' },
-		{ top: 'calc(70% - 5px)', left: 'calc(30% - 5px)' },
-		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
+		{ top: `calc(30% - ${props.size/20}px)`, left: `calc(30% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(30% - ${props.size/20}px)`, left: `calc(70% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(50% - ${props.size/20}px)`, left: `calc(50% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(70% - ${props.size/20}px)`, left: `calc(30% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(70% - ${props.size/20}px)`, left: `calc(70% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
 	],
 	6: [
-		{ top: 'calc(30% - 5px)', left: 'calc(30% - 5px)' },
-		{ top: 'calc(30% - 5px)', left: 'calc(70% - 5px)' },
-		{ top: 'calc(50% - 5px)', left: 'calc(30% - 5px)' },
-		{ top: 'calc(50% - 5px)', left: 'calc(70% - 5px)' },
-		{ top: 'calc(70% - 5px)', left: 'calc(30% - 5px)' },
-		{ top: 'calc(70% - 5px)', left: 'calc(70% - 5px)' },
+		{ top: `calc(30% - ${props.size/20}px)`, left: `calc(30% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(30% - ${props.size/20}px)`, left: `calc(70% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(50% - ${props.size/20}px)`, left: `calc(30% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(50% - ${props.size/20}px)`, left: `calc(70% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(70% - ${props.size/20}px)`, left: `calc(30% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
+		{ top: `calc(70% - ${props.size/20}px)`, left: `calc(70% - ${props.size/20}px)`, width: `${props.size/10}px`, height: `${props.size/10}px`, },
 	],
 }
 
@@ -183,6 +183,7 @@ const getDotSizeClasses = () => {
 		<!-- D20 -->
 		<div
 				class="dice-d20"
+				:style="`width: ${size}px; height: ${size + size/10}px; background: url('/images/board-games/d20.png') center center / ${size}px no-repeat;`"
 				:class="{ rolling: isRollingD20 }"
 				@click="rollDice('d20')"
 		>
@@ -194,6 +195,7 @@ const getDotSizeClasses = () => {
 		<!-- D6 -->
 		<div
 				class="dice-d6"
+				:style="`width: ${size}px; height: ${size}px;`"
 				:class="{ rolling: isRollingD6 }"
 				@click="rollDice('d6')"
 		>
@@ -229,12 +231,10 @@ const getDotSizeClasses = () => {
 
 	.dice-d20 {
 		@apply
-			w-[100px] h-[110px]
 			cursor-pointer
 		;
 
 		transition: transform 0.5s;
-		background: url("/images/board-games/d20.png") center center / 100px no-repeat;
 
 		&.rolling {
 			animation: roll 1s ease;
@@ -252,7 +252,6 @@ const getDotSizeClasses = () => {
 	.dice-d6 {
 		@apply
 			flex
-			w-[100px] h-[100px]
 			cursor-pointer
 			bg-[var(--error-color)]
 			justify-center items-center
@@ -269,7 +268,6 @@ const getDotSizeClasses = () => {
 
 		.dot {
 			@apply
-				w-[10px] h-[10px]
 				bg-[var(--main-text-color)]
 				absolute
 			;
@@ -279,9 +277,9 @@ const getDotSizeClasses = () => {
 
 		.d6-face {
 			@apply
-			text-[2rem] text-[var(--main-text-color)]
-			flex
-			justify-center items-center
+				text-[2rem] text-[var(--main-text-color)]
+				flex
+				justify-center items-center
 			;
 		}
 	}

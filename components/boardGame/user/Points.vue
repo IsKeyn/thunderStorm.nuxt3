@@ -37,7 +37,7 @@ const form = ref(
 		{
 			points: {
 				name: 'Очки',
-				value: 0,
+				value: null,
 				type: 'number',
 				placeholder: 'Количество очков',
 				validateRules: 'required, minLength_2, maxLength_50',
@@ -50,6 +50,8 @@ onMounted(() => {
 	setPoints();
 });
 
+const points = ref(null);
+
 const setPoints = () => {
 	const player = props.boardGameInfo.players.filter((item) => {
 		if (item.user.id === userStore.user.id) {
@@ -60,7 +62,7 @@ const setPoints = () => {
 	});
 
 	if (player.length > 0) {
-		form.value.points.value = player[0].points;
+		points.value = player[0].points;
 	}
 }
 
@@ -85,11 +87,14 @@ const requestInProgress = ref(false);
 
 const sendRequest = async () => {
 	requestInProgress.value = true;
+	points.value = points.value + form.value.points.value;
 
 	try {
-		const body = preparedRequestBody(form.value);
+		// const body = preparedRequestBody(form.value);
+		const body = {};
 
 		body.board_game_id = props.boardGameId;
+		body.points = points.value;
 
 		const response = await sendApiRequest('board-game/player/updatedPoints', 'POST', body);
 
@@ -104,6 +109,7 @@ const sendRequest = async () => {
 			};
 			setLog(logBody);
 
+			form.value.points.value = null;
 			emit('fetchLogs');
 			emit('updateBoardGameInfo');
 		}
@@ -116,21 +122,36 @@ const sendRequest = async () => {
 watch(() => props.boardGameInfo.players, () => {
 	setPoints();
 }, { deep: true });
+
+const buttonName = computed(() => {
+	if (form.value.points.value === 0 || form.value.points.value === null) {
+		return 'Обновить';
+	} else if (form.value.points.value > 0) {
+		return 'Добавить';
+	} else {
+		return 'Отнять';
+	}
+});
 </script>
 
 <template>
-	<span class="user-interface-title">Очки</span>
+	<span class="user-interface-title">Очки: {{ points }}</span>
+	<div class="text-center mb-2">
+		<span class="block">Впишите число, для добавления</span>
+		<span class="block">Впишите число со знаком "-", для уменьшения</span>
+	</div>
+	<AlertBox
+			:errorsMessages="errorsMessages"
+			class="mb-2"
+	/>
 	<div
 			v-if="userStore.user && Object.keys(userStore.user).length > 0"
-			class="wrapper"
+			class="wrapper points-form"
 	>
-		<AlertBox
-				:errorsMessages="errorsMessages"
-				class="mb-2"
-		/>
 		<FormGenerator
 				v-if="form.points"
 				name="name"
+				class="w-1/2"
 				:element="form.points"
 				:showTitle="false"
 				validateErrorPosition="bottom"
@@ -138,7 +159,8 @@ watch(() => props.boardGameInfo.players, () => {
 				:fieldClasses="form.points.classes"
 		/>
 		<ActionButton
-				buttonName="Обновить"
+				buttonClasses="btn btn-simple-1 w-1/2"
+				:buttonName="buttonName"
 				:actionInProgress="requestInProgress"
 				@startAction="sendForm()"
 		/>
@@ -151,5 +173,13 @@ watch(() => props.boardGameInfo.players, () => {
 <style lang="scss" scoped>
 .wrapper {
 	@apply flex mb-[1rem] justify-center;
+}
+</style>
+
+<style lang="scss">
+.points-form {
+	input {
+		@apply w-full;
+	}
 }
 </style>

@@ -1,3 +1,4 @@
+
 <script setup>
 import PlayerCard from '@/components/boardGame/user/PlayerCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
@@ -43,6 +44,10 @@ const showPlayerInfo = (id) => {
 	getPlayerInfo(id);
 	openCloseModalFunc();
 }
+
+defineExpose({
+	showPlayerInfo,
+});
 
 const requestInProgress = ref(false);
 const fetchData = ref({});

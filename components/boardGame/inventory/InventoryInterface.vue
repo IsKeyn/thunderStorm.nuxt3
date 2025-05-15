@@ -14,7 +14,7 @@ import UseItem from '@/components/boardGame/inventory/UseItem';
 import ItemsList from '@/components/boardGame/inventory/ItemsList.vue';
 import OpeningBox from '@/components/ui/OpeningBox.vue';
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const emit = defineEmits(['fetchLogs', 'updateUserItems', 'updateBoardGameInfo']);
 
@@ -79,59 +79,20 @@ ItemList.value = props.ItemList;
 UserItems.value = props.UserItems;
 UsedItems.value = props.UsedItems;
 
+// watch(() => props.ItemList, () => {
+// 	ItemList.value = props.ItemList;
+// }, { deep: true });
+
+watch(() => props.UserItems, () => {
+	UserItems.value = props.UserItems;
+}, { deep: true });
+
+watch(() => props.UsedItems, () => {
+	UsedItems.value = props.UsedItems;
+}, { deep: true });
+
 /* Получение данных */
 const requestInProgress = ref(false);
-//
-// const { refresh } = await useAsyncData(
-// 		async () => {
-// 			let request = `${apiUrl.value}board-game/getItemAndInventory`;
-//
-// 			const query = {
-// 				board_game_id: props.boardGameId,
-// 			};
-// 			const sessionCookie = useCookie(sessionCookieName.value);
-//
-// 			requestInProgress.value = true;
-//
-// 			try {
-// 				await $fetch(
-// 						request,
-// 						{
-// 							method: 'GET',
-// 							credentials: 'include',
-// 							query,
-// 							headers: {
-// 								Accept: 'application/json',
-// 								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-// 								Referer: publicUrl.value,
-// 							},
-// 							onResponse({response}) {
-// 								if (response.status === 200) {
-// 									ItemList.value = response._data.items;
-//
-// 									if (response._data.inventory) {
-// 										response._data.inventory.forEach((item) => {
-// 											if (item.has_used === 1) {
-// 												UsedItems.value.push({ ...item.item, inventory_id: item.id });
-// 											} else {
-// 												UserItems.value.push({ ...item.item, inventory_id: item.id });
-// 											}
-// 										})
-// 									}
-// 								} else {
-// 									error('Request error', 5000);
-// 								}
-//
-// 								requestInProgress.value = false;
-// 							}
-// 						},
-// 				);
-// 			} catch (e) {
-// 				errorHandler(e);
-// 				requestInProgress.value = false;
-// 			}
-// 		}
-// );
 
 const addItemToInventory = async (itemId, name) => {
 	requestInProgress.value = true;
@@ -221,26 +182,6 @@ const useItem = (item) => {
 	openCloseModalFunc();
 
 	itemForUse.value = item;
-
-	// choiceAlert(
-	// 		{
-	// 			title: 'Использовать предмет',
-	// 			message: `Использовать предмет "${item.name}"?`,
-	// 			buttons: [
-	// 				{
-	// 					name: 'Да',
-	// 					func: () => {
-	// 						useItemRequest(item.inventory_id, item.name);
-	// 					},
-	// 					additionalKeywordFunc: 'close',
-	// 				},
-	// 				{
-	// 					name: 'Нет',
-	// 					additionalKeywordFunc: 'close',
-	// 				},
-	// 			],
-	// 		}
-	// );
 }
 
 const deleteItem = (item) => {
@@ -266,7 +207,7 @@ const deleteItem = (item) => {
 }
 
 const useItemFromEmit = (params) => {
-	// openCloseModalFunc();
+	openCloseModalFunc();
 	useItemRequest(params.item.inventory_id, params.item.name, params.additionalParams);
 }
 
@@ -292,11 +233,12 @@ const useItemRequest = async (inventory_id, name, additionalParams = {}) => {
 
 				const logBody = {
 					board_game_id: props.boardGameId,
-					message: `использовал предмет "${name}"`
+					message: additionalParams.logMessage ? additionalParams.logMessage : `использовал предмет "${name}"`
 				};
 				setLog(logBody);
 
 				emit('fetchLogs');
+				emit('updateInventory');
 
 				// TODO заменить на for, чтобы выходить из цикла при нахождении элемента
 				UserItems.value.forEach((item) => {

@@ -99,6 +99,7 @@ const sendRequest = async () => {
 		/>
 		<div class="text-center">
 			<ActionButton
+					buttonClasses="btn btn-simple-1 w-full"
 					buttonName="Добавить"
 					:actionInProgress="requestInProgress"
 					@startAction="sendForm()"

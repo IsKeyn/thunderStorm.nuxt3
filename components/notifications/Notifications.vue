@@ -124,7 +124,7 @@ const onClickHandler = (item) => {
 				<font-awesome-icon
 						:icon="['fass', 'xmark']"
 						class="cursor-pointer"
-						@click="onClickHandler(error)"
+						@click="onClickHandler(alert)"
 				/>
 			</span>
 		</div>
@@ -154,7 +154,7 @@ const onClickHandler = (item) => {
 				<component
 						:is="getCardType(choiceAlert.card)"
 						:item="choiceAlert"
-						@click="onClickHandler(error)"
+						@click="onClickHandler(choiceAlert)"
 				/>
 			</Modal>
 		</div>

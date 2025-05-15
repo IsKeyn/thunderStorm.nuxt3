@@ -117,6 +117,10 @@ const useItem = () => {
 			arg.additionalParams.message = form.value.message.value;
 		}
 
+		if (logMessage.value) {
+			arg.additionalParams.logMessage = logMessage.value;
+		}
+
 		emit('useItemFromEmit', arg);
 	} else {
 
@@ -173,12 +177,70 @@ const getItemByFilter = (type = null) => {
 /* Очистка предмета, при выборе другого игрока */
 watch(() => selectedPlayer.value, () => {
 	selectedItem.value = {};
+	setMessages();
 }, { deep: true });
 
 
 watch(() => selectedItem.value, () => {
 	selectedSecondPlayer.value = {};
+	setMessages();
 }, { deep: true });
+
+watch(() => selectedSecondPlayer.value, () => {
+	setMessages();
+}, { deep: true });
+
+const logMessage = ref('');
+const notificationMessage = ref('');
+
+const setMessages = () => {
+	const defaultLogMessage = `Использовал предмет "${props.item.name}"`;
+	const defaultNotificationMessage = `Использовал на тебя предмет "${props.item.name}"`;
+
+	let message = '';
+	let log = '';
+
+	/* Дополнение сообщений информацией о выбранном участнике */
+	if (Object.keys(selectedPlayer.value).length > 1) {
+		log = `${defaultLogMessage} на участника "${selectedPlayer.value.user.name}"`;
+		message = `${defaultNotificationMessage}`;
+	}
+
+	/* Дополнение сообщений информацией о предмете */
+	if (Object.keys(selectedItem.value).length > 1) {
+		if (!log) {
+			log = `${defaultLogMessage}`;
+		}
+
+		log += ` выбрал предмет "${selectedItem.value.item.name}"`;
+
+		if (!message) {
+			message = `${defaultNotificationMessage}`;
+		}
+
+		message += ` выбрал предмет "${selectedItem.value.item.name}"`;
+	}
+
+	/* Дополнение сообщений информацией о выбранном втором участнике */
+	if (Object.keys(selectedSecondPlayer.value).length > 1) {
+		if (!log) {
+			log = `${defaultLogMessage}`;
+		}
+
+		log += ` выбрал второго участника "${selectedSecondPlayer.value.user.name}"`;
+
+		if (!message) {
+			message = `${defaultNotificationMessage}`;
+		}
+
+		message += ` выбрал второго участника "${selectedSecondPlayer.value.user.name}"`;
+	}
+
+	logMessage.value = log;
+	notificationMessage.value = message;
+
+	form.value.message.value = notificationMessage.value;
+}
 
 /* Функция отображает сообщение о том на кого распространяется эффект */
 const effectFor = (action) => {

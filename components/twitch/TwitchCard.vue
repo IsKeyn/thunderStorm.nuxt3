@@ -8,32 +8,27 @@ const props = defineProps({
 	},
 });
 
-const playerIsSet = ref(false);
-
 onMounted(() => {
-	console.log(1111);
+	if (process.client && props.channel) {
+		const players = document.querySelectorAll('.twitch-embed-' + props.channel);
 
-	if (process.client && props.channel && !playerIsSet.value) {
-		setTwitchPlayer(props.channel);
+		players.forEach((item) => {
+			if (!item.querySelector('iframe')) {
+				setTwitchPlayer(props.channel, item);
+			}
+		});
 	}
 });
 
-const setTwitchPlayer = (channel) => {
-	const script = document.createElement('script');
-	script.src = 'https://player.twitch.tv/js/embed/v1.js';
-
-	script.onload = () => {
-		new Twitch.Player('twitch-embed-' + channel, {
-			channel: channel,
-			muted: true
-		});
-	};
-	document.body.appendChild(script);
-	playerIsSet.value = true;
+const setTwitchPlayer = (channel, block) => {
+	new Twitch.Player(block, {
+		channel: channel,
+		muted: true
+	});
 };
 
 </script>
 
 <template>
-	<div :id="`twitch-embed-${channel}`"></div>
+	<div :class="`twitch-embed-${channel} w-full`"></div>
 </template>

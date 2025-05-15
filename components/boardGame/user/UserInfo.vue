@@ -34,19 +34,19 @@ const openCloseBoxFunc = () => {
 			v-if="userStore.user && Object.keys(userStore.user).length > 0"
 			class="wrapper"
 	>
-		<span class="user-interface-title">Игрок</span>
+		<span class="user-interface-title">{{ userStore.user.name }}</span>
+		<div class="avatar" @click="showNotificationModal">
+			<img
+					:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
+					:alt="userStore.user.name"
+					:title="userStore.user.name"
+			/>
+			<span v-if="useNotifications && useNotifications.currentUserNotificationCount" class="notifications">{{ useNotifications.currentUserNotificationCount }}</span>
+			<!--				<font-awesome-icon :icon="['fas', 'camera']" class="change-avatar" />-->
+		</div>
 		<div class="user-info-wrap">
-			<div class="avatar" @click="showNotificationModal">
-				<img
-						:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
-						:alt="userStore.user.name"
-						:title="userStore.user.name"
-				/>
-				<span v-if="useNotifications && useNotifications.currentUserNotificationCount" class="notifications">{{ useNotifications.currentUserNotificationCount }}</span>
-<!--				<font-awesome-icon :icon="['fas', 'camera']" class="change-avatar" />-->
-			</div>
-			<span class="name">{{ userStore.user.name }}</span>
-			<button class="btn btn-primary" @click="openCloseBoxFunc()"><font-awesome-icon :icon="['fas', 'pen']" /></button>
+			<button class="btn btn-simple-1 mr-2" @click="openCloseBoxFunc()"><font-awesome-icon :icon="['fas', 'pen']" /></button>
+			<button class="btn btn-simple-1 mr-2" @click="showNotificationModal"><font-awesome-icon :icon="['fas', 'bell']" /></button>
 		</div>
 	</div>
 	<Modal

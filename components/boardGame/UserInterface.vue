@@ -70,16 +70,17 @@ const alreadyInGame = computed(() => {
 						:boardGameInfo="boardGameInfo"
 						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 				/>
+				<Dices
+						:boardGameId="boardGameId"
+						:size="75"
+						@fetchLogs="emit('fetchLogs')"
+						@updateBoardGameInfo="emit('updateBoardGameInfo')"
+				/>
 				<Points
 						:boardGameId="boardGameId"
 						:boardGameInfo="boardGameInfo"
 						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 						@fetchLogs="emit('fetchLogs')"
-				/>
-				<Dices
-						:boardGameId="boardGameId"
-						@fetchLogs="emit('fetchLogs')"
-						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 				/>
 				<span class="user-interface-title">Инвентарь</span>
 				<Inventory
