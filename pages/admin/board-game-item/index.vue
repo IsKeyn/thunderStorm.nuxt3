@@ -65,6 +65,6 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/BoardGame/BoardGameItem"
+		fetchUrl="admin/entity/BoardGame/BoardGameItem"
 	/>
 </template>

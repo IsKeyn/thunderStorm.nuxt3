@@ -841,9 +841,11 @@ function onDragEnd() {
 
 function onDrop(index) {
 	droppingIndex.value = index
-	tokenPosition.value = index
 
-	addPlayerPosition(index);
+	if (tokenPosition.value !== index) {
+		tokenPosition.value = index
+		addPlayerPosition(index);
+	}
 
 	// Убираем класс анимации после завершения
 	setTimeout(() => {
@@ -998,7 +1000,7 @@ onMounted(() => {
 	getThemeConst();
 });
 
-const currentTheme = ref('theme-1');
+const currentTheme = ref('theme-4');
 
 const getThemeConst = () => {
 	if (process.client) {

@@ -102,7 +102,7 @@ export function validate() {
                 if (minLengthRegex.test(item)) { // example minLength_10
                     const minLength = Number(item.split('_')[1]);
 
-                    if (value.length < minLength) {
+                    if (value && value.length < minLength) {
                         error = `Длина строки должна быть не меньше ${minLength} символов`;
                     }
                 }
@@ -111,7 +111,7 @@ export function validate() {
                 if (maxLengthRegex.test(item)) { // example minLength_10
                     const maxLength = Number(item.split('_')[1]);
 
-                    if (value.length > maxLength) {
+                    if (value && value.length > maxLength) {
                         error = `Длина строки должна быть не больше ${maxLength} символов`;
                     }
                 }

@@ -23,6 +23,9 @@ const titles = ref(
 			release_time: {
 				name: 'Дата и время выхода',
 			},
+			sort: {
+				name: 'Сортировка',
+			},
 		}
 );
 

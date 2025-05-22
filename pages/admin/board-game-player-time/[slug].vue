@@ -73,9 +73,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/BoardGamePlayerTimer"
-				:showTags="true"
-				:hasResource="true"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/BoardGame/BoardGamePlayerTimer"
 		/>
 	</div>
 </template>

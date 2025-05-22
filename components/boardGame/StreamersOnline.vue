@@ -108,38 +108,52 @@ onMounted(() => {
 			v-if="fetchedData.length > 0"
 			class="streamers-online"
 	>
-		<Carousel
-				v-if="scriptTwitchIsOnline"
-				ref="carouselRef"
-				v-bind="carouselConfig"
-				class="w-full"
-		>
-			<Slide
+		<template v-if="fetchedData.length > 1">
+			<Carousel
+					v-if="scriptTwitchIsOnline"
+					ref="carouselRef"
+					v-bind="carouselConfig"
+					class="w-full"
+			>
+				<Slide
+						v-for="(channel, index) in fetchedData"
+						:key="index"
+						class="slide w-full"
+				>
+					<TwitchCard :channel="channel" />
+				</Slide>
+				<template #addons>
+					<!--				<Navigation />-->
+					<Pagination />
+				</template>
+			</Carousel>
+			<div>
+						<span
+								class="nav-prev"
+								@click="prev"
+						>
+					<font-awesome-icon :icon="['fas', 'angle-left']" />
+				</span>
+				<span
+						class="nav-next"
+						@click="next"
+				>
+						<font-awesome-icon :icon="['fas', 'angle-right']" />
+					</span>
+			</div>
+		</template>
+		<template v-else-if="fetchedData.length === 1">
+			<div
 					v-for="(channel, index) in fetchedData"
 					:key="index"
-					class="slide w-full"
+					v-if="scriptTwitchIsOnline"
+					class="w-full"
 			>
-				<TwitchCard :channel="channel" />
-			</Slide>
-			<template #addons>
-<!--				<Navigation />-->
-				<Pagination />
-			</template>
-		</Carousel>
-		<div>
-					<span
-							class="nav-prev"
-							@click="prev"
-					>
-				<font-awesome-icon :icon="['fas', 'angle-left']" />
-			</span>
-			<span
-					class="nav-next"
-					@click="next"
-			>
-					<font-awesome-icon :icon="['fas', 'angle-right']" />
-				</span>
-		</div>
+				<TwitchCard
+						:channel="channel"
+				/>
+			</div>
+		</template>
 	</div>
 	<div v-else>
 		Сейчас никто не стримит *(

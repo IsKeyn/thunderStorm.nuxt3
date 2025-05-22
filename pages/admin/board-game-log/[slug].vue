@@ -23,7 +23,7 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			created_by: {
-				name: 'created_by',
+				name: 'Создал',
 				value: '',
 				type: 'text',
 				validateRules: 'required, maxLength_255',
@@ -66,9 +66,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/BoardGameLog"
-				:showTags="true"
-				:hasResource="true"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/BoardGame/BoardGameLog"
 		/>
 	</div>
 </template>

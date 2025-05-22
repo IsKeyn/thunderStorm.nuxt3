@@ -20,6 +20,12 @@ const titles = ref(
 			description: {
 				name: 'Описание',
 			},
+			active: {
+				name: 'Активность',
+			},
+			show_in_list: {
+				name: 'Отображать в списках',
+			},
 		}
 );
 

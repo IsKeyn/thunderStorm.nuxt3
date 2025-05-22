@@ -6,6 +6,7 @@ import Board from '@/components/boardGame/Board.vue';
 import Head from '@/components/seo/Head.vue';
 import Rules from '@/components/boardGame/Rules.vue';
 import Items from '@/components/boardGame/Items.vue';
+import Games from '@/components/boardGame/Games.vue';
 import StreamersOnline from '@/components/boardGame/StreamersOnline.vue';
 
 import { ref } from "vue";
@@ -90,6 +91,9 @@ const showPlayer = (id) => {
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 				/>
+				<Games
+						:boardGameId="fetchedData.id"
+				/>
 				<Items
 						:boardGameId="fetchedData.id"
 				/>
@@ -109,6 +113,7 @@ const showPlayer = (id) => {
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 						@fetchLogs="fetchLogs"
+						@showPlayer="showPlayer"
 						@updateBoardGameInfo="updateBoardGameInfo"
 				/>
 			</div>

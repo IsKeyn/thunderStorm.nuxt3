@@ -2,6 +2,7 @@
 import ItemCard from '@/components/boardGame/inventory/ItemCard.vue';
 import LogCard from '@/components/boardGame/bg-logs/LogCard.vue';
 import StepCard from '@/components/boardGame/user/StepCard.vue';
+import CurrentGameCard from '@/components/boardGame/game/CurrentGameCard.vue';
 
 import { media } from '@/composables/media.js'
 const {
@@ -41,6 +42,14 @@ const twitch = computed(() => {
 	}
 
 	return false;
+});
+
+const currentPlayer = computed(() => {
+	let curPlayer = props.boardGameInfo.players.filter((item) => item.user_id === props.userInfo.player_info.user_id);
+
+	if (curPlayer && curPlayer[0]) {
+		return curPlayer[0];
+	}
 });
 </script>
 
@@ -96,6 +105,15 @@ const twitch = computed(() => {
 
 				</div>
 			</div>
+		</div>
+
+		<div class="mb-[2rem]" v-if="currentPlayer.current_game">
+			<h2 class="inv-title">Текущая игра</h2>
+			<CurrentGameCard
+					:currentGame="currentPlayer.current_game"
+					:players="boardGameInfo.players"
+					class="current-game"
+			/>
 		</div>
 
 		<div
@@ -194,7 +212,9 @@ const twitch = computed(() => {
 }
 
 .inventory,
-.logs-and-steps {
+.logs-and-steps,
+.current-game
+{
 	@apply flex gap-4;
 
 	.box {

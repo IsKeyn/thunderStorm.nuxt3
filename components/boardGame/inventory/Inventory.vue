@@ -132,7 +132,7 @@ const carouselConfig = {
 	<div>
 		<div class="user-items">
 			<Carousel
-					v-if="SmallUserItems.length > 0"
+					v-if="SmallUserItems.length > 2"
 					v-bind="carouselConfig"
 					class="w-full"
 			>
@@ -157,6 +157,24 @@ const carouselConfig = {
 					<Pagination />
 				</template>
 			</Carousel>
+			<div
+				v-else-if="SmallUserItems.length > 0"
+			>
+				<div
+						v-for="(element, key) in SmallUserItems"
+						:key="key"
+				>
+					<ItemCard
+							class="w-full"
+							:element="element"
+							:cutDescription="true"
+							@setOpenedImage="setOpenedImage"
+							@deleteItem="deleteItem"
+							@useItem="useItem"
+							@click="openCloseModalFunc"
+					/>
+				</div>
+			</div>
 		</div>
 		<div class="button-block">
 			<button

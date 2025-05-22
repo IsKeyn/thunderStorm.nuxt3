@@ -1,4 +1,3 @@
-
 <script setup>
 import PlayerCard from '@/components/boardGame/user/PlayerCard.vue';
 import LightBox from '@/components/media/LightBox.vue'

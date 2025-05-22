@@ -362,16 +362,16 @@ const addItemToInventoryEmit = (data) => {
 		</div>
 	</div>
 
-	<OpeningBox
-			v-if="ItemList.length > 0"
-			title="Все предметы"
-			classes="pb-[1rem] pl-[1rem] pr-[1rem]"
-	>
-		<ItemsList
-				:itemList="ItemList"
-				@setOpenedImage="setOpenedImage"
-		/>
-	</OpeningBox>
+<!--	<OpeningBox-->
+<!--			v-if="ItemList.length > 0"-->
+<!--			title="Все предметы"-->
+<!--			classes="pb-[1rem] pl-[1rem] pr-[1rem]"-->
+<!--	>-->
+<!--		<ItemsList-->
+<!--				:itemList="ItemList"-->
+<!--				@setOpenedImage="setOpenedImage"-->
+<!--		/>-->
+<!--	</OpeningBox>-->
 
 	<OpeningBox
 			v-if="ItemList.length > 0"
