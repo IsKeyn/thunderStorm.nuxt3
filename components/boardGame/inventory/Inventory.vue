@@ -7,6 +7,9 @@ import InventoryInterface from '@/components/boardGame/inventory/InventoryInterf
 import ItemCard from '@/components/boardGame/inventory/ItemCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
 
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
+
 import { api } from '@/composables/api.js'
 const {
 	apiUrl,
@@ -22,9 +25,9 @@ const {
 	setOpenedImage
 } = lightBox();
 
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
-const emit = defineEmits(['fetchLogs']);
+const emit = defineEmits(['fetchLogs', 'updateBoardGameInfo']);
 
 const props = defineProps({
 	boardGameId: {
@@ -44,75 +47,18 @@ const openCloseModalFunc = () => {
 };
 
 /* Получение данных */
-const ItemList = ref([]);
 const UserItems = ref([]);
 const SmallUserItems = ref([]);
 const UsedItems = ref([]);
 
 const requestInProgress = ref(false);
 
-const { refresh } = await useAsyncData(
-		async () => {
-			let request = `${apiUrl.value}board-game/getItemAndInventory`;
-
-			const query = {
-				board_game_id: props.boardGameId,
-			};
-			const sessionCookie = useCookie(sessionCookieName.value);
-
-			requestInProgress.value = true;
-
-			try {
-				await $fetch(
-						request,
-						{
-							method: 'GET',
-							credentials: 'include',
-							query,
-							headers: {
-								Accept: 'application/json',
-								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-								Referer: publicUrl.value,
-							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									UserItems.value = [];
-									SmallUserItems.value = [];
-									UsedItems.value = [];
-
-									ItemList.value = response._data.items;
-
-									if (response._data.inventory) {
-										response._data.inventory.forEach((item) => {
-											if (item.has_used === 1) {
-												UsedItems.value.push({ ...item.item, inventory_id: item.id });
-											} else {
-												UserItems.value.push({ ...item.item, inventory_id: item.id });
-												SmallUserItems.value.push({ ...item.item, inventory_id: item.id });
-											}
-										})
-									}
-								} else {
-									error('Request error', 5000);
-								}
-
-								requestInProgress.value = false;
-							}
-						},
-				);
-			} catch (e) {
-				errorHandler(e);
-				requestInProgress.value = false;
-			}
-		}
-);
-
 const updateUserItems = (items) => {
 	SmallUserItems.value = items;
 }
 
 const updateInventory = () => {
-	refresh();
+	emit('updateBoardGameInfo');
 }
 
 const carouselConfig = {
@@ -126,6 +72,37 @@ const carouselConfig = {
 	autoplay: 5000,
 	mouseWheel: true,
 }
+
+const currentPlayer = computed(() => {
+	let curPlayer = props.boardGameInfo.players.filter((item) => item.user_id === userStore.user.id);
+
+	if (curPlayer && curPlayer[0]) {
+		return curPlayer[0];
+	}
+});
+
+const setUserItems = (inventory) => {
+	UserItems.value = [];
+	SmallUserItems.value = [];
+	UsedItems.value = [];
+
+	if (inventory) {
+		inventory.forEach((item) => {
+			if (item.has_used === 1) {
+				UsedItems.value.push({ ...item.item, inventory_id: item.id });
+			} else {
+				UserItems.value.push({ ...item.item, inventory_id: item.id });
+				SmallUserItems.value.push({ ...item.item, inventory_id: item.id });
+			}
+		});
+	}
+};
+
+setUserItems(currentPlayer.value.inventory);
+
+watch(() => props.boardGameInfo, () => {
+	setUserItems(currentPlayer.value.inventory);
+}, { deep: true });
 </script>
 
 <template>
@@ -188,13 +165,13 @@ const carouselConfig = {
 	<Modal
 			:showOpenModal="modalOpen"
 			size="full-width"
+			:fullCloseModal="true"
 			@toggleModal="openCloseModalFunc"
 	>
 		<div class="modal-parent">
 			<h3 class="modal-title">Инвентарь</h3>
 			<div class="link-parent-box">
 				<InventoryInterface
-						:ItemList="ItemList"
 						:UserItems="UserItems"
 						:UsedItems="UsedItems"
 						:boardGameInfo="boardGameInfo"

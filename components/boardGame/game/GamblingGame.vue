@@ -35,7 +35,7 @@ const props = defineProps({
 	},
 	spinTime: {
 		type: Number,
-		default: 15000,
+		default: 27000,
 	},
 	itemHeight: {
 		type: Number,
@@ -346,7 +346,8 @@ const refreshGameList = () => {
 						Редактировать список
 					</button>
 				</div>
-				<audio ref="spinSound" src="/sounds/roll.wav" preload="auto"></audio>
+<!--				<audio ref="spinSound" src="/sounds/roll.wav" preload="auto"></audio>-->
+				<audio ref="spinSound" src="/sounds/baraban_sg.mp3" preload="auto"></audio>
 			</div>
 			<div v-else class="item-box">
 				Игр больше нет *(
