@@ -24,7 +24,7 @@ const props = defineProps({
 let items = props.items;
 
 // Дублируем элементы для долгого кручения
-const repeatedItems = Array(60).fill([...items]).flat()
+const repeatedItems = Array(60).fill([...items]).flat();
 
 const translateY = ref(0)
 const spinning = ref(false)

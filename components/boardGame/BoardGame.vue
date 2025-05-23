@@ -8,6 +8,7 @@ import Rules from '@/components/boardGame/Rules.vue';
 import Items from '@/components/boardGame/Items.vue';
 import Games from '@/components/boardGame/Games.vue';
 import StreamersOnline from '@/components/boardGame/StreamersOnline.vue';
+import ThemeSelect from '@/components/boardGame/ThemeSelect.vue';
 
 import { ref } from "vue";
 
@@ -158,6 +159,7 @@ const showPlayer = (id) => {
 	<div v-else>
 		Данная игра не активна
 	</div>
+	<ThemeSelect />
 </template>
 
 <style lang="scss" scoped>

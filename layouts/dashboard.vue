@@ -32,4 +32,8 @@ const theme = computed(() => {
 @import url('~/assets/scss/InSilentHill/fonts.scss');
 @import url('~/assets/scss/InSilentHill/imports.scss');
 @import url('~/assets/scss/Dashboard/style.scss');
+
+@import url('~/assets/scss/Dashboard/themes/Green.scss');
+@import url('~/assets/scss/Dashboard/themes/Ocean.scss');
+@import url('~/assets/scss/Dashboard/themes/Street.scss');
 </style>

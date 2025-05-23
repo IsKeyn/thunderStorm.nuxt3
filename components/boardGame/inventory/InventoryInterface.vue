@@ -339,9 +339,11 @@ const addItemToInventoryEmit = (data) => {
 
 	ItemList.value.forEach((item) => {
 		if (item.id === data.id) {
-			item.inventory_id = id;
-			item.id = id;
-			UserItems.value.unshift(item);
+			const itemCopy = { ...item };
+
+			itemCopy.inventory_id = id;
+			itemCopy.id = id;
+			UserItems.value.unshift(itemCopy);
 		}
 	});
 
