@@ -70,8 +70,6 @@ const { refresh } = await useAsyncData(
 									if (process.client && !sessionStorage.getItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`)) {
 										sessionStorage.setItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`, true);
 									}
-								} else {
-									// Возарщаем 404
 								}
 
 								requestInProgress.value = false;
@@ -81,6 +79,11 @@ const { refresh } = await useAsyncData(
 			} catch (e) {
 				errorHandler(e);
 				requestInProgress.value = false;
+
+				throw createError({
+					statusCode: 404,
+					statusMessage: 'Page Not Found'
+				});
 			}
 		}
 );

@@ -45,6 +45,6 @@ const currentPlayer = computed(() => {
 
 <style lang="scss" scoped>
 .wrapper {
-	@apply flex mb-[1rem] justify-center;
+	@apply mb-[1rem] justify-center;
 }
 </style>

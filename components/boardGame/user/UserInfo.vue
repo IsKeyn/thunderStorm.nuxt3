@@ -19,7 +19,7 @@ const {
 	getResizeImg,
 } = media();
 
-const emit = defineEmits(['updateBoardGameInfo']);
+const emit = defineEmits(['updateBoardGameInfo', 'showPlayer']);
 
 import { ref, watch } from "vue";
 
@@ -35,13 +35,20 @@ const openCloseBoxFunc = () => {
 			class="wrapper"
 	>
 		<span class="user-interface-title">{{ userStore.user.name }}</span>
-		<div class="avatar" @click="showNotificationModal">
+		<div class="avatar">
 			<img
 					:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
 					:alt="userStore.user.name"
 					:title="userStore.user.name"
+					@click="emit('showPlayer', userStore.user.id)"
 			/>
-			<span v-if="useNotifications && useNotifications.currentUserNotificationCount" class="notifications">{{ useNotifications.currentUserNotificationCount }}</span>
+			<span
+					v-if="useNotifications && useNotifications.currentUserNotificationCount && useNotifications.currentUserNotificationCount > 0"
+					class="notifications"
+					@click="showNotificationModal"
+			>
+				{{ useNotifications.currentUserNotificationCount }}
+			</span>
 			<!--				<font-awesome-icon :icon="['fas', 'camera']" class="change-avatar" />-->
 		</div>
 		<div class="user-info-wrap">

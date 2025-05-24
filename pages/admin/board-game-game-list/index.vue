@@ -14,8 +14,26 @@ const titles = ref(
 			game_id: {
 				name: 'ID игры',
 			},
+			gaming_platform_id: {
+				name: 'ID платформы',
+			},
+			description: {
+				name: 'Описание',
+			},
 			board_game_id: {
 				name: 'ID настолки',
+			},
+			points: {
+				name: 'Количество очков за игру',
+			},
+			active: {
+				name: 'Активность',
+			},
+			added_by: {
+				name: 'Добавил',
+			},
+			created_by: {
+				name: 'Создал',
 			},
 		}
 );
@@ -50,6 +68,6 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/BoardGameGameList"
+		fetchUrl="admin/entity/BoardGame/BoardGameGameList"
 	/>
 </template>

@@ -70,10 +70,15 @@ const updateData = () => {
 </script>
 
 <template>
-	<UserNotificationCard
-			v-for="(item, key) in fetchedData"
-			:key="key"
-			:notification="item"
-			@updateData="updateData"
-	/>
+	<div v-if="fetchedData.length > 0">
+		<UserNotificationCard
+				v-for="(item, key) in fetchedData"
+				:key="key"
+				:notification="item"
+				@updateData="updateData"
+		/>
+	</div>
+	<div v-else class="item-box">
+		Оповещений нет
+	</div>
 </template>

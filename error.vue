@@ -244,8 +244,15 @@ const redirectList = ref([
 		url: 'revelation_finishes_shooting',
 		redirectUrl: 'news/sieemki-silent-hill:-revelation-podhodyat-k-koncu',
 	},
+
+	/* Редиректы настольной игры */
+	{
+		url: 'r2025',
+		redirectUrl: 'board-game/retro2025',
+	},
 ]);
 
+const hasRedirect = ref(false);
 
 for (let key in redirectList.value) {
 	let preparedUrl = route.fullPath;
@@ -268,14 +275,15 @@ for (let key in redirectList.value) {
 	}
 
 	if (redirectPreparedUrl === preparedUrl) {
+		hasRedirect.value = true;
+
 		let preparedRedirectUlr =  redirectList.value[key].redirectUrl;
 
 		if (preparedRedirectUlr[0] === '/') {
 			preparedRedirectUlr = preparedRedirectUlr.slice(1);
 		}
 
-		// TODO получить текущий протокой сайта
-		location.href = 'https://' + publicUrl.value + '/' + preparedRedirectUlr;
+		location.href = window.location.protocol + '//' + publicUrl.value + '/' + preparedRedirectUlr;
 		// router.push({path: redirectList.value[key].redirectUrl});
 		break;
 	}
@@ -299,33 +307,40 @@ const getLinkForOldSite = computed(() => {
 <template>
 	<NuxtLayout>
 		<div class="mt-7 mx-auto text-center card">
-			<p class="mt-7 text-7xl font-bold">{{error.statusCode}}</p>
-			<div class="mt-7" v-if="error.statusCode === 404">
-				<p class="text-[1.5rem]">
-					Извините, но такой страницы нет.<br />
-					Возможно, её поглотил иной мир Алессы,<br />
-					а может она была покарана Пирамидоголовым<br />
-					или стала жертвой Уолтера Салливана.<br />
-					<br />
-					Она могла быть уничтожена печаться Метратона,<br />
-					или затеряться в глубине свого сознания.<br />
-					<br />
-					А её возможно никогда не было,<br />
-					она являлась плодом вашей фантазии!<br />
-					<br />
-					Но в реальном мире данного сайта<br />
-					вы можете найти её альтернативу.<br />
-					<br />
-					Или она осталась на старой версии сайта,<br/>
-					попробуйсте перейти на старый сайт с помощью кнопки ниже.
-				</p>
-				<div class="button-block">
-					<!--			<p class="mt-7">{{error.message}}</p>-->
-					<a class="btn btn-primary mt-7 block" href="/">Вернуться на главную страницу</a>
-					<a class="btn btn-primary mt-7 block" target="_blank" :href="getLinkForOldSite">Посмотреть страницу на старом сайте</a>
+			<template v-if="hasRedirect">
+				<div class="mt-7" v-if="error.statusCode === 404">
+					<p class="text-[1.5rem]">Вы попали на страницу редиректа, сейчас поезд отправится на нужную станцию...</p>
 				</div>
-			</div>
-			<p class="mt-7 text-6xl" v-else>Произошла ошибка...</p>
+			</template>
+			<template v-else>
+				<p class="mt-7 text-7xl font-bold">{{error.statusCode}}</p>
+				<div class="mt-7" v-if="error.statusCode === 404">
+					<p class="text-[1.5rem]">
+						Извините, но такой страницы нет.<br />
+						Возможно, её поглотил иной мир Алессы,<br />
+						а может она была покарана Пирамидоголовым<br />
+						или стала жертвой Уолтера Салливана.<br />
+						<br />
+						Она могла быть уничтожена печаться Метратона,<br />
+						или затеряться в глубине свого сознания.<br />
+						<br />
+						А её возможно никогда не было,<br />
+						она являлась плодом вашей фантазии!<br />
+						<br />
+						Но в реальном мире данного сайта<br />
+						вы можете найти её альтернативу.<br />
+						<br />
+						Или она осталась на старой версии сайта,<br/>
+						попробуйсте перейти на старый сайт с помощью кнопки ниже.
+					</p>
+					<div class="button-block">
+						<!--			<p class="mt-7">{{error.message}}</p>-->
+						<a class="btn btn-primary mt-7 block" href="/">Вернуться на главную страницу</a>
+						<a class="btn btn-primary mt-7 block" target="_blank" :href="getLinkForOldSite">Посмотреть страницу на старом сайте</a>
+					</div>
+				</div>
+				<p class="mt-7 text-6xl" v-else>Произошла ошибка...</p>
+			</template>
 		</div>
 	</NuxtLayout>
 </template>

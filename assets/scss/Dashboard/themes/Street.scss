@@ -1,19 +1,24 @@
-:root {
+/*
+* https://color.romanuke.com/czvetovaya-palitra-4512/
+* #FEF4DB #D4DBE2 #7B7C81 #453C41 #040000
+*/
+
+:root.street-theme {
   /* Цветовая схема InSilentHill  */
   /* Цвета */
   --alert-color: #800000;
   --error-color: #500000;
-  --success-color: #004d42;
+  --success-color: #D4DBE2;
 
   /* Фоны */
   --body-bg-color: #333333;
   --main-bg-color: #000000;
-  --second-bg-color: #241a1a;
+  --second-bg-color: #4c4248;
   --third-bg-color: #0b0b0b;
 
   /* Блоки */
   --main-block-color: #000000;
-  --second-block-color: #800000;
+  --second-block-color: #4c4248;
 
   /* Пелена */
   --main-veil-color: rgba(0, 0, 0, 0.5);
@@ -24,7 +29,7 @@
   --modal-full-screen-width: 100%;
 
   /* Заголовки */
-  --main-title-color: #800000;
+  --main-title-color: #453C41;
 
   /* Текст */
   --main-text-color: #C0C0C0;
@@ -40,23 +45,23 @@
   --text-small-text: 14px;
 
   /* Ссылки */
-  --main-href-color: #800000;
-  --main-hover-color: #900000;
-  --main-active-color: #bc0000;
-  --second-active-color: #713232;
-  --third-active-color: #5d2727;
-  --second-href-color: #150000;
-  --second-hover-color: #250000;
+  --main-href-color: #453C41;
+  --main-hover-color: #7B7C81;
+  --main-active-color: #7B7C81;
+  --second-active-color: #7B7C81;
+  --third-active-color: #7B7C81;
+  --second-href-color: #453C41;
+  --second-hover-color: #453C41;
   --third-hover-color: #DDD;
 
   /* Рамки */
-  --main-border-color: #800000;
+  --main-border-color: #453C41;
   --second-border-color: #333333;
   --third-border-color: #1c1c1c;
   --main-very-light-color: #1d1d1d;
 
   /* Кнопки */
-  --button-color-1: #500000;
+  --button-color-1: #322b2f;
 
   /* Размеры */
   --main-block-width: 1400px;
@@ -79,11 +84,11 @@
    */
 
   /* Notification */
-  --not-alert-bg-color: #004d42;
-  --not-error-bg-color: #800000;
+  --not-alert-bg-color: #D4DBE2;
+  --not-error-bg-color: #453C41;
 
   /* Статьи */
-  --item-color: #004d42;
+  --item-color: #D4DBE2;
   --heal-color: #9df700;
   --ammo-color: #000bea;
   --epic-color: #4700d8;

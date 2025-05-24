@@ -53,10 +53,10 @@ const props = defineProps({
 		type: Number,
 		default: 1,
 	},
-	ItemList: {
-		type: Array,
-		default: [],
-	},
+	// ItemList: {
+	// 	type: Array,
+	// 	default: [],
+	// },
 	UserItems: {
 		type: Array,
 		default: [],
@@ -93,6 +93,47 @@ watch(() => props.UsedItems, () => {
 
 /* Получение данных */
 const requestInProgress = ref(false);
+
+const { refresh } = await useAsyncData(
+		async () => {
+			let request = `${apiUrl.value}board-game/getItemAndInventory`;
+
+			const query = {
+				board_game_id: props.boardGameId,
+			};
+			const sessionCookie = useCookie(sessionCookieName.value);
+
+			requestInProgress.value = true;
+
+			try {
+				await $fetch(
+						request,
+						{
+							method: 'GET',
+							credentials: 'include',
+							query,
+							headers: {
+								Accept: 'application/json',
+								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+								Referer: publicUrl.value,
+							},
+							onResponse({response}) {
+								if (response.status === 200) {
+									ItemList.value = response._data.items;
+								} else {
+									error('Request error', 5000);
+								}
+
+								requestInProgress.value = false;
+							}
+						},
+				);
+			} catch (e) {
+				errorHandler(e);
+				requestInProgress.value = false;
+			}
+		}
+);
 
 const addItemToInventory = async (itemId, name) => {
 	requestInProgress.value = true;
@@ -298,9 +339,11 @@ const addItemToInventoryEmit = (data) => {
 
 	ItemList.value.forEach((item) => {
 		if (item.id === data.id) {
-			item.inventory_id = id;
-			item.id = id;
-			UserItems.value.unshift(item);
+			const itemCopy = { ...item };
+
+			itemCopy.inventory_id = id;
+			itemCopy.id = id;
+			UserItems.value.unshift(itemCopy);
 		}
 	});
 
@@ -362,16 +405,16 @@ const addItemToInventoryEmit = (data) => {
 		</div>
 	</div>
 
-	<OpeningBox
-			v-if="ItemList.length > 0"
-			title="Все предметы"
-			classes="pb-[1rem] pl-[1rem] pr-[1rem]"
-	>
-		<ItemsList
-				:itemList="ItemList"
-				@setOpenedImage="setOpenedImage"
-		/>
-	</OpeningBox>
+<!--	<OpeningBox-->
+<!--			v-if="ItemList.length > 0"-->
+<!--			title="Все предметы"-->
+<!--			classes="pb-[1rem] pl-[1rem] pr-[1rem]"-->
+<!--	>-->
+<!--		<ItemsList-->
+<!--				:itemList="ItemList"-->
+<!--				@setOpenedImage="setOpenedImage"-->
+<!--		/>-->
+<!--	</OpeningBox>-->
 
 	<OpeningBox
 			v-if="ItemList.length > 0"

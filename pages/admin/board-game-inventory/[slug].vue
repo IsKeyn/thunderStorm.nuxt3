@@ -23,14 +23,14 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			board_game_item_id: {
-				name: 'ID игры',
+				name: 'ID предмета',
 				value: '',
 				type: 'text',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			has_used: {
-				name: 'ID игры',
+				name: 'Был ли использоан',
 				value: '',
 				type: 'text',
 				validateRules: 'required, maxLength_255',
@@ -73,8 +73,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/BoardGame/BoardGameInventory"
-				:hasResource="true"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/BoardGame/BoardGameInventory"
 		/>
 	</div>
 </template>

@@ -24,7 +24,7 @@ const props = defineProps({
 let items = props.items;
 
 // Дублируем элементы для долгого кручения
-const repeatedItems = Array(60).fill([...items]).flat()
+const repeatedItems = Array(60).fill([...items]).flat();
 
 const translateY = ref(0)
 const spinning = ref(false)
@@ -70,8 +70,10 @@ const startSpin = () => {
 		const progress = Math.min(elapsed / spinTime, 1)
 
 		const easeOut = 1 - Math.pow(1 - progress, 3)
+		// Используем более резкое easeOut
+		// const easeOutExpo = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
 
-		translateY.value = startTranslateY + (targetTranslateY - startTranslateY) * easeOut
+		translateY.value = startTranslateY + (targetTranslateY - startTranslateY) * easeOut;
 
 		if (elapsed < spinTime) {
 			requestAnimationFrame(animate)
@@ -115,9 +117,6 @@ const startSpin = () => {
 								:element="element"
 								:showControlPanel="false"
 								:classes="element.id === resultId ? 'active' : ''"
-								@setOpenedImage="emit('setOpenedImage')"
-								@deleteItem="deleteItem"
-								@useItem="useItem"
 						/>
 					</div>
 				</div>

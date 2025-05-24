@@ -1,19 +1,24 @@
-:root {
+/*
+* https://color.romanuke.com/tsvetovaya-palitra-192/
+* #012d4a #014753 #016392 #01839d #aacfe2
+*/
+
+:root.ocean-theme {
   /* Цветовая схема InSilentHill  */
   /* Цвета */
   --alert-color: #800000;
   --error-color: #500000;
-  --success-color: #004d42;
+  --success-color: #01839d;
 
   /* Фоны */
   --body-bg-color: #333333;
   --main-bg-color: #000000;
-  --second-bg-color: #241a1a;
+  --second-bg-color: #003e66;
   --third-bg-color: #0b0b0b;
 
   /* Блоки */
   --main-block-color: #000000;
-  --second-block-color: #800000;
+  --second-block-color: #003e66;
 
   /* Пелена */
   --main-veil-color: rgba(0, 0, 0, 0.5);
@@ -24,7 +29,7 @@
   --modal-full-screen-width: 100%;
 
   /* Заголовки */
-  --main-title-color: #800000;
+  --main-title-color: #012d4a;
 
   /* Текст */
   --main-text-color: #C0C0C0;
@@ -40,23 +45,23 @@
   --text-small-text: 14px;
 
   /* Ссылки */
-  --main-href-color: #800000;
-  --main-hover-color: #900000;
-  --main-active-color: #bc0000;
-  --second-active-color: #713232;
-  --third-active-color: #5d2727;
-  --second-href-color: #150000;
-  --second-hover-color: #250000;
+  --main-href-color: #012d4a;
+  --main-hover-color: #016392;
+  --main-active-color: #01839d;
+  --second-active-color: #01839d;
+  --third-active-color: #01839d;
+  --second-href-color: #012d4a;
+  --second-hover-color: #012d4a;
   --third-hover-color: #DDD;
 
   /* Рамки */
-  --main-border-color: #800000;
+  --main-border-color: #012d4a;
   --second-border-color: #333333;
   --third-border-color: #1c1c1c;
   --main-very-light-color: #1d1d1d;
 
   /* Кнопки */
-  --button-color-1: #500000;
+  --button-color-1: #012d4a;
 
   /* Размеры */
   --main-block-width: 1400px;
@@ -79,11 +84,11 @@
    */
 
   /* Notification */
-  --not-alert-bg-color: #004d42;
-  --not-error-bg-color: #800000;
+  --not-alert-bg-color: #01839d;
+  --not-error-bg-color: #012d4a;
 
   /* Статьи */
-  --item-color: #004d42;
+  --item-color: #01839d;
   --heal-color: #9df700;
   --ammo-color: #000bea;
   --epic-color: #4700d8;

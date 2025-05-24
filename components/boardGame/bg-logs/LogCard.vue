@@ -59,7 +59,7 @@ const props = defineProps({
 		<div class="info">
 			<template v-if="theme === 'default'">
 				<span class="name">
-					{{ element.id }}: {{ element.user.name }} [{{ getFormattedDate('d.m.Y H:i', element.created_at) }}]
+					{{ element.user.name }} [{{ getFormattedDate('d.m.Y H:i', element.created_at) }}]
 				</span>
 					<span class="description">
 					{{ element.message }}

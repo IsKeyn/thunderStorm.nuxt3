@@ -11,15 +11,57 @@ const form = ref(
 			game_id: {
 				name: 'ID игры',
 				value: '',
-				type: 'text',
+				type: 'number',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
+			},
+			gaming_platform_id: {
+				name: 'ID платформы',
+				value: '',
+				type: 'number',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			description: {
+				name: 'Описание',
+				value: '',
+				type: 'textarea',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			board_game_id: {
 				name: 'ID настолки',
 				value: '',
 				type: 'text',
 				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			points: {
+				name: 'Количество очков',
+				value: '',
+				type: 'number',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			active: {
+				name: 'Активность',
+				value: '1',
+				type: 'checkbox',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			added_by: {
+				name: 'Добавил',
+				value: '',
+				type: 'number',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			created_by: {
+				name: 'Создал',
+				value: '',
+				type: 'number',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -59,9 +101,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/BoardGameGameList"
-				:showTags="true"
-				:hasResource="true"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/BoardGame/BoardGameGameList"
 		/>
 	</div>
 </template>

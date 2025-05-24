@@ -1,8 +1,6 @@
 <script setup>
 import Modal from '@/components/modals/Modal.vue';
-import ItemsList from '@/components/boardGame/inventory/ItemsList.vue';
-
-import { ref } from "vue";
+import EventGameList from '@/components/boardGame/game/EventGameList.vue';
 
 const props = defineProps({
 	boardGameId: {
@@ -24,7 +22,7 @@ const openCloseModalFunc = () => {
 				class="btn btn-simple-1 ml-[1rem]"
 				@click="openCloseModalFunc"
 		>
-			Предметы <font-awesome-icon :icon="['fas', 'hat-wizard']" />
+			Игры <font-awesome-icon :icon="['fas', 'gamepad']" />
 		</button>
 	</div>
 	<Modal
@@ -34,10 +32,16 @@ const openCloseModalFunc = () => {
 			@toggleModal="openCloseModalFunc"
 	>
 		<div class="modal-parent">
-			<h3 class="modal-title">Предметы</h3>
+			<h3 class="modal-title">Игры</h3>
 			<div class="link-parent-box">
-				<ItemsList />
+				<EventGameList
+						:boardGameId="props.boardGameId"
+				/>
 			</div>
 		</div>
 	</Modal>
 </template>
+
+<style lang="scss" scoped>
+
+</style>

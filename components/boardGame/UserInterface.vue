@@ -7,15 +7,17 @@ import GoInThisGame from '@/components/boardGame/user/GoInThisGame.vue';
 import Inventory from '@/components/boardGame/inventory/Inventory.vue';
 import Dices from '@/components/boardGame/Dices.vue';
 import Points from '@/components/boardGame/user/Points.vue';
+import UserGame from '@/components/boardGame/user/UserGame.vue';
 import StatusEffects from '@/components/boardGame/user/StatusEffects.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
 import { roles } from '@/composables/roles.js';
+import { ref } from "vue";
 const { hasRole } = roles();
 
-const emit = defineEmits(['fetchLogs', 'updateBoardGameInfo']);
+const emit = defineEmits(['fetchLogs', 'updateBoardGameInfo', 'showPlayer']);
 
 const props = defineProps({
 	boardGameId: {
@@ -81,6 +83,13 @@ const alreadyInGame = computed(() => {
 						:boardGameInfo="boardGameInfo"
 						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 						@fetchLogs="emit('fetchLogs')"
+				/>
+				<UserGame
+						:boardGameId="boardGameId"
+						:boardGameInfo="boardGameInfo"
+						@updateBoardGameInfo="emit('updateBoardGameInfo')"
+						@showPlayer="$emit('showPlayer', $event)"
+						@updateInventory="updateInventory"
 				/>
 				<span class="user-interface-title">Инвентарь</span>
 				<Inventory

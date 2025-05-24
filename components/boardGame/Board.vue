@@ -841,9 +841,11 @@ function onDragEnd() {
 
 function onDrop(index) {
 	droppingIndex.value = index
-	tokenPosition.value = index
 
-	addPlayerPosition(index);
+	if (tokenPosition.value !== index) {
+		tokenPosition.value = index
+		addPlayerPosition(index);
+	}
 
 	// Убираем класс анимации после завершения
 	setTimeout(() => {
@@ -995,10 +997,10 @@ const openCloseBoxFunc = () => {
 
 
 onMounted(() => {
-	getThemeConst();
+	// getThemeConst();
 });
 
-const currentTheme = ref('theme-1');
+const currentTheme = ref('theme-4');
 
 const getThemeConst = () => {
 	if (process.client) {
@@ -1029,15 +1031,15 @@ watch(() => userStore.user, () => {
 <template>
 	<div>
 		<span class="user-interface-title">Игровая доска</span>
-		<div class="choice-theme-box">
-			<span>Цветовая схема</span>
-			<div class="theme-control">
-				<div @click="setTheme('theme-1')" :class="['choice-theme theme-1', currentTheme === 'theme-1' ? 'active' : '']" />
-				<div @click="setTheme('theme-2')" :class="['choice-theme theme-2', currentTheme === 'theme-2' ? 'active' : '']" />
-				<div @click="setTheme('theme-3')" :class="['choice-theme theme-3', currentTheme === 'theme-3' ? 'active' : '']" />
-				<div @click="setTheme('theme-4')" :class="['choice-theme theme-4', currentTheme === 'theme-4' ? 'active' : '']" />
-			</div>
-		</div>
+<!--		<div class="choice-theme-box">-->
+<!--			<span>Цветовая схема</span>-->
+<!--			<div class="theme-control">-->
+<!--				<div @click="setTheme('theme-1')" :class="['choice-theme theme-1', currentTheme === 'theme-1' ? 'active' : '']" />-->
+<!--				<div @click="setTheme('theme-2')" :class="['choice-theme theme-2', currentTheme === 'theme-2' ? 'active' : '']" />-->
+<!--				<div @click="setTheme('theme-3')" :class="['choice-theme theme-3', currentTheme === 'theme-3' ? 'active' : '']" />-->
+<!--				<div @click="setTheme('theme-4')" :class="['choice-theme theme-4', currentTheme === 'theme-4' ? 'active' : '']" />-->
+<!--			</div>-->
+<!--		</div>-->
 		<table :class="[currentTheme]">
 			<tr
 					v-for="(row, rowNumber) in fields"

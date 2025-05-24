@@ -58,6 +58,7 @@ const wasOpen = ref(false);
 
 watch(() => props.showOpenModal, (newValue) => {
 	modalActive.value = newValue;
+	setHideBodyOverflow(newValue);
 });
 
 watch(() => props.reCalcHeight, (newValue) => {
@@ -68,6 +69,10 @@ watch(() => props.reCalcHeight, (newValue) => {
 });
 
 watch(modalActive, (newValue) => {
+	setHideBodyOverflow(newValue);
+});
+
+const setHideBodyOverflow = (newValue) => {
 	if (newValue) {
 		if (wasOpen.value === false) {
 			init();
@@ -91,7 +96,7 @@ watch(modalActive, (newValue) => {
 	} else {
 		wasOpen.value = value;
 	}
-});
+}
 
 const el = ref()
 

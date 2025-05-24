@@ -39,7 +39,7 @@
   }
 
   &.btn-simple-1 {
-    @apply bg-[var(--error-color)];
+    @apply bg-[var(--button-color-1)];
 
     &:hover {
       @apply bg-[var(--main-hover-color)];
