@@ -337,11 +337,13 @@ const fields = ref(
 						name: '96',
 						index: 96,
 						useThisField: true,
+						description: 'Игра в Teenage Mutant Ninja Turtles IV - Turtles in Time c другим стримером за 20 очков',
 					},
 					{
 						name: '97',
 						index: 97,
 						useThisField: true,
+						description: 'Ты достиг последней клетки, чего это стоило?',
 					},
 				],
 			},

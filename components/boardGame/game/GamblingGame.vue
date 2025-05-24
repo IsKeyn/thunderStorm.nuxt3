@@ -332,6 +332,10 @@ const refreshGameList = () => {
 					</div>
 				</div>
 
+				<div class="count-info">
+					Количество игр: {{ items.length }}
+				</div>
+
 				<div class="flex">
 					<button
 							:class="`btn mr-[1rem] ${spinning || requestInProgress ? 'btn-disable' : 'btn-simple-1' }`"
@@ -397,6 +401,10 @@ const refreshGameList = () => {
 				@apply flex justify-center items-center mb-[5px];
 			}
 		}
+	}
+
+	.count-info {
+		@apply mt-[1rem] mb-[1rem] text-[1.2rem];
 	}
 }
 </style>

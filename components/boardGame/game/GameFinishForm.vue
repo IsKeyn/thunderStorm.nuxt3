@@ -51,10 +51,10 @@ const form = ref({});
 
 if (props.type === 2) {
 	form.value.hourCount = {
-		name: 'Затраченное время',
+		name: 'Затраченное время (в формате 8:40)',
 				value: null,
 				type: 'number',
-				placeholder: 'Часы',
+				placeholder: 'Время',
 				validateRules: 'minLength_1, 10',
 				classes: '',
 	};
