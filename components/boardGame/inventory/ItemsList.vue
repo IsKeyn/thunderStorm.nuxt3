@@ -84,7 +84,7 @@ const { refresh } = await useAsyncData(
 				:key="key"
 				:element="element"
 				:useLightBox="true"
-				@setOpenedImage="emit('setOpenedImage', $event)"
+				@setOpenedImage="setOpenedImage"
 		/>
 	</div>
 

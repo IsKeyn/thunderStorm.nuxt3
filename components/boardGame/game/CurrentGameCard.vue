@@ -1,5 +1,6 @@
 <script setup>
 import GameFinishForm from '@/components/boardGame/game/GameFinishForm.vue';
+import LightBox from '@/components/media/LightBox.vue'
 
 const emit = defineEmits(['showPlayer', 'setStep', 'toggleFormVisible', 'updateBoardGameInfo']);
 
@@ -8,9 +9,16 @@ const {
 	getResizeImg,
 } = media();
 
+import { date } from '@/composables/date.js';
 const {
 	getFormattedDate
 } = date();
+
+import { lightBox } from '@/composables/lightBox.js';
+const {
+	openedImage,
+	setOpenedImage,
+} = lightBox();
 
 const props = defineProps({
 	boardGameId: {
@@ -67,6 +75,7 @@ const toggleFormVisible = (typeValue = null) => {
 		<img
 				v-if="showTitle && currentGame.game.game?.covers[0]?.src"
 				:src="getResizeImg(currentGame.game.game.covers[0])"
+				@click="setOpenedImage(currentGame.game.game.covers[0])"
 		>
 		<div class="description-block">
 			<span class="title">{{ currentGame.game.game.name }}</span>
@@ -102,6 +111,7 @@ const toggleFormVisible = (typeValue = null) => {
 			</div>
 			<div v-if="showActionButtons && !showFinishGameForm">
 				<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(1)">Рерольнуть</button>
+				<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(3)">Отдал</button>
 				<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(2)">Игра пройдена</button>
 				<button class="btn btn-simple-1 mr-[1rem]" @click="emit('showEditList')">Редактировать списки</button>
 			</div>
@@ -116,6 +126,12 @@ const toggleFormVisible = (typeValue = null) => {
 			@toggleFormVisible="toggleFormVisible"
 			@updateBoardGameInfo="emit('updateBoardGameInfo')"
 	/>
+	<LightBox
+			v-if="openedImage"
+			:image="openedImage"
+			:setViewsLog="true"
+			@setCurrentElement="setOpenedImage"
+	/>
 </template>
 
 
@@ -124,11 +140,10 @@ const toggleFormVisible = (typeValue = null) => {
 	@apply flex;
 
 	img {
-		@apply w-1/6 object-contain;
+		@apply w-1/6 object-contain mr-[1rem] cursor-pointer;
 	}
 
 	.description-block {
-		@apply ml-[1rem];
 
 		.title {
 			@apply block mb-[1.3rem];

@@ -53,7 +53,7 @@ if (props.type === 2) {
 	form.value.hourCount = {
 		name: 'Затраченное время (в формате 8:40)',
 				value: null,
-				type: 'number',
+				type: 'text',
 				placeholder: 'Время',
 				validateRules: 'minLength_1, 10',
 				classes: '',
@@ -162,7 +162,9 @@ const writeLogMessage = () => {
 			break;
 
 		case 3:
-			if (props.doType === 'add') {
+			if (props.doType === 'update') {
+				message += `отдал игру "${props.game.name}"`;
+			} else if (props.doType === 'add') {
 				message += `отметил игру "${props.game.name}" как отданную`;
 			}
 			break;
@@ -210,6 +212,7 @@ const writeLogMessage = () => {
 			<div v-if="props.doType === 'update'" class="item-box">
 				<template v-if="type === 1">При рероле игры, вы получите "Тухлый банан" в инвентарь</template>
 				<template v-if="type === 2">За прохождение игры, вам будут начислены {{ points }} очков</template>
+				<template v-if="type === 3">Используйте данную кнопку, если передаете игру другому игроку</template>
 			</div>
 			<div class="flex">
 				<button
