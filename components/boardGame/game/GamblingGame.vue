@@ -1,7 +1,7 @@
 <script setup>
 import GameGamblingCard from '@/components/boardGame/game/GameGamblingCard.vue';
 import CurrentGameCard from '@/components/boardGame/game/CurrentGameCard.vue';
-import EditPlayerList from '@/components/boardGame/game/EditPlayerList.vue';
+import EditorForPlayerGamesList from '@/components/boardGame/game/EditorForPlayerGamesList.vue';
 
 import { ref, watch } from 'vue'
 
@@ -268,7 +268,7 @@ const refreshGameList = () => {
 </script>
 
 <template>
-	<EditPlayerList
+	<EditorForPlayerGamesList
 			v-if="editListShow === true"
 			:boardGameId="boardGameId"
 			:items="items"
