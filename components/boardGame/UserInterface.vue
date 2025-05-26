@@ -59,6 +59,7 @@ const alreadyInGame = computed(() => {
 		<template v-if="userStore.user.email_verified_at">
 			<UserInfo
 					@updateBoardGameInfo="emit('updateBoardGameInfo')"
+					@showPlayer="$emit('showPlayer', $event)"
 			/>
 			<GoInThisGame
 					v-if="!alreadyInGame"

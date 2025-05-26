@@ -5,9 +5,18 @@ const showThemeSettings = ref(false);
 
 const toggleThemeSettingsFunc = () => {
 	showThemeSettings.value = !showThemeSettings.value;
+
+	if (showSvgAnimation.value && showThemeSettings.value) {
+		showSvgAnimation.value = false;
+
+		if (themeFromLocalStore.value === null) {
+			localStorage.setItem('dashboard-theme', selectedTheme.value);
+		}
+	}
 }
 
 const selectedTheme = ref('');
+const showSvgAnimation = ref(true);
 
 const themeList = ref(
 		[
@@ -37,11 +46,16 @@ onMounted(() => {
 	getThemeConst();
 });
 
+const themeFromLocalStore = ref('');
+
 const getThemeConst = () => {
 	if (process.client) {
-		const theme = localStorage.getItem('dashboard-theme');
+		themeFromLocalStore.value = localStorage.getItem('dashboard-theme');
 
-		selectedTheme.value = theme ? theme : '';
+		if (themeFromLocalStore.value !== null) {
+			showSvgAnimation.value = false;
+			selectedTheme.value = themeFromLocalStore.value;
+		}
 	}
 }
 </script>
@@ -53,15 +67,16 @@ const getThemeConst = () => {
 				@click="toggleThemeSettingsFunc()"
 		>
 			<font-awesome-icon
+					v-if="showSvgAnimation"
 					:icon="['fas', 'palette']"
 					bounce
 					class="choice-theme-icon"
 			/>
-<!--			<font-awesome-icon-->
-<!--					v-else-->
-<!--					:icon="['fas', 'xmark']"-->
-<!--					class="choice-theme-icon"-->
-<!--			/>-->
+			<font-awesome-icon
+					v-else
+					:icon="['fas', 'palette']"
+					class="choice-theme-icon"
+			/>
 		</div>
 
 		<div class="choice-theme-data" v-if="showThemeSettings">
