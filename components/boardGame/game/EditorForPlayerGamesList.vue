@@ -143,6 +143,9 @@ const clearAllFilters = () => {
 					{{ platform.name }}
 				</option>
 			</select>
+			<div class="count-info">
+				Найдено игр: {{ filteredItems.length }}
+			</div>
 		</div>
 		<OpeningBox
 				title="Фильтрация по списку"
@@ -179,3 +182,9 @@ const clearAllFilters = () => {
 		Игр нет
 	</div>
 </template>
+
+<style lang="scss" scoped>
+.count-info {
+	@apply pt-[1rem] pl-[1rem];
+}
+</style>
