@@ -1,5 +1,8 @@
 <script setup>
 import GameListCard from '@/components/entertainment/card/GameListCard.vue';
+import BigPreloader from '@/components/ui/BigPreloader.vue';
+
+const emit = defineEmits(['loadingToggle']);
 
 import { api } from '@/composables/api.js'
 const {
@@ -76,14 +79,15 @@ const { refresh } = await useAsyncData(
 								} else {
 									error('Request error', 5000);
 								}
-
 								requestInProgress.value = false;
+								emit('loadingToggle');
 							}
 						},
 				);
 			} catch (e) {
 				errorHandler(e);
 				requestInProgress.value = false;
+				emit('loadingToggle');
 			}
 		}
 );
@@ -104,33 +108,37 @@ const dataByGroups = computed(() => {
 </script>
 
 <template>
-	<div v-if="gameList.length > 0">
-		<div v-if="dataByGroups">
-			<div class="group" v-for="(group, key) in dataByGroups">
-				<span class="title">{{ group.name }}</span>
-				<div class="game-list">
-					<GameListCard
-							v-for="(item, index) in group.items"
-							:key="key"
-							:game="item.game"
-							target="_blank"
-							entity="game"
-					/>
+	<BigPreloader v-if="requestInProgress" />
+	<template v-else>
+		<div v-if="gameList.length > 0">
+			<div v-if="dataByGroups">
+				<div class="group" v-for="(group, key) in dataByGroups">
+					<span class="title">{{ group.name }}</span>
+					<div class="game-list">
+						<GameListCard
+								v-for="(item, index) in group.items"
+								:key="key"
+								:game="item.game"
+								target="_blank"
+								entity="game"
+						/>
+					</div>
 				</div>
 			</div>
+			<!--		<div class="game-list">-->
+			<!--			<GameListCard-->
+			<!--					v-for="(item, index) in gameList"-->
+			<!--					:key="index"-->
+			<!--					:game="item.game"-->
+			<!--					entity="game"-->
+			<!--			/>-->
+			<!--		</div>-->
 		</div>
-<!--		<div class="game-list">-->
-<!--			<GameListCard-->
-<!--					v-for="(item, index) in gameList"-->
-<!--					:key="index"-->
-<!--					:game="item.game"-->
-<!--					entity="game"-->
-<!--			/>-->
-<!--		</div>-->
-	</div>
-	<div v-else class="item-box">
-		Игр нет
-	</div>
+		<div v-else class="item-box">
+			Игр нет
+		</div>
+	</template>
+
 </template>
 
 <style lang="scss" scoped>

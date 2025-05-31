@@ -99,10 +99,16 @@ const showPlayer = (id) => {
 						:boardGameId="fetchedData.id"
 				/>
 				<a
+						href="https://dashboard.twitch.tv/extensions/3cn0qf9xaa13w6wj7za4nmxl2qn0ju-1.0.1"
+						target="_blank"
+						class="btn btn-simple-1 ml-[1rem]"
+				>
+					Расширение <font-awesome-icon :icon="['fab', 'twitch']" />
+				</a>
+				<a
 						href="https://t.me/game_events_tr"
 						target="_blank"
 						class="btn btn-simple-1 ml-[1rem]"
-						@click="openCloseModalFunc"
 				>
 					Телеграм <font-awesome-icon :icon="['fab', 'telegram']" />
 				</a>
@@ -116,6 +122,8 @@ const showPlayer = (id) => {
 						@fetchLogs="fetchLogs"
 						@showPlayer="showPlayer"
 						@updateBoardGameInfo="updateBoardGameInfo"
+						@showGame="$emit('showGame', $event)"
+						@showInventory="$emit('showInventory', $event)"
 				/>
 			</div>
 			<div class="board-box">

@@ -1,6 +1,7 @@
 <script setup>
 import Modal from '@/components/modals/Modal.vue';
 import EventGameList from '@/components/boardGame/game/EventGameList.vue';
+import BigPreloader from '@/components/ui/BigPreloader.vue';
 
 const props = defineProps({
 	boardGameId: {
@@ -10,9 +11,11 @@ const props = defineProps({
 });
 
 const modalOpen = ref(false);
+const modalLoading = ref(false);
 
 const openCloseModalFunc = () => {
 	modalOpen.value = !modalOpen.value;
+	modalLoading.value = true;
 };
 </script>
 
@@ -34,8 +37,11 @@ const openCloseModalFunc = () => {
 		<div class="modal-parent">
 			<h3 class="modal-title">Игры</h3>
 			<div class="link-parent-box">
+				<BigPreloader v-if="modalLoading" />
 				<EventGameList
+						v-show="!modalLoading"
 						:boardGameId="props.boardGameId"
+						@loadingToggle="modalLoading = !modalLoading"
 				/>
 			</div>
 		</div>

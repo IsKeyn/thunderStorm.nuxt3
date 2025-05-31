@@ -4,7 +4,7 @@ import LightBox from '@/components/media/LightBox.vue'
 
 import { ref } from "vue";
 
-const emit = defineEmits(['setOpenedImage']);
+const emit = defineEmits(['setOpenedImage', 'loadingToggle']);
 
 import { api } from '@/composables/api.js'
 const {
@@ -64,19 +64,22 @@ const { refresh } = await useAsyncData(
 								}
 
 								requestInProgress.value = false;
+								emit('loadingToggle');
 							}
 						},
 				);
 			} catch (e) {
 				errorHandler(e);
 				requestInProgress.value = false;
+				emit('loadingToggle');
 			}
 		}
 );
 </script>
 
 <template>
-	<div class="wrapper">
+	<BigPreloader v-if="requestInProgress" />
+	<div v-else class="wrapper">
 		<span v-if="itemList && itemList.length === 0">Предметов нет</span>
 		<ItemCard
 				v-else

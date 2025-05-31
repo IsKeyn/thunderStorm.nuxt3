@@ -3,6 +3,7 @@ import ItemCard from '@/components/boardGame/inventory/ItemCard.vue';
 import LogCard from '@/components/boardGame/bg-logs/LogCard.vue';
 import StepCard from '@/components/boardGame/user/StepCard.vue';
 import CurrentGameCard from '@/components/boardGame/game/CurrentGameCard.vue';
+import ProfileGameCard from '@/components/boardGame/game/ProfileGameCard.vue';
 
 import { media } from '@/composables/media.js'
 const {
@@ -115,6 +116,20 @@ const currentPlayer = computed(() => {
 					class="current-game"
 			/>
 		</div>
+
+		<ui-OpeningBox
+				v-if="userInfo.player_info.player_games.length > 0"
+				title="История игр игрока"
+		>
+			<div v-for="(element, key) in userInfo.player_info.player_games" :key="key">
+				<ProfileGameCard
+						v-if="element.status !== 0"
+						:element="element"
+						:players="boardGameInfo.players"
+						@setOpenedImage="emit('setOpenedImage', $event)"
+				/>
+			</div>
+		</ui-OpeningBox>
 
 		<div
 				v-if="userInfo.inventory"

@@ -130,19 +130,19 @@ const clearAllFilters = () => {
 					labelClasses="mr-4 mt-[10px] mb-[10px]"
 					:fieldClasses="form.searchLine.classes"
 			/>
-			<select
-					v-model="selectedPlatform"
-					class="mb-[10px] pb-0 pr-[10px]"
-			>
-				<option :value="null">Все платформы</option>
-				<option
-						v-for="(platform, key) in platforms"
-						:key="key"
-						:value="platform.id"
-				>
-					{{ platform.name }}
-				</option>
-			</select>
+<!--			<select-->
+<!--					v-model="selectedPlatform"-->
+<!--					class="mb-[10px] pb-0 pr-[10px]"-->
+<!--			>-->
+<!--				<option :value="null">Все платформы</option>-->
+<!--				<option-->
+<!--						v-for="(platform, key) in platforms"-->
+<!--						:key="key"-->
+<!--						:value="platform.id"-->
+<!--				>-->
+<!--					{{ platform.name }}-->
+<!--				</option>-->
+<!--			</select>-->
 			<div class="count-info">
 				Найдено игр: {{ filteredItems.length }}
 			</div>

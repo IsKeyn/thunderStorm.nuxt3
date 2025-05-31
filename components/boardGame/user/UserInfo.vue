@@ -19,7 +19,7 @@ const {
 	getResizeImg,
 } = media();
 
-const emit = defineEmits(['updateBoardGameInfo', 'showPlayer']);
+const emit = defineEmits(['updateBoardGameInfo', 'showPlayer', 'showInventory', 'showGame']);
 
 import { ref, watch } from "vue";
 
@@ -53,6 +53,8 @@ const openCloseBoxFunc = () => {
 		</div>
 		<div class="user-info-wrap">
 			<button class="btn btn-simple-1 mr-2" @click="openCloseBoxFunc()"><font-awesome-icon :icon="['fas', 'pen']" /></button>
+			<button class="btn btn-simple-1 mr-2" @click="emit('showGame')"><font-awesome-icon :icon="['fas', 'gamepad']" /></button>
+			<button class="btn btn-simple-1 mr-2" @click="emit('showInventory')"><font-awesome-icon :icon="['fas', 'hat-wizard']" /></button>
 			<button class="btn btn-simple-1 mr-2" @click="showNotificationModal"><font-awesome-icon :icon="['fas', 'bell']" /></button>
 		</div>
 	</div>

@@ -16,7 +16,7 @@ import OpeningBox from '@/components/ui/OpeningBox.vue';
 
 import { ref, watch } from 'vue'
 
-const emit = defineEmits(['fetchLogs', 'updateUserItems', 'updateBoardGameInfo']);
+const emit = defineEmits(['fetchLogs', 'updateUserItems', 'updateBoardGameInfo', 'loadingToggle']);
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -125,12 +125,14 @@ const { refresh } = await useAsyncData(
 								}
 
 								requestInProgress.value = false;
+								emit('loadingToggle');
 							}
 						},
 				);
 			} catch (e) {
 				errorHandler(e);
 				requestInProgress.value = false;
+				emit('loadingToggle');
 			}
 		}
 );
@@ -360,6 +362,11 @@ const addItemToInventoryEmit = (data) => {
 			@setOpenedImage="setOpenedImage"
 			@addItemToInventory="addItemToInventoryEmit"
 	/>
+<!--	<div class="mr-4 ml-4">-->
+<!--		<div class="item-box">-->
+<!--			Предметы разрешено применять только во время стрима-->
+<!--		</div>-->
+<!--	</div>-->
 	<div v-if="ItemList.length > 0" class="inventory">
 		<div class="user-items">
 			<h2 class="inv-title">Ваш инвентарь</h2>
