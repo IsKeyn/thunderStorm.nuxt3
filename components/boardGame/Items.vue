@@ -12,9 +12,11 @@ const props = defineProps({
 });
 
 const modalOpen = ref(false);
+const modalLoading = ref(false);
 
 const openCloseModalFunc = () => {
 	modalOpen.value = !modalOpen.value;
+	modalLoading.value = true;
 };
 </script>
 
@@ -36,7 +38,11 @@ const openCloseModalFunc = () => {
 		<div class="modal-parent">
 			<h3 class="modal-title">Предметы</h3>
 			<div class="link-parent-box">
-				<ItemsList />
+				<ui-BigPreloader v-if="modalLoading" />
+				<ItemsList
+						v-show="!modalLoading"
+						@loadingToggle="modalLoading = !modalLoading"
+				/>
 			</div>
 		</div>
 	</Modal>

@@ -5,7 +5,7 @@ import GamblingGame from '@/components/boardGame/game/GamblingGame.vue';
 
 import { ref } from "vue";
 
-const emit = defineEmits(['updateBoardGameInfo', 'showPlayer']);
+const emit = defineEmits(['updateBoardGameInfo', 'showPlayer', 'loadingToggle']);
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -22,9 +22,11 @@ const props = defineProps({
 });
 
 const modalOpen = ref(false);
+const modalLoading = ref(false);
 
 const openCloseModalFunc = () => {
 	modalOpen.value = !modalOpen.value;
+	modalLoading.value = true;
 };
 
 const currentPlayer = computed(() => {
@@ -33,6 +35,14 @@ const currentPlayer = computed(() => {
 	if (curPlayer && curPlayer[0]) {
 		return curPlayer[0];
 	}
+});
+
+const loadingToggle = (value) => {
+	modalLoading.value = value;
+}
+
+defineExpose({
+	openCloseModalFunc,
 });
 </script>
 
@@ -57,10 +67,13 @@ const currentPlayer = computed(() => {
 			<div class="modal-parent">
 				<h3 class="modal-title">Рулетка игр</h3>
 				<div class="link-parent-box">
+					<ui-BigPreloader v-if="modalLoading" />
 					<GamblingGame
+							v-show="!modalLoading"
 							:boardGameInfo="boardGameInfo"
 							@updateBoardGameInfo="emit('updateBoardGameInfo')"
 							@showPlayer="$emit('showPlayer', $event)"
+							@loadingToggle="loadingToggle($event)"
 					/>
 				</div>
 			</div>

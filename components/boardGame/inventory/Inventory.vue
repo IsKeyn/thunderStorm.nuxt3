@@ -41,9 +41,11 @@ const props = defineProps({
 });
 
 const modalOpen = ref(false);
+const modalLoading = ref(false);
 
 const openCloseModalFunc = () => {
 	modalOpen.value = !modalOpen.value;
+	modalLoading.value = true;
 };
 
 /* Получение данных */
@@ -103,6 +105,10 @@ setUserItems(currentPlayer.value.inventory);
 watch(() => props.boardGameInfo, () => {
 	setUserItems(currentPlayer.value.inventory);
 }, { deep: true });
+
+defineExpose({
+	openCloseModalFunc,
+});
 </script>
 
 <template>
@@ -171,7 +177,9 @@ watch(() => props.boardGameInfo, () => {
 		<div class="modal-parent">
 			<h3 class="modal-title">Инвентарь</h3>
 			<div class="link-parent-box">
+				<ui-BigPreloader v-if="modalLoading" />
 				<InventoryInterface
+						v-show="!modalLoading"
 						:UserItems="UserItems"
 						:UsedItems="UsedItems"
 						:boardGameInfo="boardGameInfo"
@@ -179,6 +187,7 @@ watch(() => props.boardGameInfo, () => {
 						@updateUserItems="updateUserItems"
 						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 						@updateInventory="updateInventory"
+						@loadingToggle="modalLoading = !modalLoading"
 				/>
 			</div>
 		</div>

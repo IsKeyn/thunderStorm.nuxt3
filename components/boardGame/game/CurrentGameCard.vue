@@ -65,6 +65,19 @@ const toggleFormVisible = (typeValue = null) => {
 		type.value = typeValue;
 	}
 }
+
+const getLongPlayLink = () => {
+	let urlSearch = 'https://www.youtube.com/results?search_query=';
+	urlSearch += ' ' + props.currentGame.game.game.name;
+
+	if (props.currentGame.game.platform) {
+		urlSearch += ' ' + props.currentGame.game.platform.name;
+	}
+
+	urlSearch += ' longplay';
+
+	return urlSearch;
+}
 </script>
 
 <template>
@@ -81,7 +94,7 @@ const toggleFormVisible = (typeValue = null) => {
 			<span class="title">{{ currentGame.game.game.name }}</span>
 			<span class="line-info" v-if="currentGame.game.platform">Платформа: {{ currentGame.game.platform.name }}</span>
 			<span class="line-info" v-if="currentGame.game.game?.release_dates[0]?.date">Год релиза: {{ getFormattedDate('Y', currentGame.game.game.release_dates[0].date) }}</span>
-			<span class="line-info" v-if="currentGame.game.points">Количество очков за игру: {{ currentGame.game.points }}</span>
+			<span class="line-info" v-if="currentGame.game.points !== null && currentGame.game.points !== undefined">Количество очков за игру: {{ currentGame.game.points }}</span>
 			<span
 					v-if="currentGame.game.added_by && getPlayerById(currentGame.game.added_by)"
 					class="line-info"
@@ -96,7 +109,7 @@ const toggleFormVisible = (typeValue = null) => {
 					<li>
 						<a
 								class="mr-[1rem]"
-								:href="`https://www.youtube.com/results?search_query=${currentGame.game.game.name} longplay`"
+								:href="getLongPlayLink()"
 								target="_blank"
 						>Лонгплей</a>
 					</li>
@@ -144,13 +157,16 @@ const toggleFormVisible = (typeValue = null) => {
 	}
 
 	.description-block {
-
 		.title {
 			@apply block mb-[1.3rem];
 		}
 
 		span.line-info {
 			@apply block mb-[0.3rem];
+		}
+
+		a {
+			@apply text-[var(--main-text-color)];
 		}
 	}
 }

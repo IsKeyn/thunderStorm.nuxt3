@@ -1,6 +1,8 @@
 <script setup>
 import UserNotificationCard from '@/components/user/notifications/UserNotificationCard.vue';
 
+const emit = defineEmits(['loadingToggle']);
+
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
@@ -54,12 +56,14 @@ const { refresh } = await useAsyncData(
 								}
 
 								requestInProgress.value = false;
+								emit('loadingToggle');
 							}
 						},
 				);
 			} catch (e) {
 				errorHandler(e);
 				requestInProgress.value = false;
+				emit('loadingToggle');
 			}
 		}
 );

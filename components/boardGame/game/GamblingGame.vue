@@ -110,9 +110,11 @@ const { refresh } = await useAsyncData(
 
 									// Дублируем элементы для долгого кручения
 									if (Object.keys(items.value).length > 0) {
+										/* Перемешиваем элементы */
+										items.value = items.value.sort(() => Math.random() - 0.5);
+
 										let repeatItemCount = Math.round(100 / Object.keys(items.value).length) * 2;
 
-										// repeatedItems.value = Array(props.repeaterItemsCount).fill([...items.value]).flat();
 										repeatedItems.value = Array(repeatItemCount).fill([...items.value]).flat();
 									}
 
@@ -124,12 +126,14 @@ const { refresh } = await useAsyncData(
 								}
 
 								requestInProgress.value = false;
+								emit('loadingToggle', false);
 							}
 						},
 				);
 			} catch (e) {
 				errorHandler(e);
 				requestInProgress.value = false;
+				emit('loadingToggle', false);
 			}
 		}
 );
@@ -268,99 +272,116 @@ const refreshGameList = () => {
 </script>
 
 <template>
-	<EditorForPlayerGamesList
-			v-if="editListShow === true"
-			:boardGameId="boardGameId"
-			:items="items"
-			@editListToggle="editListToggle"
-			@updateBoardGameInfo="emit('updateBoardGameInfo')"
-			@refreshGameList="refreshGameList"
-	/>
-	<template v-else>
-		<CurrentGameCard
-				v-if="currentPlayer.current_game"
+	<div class="relative">
+		<div
+				v-if="requestInProgress"
+				class="loading-box"
+		>
+			<ui-BigPreloader class="h-full" />
+		</div>
+
+		<div
+				class="platforms-container"
+				v-if="!currentPlayer.current_game || (currentPlayer.current_game && editListShow === true)"
+		>
+			<div
+					:class="['platform', selectedPlatform === null ? 'active' : '']"
+					@click="selectPlatform(null)"
+			>Все платформы</div>
+			<div
+					v-for="(platform, key) in platforms"
+					:key="key"
+					:class="['platform', selectedPlatform === platform.id ? 'active' : '']"
+					@click="selectPlatform(platform.id)"
+			>
+				{{ platform.name }}
+			</div>
+		</div>
+
+		<EditorForPlayerGamesList
+				v-if="editListShow === true"
 				:boardGameId="boardGameId"
-				:currentGame="currentPlayer.current_game"
-				:players="boardGameInfo.players"
-				:showActionButtons="true"
-				@showPlayer="$emit('showPlayer', $event)"
+				:items="items"
+				@editListToggle="editListToggle"
 				@updateBoardGameInfo="emit('updateBoardGameInfo')"
-				@showEditList="editListToggle"
+				@refreshGameList="refreshGameList"
 		/>
 		<template v-else>
-			<div class="platforms-container">
+			<CurrentGameCard
+					v-if="currentPlayer.current_game"
+					:boardGameId="boardGameId"
+					:currentGame="currentPlayer.current_game"
+					:players="boardGameInfo.players"
+					:showActionButtons="true"
+					@showPlayer="$emit('showPlayer', $event)"
+					@updateBoardGameInfo="emit('updateBoardGameInfo')"
+					@showEditList="editListToggle"
+			/>
+			<template v-else>
 				<div
-						:class="['platform', selectedPlatform === null ? 'active' : '']"
-						@click="selectPlatform(null)"
-				>Все платформы</div>
-				<div
-						v-for="(platform, key) in platforms"
-						:key="key"
-						:class="['platform', selectedPlatform === platform.id ? 'active' : '']"
-						@click="selectPlatform(platform.id)"
+						v-if="items.length > 0"
+						class="roulette-container"
 				>
-					{{ platform.name }}
-				</div>
-			</div>
-			<div
-					v-if="items.length > 0"
-					class="roulette-container"
-			>
-				<div
-						class="roulette-window"
-						:style="`height: ${mainBlockHeight}px;`"
-				>
-					<font-awesome-icon :icon="['fas', 'play']" class="left-triangle" />
-					<font-awesome-icon :icon="['fas', 'play']" flip="horizontal" class="right-triangle" />
 					<div
-							class="roulette-content"
-							:style="{ transform: `translateY(${-translateY}px)`, transition: spinning ? 'none' : 'transform 2s ease-out' }"
+							class="roulette-window"
+							:style="`height: ${mainBlockHeight}px;`"
 					>
+						<font-awesome-icon :icon="['fas', 'play']" class="left-triangle" />
+						<font-awesome-icon :icon="['fas', 'play']" flip="horizontal" class="right-triangle" />
 						<div
-								v-for="(element, index) in repeatedItems"
-								:key="index"
-								class="item"
-								:style="`height: ${itemHeight - 5}px;`"
+								class="roulette-content"
+								:style="{ transform: `translateY(${-translateY}px)`, transition: spinning ? 'none' : 'transform 2s ease-out' }"
 						>
-							<GameGamblingCard
-									:element="element"
-									:showControlPanel="false"
-									:itemHeight="itemHeight"
-									:classes="element.id === resultId ? 'active' : ''"
-							/>
+							<div
+									v-for="(element, index) in repeatedItems"
+									:key="index"
+									class="item"
+									:style="`height: ${itemHeight - 5}px;`"
+							>
+								<GameGamblingCard
+										:element="element"
+										:showControlPanel="false"
+										:itemHeight="itemHeight"
+										:classes="element.id === resultId ? 'active' : ''"
+								/>
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="count-info">
-					Количество игр: {{ items.length }}
-				</div>
+					<div class="count-info">
+						Количество игр: {{ items.length }}
+					</div>
 
-				<div class="flex">
-					<button
-							:class="`btn mr-[1rem] ${spinning || requestInProgress ? 'btn-disable' : 'btn-simple-1' }`"
-							@click="getRandomGame"
-					>
-						{{ currentPlayer.current_game ? 'Реролить' : 'Крутануть рулетку' }}
-					</button>
-					<button
-							:class="`btn mr-[1rem] ${spinning || requestInProgress ? 'btn-disable' : 'btn-simple-1' }`"
-							@click="editListToggle()"
-					>
-						Редактировать список
-					</button>
+					<div class="flex">
+						<button
+								:class="`btn mr-[1rem] ${spinning || requestInProgress ? 'btn-disable' : 'btn-simple-1' }`"
+								@click="getRandomGame"
+						>
+							{{ currentPlayer.current_game ? 'Реролить' : 'Крутануть рулетку' }}
+						</button>
+						<button
+								:class="`btn mr-[1rem] ${spinning || requestInProgress ? 'btn-disable' : 'btn-simple-1' }`"
+								@click="editListToggle()"
+						>
+							Редактировать список
+						</button>
+					</div>
+					<!--				<audio ref="spinSound" src="/sounds/roll.wav" preload="auto"></audio>-->
+					<audio ref="spinSound" src="/sounds/baraban_sg.mp3" preload="auto"></audio>
 				</div>
-<!--				<audio ref="spinSound" src="/sounds/roll.wav" preload="auto"></audio>-->
-				<audio ref="spinSound" src="/sounds/baraban_sg.mp3" preload="auto"></audio>
-			</div>
-			<div v-else class="item-box">
-				Игр больше нет *(
-			</div>
+				<div v-else class="item-box">
+					Игр больше нет *(
+				</div>
+			</template>
 		</template>
-	</template>
+	</div>
 </template>
 
 <style lang="scss" scoped>
+.loading-box {
+	@apply absolute z-[10] justify-center items-center w-full h-full bg-black/50;
+}
+
 .platforms-container {
 	@apply flex gap-[10px] pt-[20px] pb-[20px] flex-wrap;
 

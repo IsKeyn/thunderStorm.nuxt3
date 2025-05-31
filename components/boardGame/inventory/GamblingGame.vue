@@ -24,6 +24,9 @@ const props = defineProps({
 let items = props.items;
 
 // Дублируем элементы для долгого кручения
+/* Перемешиваем элементы */
+items = items.sort(() => Math.random() - 0.5);
+
 const repeatedItems = Array(60).fill([...items]).flat();
 
 const translateY = ref(0)

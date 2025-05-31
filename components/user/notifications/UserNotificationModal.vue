@@ -5,9 +5,11 @@ import UserNotificationList from '@/components/user/notifications/UserNotificati
 import { ref } from "vue";
 
 const modalOpen = ref(false);
+const modalLoading = ref(false);
 
 const showModal = () => {
 	modalOpen.value = !modalOpen.value;
+	modalLoading.value = true;
 }
 
 defineExpose({
@@ -25,7 +27,11 @@ defineExpose({
 		<div class="modal-parent">
 			<h3 class="modal-title">Уведомления</h3>
 			<div class="link-parent-box">
-				<UserNotificationList />
+				<ui-BigPreloader v-if="modalLoading" />
+				<UserNotificationList
+						v-show="!modalLoading"
+						@loadingToggle="modalLoading = !modalLoading"
+				/>
 			</div>
 		</div>
 	</Modal>

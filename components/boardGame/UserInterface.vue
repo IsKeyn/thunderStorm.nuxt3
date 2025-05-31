@@ -9,6 +9,7 @@ import Dices from '@/components/boardGame/Dices.vue';
 import Points from '@/components/boardGame/user/Points.vue';
 import UserGame from '@/components/boardGame/user/UserGame.vue';
 import StatusEffects from '@/components/boardGame/user/StatusEffects.vue';
+import Timer from '@/components/boardGame/timer/Timer.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -52,6 +53,17 @@ const alreadyInGame = computed(() => {
 
 	return player.length > 0;
 });
+
+const gameComponent = ref(null);
+const inventoryComponent = ref(null);
+
+const showGame = () => {
+	gameComponent.value.openCloseModalFunc();
+}
+
+const showInventory = () => {
+	inventoryComponent.value.openCloseModalFunc();
+}
 </script>
 
 <template>
@@ -60,6 +72,8 @@ const alreadyInGame = computed(() => {
 			<UserInfo
 					@updateBoardGameInfo="emit('updateBoardGameInfo')"
 					@showPlayer="$emit('showPlayer', $event)"
+					@showGame="showGame()"
+					@showInventory="showInventory()"
 			/>
 			<GoInThisGame
 					v-if="!alreadyInGame"
@@ -79,6 +93,9 @@ const alreadyInGame = computed(() => {
 						@fetchLogs="emit('fetchLogs')"
 						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 				/>
+<!--				<Timer-->
+<!--						:boardGameId="boardGameId"-->
+<!--				/>-->
 				<Points
 						:boardGameId="boardGameId"
 						:boardGameInfo="boardGameInfo"
@@ -86,6 +103,7 @@ const alreadyInGame = computed(() => {
 						@fetchLogs="emit('fetchLogs')"
 				/>
 				<UserGame
+						ref="gameComponent"
 						:boardGameId="boardGameId"
 						:boardGameInfo="boardGameInfo"
 						@updateBoardGameInfo="emit('updateBoardGameInfo')"
@@ -94,6 +112,7 @@ const alreadyInGame = computed(() => {
 				/>
 				<span class="user-interface-title">Инвентарь</span>
 				<Inventory
+						ref="inventoryComponent"
 						:boardGameId="boardGameId"
 						:boardGameInfo="boardGameInfo"
 						@fetchLogs="emit('fetchLogs')"

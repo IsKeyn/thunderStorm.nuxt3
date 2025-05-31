@@ -120,11 +120,13 @@ const afterSendNotification = () => {
 		<div class="modal-parent">
 			<h3 class="modal-title">Профиль пользователя</h3>
 			<div class="link-parent-box">
+				<ui-BigPreloader v-if="requestInProgress" />
 				<UserProfile
-					:userInfo="fetchData"
-					:boardGameInfo="boardGameInfo"
-					@setOpenedImage="setOpenedImage"
-					@sendNotification="sendNotification"
+						v-show="!requestInProgress"
+						:userInfo="fetchData"
+						:boardGameInfo="boardGameInfo"
+						@setOpenedImage="setOpenedImage"
+						@sendNotification="sendNotification"
 				/>
 			</div>
 		</div>

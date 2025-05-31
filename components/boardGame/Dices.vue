@@ -182,23 +182,31 @@ const getDotSizeClasses = () => {
 	<div class="dice-container">
 		<!-- D20 -->
 		<div
-				class="dice-d20"
-				:style="`
-  				  width: ${size}px;
-						height: ${size + size/10}px;
-						background-color: var(--button-color-1);
-						-webkit-mask-image: url('/images/board-games/d20.png');
-						-webkit-mask-position: center center;
-						-webkit-mask-size: ${size}px;
-						-webkit-mask-repeat: no-repeat;
-						mask-image: url('/images/board-games/d20.png');
-						mask-position: center center;
-						mask-size: ${size}px;
-						mask-repeat: no-repeat;
-				`"
-				:class="{ rolling: isRollingD20 }"
+				class="d20-container"
 				@click="rollDice('d20')"
+				:style="`
+							width: ${size}px;
+							height: ${size + size/10}px;
+				`"
 		>
+			<div
+					class="dice-d20"
+					:style="`
+							width: ${size}px;
+							height: ${size + size/10}px;
+							background-color: var(--button-color-1);
+							-webkit-mask-image: url('/images/board-games/d20.png');
+							-webkit-mask-position: center center;
+							-webkit-mask-size: ${size}px;
+							-webkit-mask-repeat: no-repeat;
+							mask-image: url('/images/board-games/d20.png');
+							mask-position: center center;
+							mask-size: ${size}px;
+							mask-repeat: no-repeat;
+					`"
+					:class="{ rolling: isRollingD20 }"
+			>
+			</div>
 			<div class="face d20-face">
 				{{ d20Result }}
 			</div>
@@ -241,22 +249,28 @@ const getDotSizeClasses = () => {
 		@apply w-full h-full;
 	}
 
-	.dice-d20 {
-		@apply
+	.d20-container {
+		@apply relative;
+
+		.dice-d20 {
+			@apply
 			cursor-pointer
-		;
+			absolute top-0 left-0
+			;
 
-		transition: transform 0.5s;
+			transition: transform 0.5s;
 
-		&.rolling {
-			animation: roll 1s ease;
+			&.rolling {
+				animation: roll 1s ease;
+			}
 		}
 
 		.d20-face {
 			@apply
-				text-[2rem] text-[var(--main-text-color)]
-				flex
-				justify-center items-center
+			text-[2rem] text-[var(--main-text-color)]
+			flex
+			justify-center items-center
+			relative z-[10]
 			;
 		}
 	}
