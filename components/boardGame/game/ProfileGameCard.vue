@@ -63,6 +63,9 @@ const getLongPlayLink = () => {
 
 <template>
 	<div :class="['item-box', classes]">
+		<div class="status-bar">
+			{{ getStatusName(element.status) }} <span v-if="element.time">(время прохождения {{ element.time }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
+		</div>
 		<div class="content-box">
 			<img
 					v-if="element.game.game.covers && element.game.game.covers[0]"
@@ -118,9 +121,6 @@ const getLongPlayLink = () => {
 			<div class="message">
 				{{ element.comment.message }}
 			</div>
-		</div>
-		<div class="status-bar">
-			{{ getStatusName(element.status) }} <span v-if="element.time">(время прохождения {{ element.time }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
 		</div>
 	</div>
 </template>
