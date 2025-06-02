@@ -12,6 +12,10 @@ const showModal = () => {
 	modalLoading.value = true;
 }
 
+const loadingToggle = (value = false) => {
+	modalLoading.value = value;
+}
+
 defineExpose({
 	showModal,
 });
@@ -30,7 +34,7 @@ defineExpose({
 				<ui-BigPreloader v-if="modalLoading" />
 				<UserNotificationList
 						v-show="!modalLoading"
-						@loadingToggle="modalLoading = !modalLoading"
+						@loadingToggle="loadingToggle"
 				/>
 			</div>
 		</div>
