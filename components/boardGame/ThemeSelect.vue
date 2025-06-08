@@ -93,13 +93,16 @@ const getThemeConst = () => {
 
 <style lang="scss" scoped>
 .choice-theme-block {
-	@apply fixed bottom-[5rem] left-[5rem] z-[99999] flex bg-[var(--button-color-1)] rounded-full p-[1rem];
+	@apply
+		fixed bottom-[1rem] lg:bottom-[5rem] left-[1rem] lg:left-[5rem] z-[99999]
+		flex bg-[var(--button-color-1)] rounded-full p-[1rem]
+	;
 
 	.icon-box {
 		@apply flex justify-center items-center cursor-pointer;
 
 		.choice-theme-icon {
-			@apply text-[3rem];
+			@apply lg:text-[3rem];
 		}
 	}
 

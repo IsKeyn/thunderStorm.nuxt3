@@ -855,12 +855,10 @@ function onDrop(index) {
 	}, 300)
 }
 
-const fetchedData = ref([]);
-const requestInProgress = ref(false);
-
 const otherPlayers = ref({});
 
-const { refresh } = await useAsyncData(
+const { data: requestData, pending: requestInProgress, refresh } = await useAsyncData(
+		'boardGameGetBoardInfoKey',
 		async () => {
 			let request = `${apiUrl.value}board-game/getBoardInfo`;
 
@@ -870,10 +868,8 @@ const { refresh } = await useAsyncData(
 
 			const sessionCookie = useCookie(sessionCookieName.value);
 
-			requestInProgress.value = true;
-
 			try {
-				await $fetch(
+				const response = await $fetch(
 						request,
 						{
 							method: 'GET',
@@ -884,44 +880,44 @@ const { refresh } = await useAsyncData(
 								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
 								Referer: publicUrl.value,
 							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									fetchedData.value = response._data;
-
-									tokenPosition.value = 1;
-									otherPlayers.value = [];
-
-									if (fetchedData.value && fetchedData.value?.player?.position) {
-										tokenPosition.value = fetchedData.value.player.position;
-									}
-
-									for (const key in fetchedData.value.otherPlayers) {
-										let position = 1;
-
-										if (fetchedData.value.otherPlayers[key].position) {
-											position = fetchedData.value.otherPlayers[key].position;
-										}
-
-										if (!otherPlayers.value[position]) {
-											otherPlayers.value[position] = [];
-										}
-
-										otherPlayers.value[position].push(fetchedData.value.otherPlayers[key]);
-									}
-								} else {
-									error('Log request error', 5000);
-								}
-
-								requestInProgress.value = false;
-							}
 						},
 				);
+
+				return response;
 			} catch (e) {
 				errorHandler(e);
-				requestInProgress.value = false;
 			}
 		}
 );
+
+const fetchedData = computed(() => {
+	return requestData.value || null;
+});
+
+const setData = () => {
+		tokenPosition.value = 1;
+		otherPlayers.value = [];
+
+		if (fetchedData.value && fetchedData.value?.player?.position) {
+			tokenPosition.value = fetchedData.value.player.position;
+		}
+
+		for (const key in fetchedData.value.otherPlayers) {
+			let position = 1;
+
+			if (fetchedData.value.otherPlayers[key].position) {
+				position = fetchedData.value.otherPlayers[key].position;
+			}
+
+			if (!otherPlayers.value[position]) {
+				otherPlayers.value[position] = [];
+			}
+
+			otherPlayers.value[position].push(fetchedData.value.otherPlayers[key]);
+		}
+}
+
+setData();
 
 const alreadyInGame = computed(() => {
 	const player = props.boardGameInfo.players.filter((item) => {
@@ -1025,9 +1021,14 @@ const setTheme = (theme) => {
 */
 watch(() => userStore.user, () => {
 	if (userStore.user && Object.keys(userStore.user).length > 0) {
-		refresh();
+		updateData();
 	}
 });
+
+const updateData = async () => {
+	await refresh();
+	setData();
+}
 </script>
 
 <template>

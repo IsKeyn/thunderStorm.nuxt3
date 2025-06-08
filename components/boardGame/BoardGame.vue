@@ -23,20 +23,16 @@ const {
 
 const route = useRoute();
 
-const requestInProgress = ref(false);
-const fetchedData = ref();
-
-const { refresh } = await useAsyncData(
+const { data: requestData, pending: requestInProgress, refresh } = await useAsyncData(
+		'boardGameInfoKey',
 		async () => {
 			let request = `${apiUrl.value}board-game/get/${route.params.slug}`;
 
 			const query = {};
 			const sessionCookie = useCookie(sessionCookieName.value);
 
-			requestInProgress.value = true;
-
 			try {
-				await $fetch(
+				const response = await $fetch(
 						request,
 						{
 							method: 'GET',
@@ -46,24 +42,23 @@ const { refresh } = await useAsyncData(
 								Accept: 'application/json',
 								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
 								Referer: publicUrl.value,
-							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									fetchedData.value = response._data.data;
-								} else {
-									error('Request error', 5000);
-								}
-
-								requestInProgress.value = false;
 							}
 						},
 				);
+
+				return response.data;
 			} catch (e) {
 				errorHandler(e);
-				requestInProgress.value = false;
 			}
+		},
+		{
+			server: true, // выполнять только на сервере
+			lazy: true, // ждать выполнения запроса перед рендерингом
 		}
 );
+
+
+const fetchedData = computed(() => requestData.value || null);
 
 const logListBlock = ref(null);
 
@@ -71,8 +66,8 @@ const updateLogs = () => {
 	logListBlock.value.updateLogs();
 }
 
-const updateBoardGameInfo = () => {
-	refresh();
+const updateBoardGameInfo = async () => {
+	await refresh();
 }
 
 const playersComponent = ref(null);
@@ -80,10 +75,21 @@ const playersComponent = ref(null);
 const showPlayer = (id) => {
 	playersComponent.value.showPlayerInfo(id);
 }
+
+const showBoard = ref(false);
+
+const toggleBoard = () => {
+	showBoard.value = !showBoard.value;
+}
 </script>
 
 <template>
-	<Preloader v-if="requestInProgress" />
+	<div
+			v-if="requestInProgress"
+			class="loading-box without-border"
+	>
+		<ui-BigPreloader class="h-full" />
+	</div>
 	<div v-if="fetchedData && fetchedData.active === 1">
 		<header class="without-border">
 			<span class="title" v-if="fetchedData.name">{{ fetchedData.name }}</span>
@@ -103,19 +109,22 @@ const showPlayer = (id) => {
 						target="_blank"
 						class="btn btn-simple-1 ml-[1rem]"
 				>
-					Расширение <font-awesome-icon :icon="['fab', 'twitch']" />
+					<span class="button-text">Расширение</span> <font-awesome-icon :icon="['fab', 'twitch']" />
 				</a>
 				<a
 						href="https://t.me/game_events_tr"
 						target="_blank"
 						class="btn btn-simple-1 ml-[1rem]"
 				>
-					Телеграм <font-awesome-icon :icon="['fab', 'telegram']" />
+					<span class="button-text">Телеграм</span> <font-awesome-icon :icon="['fab', 'telegram']" />
 				</a>
 			</div>
 		</header>
+		<button class="btn btn-simple-1 show-board-button" @click="toggleBoard">
+			{{ showBoard ? 'Cкрыть' : 'Показать' }} доску
+		</button>
 		<div class="main-dashboard-box">
-			<div class="user-interface-box">
+			<div :class="['user-interface-box', showBoard ? 'show-board' : '']">
 				<UserInterface
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
@@ -126,13 +135,15 @@ const showPlayer = (id) => {
 						@showInventory="$emit('showInventory', $event)"
 				/>
 			</div>
-			<div class="board-box">
-				<Board
-						:boardGameId="fetchedData.id"
-						:boardGameInfo="fetchedData"
-						@updateBoardGameInfo="updateBoardGameInfo"
-						@showPlayer="showPlayer"
-				/>
+			<div :class="['board-box', showBoard ? 'show-board' : '']">
+				<div class="hidden lg:block">
+					<Board
+							:boardGameId="fetchedData.id"
+							:boardGameInfo="fetchedData"
+							@updateBoardGameInfo="updateBoardGameInfo"
+							@showPlayer="showPlayer"
+					/>
+				</div>
 				<Comments
 						entityType="App\Models\BoardGame"
 						:entityId="fetchedData.id"
@@ -141,7 +152,7 @@ const showPlayer = (id) => {
 						@refresh="refresh"
 				/>
 			</div>
-			<div class="info-box">
+			<div :class="['info-box', showBoard ? 'show-board' : '']">
 				<Players
 						ref="playersComponent"
 						:boardGameId="fetchedData.id"
@@ -163,46 +174,82 @@ const showPlayer = (id) => {
 					title: fetchedData.name,
 			}"
 		/>
+		<ThemeSelect />
 	</div>
 	<div v-else>
 		Данная игра не активна
 	</div>
-	<ThemeSelect />
 </template>
 
+<style lang="scss">
+header {
+	.menu-block {
+		.btn {
+			@apply text-center;
+
+			span.button-text {
+				@apply hidden xl:block 2xl:inline;
+			}
+		}
+	}
+}
+</style>
+
 <style lang="scss" scoped>
+.loading-box {
+	@apply fixed z-[50000] justify-center items-center w-[100vw] h-[100vh] bg-black/50;
+}
+
 header {
 	@apply
 		pt-[1rem] pb-[1rem] pl-[var(--main-left-padding)] pr-[var(--main-right-padding)]
-		flex items-center gap-2
+		block lg:flex lg:items-center gap-2 text-center lg:text-left
 	;
 
 	border-bottom: 1px solid var(--second-border-color);
 
 	.title {
-		@apply w-1/2;
+		@apply w-1/3;
 	}
 
 	.menu-block {
-		@apply w-1/2 flex justify-end;
+		@apply w-full lg:w-2/3 flex justify-center lg:justify-end;
 	}
 }
 
+.show-board-button {
+	@apply hidden lg:block 2xl:hidden;
+}
+
 .main-dashboard-box {
-	@apply grid grid-cols-12;
+	@apply block lg:grid grid-cols-12;
 
 	.user-interface-box {
-		@apply col-span-2 mr-[2rem];
+		@apply lg:col-span-6 2xl:col-span-2 mr-0 lg:mr-[2rem];
+
+		&.show-board {
+			@apply hidden;
+		}
 	}
 
 	.board-box {
-		@apply col-span-8;
+		@apply
+			col-span-4 lg:hidden 2xl:block 2xl:col-span-8
+		;
 
 		margin: 0 auto;
+
+		&.show-board {
+			@apply col-span-12 block;
+		}
 	}
 
 	.info-box {
-		@apply col-span-2 ml-[2rem];
+		@apply lg:col-span-6 2xl:col-span-2 ml-0 lg:ml-[2rem];
+
+		&.show-board {
+			@apply hidden;
+		}
 	}
 }
 </style>

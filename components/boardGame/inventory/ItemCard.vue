@@ -27,7 +27,7 @@ const props = defineProps({
 </script>
 
 <template>
-	<div :class="['item-box', showControlPanel ? 'show-control-panel' : '']">
+	<div :class="['item-box', showControlPanel || element.quantity > 1 ? 'add-padding-right' : '']">
 		<img
 				v-if="element.image"
 				:src="getResizeImg(element.image)"
@@ -65,6 +65,12 @@ const props = defineProps({
 				<font-awesome-icon :icon="['fas', 'xmark']" />
 			</span>
 		</div>
+		<div
+				v-if="element.quantity > 1"
+				class="count-panel"
+		>
+			x{{ element.quantity }}
+		</div>
 	</div>
 </template>
 
@@ -73,7 +79,7 @@ const props = defineProps({
 .item-box {
 	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative cursor-pointer min-h-[86px];
 
-	&.show-control-panel {
+	&.add-padding-right {
 		@apply pr-[3rem];
 	}
 
@@ -115,6 +121,10 @@ const props = defineProps({
 		.close-button {
 			@apply bg-[var(--error-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center;
 		}
+	}
+
+	.count-panel {
+		@apply absolute right-0 top-0 flex justify-between items-center text-[1.5rem] h-full p-[1rem];
 	}
 }
 </style>

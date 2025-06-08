@@ -1,8 +1,9 @@
 <script setup>
 import ItemCard from '@/components/boardGame/inventory/ItemCard.vue';
 import LightBox from '@/components/media/LightBox.vue'
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const emit = defineEmits(['setOpenedImage', 'loadingToggle']);
 
@@ -28,8 +29,31 @@ const props = defineProps({
 	},
 });
 
+const form = ref(
+		{
+			searchLine: {
+				name: 'Поиск',
+				value: '',
+				type: 'text',
+				placeholder: 'Начните вводить название предмета, для фильтрации',
+				validateRules: 'required, minLength_2, maxLength_50',
+				classes: 'w-full',
+			},
+		},
+);
+
 /* Получение данных */
 const itemList = ref([]);
+
+const filteredItems = ref(null);
+
+const useFilter = () => {
+	const filteredItemsVal = itemList.value.filter((item) => {
+		return item.name.toLowerCase().includes(form.value.searchLine.value.toLowerCase());
+	});
+
+	filteredItems.value = filteredItemsVal;
+}
 
 const requestInProgress = ref(false);
 
@@ -59,6 +83,7 @@ const { refresh } = await useAsyncData(
 							onResponse({response}) {
 								if (response.status === 200) {
 									itemList.value = response._data.items;
+									useFilter();
 								} else {
 									error('Request error', 5000);
 								}
@@ -75,15 +100,29 @@ const { refresh } = await useAsyncData(
 			}
 		}
 );
+
+watch(form.value.searchLine, () => {
+	useFilter();
+}, { deep: true });
 </script>
 
 <template>
 	<BigPreloader v-if="requestInProgress" />
 	<div v-else class="wrapper">
+		<FormGenerator
+				v-if="form.searchLine"
+				name="search"
+				class="w-1/2"
+				:element="form.searchLine"
+				:showTitle="false"
+				validateErrorPosition="bottom"
+				labelClasses="mr-4 mt-[10px] mb-[10px]"
+				:fieldClasses="form.searchLine.classes"
+		/>
 		<span v-if="itemList && itemList.length === 0">Предметов нет</span>
 		<ItemCard
 				v-else
-				v-for="(element, key) in itemList"
+				v-for="(element, key) in filteredItems"
 				:key="key"
 				:element="element"
 				:useLightBox="true"
@@ -99,3 +138,8 @@ const { refresh } = await useAsyncData(
 	/>
 </template>
 
+<style lang="scss">
+input[name="search"] {
+	@apply bg-[var(--third-bg-color)];
+}
+</style>

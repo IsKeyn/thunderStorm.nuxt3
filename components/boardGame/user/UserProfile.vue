@@ -4,6 +4,7 @@ import LogCard from '@/components/boardGame/bg-logs/LogCard.vue';
 import StepCard from '@/components/boardGame/user/StepCard.vue';
 import CurrentGameCard from '@/components/boardGame/game/CurrentGameCard.vue';
 import ProfileGameCard from '@/components/boardGame/game/ProfileGameCard.vue';
+import Timer from '@/components/boardGame/timer/Timer.vue';
 
 import { media } from '@/composables/media.js'
 const {
@@ -52,6 +53,26 @@ const currentPlayer = computed(() => {
 		return curPlayer[0];
 	}
 });
+
+const usedItems = computed(() => {
+	const grouped = {};
+
+	if (props.userInfo.inventory) {
+		props.userInfo.inventory.filter(item => item.has_used).forEach((item) => {
+			if (grouped[item.item.id]) {
+				grouped[item.item.id].item.quantity++;
+			} else {
+				grouped[item.item.id] = { ...item };
+				grouped[item.item.id].item.quantity = 1;
+
+			}
+		});
+	}
+
+	return Object.values(grouped).sort(function(a, b) {
+		return b.item.quantity - a.item.quantity;
+	});
+});
 </script>
 
 <template>
@@ -70,7 +91,7 @@ const currentPlayer = computed(() => {
 				>
 				<img v-else src="/images/system/no-avatar.png">
 			</div>
-			<div class="box">
+			<div class="box w-full">
 				<h2 v-if="userInfo.player_info.user" class="inv-title">{{ userInfo.player_info.user.name }}</h2>
 				<div class="info">
 					<div class="column1">
@@ -101,9 +122,14 @@ const currentPlayer = computed(() => {
 						</button>
 					</div>
 					<div class="column2">
-
+						<Timer
+								class="w-2/3"
+								:boardGameId="boardGameId"
+								:userId="userInfo.player_info.user_id"
+								:showName="false"
+								:showControlButtons="false"
+						/>
 					</div>
-
 				</div>
 			</div>
 		</div>
@@ -113,6 +139,7 @@ const currentPlayer = computed(() => {
 			<CurrentGameCard
 					:currentGame="currentPlayer.current_game"
 					:players="boardGameInfo.players"
+					:showTitle="false"
 					class="current-game"
 			/>
 		</div>
@@ -150,10 +177,10 @@ const currentPlayer = computed(() => {
 			</div>
 			<div class="box">
 				<h2 v-if="userInfo.player_info" class="inv-title">Использованные предметы игрока</h2>
-				<span v-if="userInfo.inventory && userInfo.inventory.filter(item => item.has_used).length === 0">Предметов нет</span>
+				<span v-if="usedItems.length === 0">Предметов нет</span>
 				<div class="wrapper">
 					<ItemCard
-							v-for="(element, key) in userInfo.inventory.filter(item => item.has_used)"
+							v-for="(element, key) in usedItems"
 							:key="key"
 							:element="element.item"
 							:useLightBox="true"
@@ -206,6 +233,8 @@ const currentPlayer = computed(() => {
 	@apply flex gap-4 mb-[2rem];
 
 	.box {
+		@apply mb-[1rem] lg:mb-0;
+
 		span {
 			&.field {
 				@apply block mb-[0.2rem];
@@ -216,10 +245,11 @@ const currentPlayer = computed(() => {
 			@apply flex;
 
 			.column1 {
-				//@apply w-1/3;
+				@apply w-1/2;
 			}
 
-			.column1 {
+			.column2 {
+				@apply flex justify-center lg:justify-end w-1/2;
 				//@apply w-2/3;
 			}
 		}
@@ -230,10 +260,10 @@ const currentPlayer = computed(() => {
 .logs-and-steps,
 .current-game
 {
-	@apply flex gap-4;
+	@apply block lg:flex gap-4;
 
 	.box {
-		@apply w-1/2;
+		@apply mb-[1rem] lg:mb-0 w-full lg:w-1/2;
 
 		.wrapper {
 			@apply h-[440px] overflow-auto;
@@ -242,13 +272,12 @@ const currentPlayer = computed(() => {
 }
 
 .logs-and-steps {
-	@apply flex gap-4;
+	@apply block lg:flex gap-4;
 
 	.logs {
 
 	}
 }
-
 
 .inv-title {
 	@apply font-bold mb-4 uppercase;

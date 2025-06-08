@@ -1,5 +1,6 @@
 <script setup>
 import GameFinishForm from '@/components/boardGame/game/GameFinishForm.vue';
+import PlayerActionWithGame from '@/components/boardGame/game/PlayerActionWithGame.vue';
 import LightBox from '@/components/media/LightBox.vue'
 
 const emit = defineEmits(['showPlayer', 'setStep', 'toggleFormVisible', 'updateBoardGameInfo']);
@@ -15,6 +16,7 @@ const {
 } = date();
 
 import { lightBox } from '@/composables/lightBox.js';
+
 const {
 	openedImage,
 	setOpenedImage,
@@ -24,6 +26,10 @@ const props = defineProps({
 	boardGameId: {
 		type: Number,
 		default: 1,
+	},
+	boardGameInfo: {
+		type: Object,
+		default: {},
 	},
 	currentGame: {
 		type: Object,
@@ -37,6 +43,10 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	showCover: {
+		type: Boolean,
+		default: true,
+	},
 	showInfoButtons: {
 		type: Boolean,
 		default: true,
@@ -45,6 +55,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showOtherPlayersActions: {
+		type: Boolean,
+		default: false,
+	}
 });
 
 const getPlayerById = (id) => {
@@ -81,12 +95,17 @@ const getLongPlayLink = () => {
 </script>
 
 <template>
+	<span
+			v-if="showTitle"
+			class="user-interface-title text-left">
+		Ваша текущая игра
+	</span>
 	<div
 			v-if="Object.keys(currentGame).length > 0"
 			class="current-game"
 	>
 		<img
-				v-if="showTitle && currentGame.game.game?.covers[0]?.src"
+				v-if="showCover && currentGame.game.game?.covers[0]?.src"
 				:src="getResizeImg(currentGame.game.game.covers[0])"
 				@click="setOpenedImage(currentGame.game.game.covers[0])"
 		>
@@ -103,7 +122,10 @@ const getLongPlayLink = () => {
 				Добавил: <span class="hover-line">{{ getPlayerById(currentGame.game.added_by).user.name }}</span>
 			</span>
 			<span class="line-info" v-if="currentGame.game.description">{{ currentGame.game.description }}</span>
-			<div v-if="showInfoButtons">
+			<div
+					v-if="showInfoButtons"
+					class="mb-[1rem] mt-[1rem]"
+			>
 				<div class="mb-2">Ссылки:</div>
 				<ul>
 					<li>
@@ -122,13 +144,13 @@ const getLongPlayLink = () => {
 					</li>
 				</ul>
 			</div>
-			<div v-if="showActionButtons && !showFinishGameForm">
-				<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(1)">Рерольнуть</button>
-				<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(3)">Отдал</button>
-				<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(2)">Игра пройдена</button>
-				<button class="btn btn-simple-1 mr-[1rem]" @click="emit('showEditList')">Редактировать списки</button>
-			</div>
 		</div>
+	</div>
+	<div class="mt-5" v-if="showActionButtons && !showFinishGameForm">
+		<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(1)">Рерольнуть</button>
+		<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(3)">Отдал</button>
+		<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(2)">Игра пройдена</button>
+		<button class="btn btn-simple-1 mr-[1rem]" @click="emit('showEditList')">Редактировать списки</button>
 	</div>
 	<GameFinishForm
 			v-if="showFinishGameForm"
@@ -139,6 +161,23 @@ const getLongPlayLink = () => {
 			@toggleFormVisible="toggleFormVisible"
 			@updateBoardGameInfo="emit('updateBoardGameInfo')"
 	/>
+	<template v-if="showOtherPlayersActions">
+		<span class="user-interface-title text-left">Действия других с данной игрой</span>
+		<PlayerActionWithGame
+				v-if="currentGame.other_players_actions.length > 0"
+				v-for="(element, key) in currentGame.other_players_actions"
+				:key="key"
+				:boardGameId="boardGameId"
+				:boardGameInfo="boardGameInfo"
+				:element="element"
+				classes="cursor-pointer"
+				@showPlayer="$emit('showPlayer', $event)"
+		/>
+		<div v-else class="item-box">
+			Другим игрокам эта игра не выпадала
+		</div>
+	</template>
+
 	<LightBox
 			v-if="openedImage"
 			:image="openedImage"
@@ -150,10 +189,12 @@ const getLongPlayLink = () => {
 
 <style lang="scss" scoped>
 .current-game {
-	@apply flex;
+	@apply lg:flex;
 
 	img {
-		@apply w-1/6 object-contain mr-[1rem] cursor-pointer;
+		@apply
+			mx-auto mb-4 lg:m-0 lg:mr-[1rem]
+			w-1/2 lg:w-1/6 object-contain cursor-pointer;
 	}
 
 	.description-block {

@@ -122,7 +122,7 @@ const afterSendNotification = () => {
 			<div class="link-parent-box">
 				<ui-BigPreloader v-if="requestInProgress" />
 				<UserProfile
-						v-show="!requestInProgress"
+						v-if="!requestInProgress"
 						:userInfo="fetchData"
 						:boardGameInfo="boardGameInfo"
 						@setOpenedImage="setOpenedImage"

@@ -29,10 +29,8 @@ const props = defineProps({
 	},
 });
 
-const fetchedData = ref([]);
-const requestInProgress = ref(false);
-
-const { refresh } = await useAsyncData(
+const { data: requestData, pending: requestInProgress, refresh } = await useAsyncData(
+		'boardGameStreamersOnlineKey',
 		async () => {
 			let request = `${apiUrl.value}board-game/getStreamersOnline`;
 
@@ -42,10 +40,8 @@ const { refresh } = await useAsyncData(
 
 			const sessionCookie = useCookie(sessionCookieName.value);
 
-			requestInProgress.value = true;
-
 			try {
-				await $fetch(
+				const response = await $fetch(
 						request,
 						{
 							method: 'GET',
@@ -56,23 +52,28 @@ const { refresh } = await useAsyncData(
 								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
 								Referer: publicUrl.value,
 							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									fetchedData.value = response._data;
-								} else {
-									error('request error', 5000);
-								}
-
-								requestInProgress.value = false;
-							}
+							// onResponse({response}) {
+							// 	if (response.status === 200) {
+							// 		fetchedData.value = response._data;
+							// 	} else {
+							// 		error('request error', 5000);
+							// 	}
+							//
+							// 	requestInProgress.value = false;
+							// }
 						},
 				);
+
+				return response;
 			} catch (e) {
 				errorHandler(e);
-				requestInProgress.value = false;
 			}
 		}
 );
+
+const fetchedData = computed(() => {
+	return requestData.value || null;
+});
 
 const carouselConfig = {
 	wrapAround: true,

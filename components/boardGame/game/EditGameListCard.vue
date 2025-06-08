@@ -41,7 +41,7 @@ const changeStep = (stepValue) => {
 
 <template>
 	<div class="item-box">
-		<div class="flex justify-between items-center">
+		<div class="item-element">
 			<div>{{ item.game.name }} <span v-if="item.platform">({{ item.platform.name }})</span> <span  v-if="item.game?.release_dates[0]?.date">({{ getFormattedDate('Y', item.game.release_dates[0].date) }})</span></div>
 			<div v-if="step === 1">
 			<span
@@ -81,6 +81,10 @@ const changeStep = (stepValue) => {
 
 .item-box {
 	@apply block;
+
+	.item-element {
+		@apply block lg:flex justify-between items-center;
+	}
 }
 
 select {

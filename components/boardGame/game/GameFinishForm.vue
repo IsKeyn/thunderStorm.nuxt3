@@ -11,13 +11,20 @@ const userStore = useUserStore();
 import { validate } from '@/composables/validate.js';
 const { validateForm } = validate();
 
-import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody } = api();
+import { api } from '@/composables/api.js'
+const {
+	apiUrl,
+	publicUrl,
+	sessionCookieName,
+	errorHandler,
+	sendApiRequest,
+} = api();
 
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
 import { boardGameLog } from '@/composables/BoardGame/boardGameLog.js'
+import { watch } from "vue";
 const { setLog } = boardGameLog();
 
 const props = defineProps({
@@ -50,13 +57,40 @@ const props = defineProps({
 const form = ref({});
 
 if (props.type === 2) {
-	form.value.hourCount = {
-		name: 'Затраченное время (в формате 8:40)',
-				value: null,
-				type: 'text',
-				placeholder: 'Время',
-				validateRules: 'minLength_1, 10',
-				classes: '',
+	// form.value.hourCount = {
+	// 	name: 'Затраченное время (в формате 8:40)',
+	// 			value: null,
+	// 			type: 'text',
+	// 			placeholder: 'Время',
+	// 			validateRules: 'minLength_1, 10',
+	// 			classes: 'mt-1 mb-1',
+	// };
+
+	form.value.hours = {
+		name: 'Часы',
+		value: null,
+		type: 'number',
+		placeholder: '00',
+		validateRules: 'minNumber_0, maxNumber_999',
+		classes: 'w-[4rem]',
+	};
+
+	form.value.minuts = {
+		name: 'Минуты',
+		value: null,
+		type: 'number',
+		placeholder: '00',
+		validateRules: 'minNumber_0, maxNumber_60',
+		classes: 'w-[4rem]',
+	};
+
+	form.value.seconds = {
+		name: 'Секунды',
+		value: null,
+		type: 'number',
+		placeholder: '00',
+		validateRules: 'minNumber_0, maxNumber_60',
+		classes: 'w-[4rem]',
 	};
 }
 
@@ -66,7 +100,7 @@ form.value.comment = {
 			type: 'textarea',
 			placeholder: '',
 			validateRules: 'minLength_2, 3000',
-			classes: '',
+			classes: 'w-full mt-1 mb-1',
 };
 
 const errorsMessages = ref([]);
@@ -92,13 +126,16 @@ const sendRequest = async () => {
 	requestInProgress.value = true;
 
 	try {
-		const body = preparedRequestBody(form.value);
+		// const body = preparedRequestBody(form.value);
+		const body = {};
 
 		body.board_game_id = props.boardGameId;
 		body.type = props.type;
 		body.entity_type = "App\\Models\\Game";
 		body.entity_id = props.game.id;
 		body.board_game_game_list_id = props.board_game_game_list_id;
+		body.hourCount = (form.value.hours.value * 60 + form.value.minuts.value) * 60 + form.value.seconds.value;
+		body.comment = form.value.comment.value;
 
 		const response = await sendApiRequest(`board-game/player-game/${props.doType}`, 'POST', body);
 
@@ -119,7 +156,9 @@ const sendRequest = async () => {
 			setLog(logBody);
 
 			if (props.type === 2) {
-				form.value.hourCount.value = null;
+				form.value.hours.value = null;
+				form.value.minuts.value = null;
+				form.value.seconds.value = null;
 			}
 
 			form.value.comment.value = null;
@@ -170,8 +209,22 @@ const writeLogMessage = () => {
 			break;
 	}
 
-	if (props.type === 2 && form.value.hourCount.value) {
-		message += ` ${form.value.hourCount.value} часов`;
+	if (props.type === 2) {
+		let time = '';
+
+		if (form.value.hours.value) {
+			time += form.value.hours.value ? form.value.hours.value : '00';
+		}
+
+		if (form.value.minuts.value) {
+			time += form.value.minuts.value ? ':' + form.value.minuts.value : ':00';
+		}
+
+		if (form.value.seconds.value) {
+			time += form.value.seconds.value ? ':' + form.value.seconds.value : ':00';
+		}
+
+		message += ` ${time}`;
 	}
 
 	if (form.value.comment.value) {
@@ -180,6 +233,68 @@ const writeLogMessage = () => {
 
 	return message;
 }
+
+// Получение времени игры
+const { data: requestData, pending: timeRequestInProgress, refresh } = await useAsyncData(
+		'getCurrentGameTime',
+		async () => {
+			let request = `${apiUrl.value}board-game/player-game/get-spend-time`;
+
+			const query = {
+				board_game_id: props.boardGameId,
+			};
+
+			const sessionCookie = useCookie(sessionCookieName.value);
+
+			try {
+				const response = await $fetch(
+						request,
+						{
+							method: 'GET',
+							credentials: 'include',
+							query,
+							headers: {
+								Accept: 'application/json',
+								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+								Referer: publicUrl.value,
+							}
+						},
+				);
+
+				return response;
+			} catch (e) {
+				errorHandler(e);
+			}
+		},
+		{
+			server: true, // выполнять только на сервере
+			lazy: true, // ждать выполнения запроса перед рендерингом
+		}
+);
+
+watch(() => requestData.value, (newValue) => {
+	if (requestData.value
+			&& form.value.hours
+			&& form.value.minuts
+			&& form.value.seconds
+	) {
+		form.value.hours.value = Math.floor(requestData.value / 3600);
+		form.value.minuts.value = Math.floor((requestData.value % 3600) / 60);
+		form.value.seconds.value = requestData.value % 60;
+	}
+}, { deep: true });
+
+// if (requestData.value
+// 		&& form.value.hours
+// 		&& form.value.minuts
+// 		&& form.value.seconds
+// ) {
+// 	console.log();
+//
+// 	form.value.hours.value = Math.floor(requestData.value / 3600)
+// 	form.value.minuts.value = Math.floor((requestData.value % 3600) / 60)
+// 	form.value.seconds.value = requestData.value % 60
+// }
 </script>
 
 <template>
@@ -200,15 +315,40 @@ const writeLogMessage = () => {
 		<div
 				v-if="userStore.user && Object.keys(userStore.user).length > 0"
 		>
+			<div v-if="type === 2" class="flex">
+				<FormGenerator
+						name="hours"
+						:element="form.hours"
+						validateErrorPosition="bottom"
+						labelClasses="lg:mr-4 mt-[10px] mb-[10px] block"
+						:fieldClasses="form.hours.classes"
+				/>
+
+				<FormGenerator
+						name="minuts"
+						:element="form.minuts"
+						validateErrorPosition="bottom"
+						labelClasses="lg:mr-4 mt-[10px] mb-[10px] block"
+						:fieldClasses="form.minuts.classes"
+				/>
+
+				<FormGenerator
+						name="seconds"
+						:element="form.seconds"
+						validateErrorPosition="bottom"
+						labelClasses="lg:mr-4 mt-[10px] mb-[10px] block"
+						:fieldClasses="form.seconds.classes"
+				/>
+			</div>
+
 			<FormGenerator
-					v-for="(element, key) in form"
-					:key="key"
-					name="name"
-					:element="element"
+					name="comment"
+					:element="form.comment"
 					validateErrorPosition="bottom"
-					labelClasses="mr-4 mt-[10px] mb-[10px] block"
-					:fieldClasses="element.classes"
+					labelClasses="lg:mr-4 mt-[10px] mb-[10px] block"
+					:fieldClasses="form.comment.classes"
 			/>
+
 			<div v-if="props.doType === 'update'" class="item-box">
 				<template v-if="type === 1">При рероле игры, вы получите "Тухлый банан" в инвентарь</template>
 				<template v-if="type === 2">За прохождение игры, вам будут начислены {{ points }} очков</template>

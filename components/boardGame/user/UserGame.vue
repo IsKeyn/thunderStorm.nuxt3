@@ -52,6 +52,7 @@ defineExpose({
 		<CurrentGameCard
 				v-if="currentPlayer.current_game"
 				:showTitle="false"
+				:showCover="false"
 				:showInfoButtons="false"
 				:currentGame="currentPlayer.current_game"
 				:players="boardGameInfo.players"
@@ -65,7 +66,7 @@ defineExpose({
 				@toggleModal="openCloseModalFunc"
 		>
 			<div class="modal-parent">
-				<h3 class="modal-title">Рулетка игр</h3>
+				<h3 class="modal-title">Профиль игры</h3>
 				<div class="link-parent-box">
 					<ui-BigPreloader v-if="modalLoading" />
 					<GamblingGame

@@ -1,11 +1,19 @@
 <script setup>
 import LoadingBar from '@/components/ui/LoadingBar.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+
+const emit = defineEmits(['updateTimerList']);
+
+import { ref, computed, onBeforeUnmount, onMounted } from 'vue'
+
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
 
 import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody } = api();
+const { sendApiRequest, preparedRequestBody, publicUrl } = api();
 
 import { notifications } from '@/composables/notifications.js';
-const { alert, error } = notifications();
+const { alert, error, choiceAlert } = notifications();
 
 import { boardGameLog } from '@/composables/BoardGame/boardGameLog.js'
 const { setLog } = boardGameLog();
@@ -15,17 +23,72 @@ const props = defineProps({
 		type: Number,
 		default: 1,
 	},
-	limit: {
+	userId: {
 		type: Number,
-		default: 100,
+		default: null,
+	},
+	timer: {
+		type: Object,
+		default: {},
+	},
+	showName: {
+		type: Boolean,
+		default: true,
+	},
+	showControlButtons: {
+		type: Boolean,
+		default: true,
 	},
 });
 
-import {ref, computed, onBeforeUnmount, onMounted} from 'vue'
+const slug = ref('main');
+const limit = ref(null);
 
-const seconds = ref(0)
+if (Object.keys(props.timer)) {
+	if (props.timer.slug) slug.value = props.timer.slug;
+	if (props.timer.limit) limit.value = props.timer.limit;
+}
 
-let timer = null
+const canDelete = ref(true);
+
+if (slug.value === 'main') {
+	// limit.value = 100 * 60 * 60;
+	canDelete.value = false;
+}
+
+const form = ref({});
+
+form.value.hours = {
+	name: 'Часы',
+	value: null,
+	type: 'number',
+	placeholder: '00',
+	showTitle: false,
+	validateRules: 'minNumber_0, maxNumber_999',
+	classes: 'w-[5rem] text-[2.5rem] p-0',
+};
+
+form.value.minuts = {
+	name: 'Минуты',
+	value: null,
+	type: 'number',
+	placeholder: '00',
+	showTitle: false,
+	validateRules: 'minNumber_0, maxNumber_60',
+	classes: 'w-[5rem] text-[2.5rem] p-0',
+};
+
+form.value.seconds = {
+	name: 'Секунды',
+	value: null,
+	type: 'number',
+	placeholder: '00',
+	showTitle: false,
+	validateRules: 'minNumber_0, maxNumber_60',
+	classes: 'w-[5rem] text-[2.5rem] p-0',
+};
+
+const seconds = ref(0);
 
 const formattedTime = computed(() => {
 	const hours = Math.floor(seconds.value / 3600)
@@ -36,21 +99,13 @@ const formattedTime = computed(() => {
 		hours.toString().padStart(2, '0'),
 		minutes.toString().padStart(2, '0'),
 		secs.toString().padStart(2, '0')
-	].join(':')
+	].join(':');
 })
-
-
-const resetTimer = () => {
-	stopTimer()
-	seconds.value = 0
-}
 
 onBeforeUnmount(() => {
-	clearInterval(timer)
+	clearInterval(timerInterval.value);
+	timerInterval.value = null;
 })
-
-
-
 
 const requestInProgress = ref(false);
 
@@ -65,6 +120,11 @@ const getTimerStatus = async () => {
 		const body = {};
 
 		body.board_game_id = props.boardGameId;
+		body.slug = slug.value;
+
+		if (props.userId) {
+			body.user_id = props.userId;
+		}
 
 		const response = await sendApiRequest(`board-game/timer/status`, 'POST', body);
 
@@ -76,6 +136,10 @@ const getTimerStatus = async () => {
 			} else {
 				if (response.time) {
 					seconds.value = response.time;
+				}
+
+				if (response.limit) {
+					limit.value = response.limit;
 				}
 
 				if (response.active) {
@@ -101,7 +165,7 @@ const getTimerStatus = async () => {
 const isRunning = ref(false);
 const timerInterval = ref(null);
 
-const toggleTimer = () => {
+const toggleTimer = (value = null) => {
 	if (!isRunning.value) {
 		timerApiRequest('start');
 	} else {
@@ -116,6 +180,7 @@ const timerApiRequest = async (type = 'start') => {
 		const body = {};
 
 		body.board_game_id = props.boardGameId;
+		body.slug = slug.value;
 
 		const response = await sendApiRequest(`board-game/timer/${type}`, 'POST', body);
 
@@ -135,15 +200,20 @@ const timerApiRequest = async (type = 'start') => {
 				}
 			}
 
-			if (type === 'start') {
+			if (type === 'stop') {
 				if (response.error) {
 					error(response.error);
 				} else {
 					isRunning.value = false;
 					clearInterval(timerInterval.value);
+					timerInterval.value = null;
 
 					alert('Таймер остановлен');
 				}
+			}
+
+			if (response.time) {
+				seconds.value = response.time;
 			}
 
 			// emit('fetchLogs');
@@ -158,63 +228,273 @@ const timerApiRequest = async (type = 'start') => {
 }
 
 const progress = computed(() => {
-	const secondLimit = props.limit * 60 * 60;
-	const onePercent = secondLimit / 100;
+	if (limit.value) {
+		const onePercent = limit.value / 100;
 
-	let currentPercent = Math.round(seconds.value / onePercent);
+		let currentPercent = Math.round(seconds.value / onePercent);
 
-	return currentPercent;
+		return currentPercent;
+	}
 });
+
+const editTimeMode = ref(false);
+
+const toggleEditTimeMode = (secondsValue = null) => {
+	if (isRunning.value) {
+		timerApiRequest('stop');
+		isRunning.value = false;
+	}
+
+	if (editTimeMode.value) {
+		let seconds = 0;
+
+		if (secondsValue !== null) {
+			seconds = Number(secondsValue);
+		} else {
+				seconds = (form.value.hours.value * 60 + form.value.minuts.value) * 60 + form.value.seconds.value;
+		}
+
+		editTimeRequest(seconds);
+	} else {
+			form.value.hours.value = seconds.value ? Math.floor(seconds.value / 3600) : null;
+			form.value.minuts.value = seconds.value ? Math.floor((seconds.value % 3600) / 60) : null;
+			form.value.seconds.value = seconds.value ? seconds.value % 60 : null;
+	}
+
+	editTimeMode.value = !editTimeMode.value;
+}
+
+const cancelEditTimeMode = () => {
+	editTimeMode.value = false;
+}
+
+const editTimeRequest = async (secondsValue) => {
+	requestInProgress.value = true;
+
+	try {
+		const body = {};
+
+		body.board_game_id = props.boardGameId;
+		body.seconds = secondsValue;
+		body.slug = slug.value;
+
+		const response = await sendApiRequest('board-game/timer/edit', 'POST', body);
+
+		if (response) {
+			requestInProgress.value = false;
+
+			if (response.error) {
+				error(response.error);
+			} else {
+				seconds.value = secondsValue;
+				alert('Таймер обновлен');
+			}
+
+			// emit('fetchLogs');
+		} else {
+			error('Произошла ошибка');
+			requestInProgress.value = false;
+		}
+	} catch (e) {
+		error(e);
+		requestInProgress.value = false;
+	}
+}
+
+const copyObsLink = () => {
+	const text = `${window.location.protocol}//${publicUrl.value}/obs/timer/?bg_id=${props.boardGameId}&user_id=${userStore.user.id}&slug=${slug.value}`;
+
+	navigator.clipboard.writeText(text)
+			.then(() => {
+				alert('Ссылка для OBS скопирована в буфер обмена');
+			})
+			.catch(err => {
+				alert('Ошибка копирования:', err);
+			});
+}
+
+
+const deleteTimerAsk = () => {
+	choiceAlert(
+			{
+				title: 'Удалить таймер',
+				message: `Удалить таймер "${props.timer.name}"?`,
+				buttons: [
+					{
+						name: 'Да',
+						func: () => {
+							deleteTimer();
+						},
+						additionalKeywordFunc: 'close',
+					},
+					{
+						name: 'Нет',
+						additionalKeywordFunc: 'close',
+					},
+				],
+			}
+	);
+}
+
+const deleteTimer = async () => {
+	requestInProgress.value = true;
+
+	try {
+		const body = {};
+
+		body.board_game_id = props.boardGameId;
+		body.slug = slug.value;
+
+		const response = await sendApiRequest('board-game/timer/delete', 'DELETE', body);
+
+		if (response) {
+			requestInProgress.value = false;
+
+			if (response.error) {
+				error(response.error);
+			} else {
+				alert('Таймер удален');
+				emit('updateTimerList');
+			}
+		} else {
+			error('Произошла ошибка');
+			requestInProgress.value = false;
+		}
+	} catch (e) {
+		error(e);
+		requestInProgress.value = false;
+	}
+}
+
+const formattedLimitTime = computed(() => {
+	const hours = limit.value ? Math.floor(limit.value / 3600) : '00';
+	const minutes = limit.value ? Math.floor((limit.value % 3600) / 60) : '00';
+	const secs = limit.value ? limit.value % 60 : '00';
+
+	return [
+		hours.toString().padStart(2, '0'),
+		minutes.toString().padStart(2, '0'),
+		secs.toString().padStart(2, '0')
+	].join(':');
+})
 </script>
 
 <template>
 	<div class="timer-container">
-		<h1>Таймер</h1>
-		<div class="time-display">{{ formattedTime }}</div>
-		<LoadingBar class="mb-[1rem]" :currentPercent="progress" />
+		<span
+				v-if="showName"
+				class="user-interface-title"
+		>
+			{{ timer && timer.name ? timer.name : 'Таймер' }}
+		</span>
+		<div
+				class="time-display"
+				v-if="editTimeMode"
+		>
+			<div class="flex justify-center items-center gap-2">
+				<FormGenerator
+						name="hours"
+						:element="form.hours"
+						:showTitle="form.hours.showTitle"
+						validateErrorPosition="bottom"
+						labelClasses=""
+						:fieldClasses="form.hours.classes"
+				/>
 
-		<layout-buttons-ActionButton
-				buttonClasses="btn btn-simple-1 w-1/2"
-				:buttonName="isRunning ? 'Стоп' : 'Старт'"
-				:actionInProgress="requestInProgress"
-				@startAction="toggleTimer()"
-		/>
+				<FormGenerator
+						name="minuts"
+						:element="form.minuts"
+						:showTitle="form.minuts.showTitle"
+						validateErrorPosition="bottom"
+						labelClasses=""
+						:fieldClasses="form.minuts.classes"
+				/>
+
+				<FormGenerator
+						name="seconds"
+						:element="form.seconds"
+						:showTitle="form.seconds.showTitle"
+						validateErrorPosition="bottom"
+						labelClasses=""
+						:fieldClasses="form.seconds.classes"
+				/>
+			</div>
+<!--			<input-->
+<!--					v-model="editedTime"-->
+<!--			>-->
+		</div>
+		<div v-else class="time-display">{{ formattedTime }}</div>
+		<template v-if="limit">
+			<span class="block mb-[0.5rem]">Лимит времени: {{ formattedLimitTime }}</span>
+			<LoadingBar
+					class="mb-[1rem]"
+					:currentPercent="progress"
+			/>
+		</template>
+		<template v-if="showControlButtons">
+			<div class="flex gap-2" v-if="!editTimeMode">
+				<layout-buttons-ActionButton
+						buttonClasses="btn btn-simple-1 w-full"
+						:buttonName="isRunning ? 'Стоп' : 'Старт'"
+						:actionInProgress="requestInProgress"
+						@startAction="toggleTimer()"
+				/>
+				<layout-buttons-ActionButton
+						buttonClasses="btn btn-simple-1 w-full"
+						buttonName="Изменить"
+						:actionInProgress="requestInProgress"
+						@startAction="toggleEditTimeMode()"
+				/>
+			</div>
+			<div class="flex gap-2" v-else>
+				<layout-buttons-ActionButton
+						buttonClasses="btn btn-simple-1 w-full"
+						buttonName="Сохранить"
+						:actionInProgress="requestInProgress"
+						@startAction="toggleEditTimeMode()"
+				/>
+				<layout-buttons-ActionButton
+						buttonClasses="btn btn-simple-1 w-full"
+						buttonName="Сбросить"
+						:actionInProgress="requestInProgress"
+						@startAction="toggleEditTimeMode(0)"
+				/>
+				<layout-buttons-ActionButton
+						buttonClasses="btn btn-simple-1 w-full"
+						buttonName="Отменить"
+						:actionInProgress="requestInProgress"
+						@startAction="cancelEditTimeMode()"
+				/>
+			</div>
+			<div class="flex gap-2">
+				<button
+						@click="copyObsLink()"
+						class="btn btn-simple-1 w-full"
+				>
+					Скопировать OBS ссылку
+				</button>
+				<button
+						v-if="canDelete"
+						@click="deleteTimerAsk()"
+						class="btn btn-simple-1 w-full"
+				>
+					Удалить
+				</button>
+			</div>
+		</template>
 	</div>
 </template>
 
 <style lang="scss" scoped>
-.time {
-
-}
-
 .timer-container {
-	text-align: center;
-	margin-top: 50px;
-	font-family: Arial, sans-serif;
-}
+	@apply text-center;
 
-.time-display {
-	font-size: 3em;
-	margin: 20px 0;
-}
+	.time-display {
+		@apply text-[3rem] mb-[1rem];
 
-button {
-	padding: 10px 20px;
-	margin: 0 5px;
-	font-size: 1em;
-	cursor: pointer;
-	border: none;
-	border-radius: 5px;
-	background-color: #42b983;
-	color: white;
-}
-
-button:disabled {
-	background-color: #cccccc;
-	cursor: not-allowed;
-}
-
-button:not(:disabled):hover {
-	background-color: #369f6b;
+		input {
+			@apply w-full text-center bg-[var(--second-bg-color)];
+		}
+	}
 }
 </style>

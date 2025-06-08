@@ -41,7 +41,7 @@
   &.btn-simple-1 {
     @apply bg-[var(--button-color-1)];
 
-    &:hover {
+    &:not(:disabled):hover {
       @apply bg-[var(--main-hover-color)];
     }
 
@@ -50,8 +50,9 @@
     }
   }
 
-  &.btn-disable {
-    @apply bg-gradient-to-r from-[var(--second-border-color)] to-[var(--third-border-color)];
+  &.btn-disable,
+  &:disabled {
+    @apply bg-[var(--button-disable-color-1)] cursor-not-allowed;
   }
 }
 
