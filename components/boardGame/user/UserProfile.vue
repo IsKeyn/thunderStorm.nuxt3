@@ -59,12 +59,13 @@ const usedItems = computed(() => {
 
 	if (props.userInfo.inventory) {
 		props.userInfo.inventory.filter(item => item.has_used).forEach((item) => {
-			if (grouped[item.item.id]) {
-				grouped[item.item.id].item.quantity++;
-			} else {
-				grouped[item.item.id] = { ...item };
-				grouped[item.item.id].item.quantity = 1;
-
+			if (item.item) {
+				if (grouped[item.item.id]) {
+					grouped[item.item.id].item.quantity++;
+				} else {
+					grouped[item.item.id] = { ...item };
+					grouped[item.item.id].item.quantity = 1;
+				}
 			}
 		});
 	}
@@ -230,7 +231,7 @@ const usedItems = computed(() => {
 
 <style lang="scss" scoped>
 .player-info {
-	@apply flex gap-4 mb-[2rem];
+	@apply block lg:flex gap-4 mb-[2rem];
 
 	.box {
 		@apply mb-[1rem] lg:mb-0;
@@ -242,16 +243,20 @@ const usedItems = computed(() => {
 		}
 
 		.info {
-			@apply flex;
+			@apply block lg:flex;
 
 			.column1 {
-				@apply w-1/2;
+				@apply w-full lg:w-1/2;
 			}
 
 			.column2 {
-				@apply flex justify-center lg:justify-end w-1/2;
+				@apply flex justify-center lg:justify-end w-full lg:w-1/2;
 				//@apply w-2/3;
 			}
+		}
+
+		img {
+			@apply mx-auto;
 		}
 	}
 }

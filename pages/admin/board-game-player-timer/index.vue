@@ -8,29 +8,23 @@ import ListTable from '@/components/admin/list/ListTable.vue';
 
 const titles = ref(
 		{
-			id: {
-				name: 'id',
+			timer_id: {
+				name: 'ID таймера',
 			},
-			name: {
-				name: 'Название',
-			},
-			slug: {
-				name: 'Slug',
-			},
-			description: {
-				name: 'Описание',
-			},
-			actions: {
-				name: 'Действия (json)',
-			},
-			type: {
-				name: 'Тип',
+			user_id: {
+				name: 'ID пользователя',
 			},
 			board_game_id: {
 				name: 'ID настолькой игры',
 			},
-			active: {
-				name: 'Активность',
+			time_start: {
+				name: 'Старт таймера',
+			},
+			time_stop: {
+				name: 'Остановка таймера',
+			},
+			created_by: {
+				name: 'created_by',
 			},
 		}
 );
@@ -53,7 +47,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Предметы в настолке',
+			name: 'Игровое время',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -65,6 +59,6 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/BoardGame/BoardGameItem"
+		fetchUrl="admin/entity/BoardGame/BoardGamePlayerTimer"
 	/>
 </template>
