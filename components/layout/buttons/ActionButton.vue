@@ -21,7 +21,7 @@ const props = defineProps({
 	<button
 			@click="emit('startAction')"
 			:disabled="actionInProgress"
-			:class="buttonClasses"
+			:class="[buttonClasses]"
 	>
 		<template v-if="!actionInProgress">
 			{{ buttonName }}

@@ -26,7 +26,7 @@ const openCloseModalFunc = () => {
 				class="btn btn-simple-1 ml-[1rem]"
 				@click="openCloseModalFunc"
 		>
-			Предметы <font-awesome-icon :icon="['fas', 'hat-wizard']" />
+			<span class="button-text">Предметы</span> <font-awesome-icon :icon="['fas', 'hat-wizard']" />
 		</button>
 	</div>
 	<Modal

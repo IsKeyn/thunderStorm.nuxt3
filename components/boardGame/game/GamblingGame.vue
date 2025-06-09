@@ -310,9 +310,11 @@ const refreshGameList = () => {
 			<CurrentGameCard
 					v-if="currentPlayer.current_game"
 					:boardGameId="boardGameId"
+					:boardGameInfo="boardGameInfo"
 					:currentGame="currentPlayer.current_game"
 					:players="boardGameInfo.players"
 					:showActionButtons="true"
+					:showOtherPlayersActions="true"
 					@showPlayer="$emit('showPlayer', $event)"
 					@updateBoardGameInfo="emit('updateBoardGameInfo')"
 					@showEditList="editListToggle"
@@ -383,10 +385,15 @@ const refreshGameList = () => {
 }
 
 .platforms-container {
-	@apply flex gap-[10px] pt-[20px] pb-[20px] flex-wrap;
+	@apply block lg:flex gap-[10px] pt-[20px] pb-[20px] flex-wrap;
 
 	.platform {
-		@apply w-[8rem] h-[5rem] bg-[var(--second-bg-color)] flex items-center justify-center cursor-pointer p-[2rem];
+		@apply
+			w-full lg:w-[8rem] h-[5rem] bg-[var(--second-bg-color)]
+			flex items-center justify-center cursor-pointer
+			p-[0.3rem] lg:p-[2rem]
+			mb-[2px]
+		;
 
 		&.active,
 		&:hover {

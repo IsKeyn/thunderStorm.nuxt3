@@ -246,7 +246,7 @@ const openSendCommentForm = () => {
 
 	.article-footer {
 		.add-info {
-			@apply w-full grid grid-cols-12;
+			@apply w-full block lg:grid grid-cols-12;
 
 			.column-1 {
 				@apply col-span-6;

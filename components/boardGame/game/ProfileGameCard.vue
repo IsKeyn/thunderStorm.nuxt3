@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from "vue";
+
 const emit = defineEmits(['setOpenedImage']);
 
 import { media } from '@/composables/media.js'
@@ -59,12 +61,26 @@ const getLongPlayLink = () => {
 
 	return urlSearch;
 }
+
+const formattedTime = computed(() => {
+	if (props.element.time) {
+		const hours = Math.floor(props.element.time / 3600)
+		const minutes = Math.floor((props.element.time % 3600) / 60)
+		const secs = props.element.time % 60
+
+		return [
+			hours.toString().padStart(2, '0'),
+			minutes.toString().padStart(2, '0'),
+			secs.toString().padStart(2, '0')
+		].join(':');
+	}
+});
 </script>
 
 <template>
 	<div :class="['item-box', classes]">
 		<div class="status-bar">
-			{{ getStatusName(element.status) }} <span v-if="element.time">(время прохождения {{ element.time }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
+			{{ getStatusName(element.status) }} <span v-if="formattedTime">(время прохождения {{ formattedTime }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
 		</div>
 		<div class="content-box">
 			<img
@@ -133,17 +149,20 @@ const getLongPlayLink = () => {
 	;
 
 	.content-box {
-		@apply flex w-full p-[1rem];
+		@apply lg:flex w-full p-[1rem];
 
 		img {
-			@apply w-[150px] h-auto object-contain cursor-pointer;
+			@apply
+				mx-auto mb-4 lg:m-0
+				w-[150px] h-auto object-contain cursor-pointer
+			;
 		}
 
 		.info {
 			@apply pl-3 pr-3 text-[var(--main-text-color)];
 
 			.info-wrapper {
-				@apply flex gap-6;
+				@apply block lg:flex gap-6;
 			}
 
 			.name {

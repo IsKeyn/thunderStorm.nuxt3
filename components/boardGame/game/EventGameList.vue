@@ -1,8 +1,11 @@
 <script setup>
 import GameListCard from '@/components/entertainment/card/GameListCard.vue';
 import BigPreloader from '@/components/ui/BigPreloader.vue';
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 const emit = defineEmits(['loadingToggle']);
+
+import { ref, watch } from "vue";
 
 import { api } from '@/composables/api.js'
 const {
@@ -20,9 +23,19 @@ const props = defineProps({
 	},
 });
 
-import { ref } from "vue";
+const form = ref(
+		{
+			searchLine: {
+				name: 'Поиск',
+				value: '',
+				type: 'text',
+				placeholder: 'Начните вводить название игры, для фильтрации',
+				validateRules: 'required, minLength_2, maxLength_50',
+				classes: 'w-full',
+			},
+		},
+);
 
-/* Получение данных */
 const gameList = ref([]);
 
 const requestInProgress = ref(false);
@@ -30,7 +43,9 @@ const requestInProgress = ref(false);
 const platforms = ref({});
 
 const setPlatforms = () => {
-	gameList.value.forEach((item) => {
+	platforms.value = {};
+
+	filteredItems.value.forEach((item) => {
 		platforms.value[item.platform.slug] = {
 			id: item.platform.id,
 			name: item.platform.name,
@@ -47,6 +62,44 @@ const setPlatforms = () => {
 
 	// 3. Собираем обратно в объект (в современных JS порядок сохранится)
 	platforms.value = Object.fromEntries(sortedEntries);
+}
+
+const dataByGroups = ref(null);
+const filteredItems = ref(null);
+
+const useFilter = () => {
+	filteredItems.value = gameList.value.filter((item) => {
+		return item.game.name.toLowerCase().includes(form.value.searchLine.value.toLowerCase());
+	});
+
+	filteredItems.value = filteredItems.value.sort((a, b) => {
+		const dateA = a.game.release_dates[0]?.date;
+		const dateB = b.game.release_dates[0]?.date;
+
+		if (dateA && dateB) {
+			return dateB - dateA; // для сортировки по убыванию (новые сначала)
+			// или return dateA - dateB; для сортировки по возрастанию (старые сначала)
+		}
+
+		// Если у одного из элементов нет даты, размещаем его в конце
+		if (!dateA && !dateB) return 0;
+		if (!dateA) return 1;
+		if (!dateB) return -1;
+
+		return 0;
+	});
+
+	setPlatforms();
+
+	let groups = platforms.value;
+
+	filteredItems.value.forEach((item) => {
+		if (item.platform.slug && groups[item.platform.slug]) {
+			groups[item.platform.slug].items.push(item);
+		}
+	});
+
+	dataByGroups.value = groups;
 }
 
 const { refresh } = await useAsyncData(
@@ -75,7 +128,7 @@ const { refresh } = await useAsyncData(
 							onResponse({response}) {
 								if (response.status === 200) {
 									gameList.value = response._data.data;
-									setPlatforms();
+									useFilter();
 								} else {
 									error('Request error', 5000);
 								}
@@ -92,24 +145,24 @@ const { refresh } = await useAsyncData(
 		}
 );
 
-const dataByGroups = computed(() => {
-	let groups = platforms.value;
-
-	if (gameList.value) {
-		gameList.value.forEach((item) => {
-			if (item.platform.slug && groups[item.platform.slug]) {
-				groups[item.platform.slug].items.push(item);
-			}
-		});
-	}
-
-	return groups;
-});
+watch(form.value.searchLine, () => {
+	useFilter();
+}, { deep: true });
 </script>
 
 <template>
 	<BigPreloader v-if="requestInProgress" />
 	<template v-else>
+		<FormGenerator
+				v-if="form.searchLine"
+				name="search"
+				class="w-1/2"
+				:element="form.searchLine"
+				:showTitle="false"
+				validateErrorPosition="bottom"
+				labelClasses="mr-4 mt-[10px] mb-[10px]"
+				:fieldClasses="form.searchLine.classes"
+		/>
 		<div v-if="gameList.length > 0">
 			<div v-if="dataByGroups">
 				<div class="group" v-for="(group, key) in dataByGroups">
@@ -140,6 +193,12 @@ const dataByGroups = computed(() => {
 	</template>
 
 </template>
+
+<style lang="scss">
+input[name="search"] {
+	@apply bg-[var(--third-bg-color)];
+}
+</style>
 
 <style lang="scss" scoped>
 .item-box {

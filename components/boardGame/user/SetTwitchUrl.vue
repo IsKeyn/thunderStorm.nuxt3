@@ -25,7 +25,7 @@ const form = ref(
 				type: 'text',
 				placeholder: 'Twitch канал',
 				validateRules: 'required, minLength_2, maxLength_50',
-				classes: 'w-full min-w-[500px]',
+				classes: 'w-full',
 			},
 		},
 );

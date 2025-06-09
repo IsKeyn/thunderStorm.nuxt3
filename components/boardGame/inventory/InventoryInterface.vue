@@ -351,6 +351,22 @@ const addItemToInventoryEmit = (data) => {
 
 	addItem(data.id, data.name);
 }
+
+const usedItemsGroup = computed(() => {
+	const grouped = {};
+
+	UsedItems.value.forEach((item) => {
+		if (grouped[item.id]) {
+			grouped[item.id].quantity++;
+		} else {
+			grouped[item.id] = { ...item, quantity: 1 };
+		}
+	});
+
+	return Object.values(grouped).sort(function(a, b) {
+		return b.quantity - a.quantity;
+	});
+});
 </script>
 
 <template>
@@ -426,12 +442,12 @@ const addItemToInventoryEmit = (data) => {
 	<OpeningBox
 			v-if="ItemList.length > 0"
 			title="Использованные предметы"
-			classes="pb-[1rem] pl-[1rem] pr-[1rem]"
+			classes="lg:pb-[1rem] lg:pl-[1rem] pr-[1rem]"
 	>
 		<div class="wrapper">
-			<span v-if="UsedItems.length === 0">Предметов нет</span>
+			<span v-if="usedItemsGroup.length === 0">Предметов нет</span>
 			<ItemCard
-					v-for="(element, key) in UsedItems"
+					v-for="(element, key) in usedItemsGroup"
 					:key="key"
 					:element="element"
 					:useLightBox="true"
@@ -473,15 +489,19 @@ const addItemToInventoryEmit = (data) => {
 }
 
 .inventory {
-	@apply flex gap-4 cursor-pointer;
+	@apply block lg:flex gap-4 cursor-pointer;
 
 	.user-items,
 	.chest-with-items {
-		@apply w-1/2 p-4;
+		@apply w-full lg:w-1/2 pt-4 lg:p-4;
 
 		.wrapper {
 			@apply h-[600px] overflow-auto;
 		}
+	}
+
+	.chest-with-items {
+		@apply hidden lg:block;
 	}
 
 	.used-items {

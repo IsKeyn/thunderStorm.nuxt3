@@ -83,7 +83,7 @@ export function validate() {
                     const minNumber = Number(item.split('_')[1]);
 
                     if (value < minNumber) {
-                        error = `Значение не может быть меньше ${minNumber}`;
+                        error = `Значение "{fieldName}" не может быть меньше ${minNumber}`;
                     }
                 }
 
@@ -93,7 +93,7 @@ export function validate() {
                     const maxNumber = Number(item.split('_')[1]);
 
                     if (value > maxNumber) {
-                        error = `Значение не может быть больше ${maxNumber}`;
+                        error = `Значение "{fieldName}" не может быть больше ${maxNumber}`;
                     }
                 }
 

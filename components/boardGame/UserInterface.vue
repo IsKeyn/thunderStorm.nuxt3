@@ -10,6 +10,7 @@ import Points from '@/components/boardGame/user/Points.vue';
 import UserGame from '@/components/boardGame/user/UserGame.vue';
 import StatusEffects from '@/components/boardGame/user/StatusEffects.vue';
 import Timer from '@/components/boardGame/timer/Timer.vue';
+import TimerListButtonAndModal from '@/components/boardGame/timer/TimerListButtonAndModal.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -56,6 +57,7 @@ const alreadyInGame = computed(() => {
 
 const gameComponent = ref(null);
 const inventoryComponent = ref(null);
+const timerListComponent = ref(null);
 
 const showGame = () => {
 	gameComponent.value.openCloseModalFunc();
@@ -63,6 +65,10 @@ const showGame = () => {
 
 const showInventory = () => {
 	inventoryComponent.value.openCloseModalFunc();
+}
+
+const showTimer = () => {
+	timerListComponent.value.openCloseModalFunc();
 }
 </script>
 
@@ -74,6 +80,7 @@ const showInventory = () => {
 					@showPlayer="$emit('showPlayer', $event)"
 					@showGame="showGame()"
 					@showInventory="showInventory()"
+					@showTimer="showTimer()"
 			/>
 			<GoInThisGame
 					v-if="!alreadyInGame"
@@ -93,9 +100,13 @@ const showInventory = () => {
 						@fetchLogs="emit('fetchLogs')"
 						@updateBoardGameInfo="emit('updateBoardGameInfo')"
 				/>
-<!--				<Timer-->
-<!--						:boardGameId="boardGameId"-->
-<!--				/>-->
+				<Timer
+						:boardGameId="boardGameId"
+				/>
+				<TimerListButtonAndModal
+						ref="timerListComponent"
+						:boardGameId="boardGameId"
+				/>
 				<Points
 						:boardGameId="boardGameId"
 						:boardGameInfo="boardGameInfo"

@@ -33,12 +33,26 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			actions: {
-				name: 'Действия JSON',
+			limit: {
+				name: 'Лимит',
 				value: '',
 				type: 'textarea',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+			},
+			active: {
+				name: 'Активность',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			user_id: {
+				name: 'user_id',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
 			},
 			board_game_id: {
 				name: 'ID настолькой игры',
@@ -47,27 +61,11 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			type: {
-				name: 'Тип',
+			created_by: {
+				name: 'Создан кем',
 				value: '',
 				type: 'text',
 				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			image: {
-				name: 'Медиа',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			active: {
-				name: 'Активность',
-				value: '',
-				type: 'text',
-				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -91,7 +89,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Предметы в настолке',
+			name: 'Таймеры',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -108,8 +106,7 @@ const breadCrumbsArray = computed(() => {
 		<CreateEditForm
 				:form="form"
 				:showAdditionalData="false"
-				:hasResource="true"
-				fetchUrl="admin/BoardGame/BoardGameItem"
+				fetchUrl="admin/entity/BoardGame/Timer"
 		/>
 	</div>
 </template>
