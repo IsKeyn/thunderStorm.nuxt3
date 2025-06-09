@@ -134,7 +134,11 @@ const sendRequest = async () => {
 		body.entity_type = "App\\Models\\Game";
 		body.entity_id = props.game.id;
 		body.board_game_game_list_id = props.board_game_game_list_id;
-		body.hourCount = (form.value.hours.value * 60 + form.value.minuts.value) * 60 + form.value.seconds.value;
+
+		if (props.type === 2) {
+			body.hourCount = (form.value.hours.value * 60 + form.value.minuts.value) * 60 + form.value.seconds.value;
+		}
+
 		body.comment = form.value.comment.value;
 
 		const response = await sendApiRequest(`board-game/player-game/${props.doType}`, 'POST', body);

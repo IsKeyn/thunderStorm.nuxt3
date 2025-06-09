@@ -162,7 +162,7 @@ const getLongPlayLink = () => {
 			@updateBoardGameInfo="emit('updateBoardGameInfo')"
 	/>
 	<template v-if="showOtherPlayersActions">
-		<span class="user-interface-title text-left">Действия других с данной игрой</span>
+		<span class="user-interface-title text-left">Действия других игроков с данной игрой</span>
 		<PlayerActionWithGame
 				v-if="currentGame.other_players_actions.length > 0"
 				v-for="(element, key) in currentGame.other_players_actions"
