@@ -37,7 +37,9 @@ const getTimerStatus = async () => {
 			if (response.error) {
 				showMessage.value = response.error;
 			} else {
-				timerName.value = response.name;
+				if (!route.query.hideTitle) {
+					timerName.value = response.name;
+				}
 
 				if (response.active !== isRunning.value) {
 					if (typeof response.time === 'number') {
@@ -118,11 +120,12 @@ const formattedTime = computed(() => {
 
 	.timer-name {
 		@apply block text-[1.5rem];
+		text-shadow: 0 0 5px #000; /* Свечение */
 	}
 
 	.timer {
-		@apply text-[4rem] font-['Digital-7'];
-		text-shadow: 0 0 5px #0f0; /* Свечение */
+		@apply text-[4rem] font-['Digital-7'] block mt-[-1rem];
+		text-shadow: 0 0 5px #000; /* Свечение */
 
 		&.active {
 			animation: flicker 0.5s infinite alternate;

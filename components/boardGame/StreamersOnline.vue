@@ -93,6 +93,8 @@ const scriptTwitchIsOnline = ref(false);
 
 onMounted(() => {
 	if (process.client) {
+		setShowStreamersBlockSetting();
+
 		const script = document.createElement('script');
 		script.src = 'https://player.twitch.tv/js/embed/v1.js';
 		document.body.appendChild(script);
@@ -101,64 +103,88 @@ onMounted(() => {
 		};
 	}
 });
+
+const showStreamersBlock = ref(true);
+
+const setShowStreamersBlockSetting = () => {
+	if (process.client) {
+		const showStreamersBlockLs = localStorage.getItem('show-streamers-block')
+
+		if (showStreamersBlockLs !== null) {
+			showStreamersBlock.value = showStreamersBlockLs;
+		}
+	}
+}
+
+const setShowStreamerBlockValue = (value) => {
+	showStreamersBlock.value = value;
+
+	localStorage.setItem('show-streamers-block', showStreamersBlock.value)
+}
 </script>
 
 <template>
-	<span class="user-interface-title">Участники онлайн</span>
-	<div
-			v-if="fetchedData.length > 0"
-			class="streamers-online"
-	>
-		<template v-if="fetchedData.length > 1">
-			<Carousel
-					v-if="scriptTwitchIsOnline"
-					ref="carouselRef"
-					v-bind="carouselConfig"
-					class="w-full"
-			>
-				<Slide
+	<span class="user-interface-title">
+		Участники онлайн
+		<font-awesome-icon v-if="showStreamersBlock" :icon="['fas', 'eye-slash']" class="cursor-pointer" @click="setShowStreamerBlockValue(false)" />
+		<font-awesome-icon v-else :icon="['fas', 'eye']" class="cursor-pointer" @click="setShowStreamerBlockValue(true)" />
+	</span>
+	<template v-if="showStreamersBlock">
+		<div
+				v-if="fetchedData.length > 0"
+				class="streamers-online"
+		>
+			<template v-if="fetchedData.length > 1">
+				<Carousel
+						v-if="scriptTwitchIsOnline"
+						ref="carouselRef"
+						v-bind="carouselConfig"
+						class="w-full"
+				>
+					<Slide
+							v-for="(channel, index) in fetchedData"
+							:key="index"
+							class="slide w-full"
+					>
+						<TwitchCard :channel="channel" />
+					</Slide>
+					<template #addons>
+						<!--				<Navigation />-->
+						<Pagination />
+					</template>
+				</Carousel>
+				<div>
+							<span
+									class="nav-prev"
+									@click="prev"
+							>
+						<font-awesome-icon :icon="['fas', 'angle-left']" />
+					</span>
+					<span
+							class="nav-next"
+							@click="next"
+					>
+							<font-awesome-icon :icon="['fas', 'angle-right']" />
+						</span>
+				</div>
+			</template>
+			<template v-else-if="fetchedData.length === 1">
+				<div
 						v-for="(channel, index) in fetchedData"
 						:key="index"
-						class="slide w-full"
+						v-if="scriptTwitchIsOnline"
+						class="w-full"
 				>
-					<TwitchCard :channel="channel" />
-				</Slide>
-				<template #addons>
-					<!--				<Navigation />-->
-					<Pagination />
-				</template>
-			</Carousel>
-			<div>
-						<span
-								class="nav-prev"
-								@click="prev"
-						>
-					<font-awesome-icon :icon="['fas', 'angle-left']" />
-				</span>
-				<span
-						class="nav-next"
-						@click="next"
-				>
-						<font-awesome-icon :icon="['fas', 'angle-right']" />
-					</span>
-			</div>
-		</template>
-		<template v-else-if="fetchedData.length === 1">
-			<div
-					v-for="(channel, index) in fetchedData"
-					:key="index"
-					v-if="scriptTwitchIsOnline"
-					class="w-full"
-			>
-				<TwitchCard
-						:channel="channel"
-				/>
-			</div>
-		</template>
-	</div>
-	<div v-else>
-		Сейчас никто не стримит *(
-	</div>
+					<TwitchCard
+							:channel="channel"
+					/>
+				</div>
+			</template>
+		</div>
+		<div v-else>
+			Сейчас никто не стримит *(
+		</div>
+	</template>
 </template>
 
 <style lang="scss">

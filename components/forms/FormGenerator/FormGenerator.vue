@@ -255,7 +255,7 @@ if (props.formHandlerType === 1) {
 					/>
 				</span>
 				<span
-						v-if="clearButton"
+						v-if="clearButton && element.value"
 						class="additional-action-wrap"
 						@click="element.value = null"
 				>

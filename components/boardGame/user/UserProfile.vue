@@ -6,6 +6,11 @@ import CurrentGameCard from '@/components/boardGame/game/CurrentGameCard.vue';
 import ProfileGameCard from '@/components/boardGame/game/ProfileGameCard.vue';
 import Timer from '@/components/boardGame/timer/Timer.vue';
 
+const emit = defineEmits(['setOpenedImage', 'sendNotification']);
+
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
+
 import { media } from '@/composables/media.js'
 const {
 	getResizeImg,
@@ -13,11 +18,6 @@ const {
 
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
-
-import { useUserStore } from '@/stores/user';
-const userStore = useUserStore();
-
-const emit = defineEmits(['setOpenedImage', 'sendNotification']);
 
 const props = defineProps({
 	userInfo: {
@@ -115,7 +115,7 @@ const usedItems = computed(() => {
 							Итоговый результат: {{ userInfo.player_info.full_points }}
 						</span>
 						<button
-								v-if="userInfo.player_info.user_id !== userStore.user.id"
+								v-if="(userStore.user && Object.keys(userStore.user).length > 0) && (userInfo.player_info.user_id !== userStore.user.id)"
 								class="btn btn-primary"
 								@click="emit('sendNotification', userInfo.player_info.user_id)"
 						>
@@ -265,7 +265,7 @@ const usedItems = computed(() => {
 .logs-and-steps,
 .current-game
 {
-	@apply block lg:flex gap-4;
+	@apply block lg:flex gap-4 mb-4;
 
 	.box {
 		@apply mb-[1rem] lg:mb-0 w-full lg:w-1/2;

@@ -118,7 +118,7 @@ const afterSendNotification = () => {
 			@toggleModal="openCloseModalFunc"
 	>
 		<div class="modal-parent">
-			<h3 class="modal-title">Профиль пользователя</h3>
+			<h3 class="modal-title">Профиль игрока</h3>
 			<div class="link-parent-box">
 				<ui-BigPreloader v-if="requestInProgress" />
 				<UserProfile

@@ -11,12 +11,6 @@ const titles = ref(
 			timer_id: {
 				name: 'ID таймера',
 			},
-			user_id: {
-				name: 'ID пользователя',
-			},
-			board_game_id: {
-				name: 'ID настолькой игры',
-			},
 			time_start: {
 				name: 'Старт таймера',
 			},

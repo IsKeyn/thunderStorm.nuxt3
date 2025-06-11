@@ -446,25 +446,29 @@ const formattedLimitTime = computed(() => {
 						@startAction="toggleEditTimeMode()"
 				/>
 			</div>
-			<div class="flex gap-2" v-else>
-				<layout-buttons-ActionButton
-						buttonClasses="btn btn-simple-1 w-full"
-						buttonName="Сохранить"
-						:actionInProgress="requestInProgress"
-						@startAction="toggleEditTimeMode()"
-				/>
-				<layout-buttons-ActionButton
-						buttonClasses="btn btn-simple-1 w-full"
-						buttonName="Сбросить"
-						:actionInProgress="requestInProgress"
-						@startAction="toggleEditTimeMode(0)"
-				/>
-				<layout-buttons-ActionButton
-						buttonClasses="btn btn-simple-1 w-full"
-						buttonName="Отменить"
-						:actionInProgress="requestInProgress"
-						@startAction="cancelEditTimeMode()"
-				/>
+			<div v-else>
+				<div class="flex gap-2">
+					<layout-buttons-ActionButton
+							buttonClasses="btn btn-simple-1 w-full"
+							buttonName="Сохранить"
+							:actionInProgress="requestInProgress"
+							@startAction="toggleEditTimeMode()"
+					/>
+					<layout-buttons-ActionButton
+							buttonClasses="btn btn-simple-1 w-full"
+							buttonName="Сбросить"
+							:actionInProgress="requestInProgress"
+							@startAction="toggleEditTimeMode(0)"
+					/>
+				</div>
+				<div>
+					<layout-buttons-ActionButton
+							buttonClasses="btn btn-simple-1 w-full"
+							buttonName="Отменить"
+							:actionInProgress="requestInProgress"
+							@startAction="cancelEditTimeMode()"
+					/>
+				</div>
 			</div>
 			<div class="flex gap-2">
 				<button
