@@ -99,8 +99,8 @@ form.value.comment = {
 			value: null,
 			type: 'textarea',
 			placeholder: '',
-			validateRules: 'minLength_2, 3000',
-			classes: 'w-full mt-1 mb-1',
+			validateRules: 'minLength_2, maxLength_5000',
+			classes: 'w-full mt-1 mb-1 resize-y',
 };
 
 const errorsMessages = ref([]);
@@ -330,8 +330,9 @@ watch(() => requestData.value, (newValue) => {
 					name="comment"
 					:element="form.comment"
 					validateErrorPosition="bottom"
-					labelClasses="lg:mr-4 mt-[10px] mb-[10px] block"
+					labelClasses="lg:mr-4 mt-[10px] mb-[10px] !mr-0 block"
 					:fieldClasses="form.comment.classes"
+					:showMaxLength="true"
 			/>
 
 			<div v-if="props.doType === 'update'" class="item-box">

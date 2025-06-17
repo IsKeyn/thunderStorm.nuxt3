@@ -24,12 +24,12 @@ const openCloseModalFunc = () => {
 
 <template>
 	<div class="text-center">
-		<button
-				class="btn btn-simple-1 ml-[1rem]"
+		<ui-IconButton
+				class="ml-[1rem]"
+				:faIcon="['fas', 'book-open-reader']"
+				buttonText="Правила и описание"
 				@click="openCloseModalFunc"
-		>
-			<span class="button-text">Правила и описание</span> <font-awesome-icon :icon="['fas', 'book-open-reader']" />
-		</button>
+		/>
 	</div>
 	<Modal
 			:showOpenModal="modalOpen"

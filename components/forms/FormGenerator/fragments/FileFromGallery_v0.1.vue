@@ -14,6 +14,12 @@ const activeGalleryModal = ref(false);
 
 const toggleGalleryModal = () => {
 	activeGalleryModal.value = !activeGalleryModal.value;
+
+	/* TODO от части костыль, из-за перестроения репитора модалки перестраиваются и наблюдатель внутри модалки не видит изменение modalActive */
+	const body = document.querySelector('body');
+	if (body.classList.contains('overflow-hidden')) {
+		body.classList.remove('overflow-hidden');
+	}
 }
 
 const selectThisElement = (element) => {

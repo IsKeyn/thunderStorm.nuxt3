@@ -7,7 +7,13 @@ const emit = defineEmits(['fetchComments']);
 
 // Сomposables
 import { api } from '@/composables/api.js'
-const { apiUrl } = api();
+import { watch } from "vue";
+const {
+	apiUrl,
+	publicUrl,
+	sessionCookieName,
+	errorHandler,
+} = api();
 
 // Куки
 const Authorization = useCookie('Authorization');
@@ -50,28 +56,56 @@ defineExpose({
 	fetchComments,
 });
 
-const { pending, refresh } = await useFetch(
-		`${apiUrl.value}comment/getList`,
-		{
-			query: {
+const { data: requestData, pending: requestInProgress, refresh } = await useAsyncData(
+		'commentGetList',
+		async () => {
+			let request = `${apiUrl.value}comment/getList`;
+
+			const query = {
 				entityType: props.entityType,
 				entityId: props.entityId,
 				perPage: props.perPageCount,
 				page,
-			},
-			headers: {
-				Authorization: Authorization.value,
-				Accept: 'application/json',
-				'X-Requested-With': 'XMLHttpRequest',
-			},
-			onResponse({response}) {
-				if (response.status === 200) {
-					fetchedData.value = typeAddedData.value === 'show_more' ? fetchedData.value.concat(response._data.data) : response._data.data;
-					pagination.value = response._data.meta;
-				}
-			},
+			};
+
+			const sessionCookie = useCookie(sessionCookieName.value);
+
+			try {
+				const response = await $fetch(
+						request,
+						{
+							method: 'GET',
+							credentials: 'include',
+							query,
+							headers: {
+								Accept: 'application/json',
+								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
+								Referer: publicUrl.value,
+							}
+						},
+				);
+
+				return response;
+			} catch (e) {
+				errorHandler(e);
+			}
+		},
+		{
+			server: true, // выполнять только на сервере
+			lazy: true, // ждать выполнения запроса перед рендерингом
 		}
 );
+
+const setFetchedData = () => {
+	fetchedData.value = typeAddedData.value === 'show_more' ? fetchedData.value.concat(requestData.value.data) : requestData.value.data;
+	pagination.value = requestData.value.meta;
+}
+
+setFetchedData();
+
+watch(() => requestData.value, () => {
+	setFetchedData();
+}, { deep: true });
 
 const getNextPage = async () => {
 	if (pagination.value.current_page < pagination.value.last_page) {

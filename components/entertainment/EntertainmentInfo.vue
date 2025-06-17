@@ -34,6 +34,28 @@ const companies = computed(() => {
 
 	return returnData;
 });
+const anonsDates = computed(() => {
+	let returnData = '';
+	const obj = props.game.anons_dates;
+
+	for (let key in obj) {
+		if (key > 0) {
+			returnData += ', ';
+		}
+		returnData += `<span title="${obj[key].description ? obj[key].description : ''}">${getFormattedDate('d ru_mouths_name Y', obj[key].date)}</span>`;
+
+		/* Добавляем название платформы */
+		if (obj[key]?.game_platform?.name) {
+			returnData += ` (${obj[key]?.game_platform?.name})`;
+		}
+
+		if (obj[key].addInfo) {
+			returnData += ` (${obj[key].addInfo})`;
+		}
+	}
+
+	return returnData;
+});
 const releaseDates = computed(() => {
 	let returnData = '';
 	const obj = props.game.release_dates;
@@ -42,12 +64,16 @@ const releaseDates = computed(() => {
 		if (key > 0) {
 			returnData += ', ';
 		}
-		returnData += `<span title="${obj[key].description ? obj[key].description : ''}">${getFormattedDate('d ru_mouths_name Y', obj[key].date)} (${obj[key]?.game_platform?.name})</span>`;
+		returnData += `<span title="${obj[key].description ? obj[key].description : ''}">${getFormattedDate('d ru_mouths_name Y', obj[key].date)}</span>`;
+
+		/* Добавляем название платформы */
+		if (obj[key]?.game_platform?.name) {
+			returnData += ` (${obj[key]?.game_platform?.name})`;
+		}
 
 		if (obj[key].addInfo) {
 			returnData += ` (${obj[key].addInfo})`;
 		}
-
 	}
 
 	return returnData;
@@ -72,6 +98,7 @@ const stringTransfer = (obj) => {
 			<span class="field" v-if="genres"><b>Жанр:</b> <span v-html="genres" /></span>
 			<span class="field" v-if="platforms"><b>Платформа:</b> <span v-html="platforms" /></span>
 			<span class="field" v-if="companies"><b>Компании:</b> <span v-html="companies" /></span>
+			<span class="field" v-if="anonsDates"><b>Дата анонса:</b> <span v-html="anonsDates" /></span>
 			<span class="field" v-if="releaseDates"><b>Дата выхода:</b> <span v-html="releaseDates" /></span>
 			<span
 					v-for="(field, key) in props.game.additional_fields"

@@ -39,7 +39,7 @@ const openCloseBoxFunc = () => {
 			<img
 					:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
 					:alt="userStore.user.name"
-					:title="userStore.user.name"
+					:title="`${userStore.user.name} - профайл пользователя`"
 					@click="emit('showPlayer', userStore.user.id)"
 			/>
 			<span

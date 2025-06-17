@@ -25,7 +25,7 @@ const props = defineProps({
 });
 
 import { lightBox } from '@/composables/lightBox.js';
-import { ref } from "vue";
+import {computed, ref} from "vue";
 const {
 	openedImage,
 	setOpenedImage
@@ -85,13 +85,56 @@ const afterSendNotification = () => {
 	notificationForUserWithId.value = null;
 	openCloseNotificationModal();
 }
+
+const sortType = ref('byFullPoints');
+const sort = ref('desc');
+
+const sortedPlayerList = computed(() => {
+	return props.boardGameInfo.players.sort((a, b) => {
+		if (sortType.value === 'byFullPoints') {
+			return sort.value === 'desc' ? b.full_points - a.full_points : a.full_points - b.full_points;
+		}
+
+		if (sortType.value === 'pointsPerSeconds') {
+			// Если у обоих seconds = 0, сохраняем их исходный порядок
+			if (a.seconds === 0 && b.seconds === 0) return 0;
+			// Если у a seconds = 0, помещаем его ниже
+			if (a.seconds === 0) return sort.value === 'desc' ? 1 : -1;
+			// Если у b seconds = 0, помещаем его ниже
+			if (b.seconds === 0) return sort.value === 'desc' ? -1 : 1;
+
+			const ppSecondA = a.full_points ? (a.seconds / a.full_points) : 0;
+			const ppSecondB = b.full_points ? (b.seconds / b.full_points) : 0;
+
+			return sort.value === 'desc' ? ppSecondA - ppSecondB : ppSecondB - ppSecondA;
+		}
+	});
+});
 </script>
 
 <template>
 	<span class="user-interface-title">Игроки</span>
+	<div class="flex justify-end mb-4">
+		<select v-model="sortType" class="w-full mr-4">
+			<option value="byFullPoints">По количеству очков</option>
+			<option value="pointsPerSeconds">По соотношению очки/время</option>
+		</select>
+		<button>
+			<font-awesome-icon
+					v-if="sort === 'desc'"
+					:icon="['fas', 'arrow-down-wide-short']"
+					@click="sort = 'asc'"
+			/>
+			<font-awesome-icon
+					v-if="sort === 'asc'"
+					:icon="['fas', 'arrow-up-short-wide']"
+					@click="sort = 'desc'"
+			/>
+		</button>
+	</div>
 	<div class="wrapper">
 		<div
-				v-for="(player, key) in boardGameInfo.players.sort((a, b) => b.full_points - a.full_points)"
+				v-for="(player, key) in sortedPlayerList"
 				:key="key"
 		>
 			<PlayerCard

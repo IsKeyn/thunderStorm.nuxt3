@@ -44,9 +44,9 @@ const menu = ref([
 		<ui-SideMenu
 				:menu="menu"
 		/>
-		<div class="w-full">
-{{ fetchedData }}
-		</div>
+<!--		<div class="w-full">-->
+<!--{{ fetchedData }}-->
+<!--		</div>-->
 	</div>
 </template>
 

@@ -9,6 +9,7 @@ import Items from '@/components/boardGame/Items.vue';
 import Games from '@/components/boardGame/Games.vue';
 import StreamersOnline from '@/components/boardGame/StreamersOnline.vue';
 import ThemeSelect from '@/components/boardGame/ThemeSelect.vue';
+import StatsButtonAndModal from '@/components/boardGame/stats/StatsButtonAndModal.vue';
 
 import { ref } from "vue";
 
@@ -91,7 +92,7 @@ const toggleBoard = () => {
 		<ui-BigPreloader class="h-full" />
 	</div>
 	<div v-if="fetchedData && fetchedData.active === 1">
-		<header class="without-border">
+		<header>
 			<span class="title" v-if="fetchedData.name">{{ fetchedData.name }}</span>
 			<div class="menu-block">
 				<Rules
@@ -104,20 +105,21 @@ const toggleBoard = () => {
 				<Items
 						:boardGameId="fetchedData.id"
 				/>
-				<a
+<!--				<StatsButtonAndModal />-->
+				<ui-IconButton
+						class="ml-[1rem]"
+						:faIcon="['fab', 'twitch']"
+						buttonText="Расширение"
 						href="https://dashboard.twitch.tv/extensions/3cn0qf9xaa13w6wj7za4nmxl2qn0ju-1.0.1"
 						target="_blank"
-						class="btn btn-simple-1 ml-[1rem]"
-				>
-					<span class="button-text">Расширение</span> <font-awesome-icon :icon="['fab', 'twitch']" />
-				</a>
-				<a
+				/>
+				<ui-IconButton
+						class="ml-[1rem]"
+						:faIcon="['fab', 'telegram']"
+						buttonText="Телеграм"
 						href="https://t.me/game_events_tr"
 						target="_blank"
-						class="btn btn-simple-1 ml-[1rem]"
-				>
-					<span class="button-text">Телеграм</span> <font-awesome-icon :icon="['fab', 'telegram']" />
-				</a>
+				/>
 			</div>
 		</header>
 		<button class="btn btn-simple-1 show-board-button" @click="toggleBoard">
@@ -204,6 +206,8 @@ header {
 	@apply
 		pt-[1rem] pb-[1rem] pl-[var(--main-left-padding)] pr-[var(--main-right-padding)]
 		block lg:flex lg:items-center gap-2 text-center lg:text-left
+		mr-[--main-mobile-without-right-padding] lg:mr-[var(--main-without-right-padding)]
+		ml-[--main-mobile-without-left-padding] lg:ml-[var(--main-without-left-padding)]
 	;
 
 	border-bottom: 1px solid var(--second-border-color);
@@ -213,7 +217,7 @@ header {
 	}
 
 	.menu-block {
-		@apply w-full lg:w-2/3 flex justify-center lg:justify-end;
+		@apply w-full lg:w-2/3 flex flex-wrap justify-center lg:justify-end;
 	}
 }
 

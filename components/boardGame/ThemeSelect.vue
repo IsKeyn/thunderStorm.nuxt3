@@ -23,6 +23,7 @@ const themeList = ref(
 			{ value: 'green', name: 'Зеленая', },
 			{ value: 'ocean', name: 'Океан', },
 			{ value: 'street', name: 'Улица', },
+			{ value: 'street-light', name: 'Улица (светлая)', },
 		],
 );
 

@@ -147,10 +147,10 @@ const getLongPlayLink = () => {
 		</div>
 	</div>
 	<div class="mt-5" v-if="showActionButtons && !showFinishGameForm">
-		<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(1)">Рерольнуть</button>
-		<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(3)">Отдал</button>
-		<button class="btn btn-simple-1 mr-[1rem]" @click="toggleFormVisible(2)">Игра пройдена</button>
-		<button class="btn btn-simple-1 mr-[1rem]" @click="emit('showEditList')">Редактировать списки</button>
+		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(1)">Рерольнуть</button>
+		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(3)">Отдал</button>
+		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(2)">Игра пройдена</button>
+		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="emit('showEditList')">Редактировать списки</button>
 	</div>
 	<GameFinishForm
 			v-if="showFinishGameForm"
