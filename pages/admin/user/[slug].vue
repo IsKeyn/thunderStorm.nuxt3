@@ -9,51 +9,45 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 const form = ref(
 		{
 			name: {
-				name: 'Наименование',
+				name: 'Название',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
-				showMaxLength: true,
 			},
-			short_name: {
-				name: 'Короткое название',
+			email: {
+				name: 'email',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
-				showMaxLength: true,
 			},
-			slug: {
-				name: 'Slug',
-				value: '',
-				type: 'text',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]'],
-				autoFill: {
-					sourceFieldKey: 'name',
-					rule: 'slug',
-				},
-			},
-			description: {
-				name: 'Описание',
-				value: '',
-				type: 'textarea',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			release_date: {
-				name: 'Дата и время выхода',
+			email_verified_at: {
+				name: 'Дата подтверждения email',
 				value: '',
 				type: 'text',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			sort: {
-				name: 'Сортировка',
+			password: {
+				name: 'Пароль',
 				value: '',
-				type: 'number',
-				validateRules: null,
+				type: 'text',
+				validateRules: 'required, minLength_3, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			remember_token: {
+				name: 'remember_token',
+				value: '',
+				type: 'text',
+				validateRules: 'minLength_3, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			is_admin: {
+				name: 'Администратор',
+				value: '',
+				type: 'text',
+				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -77,7 +71,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игровые платформы',
+			name: 'Таймеры',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -93,7 +87,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/entity/GamingPlatform"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/user"
 		/>
 	</div>
 </template>

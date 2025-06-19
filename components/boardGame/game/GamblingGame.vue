@@ -63,7 +63,7 @@ const setPlatforms = () => {
 	items.value.forEach((item) => {
 		platforms.value[item.platform.slug] = {
 			id: item.platform.id,
-			name: item.platform.name,
+			name: item.platform.short_name ? item.platform.short_name : item.platform.name,
 			sort: item.platform.sort,
 		};
 	});

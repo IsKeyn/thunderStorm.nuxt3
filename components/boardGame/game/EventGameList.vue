@@ -69,7 +69,7 @@ const filteredItems = ref(null);
 
 const useFilter = () => {
 	filteredItems.value = gameList.value.filter((item) => {
-		return item.game.name.toLowerCase().includes(form.value.searchLine.value.toLowerCase());
+		return item.game.name.toLowerCase().includes(form.value.searchLine.value ? form.value.searchLine.value.toLowerCase() : '');
 	});
 
 	filteredItems.value = filteredItems.value.sort((a, b) => {
@@ -77,8 +77,7 @@ const useFilter = () => {
 		const dateB = b.game.release_dates[0]?.date;
 
 		if (dateA && dateB) {
-			return dateB - dateA; // для сортировки по убыванию (новые сначала)
-			// или return dateA - dateB; для сортировки по возрастанию (старые сначала)
+			return new Date(dateA) - new Date(dateB);
 		}
 
 		// Если у одного из элементов нет даты, размещаем его в конце
@@ -159,6 +158,7 @@ watch(form.value.searchLine, () => {
 				class="w-1/2"
 				:element="form.searchLine"
 				:showTitle="false"
+				:clearButton="true"
 				validateErrorPosition="bottom"
 				labelClasses="mr-4 mt-[10px] mb-[10px]"
 				:fieldClasses="form.searchLine.classes"

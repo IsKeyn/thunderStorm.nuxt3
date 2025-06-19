@@ -39,7 +39,7 @@ const openCloseBoxFunc = () => {
 			<img
 					:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
 					:alt="userStore.user.name"
-					:title="userStore.user.name"
+					:title="`${userStore.user.name} - профайл пользователя`"
 					@click="emit('showPlayer', userStore.user.id)"
 			/>
 			<span
@@ -52,11 +52,15 @@ const openCloseBoxFunc = () => {
 			<!--				<font-awesome-icon :icon="['fas', 'camera']" class="change-avatar" />-->
 		</div>
 		<div class="user-info-wrap">
-			<button class="btn btn-simple-1 mr-2" @click="openCloseBoxFunc()"><font-awesome-icon :icon="['fas', 'pen']" /></button>
-			<button class="btn btn-simple-1 mr-2" @click="emit('showGame')"><font-awesome-icon :icon="['fas', 'gamepad']" /></button>
-			<button class="btn btn-simple-1 mr-2" @click="emit('showInventory')"><font-awesome-icon :icon="['fas', 'hat-wizard']" /></button>
-			<button class="btn btn-simple-1 mr-2" @click="emit('showTimer')"><font-awesome-icon :icon="['fas', 'stopwatch']" /></button>
-			<button class="btn btn-simple-1 mr-2" @click="showNotificationModal"><font-awesome-icon :icon="['fas', 'bell']" /></button>
+			<div class="line">
+				<button class="btn btn-simple-1 mr-2" @click="openCloseBoxFunc()"><font-awesome-icon :icon="['fas', 'pen']" /></button>
+				<button class="btn btn-simple-1 mr-2" @click="showNotificationModal"><font-awesome-icon :icon="['fas', 'bell']" /></button>
+			</div>
+			<div class="line">
+				<button class="btn btn-simple-1 mr-2" @click="emit('showInventory')"><font-awesome-icon :icon="['fas', 'hat-wizard']" /></button>
+				<button class="btn btn-simple-1 mr-2" @click="emit('showTimer')"><font-awesome-icon :icon="['fas', 'stopwatch']" /></button>
+				<button class="btn btn-simple-1 mr-2" @click="emit('showGame')"><font-awesome-icon :icon="['fas', 'gamepad']" /></button>
+			</div>
 		</div>
 	</div>
 	<Modal
@@ -82,7 +86,9 @@ const openCloseBoxFunc = () => {
 	@apply text-center pl-[1rem] pr-[1rem];
 
 	.user-info-wrap {
-		@apply flex justify-center items-center;
+		.line {
+			@apply flex justify-center items-center;
+		}
 
 		.name {
 			@apply pl-[1rem] pr-[1rem] text-[1.2rem];

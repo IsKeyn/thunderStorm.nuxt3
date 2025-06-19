@@ -151,13 +151,13 @@ const gameList = ref(gameListData.value || []);
 </script>
 
 <template>
-	{{ requestInProgress }}
-	<button @click="refresh">
-		we2weqw
-	</button>
+<!--	{{ requestInProgress }}-->
+<!--	<button @click="refresh">-->
+<!--		we2weqw-->
+<!--	</button>-->
 
-	{{ gameList }}
-	{{ fetchedData }}
+<!--	{{ gameList }}-->
+<!--	{{ fetchedData }}-->
 	<div
 			:class="['sidebar', isExpanded ? 'sidebar-expanded' : '']"
 	>

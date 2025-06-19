@@ -99,8 +99,8 @@ form.value.comment = {
 			value: null,
 			type: 'textarea',
 			placeholder: '',
-			validateRules: 'minLength_2, 3000',
-			classes: 'w-full mt-1 mb-1',
+			validateRules: 'minLength_2, maxLength_5000',
+			classes: 'w-full mt-1 mb-1 resize-y',
 };
 
 const errorsMessages = ref([]);
@@ -216,18 +216,11 @@ const writeLogMessage = () => {
 	if (props.type === 2) {
 		let time = '';
 
-		if (form.value.hours.value) {
-			time += form.value.hours.value ? form.value.hours.value : '00';
+		if (form.value?.hours?.value || form.value?.minuts?.value || form.value?.seconds?.value) {
+			time += form.value?.hours?.value ? form.value.hours.value : '00';
+			time += form.value?.minuts?.value ? ':' + form.value.minuts.value : ':00';
+			time += form.value?.seconds?.value ? ':' + form.value.seconds.value : ':00';
 		}
-
-		if (form.value.minuts.value) {
-			time += form.value.minuts.value ? ':' + form.value.minuts.value : ':00';
-		}
-
-		if (form.value.seconds.value) {
-			time += form.value.seconds.value ? ':' + form.value.seconds.value : ':00';
-		}
-
 		message += ` ${time}`;
 	}
 
@@ -287,18 +280,6 @@ watch(() => requestData.value, (newValue) => {
 		form.value.seconds.value = requestData.value % 60;
 	}
 }, { deep: true });
-
-// if (requestData.value
-// 		&& form.value.hours
-// 		&& form.value.minuts
-// 		&& form.value.seconds
-// ) {
-// 	console.log();
-//
-// 	form.value.hours.value = Math.floor(requestData.value / 3600)
-// 	form.value.minuts.value = Math.floor((requestData.value % 3600) / 60)
-// 	form.value.seconds.value = requestData.value % 60
-// }
 </script>
 
 <template>
@@ -349,8 +330,9 @@ watch(() => requestData.value, (newValue) => {
 					name="comment"
 					:element="form.comment"
 					validateErrorPosition="bottom"
-					labelClasses="lg:mr-4 mt-[10px] mb-[10px] block"
+					labelClasses="lg:mr-4 mt-[10px] mb-[10px] !mr-0 block"
 					:fieldClasses="form.comment.classes"
+					:showMaxLength="true"
 			/>
 
 			<div v-if="props.doType === 'update'" class="item-box">

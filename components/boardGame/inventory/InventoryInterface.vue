@@ -386,12 +386,24 @@ const usedItemsGroup = computed(() => {
 	<div v-if="ItemList.length > 0" class="inventory">
 		<div class="user-items">
 			<h2 class="inv-title">Ваш инвентарь</h2>
+			<div class="block lg:hidden">
+				<ItemCard
+						v-for="(element, key) in UserItems"
+						:element="element"
+						:showControlPanel="true"
+						:useLightBox="true"
+						@setOpenedImage="setOpenedImage"
+						@deleteItem="deleteItem"
+						@useItem="useItem"
+				/>
+			</div>
+
 			<Draggable
 					v-model="UserItems"
 					:group="{ name: 'shared', pull: false, put: true }"
 					item-key="id"
 					@add="addItemDragAndDropEvent"
-					class="wrapper"
+					class="wrapper hidden lg:block"
 			>
 				<span v-if="UserItems.length === 0">Предметов нет</span>
 				<template #item="{ element }">
@@ -442,7 +454,7 @@ const usedItemsGroup = computed(() => {
 	<OpeningBox
 			v-if="ItemList.length > 0"
 			title="Использованные предметы"
-			classes="lg:pb-[1rem] lg:pl-[1rem] pr-[1rem]"
+			classes="lg:pb-[1rem] lg:pl-[1rem] lg:pr-[1rem]"
 	>
 		<div class="wrapper">
 			<span v-if="usedItemsGroup.length === 0">Предметов нет</span>

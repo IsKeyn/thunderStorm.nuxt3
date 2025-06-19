@@ -89,7 +89,7 @@ const props = defineProps({
 	background-position: center; /* Центрирует изображение */
 
 	.card-overlay {
-		@apply absolute top-0 left-0 inset-0 bg-black/70;
+		@apply absolute top-0 left-0 inset-0 bg-black/40;
 	}
 
 	.content-box {
@@ -99,9 +99,17 @@ const props = defineProps({
 	&.active {
 		@apply bg-[var(--second-active-color)];
 
+		animation: pulseScale 1.3s infinite ease-in-out;
+
 		.card-overlay {
-			@apply bg-black/40;
+			@apply bg-black/30;
 		}
+	}
+
+	@keyframes pulseScale {
+		0% { background-size: 100%; }
+		50% { background-size: 110%; }
+		100% { background-size: 100%; }
 	}
 
 	img {

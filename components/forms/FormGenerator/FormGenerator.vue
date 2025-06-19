@@ -62,6 +62,11 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	// Отображать или скрывать максимальное допустимое количество символов в поле
+	showMaxLength: {
+		type: Boolean,
+		default: false,
+	},
 	// Отображать или скрывать кнопку очистки формы
 	clearButton: {
 		type: Boolean,
@@ -194,6 +199,22 @@ if (props.formHandlerType === 1) {
 		}
 	}, { deep: true });
 }
+
+const maxLength = computed(() => {
+	const maxLengthRegex = /maxLength_[0-9]{1,6}/i;
+	const arRules = props.element.validateRules.replaceAll(' ', '').split(',');
+
+	for (let item of arRules) {
+		if (maxLengthRegex.test(item)) { // example minLength_10
+
+			return Number(item.split('_')[1]);
+		}
+	}
+});
+
+const currentLength = computed(() => {
+	return typeof props.element.value === 'string' ? props.element.value.length : 0;
+});
 </script>
 
 <template>
@@ -255,7 +276,7 @@ if (props.formHandlerType === 1) {
 					/>
 				</span>
 				<span
-						v-if="clearButton"
+						v-if="clearButton && element.value"
 						class="additional-action-wrap"
 						@click="element.value = null"
 				>
@@ -397,6 +418,12 @@ if (props.formHandlerType === 1) {
 			</span>
 		</template>
 		<span
+				v-if="showMaxLength && maxLength"
+				:class="['length-line', currentLength > maxLength ? 'max-length-exceeded' : '']"
+		>
+			{{ currentLength }}/{{ maxLength }}
+		</span>
+		<span
 			v-if="validateErrorPosition === 'bottom' && element.validateResult && showValidateError"
 			class="field-error-message small-text"
 		>
@@ -404,3 +431,13 @@ if (props.formHandlerType === 1) {
 		</span>
 	</label>
 </template>
+
+<style lang="scss" scoped>
+.length-line {
+	@apply block w-full text-right;
+
+	&.max-length-exceeded {
+		@apply text-[var(--error-color)];
+	}
+}
+</style>

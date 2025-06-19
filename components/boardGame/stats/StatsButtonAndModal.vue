@@ -1,14 +1,7 @@
 <script setup>
 import Modal from '@/components/modals/Modal.vue';
-import EventGameList from '@/components/boardGame/game/EventGameList.vue';
 import BigPreloader from '@/components/ui/BigPreloader.vue';
-
-const props = defineProps({
-	boardGameId: {
-		type: Number,
-		default: 1,
-	},
-});
+import StatsList from '@/components/boardGame/stats/StatsList.vue';
 
 const modalOpen = ref(false);
 const modalLoading = ref(false);
@@ -17,14 +10,29 @@ const openCloseModalFunc = () => {
 	modalOpen.value = !modalOpen.value;
 	modalLoading.value = true;
 };
+
+const props = defineProps({
+	boardGameId: {
+		type: Number,
+		default: 1,
+	},
+});
+
+const loadingToggle = (value) => {
+	modalLoading.value = value;
+}
+
+defineExpose({
+	openCloseModalFunc,
+});
 </script>
 
 <template>
 	<div class="text-center">
 		<ui-IconButton
 				class="ml-[1rem]"
-				:faIcon="['fas', 'gamepad']"
-				buttonText="Игры"
+				:faIcon="['fas', 'chart-pie']"
+				buttonText="Статистика"
 				@click="openCloseModalFunc"
 		/>
 	</div>
@@ -35,19 +43,15 @@ const openCloseModalFunc = () => {
 			@toggleModal="openCloseModalFunc"
 	>
 		<div class="modal-parent">
-			<h3 class="modal-title">Игры в эвенте</h3>
+			<h3 class="modal-title">Список таймеров</h3>
 			<div class="link-parent-box">
 				<BigPreloader v-if="modalLoading" />
-				<EventGameList
+				<StatsList
 						v-show="!modalLoading"
-						:boardGameId="props.boardGameId"
-						@loadingToggle="modalLoading = !modalLoading"
+						:boardGameId="boardGameId"
+						@loadingToggle="loadingToggle($event)"
 				/>
 			</div>
 		</div>
 	</Modal>
 </template>
-
-<style lang="scss" scoped>
-
-</style>

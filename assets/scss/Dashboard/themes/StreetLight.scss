@@ -1,0 +1,215 @@
+/*
+* https://color.romanuke.com/czvetovaya-palitra-4512/
+* #FEF4DB #D4DBE2 #7B7C81 #453C41 #040000
+*/
+
+:root.street-light-theme {
+  /* Цветовая схема InSilentHill  */
+  /* Цвета */
+  --alert-color: #800000;
+  --error-color: #500000;
+  --success-color: #453C41;
+
+  /* Фоны */
+  --body-bg-color: #333333;
+  --main-bg-color: #C0C0C0;
+  --second-bg-color: #4c4248;
+  --third-bg-color: #8c8c8c;
+
+  /* Блоки */
+  --main-block-color: #000000;
+  --second-block-color: #4c4248;
+
+  /* Пелена */
+  --main-veil-color: rgba(0, 0, 0, 0.5);
+
+  /* Модалки */
+  --modal-small-width: 400px;
+  --modal-medium-width: 900px;
+  --modal-full-screen-width: 100%;
+
+  /* Заголовки */
+  --main-title-color: #453C41;
+
+  /* Текст */
+  --main-text-color: #3F3F3F;
+  --main-text-font: Verdana;
+  --second-text-color: #3F3F3F;
+  --third-text-color: #3F3F3F;
+
+  --main-dark-text-color: #c3c3c3;
+  --second-dark-text-color: #808080;
+
+  /* Размеры шрифтов */
+  --main-font-size: 16px;
+  --main-title-font-size: 18px;
+  --text-small-text: 14px;
+
+  /* Ссылки */
+  --main-href-color: #453C41;
+  --main-hover-color: #7B7C81;
+  --main-active-color: #7B7C81;
+  --second-active-color: #7B7C81;
+  --third-active-color: #7B7C81;
+  --second-href-color: #453C41;
+  --second-hover-color: #453C41;
+  --third-hover-color: #DDD;
+
+  /* Рамки */
+  --main-border-color: #453C41;
+  --second-border-color: #333333;
+  --third-border-color: #1c1c1c;
+  --main-very-light-color: #1d1d1d;
+
+  /* Кнопки */
+  --button-color-1: #322b2f;
+
+  /* Размеры */
+  --main-block-width: 1400px;
+
+  /* Отступлы контентной зоны */
+  --main-padding: 30px;
+  --main-left-padding: 60px;
+  --main-right-padding: 60px;
+  --main-without-left-padding: -60px;
+  --main-without-right-padding: -60px;
+
+  --main-mobile-padding: 20px;
+  --main-mobile-left-padding: 20px;
+  --main-mobile-right-padding: 20px;
+  --main-mobile-without-left-padding: -20px;
+  --main-mobile-without-right-padding: -20px;
+
+  /*
+   * Префикс первые три буквы, пример alerts - --ale-main-color
+   */
+
+  /* Notification */
+  --not-alert-bg-color: #453C41;
+  --not-error-bg-color: #453C41;
+
+  /* Статьи */
+  --item-color: #D4DBE2;
+  --heal-color: #9df700;
+  --ammo-color: #000bea;
+  --epic-color: #4700d8;
+}
+
+.street-light-theme {
+  .btn,
+  .button,
+  .icon-box {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .item-box {
+    @apply text-[var(--main-dark-text-color)];
+
+    .status-bar {
+      @apply text-[var(--main-dark-text-color)];
+    }
+
+    .content-box {
+      .info {
+        @apply text-[var(--main-dark-text-color)];
+
+        a {
+          @apply text-[var(--main-dark-text-color)];
+        }
+      }
+    }
+
+    .count-panel {
+      @apply text-[var(--main-dark-text-color)];
+    }
+
+    .comment-box {
+      .message {
+        @apply text-[var(--main-dark-text-color)];
+      }
+    }
+
+    .info {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  .opening-box .header {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .modal-title {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .action-panel {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .dice-container {
+    .d20-container {
+      .d20-face {
+        @apply text-[var(--main-dark-text-color)];
+      }
+    }
+
+    .dice-d6 {
+      .d6-face {
+        @apply text-[var(--main-dark-text-color)];
+      }
+
+      .dot {
+        @apply bg-[var(--main-dark-text-color)];
+      }
+    }
+  }
+
+  .bar {
+    .percent {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  // Рулетка игры
+  .platforms-container {
+    .platform {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  // Игровая доска
+  .playable-field {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+    // Image LightBox
+  .item-info-block,
+  .btn-icon, {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .tag {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .alert-block {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  // Уведомления
+  .alert-box {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  // Инпуты
+  #modals {
+    input,
+    select {
+      @apply bg-[var(--third-bg-color)];
+
+      &::placeholder {
+        @apply text-[var(--main-dark-text-color)];
+      }
+    }
+  }
+}

@@ -80,6 +80,7 @@ const createForm = () => {
 		type: 'textarea',
 		placeholder: 'Комментарий',
 		validateRules: 'required, minLength_2, maxLength_3000',
+		classes: 'w-full resize-y',
 	};
 
 	form.value = createdForm;

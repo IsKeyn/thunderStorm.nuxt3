@@ -36,4 +36,5 @@ const theme = computed(() => {
 @import url('~/assets/scss/Dashboard/themes/Green.scss');
 @import url('~/assets/scss/Dashboard/themes/Ocean.scss');
 @import url('~/assets/scss/Dashboard/themes/Street.scss');
+@import url('~/assets/scss/Dashboard/themes/StreetLight.scss');
 </style>

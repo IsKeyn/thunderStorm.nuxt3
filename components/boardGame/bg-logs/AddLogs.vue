@@ -30,7 +30,7 @@ const form = ref(
 				type: 'textarea',
 				placeholder: 'Текст, добавляемый в лог',
 				validateRules: 'required, minLength_2, maxLength_500',
-				classes: 'min-w-[30%]',
+				classes: 'w-full',
 			},
 		},
 );
@@ -96,6 +96,7 @@ const sendRequest = async () => {
 				validateErrorPosition="bottom"
 				labelClasses="mr-4 mt-[10px] mb-[10px]"
 				:fieldClasses="form.message.classes"
+				:showMaxLength="true"
 		/>
 		<div class="text-center">
 			<ActionButton

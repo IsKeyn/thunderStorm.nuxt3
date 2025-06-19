@@ -22,12 +22,12 @@ const openCloseModalFunc = () => {
 
 <template>
 	<div class="text-center">
-		<button
-				class="btn btn-simple-1 ml-[1rem]"
+		<ui-IconButton
+				class="ml-[1rem]"
+				:faIcon="['fas', 'hat-wizard']"
+				buttonText="Предметы"
 				@click="openCloseModalFunc"
-		>
-			<span class="button-text">Предметы</span> <font-awesome-icon :icon="['fas', 'hat-wizard']" />
-		</button>
+		/>
 	</div>
 	<Modal
 			:showOpenModal="modalOpen"
@@ -36,7 +36,7 @@ const openCloseModalFunc = () => {
 			@toggleModal="openCloseModalFunc"
 	>
 		<div class="modal-parent">
-			<h3 class="modal-title">Предметы</h3>
+			<h3 class="modal-title">Предметы эвента</h3>
 			<div class="link-parent-box">
 				<ui-BigPreloader v-if="modalLoading" />
 				<ItemsList

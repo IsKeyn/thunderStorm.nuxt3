@@ -15,22 +15,8 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			user_id: {
-				name: 'ID пользователя',
-				value: '',
-				type: 'text',
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
 			time_start: {
 				name: 'Старт таймера',
-				value: '',
-				type: 'text',
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			board_game_id: {
-				name: 'ID настолькой игры',
 				value: '',
 				type: 'text',
 				validateRules: 'required, maxLength_255',

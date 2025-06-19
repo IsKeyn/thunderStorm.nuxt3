@@ -150,8 +150,8 @@ const formattedTime = computed(() => {
 <style lang="scss" scoped>
 .item-box {
 	@apply
-	block p-0
-	bg-[var(--second-bg-color)] rounded w-full mb-2
+		block p-0
+		bg-[var(--second-bg-color)] rounded w-full mb-2
 	;
 
 	.content-box {
@@ -159,13 +159,13 @@ const formattedTime = computed(() => {
 
 		img {
 			@apply
-			mx-auto mb-4 lg:m-0
-			w-[150px] h-auto object-contain cursor-pointer
+				mx-auto mb-4 lg:m-0
+				w-[150px] h-auto object-contain cursor-pointer
 			;
 		}
 
 		.info {
-			@apply pl-3 pr-3 text-[var(--main-text-color)];
+			@apply w-full pl-3 pr-3 text-[var(--main-text-color)];
 
 			.info-wrapper {
 				@apply block lg:flex gap-6;

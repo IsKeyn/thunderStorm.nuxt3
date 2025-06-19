@@ -267,11 +267,13 @@ const getDotSizeClasses = () => {
 
 		.d20-face {
 			@apply
-			text-[2rem] text-[var(--main-text-color)]
-			flex
-			justify-center items-center
-			relative z-[10]
+				text-[2rem] text-[var(--main-text-color)]
+				flex
+				justify-center items-center
+				relative z-[10]
 			;
+
+			text-shadow: 0 0 5px #000;
 		}
 	}
 
@@ -307,6 +309,8 @@ const getDotSizeClasses = () => {
 				flex
 				justify-center items-center
 			;
+
+			text-shadow: 0 0 5px #000;
 		}
 	}
 }

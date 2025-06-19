@@ -58,12 +58,12 @@ const props = defineProps({
 			>
 				<font-awesome-icon :icon="['fas', 'check']" />
 			</span>
-			<span
-					class="close-button"
-					@click="emit('deleteItem', element)"
-			>
-				<font-awesome-icon :icon="['fas', 'xmark']" />
-			</span>
+<!--			<span-->
+<!--					class="close-button"-->
+<!--					@click="emit('deleteItem', element)"-->
+<!--			>-->
+<!--				<font-awesome-icon :icon="['fas', 'xmark']" />-->
+<!--			</span>-->
 		</div>
 		<div
 				v-if="element.quantity > 1"

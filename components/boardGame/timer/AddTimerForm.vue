@@ -142,7 +142,7 @@ const sendRequest = async () => {
 			/>
 
 			<label>Лимиты таймера, при необходимости</label>
-			<div class="flex">
+			<div class="flex gap-4">
 				<FormGenerator
 						name="hours"
 						:element="form.hours"
@@ -176,7 +176,7 @@ const sendRequest = async () => {
 					:fieldClasses="form.description.classes"
 			/>
 			<layout-buttons-ActionButton
-					buttonClasses="btn btn-simple-1 w-1/2 mr-[1rem]"
+					buttonClasses="btn btn-simple-1 w-1/2 mr-[1rem] w-full lg:w-auto"
 					buttonName="Отправить"
 					:actionInProgress="requestInProgress"
 					@startAction="sendForm()"

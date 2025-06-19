@@ -14,6 +14,9 @@ const titles = ref(
 			name: {
 				name: 'Наименование',
 			},
+			short_name: {
+				name: 'Короткое название',
+			},
 			slug: {
 				name: 'Slug',
 			},

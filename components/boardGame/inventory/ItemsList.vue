@@ -49,7 +49,7 @@ const filteredItems = ref(null);
 
 const useFilter = () => {
 	const filteredItemsVal = itemList.value.filter((item) => {
-		return item.name.toLowerCase().includes(form.value.searchLine.value.toLowerCase());
+		return item.name.toLowerCase().includes(form.value.searchLine.value ? form.value.searchLine.value.toLowerCase() : '');
 	});
 
 	filteredItems.value = filteredItemsVal;
@@ -115,6 +115,7 @@ watch(form.value.searchLine, () => {
 				class="w-1/2"
 				:element="form.searchLine"
 				:showTitle="false"
+				:clearButton="true"
 				validateErrorPosition="bottom"
 				labelClasses="mr-4 mt-[10px] mb-[10px]"
 				:fieldClasses="form.searchLine.classes"
