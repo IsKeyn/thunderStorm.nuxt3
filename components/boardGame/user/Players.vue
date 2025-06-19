@@ -87,26 +87,26 @@ const afterSendNotification = () => {
 }
 
 const sortType = ref('byFullPoints');
-const sort = ref('desc');
+const sortDirection = ref('desc');
 
 const sortedPlayerList = computed(() => {
 	return props.boardGameInfo.players.sort((a, b) => {
 		if (sortType.value === 'byFullPoints') {
-			return sort.value === 'desc' ? b.full_points - a.full_points : a.full_points - b.full_points;
+			return sortDirection.value === 'desc' ? b.full_points - a.full_points : a.full_points - b.full_points;
 		}
 
 		if (sortType.value === 'pointsPerSeconds') {
 			// Если у обоих seconds = 0, сохраняем их исходный порядок
 			if (a.seconds === 0 && b.seconds === 0) return 0;
 			// Если у a seconds = 0, помещаем его ниже
-			if (a.seconds === 0) return sort.value === 'desc' ? 1 : -1;
+			if (a.seconds === 0) return sortDirection.value === 'desc' ? 1 : -1;
 			// Если у b seconds = 0, помещаем его ниже
-			if (b.seconds === 0) return sort.value === 'desc' ? -1 : 1;
+			if (b.seconds === 0) return sortDirection.value === 'desc' ? -1 : 1;
 
 			const ppSecondA = a.full_points ? (a.seconds / a.full_points) : 0;
 			const ppSecondB = b.full_points ? (b.seconds / b.full_points) : 0;
 
-			return sort.value === 'desc' ? ppSecondA - ppSecondB : ppSecondB - ppSecondA;
+			return sortDirection.value === 'desc' ? ppSecondA - ppSecondB : ppSecondB - ppSecondA;
 		}
 	});
 });
@@ -121,14 +121,14 @@ const sortedPlayerList = computed(() => {
 		</select>
 		<button>
 			<font-awesome-icon
-					v-if="sort === 'desc'"
+					v-if="sortDirection === 'desc'"
 					:icon="['fas', 'arrow-down-wide-short']"
-					@click="sort = 'asc'"
+					@click="sortDirection = 'asc'"
 			/>
 			<font-awesome-icon
-					v-if="sort === 'asc'"
+					v-if="sortDirection === 'asc'"
 					:icon="['fas', 'arrow-up-short-wide']"
-					@click="sort = 'desc'"
+					@click="sortDirection = 'desc'"
 			/>
 		</button>
 	</div>
@@ -139,7 +139,7 @@ const sortedPlayerList = computed(() => {
 		>
 			<PlayerCard
 				:element="player"
-				:place="key"
+				:place="sortDirection === 'desc' ? key : sortedPlayerList.length - key - 1"
 				theme="short"
 				@setOpenedImage="setOpenedImage"
 				@showPlayerInfo="showPlayerInfo"

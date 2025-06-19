@@ -111,7 +111,7 @@ const setShowStreamersBlockSetting = () => {
 		const showStreamersBlockLs = localStorage.getItem('show-streamers-block')
 
 		if (showStreamersBlockLs !== null) {
-			showStreamersBlock.value = showStreamersBlockLs;
+			showStreamersBlock.value = JSON.parse(showStreamersBlockLs);
 		}
 	}
 }

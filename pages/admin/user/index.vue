@@ -12,22 +12,22 @@ const titles = ref(
 				name: 'id',
 			},
 			name: {
-				name: 'Наименование',
+				name: 'Название',
 			},
-			short_name: {
-				name: 'Короткое название',
+			email: {
+				name: 'email',
 			},
-			slug: {
-				name: 'Slug',
+			email_verified_at: {
+				name: 'Дата подтверждения email',
 			},
-			description: {
-				name: 'Описание',
+			password: {
+				name: 'Пароль',
 			},
-			release_time: {
-				name: 'Дата и время выхода',
+			remember_token: {
+				name: 'remember_token',
 			},
-			sort: {
-				name: 'Сортировка',
+			is_admin: {
+				name: 'Администратор',
 			},
 		}
 );
@@ -50,7 +50,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игровые платформы',
+			name: 'Пользователи',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -58,11 +58,10 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<ListTable
-			:titles="titles"
-			fetchUrl="admin/entity/GamingPlatform"
-		/>
-	</div>
+	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
+	<ListTable
+		:titles="titles"
+		titleKey="title"
+		fetchUrl="admin/entity/User"
+	/>
 </template>
