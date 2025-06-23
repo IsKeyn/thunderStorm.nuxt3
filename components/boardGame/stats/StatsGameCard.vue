@@ -10,7 +10,8 @@ const {
 
 import { date } from '@/composables/date.js';
 const {
-	getFormattedDate
+	getFormattedDate,
+	getFormattedHoursFromSeconds
 } = date();
 
 const props = defineProps({
@@ -65,20 +66,6 @@ const getLongPlayLink = () => {
 
 	return urlSearch;
 }
-
-const formattedTime = computed(() => {
-	if (props.element.time) {
-		const hours = Math.floor(props.element.time / 3600)
-		const minutes = Math.floor((props.element.time % 3600) / 60)
-		const secs = props.element.time % 60
-
-		return [
-			hours.toString().padStart(2, '0'),
-			minutes.toString().padStart(2, '0'),
-			secs.toString().padStart(2, '0')
-		].join(':');
-	}
-});
 </script>
 
 <template>

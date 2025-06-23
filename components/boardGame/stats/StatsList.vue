@@ -19,6 +19,12 @@ const props = defineProps({
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
+import { date } from '@/composables/date.js';
+const {
+	getFormattedDate,
+	getFormattedHoursFromSeconds
+} = date();
+
 import { api } from '@/composables/api.js'
 const {
 	apiUrl,
@@ -83,18 +89,29 @@ const updateTimerList = async () => {
 		<div
 			v-for="(data, key) in fetchedData"
 			:key="key"
+			class="mb-[1rem]"
 		>
 			<span class="title">
 				{{ data.name }}
 			</span>
-			<StatsGameCard
+			<div
 					v-for="(element, gameKey) in data.data"
 					:key="gameKey"
-					:element="element"
-					:players="boardGameInfo.players"
-					additionalDataName="Рерольнута раз:"
-					@setOpenedImage="emit('setOpenedImage', $event)"
-			/>
+			>
+				{{ gameKey + 1 }}. <a
+					:href="`/game/${element.game.game.slug}`"
+					target="_blank"
+			>
+				{{ element.game.game.name }}
+				<template
+						v-if="element.additional_data"
+				> - {{ element.additional_data }}</template>
+				<template
+						v-if="
+						(key === 'shortestGames' || key === 'longestGames') && element.time"
+				> - {{ getFormattedHoursFromSeconds(element.time) }}</template>
+			</a>
+			</div>
 		</div>
 	</template>
 
@@ -121,7 +138,7 @@ const updateTimerList = async () => {
 </template>
 
 <style lang="scss" scoped>
-.timer-body {
-	@apply lg:grid grid-cols-12 gap-x-4 mb-[2rem];
+.title {
+	@apply block mb-[0.5rem];
 }
 </style>

@@ -105,7 +105,10 @@ const toggleBoard = () => {
 				<Items
 						:boardGameId="fetchedData.id"
 				/>
-<!--				<StatsButtonAndModal />-->
+				<StatsButtonAndModal
+						:boardGameId="fetchedData.id"
+						:boardGameInfo="fetchedData"
+				/>
 				<ui-IconButton
 						class="ml-[1rem]"
 						:faIcon="['fab', 'twitch']"
