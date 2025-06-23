@@ -64,11 +64,13 @@ const props = defineProps({
 }
 
 .animated {
-	@apply w-[60px] whitespace-nowrap;
-	transition: width 1.5s ease;
+	@apply w-[60px] whitespace-nowrap overflow-hidden;
+	transition: width 0.5s ease; /* Уменьшил время анимации для лучшего UX */
 
 	.button-name {
-		@apply hidden;
+		@apply hidden whitespace-nowrap overflow-hidden;
+		transition: opacity 0.3s ease;
+		opacity: 0;
 	}
 
 	&:hover {
@@ -76,6 +78,8 @@ const props = defineProps({
 
 		.button-name {
 			@apply lg:inline;
+			opacity: 1;
+			transition-delay: 0.2s; /* Небольшая задержка для плавного появления */
 		}
 	}
 }

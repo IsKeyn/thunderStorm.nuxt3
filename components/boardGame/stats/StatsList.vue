@@ -1,6 +1,7 @@
 <script setup>
 import AddTimerForm from '@/components/boardGame/timer/AddTimerForm.vue';
 import Timer from '@/components/boardGame/timer/Timer.vue';
+import StatsGameCard from '@/components/boardGame/stats/StatsGameCard.vue';
 
 const emit = defineEmits(['loadingToggle']);
 
@@ -8,6 +9,10 @@ const props = defineProps({
 	boardGameId: {
 		type: Number,
 		default: 1,
+	},
+	boardGameInfo: {
+		type: Object,
+		default: {},
 	},
 });
 
@@ -30,7 +35,7 @@ const { data: requestData, pending: requestInProgress, refresh } = await useAsyn
 		async () => {
 			emit('loadingToggle', true);
 
-			let request = `${apiUrl.value}board-game/timer/list`;
+			let request = `${apiUrl.value}board-game/stats/get`;
 
 			const query = {
 				board_game_id: props.boardGameId,
@@ -55,7 +60,7 @@ const { data: requestData, pending: requestInProgress, refresh } = await useAsyn
 
 				emit('loadingToggle', false);
 
-				return response.data;
+				return response;
 			} catch (e) {
 				errorHandler(e);
 			}
@@ -74,24 +79,45 @@ const updateTimerList = async () => {
 </script>
 
 <template>
-	<div>
-		<div class="timer-body">
-			<Timer
-					v-if="!requestInProgress"
-					class="col-span-6"
-					v-for="(timer, key) in fetchedData"
-					:key="key"
-					:timer="timer"
-					:showName="true"
-					:boardGameId="boardGameId"
-					@updateTimerList="updateTimerList"
+	<template v-if="!requestInProgress">
+		<div
+			v-for="(data, key) in fetchedData"
+			:key="key"
+		>
+			<span class="title">
+				{{ data.name }}
+			</span>
+			<StatsGameCard
+					v-for="(element, gameKey) in data.data"
+					:key="gameKey"
+					:element="element"
+					:players="boardGameInfo.players"
+					additionalDataName="Рерольнута раз:"
+					@setOpenedImage="emit('setOpenedImage', $event)"
 			/>
 		</div>
-		<AddTimerForm
-				:boardGameId="props.boardGameId"
-				@updateTimerList="updateTimerList"
-		/>
-	</div>
+	</template>
+
+
+	<buttton @click="refresh">12345</buttton>
+<!--	<div>-->
+<!--		<div class="timer-body">-->
+<!--			<Timer-->
+<!--					v-if="!requestInProgress"-->
+<!--					class="col-span-6"-->
+<!--					v-for="(timer, key) in fetchedData"-->
+<!--					:key="key"-->
+<!--					:timer="timer"-->
+<!--					:showName="true"-->
+<!--					:boardGameId="boardGameId"-->
+<!--					@updateTimerList="updateTimerList"-->
+<!--			/>-->
+<!--		</div>-->
+<!--		<AddTimerForm-->
+<!--				:boardGameId="props.boardGameId"-->
+<!--				@updateTimerList="updateTimerList"-->
+<!--		/>-->
+<!--	</div>-->
 </template>
 
 <style lang="scss" scoped>

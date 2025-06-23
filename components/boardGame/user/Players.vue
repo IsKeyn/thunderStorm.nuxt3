@@ -103,10 +103,12 @@ const sortedPlayerList = computed(() => {
 			// Если у b seconds = 0, помещаем его ниже
 			if (b.seconds === 0) return sortDirection.value === 'desc' ? -1 : 1;
 
-			const ppSecondA = a.full_points ? (a.seconds / a.full_points) : 0;
-			const ppSecondB = b.full_points ? (b.seconds / b.full_points) : 0;
+			const ppSecondA = a.full_points ? (a.full_points / a.seconds) : 0;
+			const ppSecondB = b.full_points ? (b.full_points / b.seconds) : 0;
 
-			return sortDirection.value === 'desc' ? ppSecondA - ppSecondB : ppSecondB - ppSecondA;
+			console.log();
+
+			return sortDirection.value === 'desc' ? ppSecondB - ppSecondA : ppSecondA - ppSecondB;
 		}
 	});
 });

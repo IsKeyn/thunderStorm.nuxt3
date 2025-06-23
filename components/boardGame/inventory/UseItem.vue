@@ -445,7 +445,7 @@ const getPlayersForItem = (players, target) => {
 	@apply flex;
 
 	.item-do {
-		@apply p-2 mb-2 mr-2 bg-[var(--second-bg-color)] rounded relative items-center w-1/3;
+		@apply p-2 mb-2 mr-2 bg-[var(--second-bg-color)] rounded relative items-center w-full lg:w-1/3;
 
 		span {
 			@apply block mb-[0.2rem];

@@ -16,6 +16,10 @@ const props = defineProps({
 		type: Number,
 		default: 1,
 	},
+	boardGameInfo: {
+		type: Object,
+		default: {},
+	},
 });
 
 const loadingToggle = (value) => {
@@ -49,6 +53,7 @@ defineExpose({
 				<StatsList
 						v-show="!modalLoading"
 						:boardGameId="boardGameId"
+						:boardGameInfo="boardGameInfo"
 						@loadingToggle="loadingToggle($event)"
 				/>
 			</div>

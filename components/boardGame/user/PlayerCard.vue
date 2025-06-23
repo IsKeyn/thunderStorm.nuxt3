@@ -54,6 +54,12 @@ const getPlaceColor = (place) => {
 				<span class="description">
 					Итоговый результат: {{ element.full_points }}
 				</span>
+				<span
+						v-if="element.full_points && element.seconds"
+						class="description"
+				>
+					Очков в час: {{ Math.round((element.full_points / element.seconds) * 3600) }}
+				</span>
 			</template>
 			<template v-else>
 				<span class="name">

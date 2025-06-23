@@ -36,6 +36,7 @@
   --main-text-font: Verdana;
   --second-text-color: #3F3F3F;
   --third-text-color: #3F3F3F;
+  --four-text-color: #2B2B2B;
 
   --main-dark-text-color: #c3c3c3;
   --second-dark-text-color: #808080;
@@ -211,5 +212,25 @@
         @apply text-[var(--main-dark-text-color)];
       }
     }
+  }
+
+  // Список игр
+  .game-card {
+    .info-box {
+      @apply text-[var(--four-text-color)];
+
+      background: rgba(140, 140, 140, 0.8);
+    }
+  }
+
+  // Предметы
+  .items-do-list {
+    .item-do {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  .choice-player {
+    @apply text-[var(--main-dark-text-color)];
   }
 }
