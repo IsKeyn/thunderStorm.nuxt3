@@ -3,6 +3,8 @@ import Modal from '@/components/modals/Modal.vue';
 import BigPreloader from '@/components/ui/BigPreloader.vue';
 import StatsList from '@/components/boardGame/stats/StatsList.vue';
 
+const emit = defineEmits(['showPlayer']);
+
 const modalOpen = ref(false);
 const modalLoading = ref(false);
 
@@ -15,6 +17,10 @@ const props = defineProps({
 	boardGameId: {
 		type: Number,
 		default: 1,
+	},
+	boardGameInfo: {
+		type: Object,
+		default: {},
 	},
 });
 
@@ -43,13 +49,15 @@ defineExpose({
 			@toggleModal="openCloseModalFunc"
 	>
 		<div class="modal-parent">
-			<h3 class="modal-title">Список таймеров</h3>
+			<h3 class="modal-title">Статистика (обновляется раз в 24 часа)</h3>
 			<div class="link-parent-box">
 				<BigPreloader v-if="modalLoading" />
 				<StatsList
 						v-show="!modalLoading"
 						:boardGameId="boardGameId"
+						:boardGameInfo="boardGameInfo"
 						@loadingToggle="loadingToggle($event)"
+						@showPlayer="$emit('showPlayer', $event)"
 				/>
 			</div>
 		</div>

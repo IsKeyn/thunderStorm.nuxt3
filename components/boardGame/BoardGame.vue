@@ -105,7 +105,12 @@ const toggleBoard = () => {
 				<Items
 						:boardGameId="fetchedData.id"
 				/>
-<!--				<StatsButtonAndModal />-->
+				<StatsButtonAndModal
+						v-if="route.query.dev === 'true'"
+						:boardGameId="fetchedData.id"
+						:boardGameInfo="fetchedData"
+						@showPlayer="showPlayer"
+				/>
 				<ui-IconButton
 						class="ml-[1rem]"
 						:faIcon="['fab', 'twitch']"

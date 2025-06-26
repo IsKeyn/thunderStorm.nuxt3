@@ -5,6 +5,7 @@ import StepCard from '@/components/boardGame/user/StepCard.vue';
 import CurrentGameCard from '@/components/boardGame/game/CurrentGameCard.vue';
 import ProfileGameCard from '@/components/boardGame/game/ProfileGameCard.vue';
 import Timer from '@/components/boardGame/timer/Timer.vue';
+import DoughnutChart from '@/components/ui/charts/DoughnutChart.vue';
 
 const emit = defineEmits(['setOpenedImage', 'sendNotification']);
 
@@ -74,6 +75,62 @@ const usedItems = computed(() => {
 		return b.item.quantity - a.item.quantity;
 	});
 });
+
+const finishedGamesCount = computed(() => {
+	return props.userInfo.player_info.player_games.filter((item) => item.status === 2).length;
+});
+
+const rerolledGamesCount = computed(() => {
+	return props.userInfo.player_info.player_games.filter((item) => item.status === 1).length;
+});
+
+const givenAwayGamesCount = computed(() => {
+	return props.userInfo.player_info.player_games.filter((item) => item.status === 3).length;
+});
+
+const chartData = {
+	labels: ['Пройденные', 'Рерольнутые', 'Отданные'],
+	datasets: [
+		{
+			label: 'Игры',
+			data: [
+				finishedGamesCount,
+				rerolledGamesCount,
+				givenAwayGamesCount
+			],
+			backgroundColor: [
+				'rgb(28,172,7)',
+				'rgb(183,0,0)',
+				'rgb(10,33,157)'
+			],
+			borderColor: 'rgba(0, 0, 0, 0)', // Цвет обводки
+			borderWidth: 2, // Толщина обводки
+			hoverOffset: 4
+		}
+	]
+};
+
+const chartOptions = {
+	responsive: true,
+	maintainAspectRatio: false,
+	plugins: {
+		legend: {
+			position: 'right',
+			labels: {
+				color: '#C0C0C0' // Черный цвет для текста легенды
+			}
+		},
+		// title: {
+		// 	display: true,
+		// 	text: 'Игры',
+		// 	color: '#000000' // Черный цвет для заголовка
+		// },
+		tooltip: {
+			titleColor: '#C0C0C0', // Черный цвет заголовка подсказки
+			bodyColor: '#C0C0C0'  // Черный цвет текста подсказки
+		}
+	}
+}
 </script>
 
 <template>
@@ -106,6 +163,9 @@ const usedItems = computed(() => {
 							Участвует в игре с {{ getFormattedDate('d.m.Y H:i', userInfo.player_info.created_at) }}
 						</span>
 						<span class="field">
+							Пройдено игр: {{ finishedGamesCount }}
+						</span>
+						<span class="field">
 							Количество очков: {{ userInfo.player_info.points }}
 						</span>
 						<span class="field">
@@ -114,6 +174,12 @@ const usedItems = computed(() => {
 						<span class="field">
 							Итоговый результат: {{ userInfo.player_info.full_points }}
 						</span>
+						<span
+								v-if="userInfo.player_info.full_points && userInfo.player_info.seconds"
+								class="field"
+						>
+						Очков в час: {{ Math.round((userInfo.player_info.full_points / userInfo.player_info.seconds) * 3600) }}
+					</span>
 						<button
 								v-if="(userStore.user && Object.keys(userStore.user).length > 0) && (userInfo.player_info.user_id !== userStore.user.id)"
 								class="btn btn-primary"
@@ -149,6 +215,18 @@ const usedItems = computed(() => {
 				v-if="userInfo.player_info.player_games.length > 0"
 				title="История игр игрока"
 		>
+		<div class="item-box game-count-line">
+			<DoughnutChart :chart-data="chartData" :chart-options="chartOptions" />
+<!--				<span>-->
+<!--					Пройдено игр: {{ finishedGamesCount }}-->
+<!--				</span>-->
+<!--				<span>-->
+<!--					Рерольнуто игр: {{ rerolledGamesCount }}-->
+<!--				</span>-->
+<!--				<span>-->
+<!--					Отдано игр: {{ givenAwayGamesCount }}-->
+<!--				</span>-->
+			</div>
 			<div v-for="(element, key) in userInfo.player_info.player_games" :key="key">
 				<ProfileGameCard
 						v-if="element.status !== 0"
@@ -290,5 +368,13 @@ const usedItems = computed(() => {
 
 img {
 	@apply w-[150px] h-[150px] object-cover cursor-pointer;
+}
+
+.game-count-line {
+	@apply block lg:flex justify-center;
+
+	span {
+		@apply block lg:inline mr-[1.5rem];
+	}
 }
 </style>

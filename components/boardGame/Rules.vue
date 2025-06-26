@@ -28,6 +28,7 @@ const openCloseModalFunc = () => {
 				class="ml-[1rem]"
 				:faIcon="['fas', 'book-open-reader']"
 				buttonText="Правила и описание"
+				:alwaysOpened="true"
 				@click="openCloseModalFunc"
 		/>
 	</div>

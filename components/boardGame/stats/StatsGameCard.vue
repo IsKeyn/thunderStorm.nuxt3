@@ -31,6 +31,10 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	additionalDataName: {
+		type: String,
+		default: 'Дополнительная информация:',
+	},
 });
 
 const getStatusName = (status) => {
@@ -67,7 +71,8 @@ const getLongPlayLink = () => {
 <template>
 	<div :class="['item-box', classes]">
 		<div class="status-bar">
-			{{ getStatusName(element.status) }} <span v-if="getFormattedHoursFromSeconds(element.time)">(время прохождения {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
+			{{ additionalDataName }} {{ element.additional_data }}
+<!--			{{ getStatusName(element.status) }} <span v-if="formattedTime">(время прохождения {{ formattedTime }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>-->
 		</div>
 		<div class="content-box">
 			<img
@@ -117,14 +122,14 @@ const getLongPlayLink = () => {
 				</div>
 			</div>
 		</div>
-		<div
-				v-if="element.comment"
-				class="comment-box"
-		>
-			<div class="message">
-				{{ element.comment.message }}
-			</div>
-		</div>
+<!--		<div-->
+<!--				v-if="element.comment"-->
+<!--				class="comment-box"-->
+<!--		>-->
+<!--			<div class="message">-->
+<!--				{{ element.comment.message }}-->
+<!--			</div>-->
+<!--		</div>-->
 	</div>
 </template>
 

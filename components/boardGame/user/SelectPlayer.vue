@@ -66,7 +66,7 @@ const selectOption = (option) => {
 	@apply relative select-none;
 
 	.selected {
-		@apply pt-[10px] pb-[10px] cursor-pointer bg-[--main-block-color];
+		@apply pt-[10px] pb-[10px] cursor-pointer;
 
 		.choice-player {
 			@apply p-2 pr-[3rem] mb-2 bg-[var(--second-bg-color)] rounded flex relative cursor-pointer;
@@ -77,7 +77,7 @@ const selectOption = (option) => {
 		@apply
 			absolute z-[10]
 			w-full max-h-[20rem] overflow-auto
-			bg-[--main-block-color]
+			bg-[var(--third-bg-color)]
 		;
 
 		.option {

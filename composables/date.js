@@ -25,6 +25,20 @@ export function date() {
         return format;
     };
 
+    const getFormattedHoursFromSeconds = (seconds) => {
+        if (seconds) {
+            const hours = Math.floor(seconds / 3600)
+            const minutes = Math.floor((seconds % 3600) / 60)
+            const secs = seconds % 60
+
+            return [
+                hours.toString().padStart(2, '0'),
+                minutes.toString().padStart(2, '0'),
+                secs.toString().padStart(2, '0')
+            ].join(':');
+        }
+    }
+
     const monthName = (month, lang = 'ru', langCase = 'ro') => {
 
         /*
@@ -116,5 +130,11 @@ export function date() {
         return ('0' + num).slice(-2);
     };
 
-    return { getFormattedDate, monthName, weekDayName, twoDigits };
+    return {
+        getFormattedDate,
+        getFormattedHoursFromSeconds,
+        monthName,
+        weekDayName,
+        twoDigits
+    };
 }
