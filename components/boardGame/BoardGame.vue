@@ -106,7 +106,6 @@ const toggleBoard = () => {
 						:boardGameId="fetchedData.id"
 				/>
 				<StatsButtonAndModal
-						v-if="route.query.dev === 'true'"
 						:boardGameId="fetchedData.id"
 						:boardGameInfo="fetchedData"
 						@showPlayer="showPlayer"
