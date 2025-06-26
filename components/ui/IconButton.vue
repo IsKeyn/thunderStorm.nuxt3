@@ -25,6 +25,10 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	alwaysOpened: {
+		type: Boolean,
+		default: false,
+	}
 });
 </script>
 
@@ -36,7 +40,7 @@ const props = defineProps({
 	>
 		<button
 				:title="buttonText"
-				:class="['btn btn-simple-1', type]"
+				:class="['btn btn-simple-1', type, alwaysOpened ? 'opened' : '']"
 		>
 			<font-awesome-icon :icon="faIcon" /> <span class="button-name">{{ buttonText }}</span>
 		</button>
@@ -44,7 +48,7 @@ const props = defineProps({
 	<button
 			v-else
 			:title="buttonText"
-			:class="['btn btn-simple-1', type]"
+			:class="['btn btn-simple-1', type, alwaysOpened ? 'opened' : '']"
 	>
 		<font-awesome-icon :icon="faIcon" /> <span class="button-name">{{ buttonText }}</span>
 	</button>
@@ -56,7 +60,8 @@ const props = defineProps({
 		@apply hidden;
 	}
 
-	&:hover {
+	&:hover,
+	&.opened {
 		.button-name {
 			@apply inline;
 		}
@@ -73,7 +78,8 @@ const props = defineProps({
 		opacity: 0;
 	}
 
-	&:hover {
+	&:hover,
+	&.opened {
 		@apply lg:w-[240px];
 
 		.button-name {

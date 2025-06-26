@@ -5,6 +5,7 @@ import StepCard from '@/components/boardGame/user/StepCard.vue';
 import CurrentGameCard from '@/components/boardGame/game/CurrentGameCard.vue';
 import ProfileGameCard from '@/components/boardGame/game/ProfileGameCard.vue';
 import Timer from '@/components/boardGame/timer/Timer.vue';
+import DoughnutChart from '@/components/ui/charts/DoughnutChart.vue';
 
 const emit = defineEmits(['setOpenedImage', 'sendNotification']);
 
@@ -86,6 +87,50 @@ const rerolledGamesCount = computed(() => {
 const givenAwayGamesCount = computed(() => {
 	return props.userInfo.player_info.player_games.filter((item) => item.status === 3).length;
 });
+
+const chartData = {
+	labels: ['Пройденные', 'Рерольнутые', 'Отданные'],
+	datasets: [
+		{
+			label: 'Игры',
+			data: [
+				finishedGamesCount,
+				rerolledGamesCount,
+				givenAwayGamesCount
+			],
+			backgroundColor: [
+				'rgb(28,172,7)',
+				'rgb(183,0,0)',
+				'rgb(10,33,157)'
+			],
+			borderColor: 'rgba(0, 0, 0, 0)', // Цвет обводки
+			borderWidth: 2, // Толщина обводки
+			hoverOffset: 4
+		}
+	]
+};
+
+const chartOptions = {
+	responsive: true,
+	maintainAspectRatio: false,
+	plugins: {
+		legend: {
+			position: 'right',
+			labels: {
+				color: '#C0C0C0' // Черный цвет для текста легенды
+			}
+		},
+		// title: {
+		// 	display: true,
+		// 	text: 'Игры',
+		// 	color: '#000000' // Черный цвет для заголовка
+		// },
+		tooltip: {
+			titleColor: '#C0C0C0', // Черный цвет заголовка подсказки
+			bodyColor: '#C0C0C0'  // Черный цвет текста подсказки
+		}
+	}
+}
 </script>
 
 <template>
@@ -170,16 +215,17 @@ const givenAwayGamesCount = computed(() => {
 				v-if="userInfo.player_info.player_games.length > 0"
 				title="История игр игрока"
 		>
-			<div class="item-box game-count-line">
-				<span>
-					Пройдено игр: {{ finishedGamesCount }}
-				</span>
-				<span>
-					Рерольнуто игр: {{ rerolledGamesCount }}
-				</span>
-				<span>
-					Отдано игр: {{ givenAwayGamesCount }}
-				</span>
+		<div class="item-box game-count-line">
+			<DoughnutChart :chart-data="chartData" :chart-options="chartOptions" />
+<!--				<span>-->
+<!--					Пройдено игр: {{ finishedGamesCount }}-->
+<!--				</span>-->
+<!--				<span>-->
+<!--					Рерольнуто игр: {{ rerolledGamesCount }}-->
+<!--				</span>-->
+<!--				<span>-->
+<!--					Отдано игр: {{ givenAwayGamesCount }}-->
+<!--				</span>-->
 			</div>
 			<div v-for="(element, key) in userInfo.player_info.player_games" :key="key">
 				<ProfileGameCard
@@ -325,7 +371,7 @@ img {
 }
 
 .game-count-line {
-	@apply block lg:flex;
+	@apply block lg:flex justify-center;
 
 	span {
 		@apply block lg:inline mr-[1.5rem];

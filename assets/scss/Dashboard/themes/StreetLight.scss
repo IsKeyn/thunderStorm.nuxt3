@@ -202,6 +202,12 @@
     @apply text-[var(--main-dark-text-color)];
   }
 
+  .error-box {
+    .wrap {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
   // Инпуты
   #modals {
     input,
@@ -232,5 +238,12 @@
 
   .choice-player {
     @apply text-[var(--main-dark-text-color)];
+  }
+
+  // Аватар
+  .avatar {
+    .notifications {
+      @apply text-[var(--main-dark-text-color)];
+    }
   }
 }
