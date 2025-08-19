@@ -40,7 +40,7 @@ const setSettings = () => {
 	if (userStore.user && Object.keys(userStore.user).length > 0) {
 		funcDelay(setSettingsRequest, delayTime);
 	} else {
-		saveSettingsForNotAuthUser();
+		saveSettingsInLocalStorage();
 	}
 }
 
@@ -66,13 +66,13 @@ const setSettingsRequest = async () => {
 	}
 }
 
-const saveSettingsForNotAuthUser = () => {
+const saveSettingsInLocalStorage = () => {
 	const body = {
 		soundVolume: Number(soundVolume.value),
 		theme: theme.value,
 	}
 
-	localStorage.setItem('settings', body);
+	localStorage.setItem('settings', JSON.stringify(body));
 };
 
 /* Установка настроек, при загрузке компонента */
@@ -82,7 +82,7 @@ if (userStore.user && Object.keys(userStore.user).length > 0) {
 	settings.value = userStore.user.settings;
 } else {
 	if (process.client) {
-		settings.value = localStorage.getItem('settings');
+		settings.value = JSON.parse(localStorage.getItem('settings'));
 	}
 }
 

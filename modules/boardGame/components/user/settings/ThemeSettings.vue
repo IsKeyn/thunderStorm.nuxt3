@@ -20,7 +20,7 @@ const themeList = ref(
 		],
 );
 
-const selectedTheme = ref('');
+const selectedTheme = ref(props.defaultTheme);
 
 const setTheme = (theme) => {
 	themeList.value.forEach((item) => {
@@ -31,6 +31,10 @@ const setTheme = (theme) => {
 		}
 	});
 };
+
+onMounted(() => {
+	setTheme(selectedTheme.value);
+});
 
 watch(() => props.modelValue, (newValue, oldValue) => {
 	if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
