@@ -112,7 +112,7 @@ watch(() => props.element.value, (newValue) => {
 		props.element.value = newValue.replace(/[^+\(\)\d]/g, '');
 	}
 
-	if (props.element.type === 'file' && typeof newValue === 'object') {
+	if (props.element.type === 'file' && newValue && typeof newValue === 'object') {
 		previewImage.value = URL.createObjectURL(newValue[0]);
 	}
 }, { deep: true });
@@ -246,6 +246,7 @@ const currentLength = computed(() => {
 						:friendly-name="element.name"
 						:placeholder="element.placeholder"
 						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+						@input="onInput"
 				/>
 				<span
 						v-if="element.showChangeTypeButton"
@@ -410,12 +411,21 @@ const currentLength = computed(() => {
 			<span class="input-wrap">
 			<input
 					v-model="element.value"
-					:checked="element.value"
 					:type="element.type"
-			>
+			/>
 				<span class="checkbox-name" v-if="element.html" v-html="element.html" />
 				<span class="checkbox-name" v-else>{{ element.name }}</span>
 			</span>
+		</template>
+		<template v-else-if="element.type === 'range'">
+			<input
+					v-model="element.value"
+					:type="element.type"
+					:min="element.min ? element.min : 0"
+					:max="element.max ? element.max : 1"
+					:step="element.step ? element.step : 0.1"
+					:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+			/>
 		</template>
 		<span
 				v-if="showMaxLength && maxLength"

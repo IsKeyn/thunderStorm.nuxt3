@@ -33,6 +33,13 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
+			settings: {
+				name: 'Настройка',
+				value: '',
+				type: 'textarea',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+			},
 			media_id: {
 				name: 'Медиа',
 				value: '',
@@ -44,9 +51,30 @@ const form = ref(
 			},
 			active: {
 				name: 'Активность',
-				value: '',
-				type: 'text',
+				value: true,
+				type: 'checkbox',
 				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			is_close: {
+				name: 'Закрыто',
+				value: false,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			started_at: {
+				name: 'Дата начала',
+				value: '',
+				type: 'datetime-local',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			ended_at: {
+				name: 'Дата конца',
+				value: '',
+				type: 'datetime-local',
+				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			created_by: {

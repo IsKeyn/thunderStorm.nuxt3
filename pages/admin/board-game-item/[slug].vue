@@ -70,6 +70,13 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			author: {
+				name: 'Автор',
+				value: '',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 
@@ -109,7 +116,7 @@ const breadCrumbsArray = computed(() => {
 				:form="form"
 				:showAdditionalData="false"
 				:hasResource="true"
-				fetchUrl="admin/BoardGame/BoardGameItem"
+				fetchUrl="admin/BoardGame/Item"
 		/>
 	</div>
 </template>

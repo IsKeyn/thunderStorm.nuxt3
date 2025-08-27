@@ -31,7 +31,11 @@ const props = defineProps({
 	},
 	href: {
 		type: String,
-		default: 'javascript:void(0);',
+		default: null,
+	},
+	routerLinkUrl: {
+		type: String,
+		default: null,
 	},
 	target: {
 		type: String,
@@ -63,6 +67,23 @@ const props = defineProps({
 			<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
 		</button>
 	</a>
+	<router-link
+			v-else-if="routerLinkUrl"
+			:to="routerLinkUrl"
+	>
+		<button
+				:title="buttonText"
+				:class="[
+						'btn btn-simple-1',
+						type,
+						alwaysOpened ? 'opened' : '',
+						type === 'animated' ? closeWidthClass : '',
+						openType
+				]"
+		>
+			<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
+		</button>
+	</router-link>
 	<button
 			v-else
 			:title="buttonText"

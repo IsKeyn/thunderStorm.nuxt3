@@ -44,7 +44,11 @@ const props = defineProps({
 	breakerLvl: {
 		type: Number,
 		default: 10,
-	}
+	},
+	showAnswer: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const lineBreakerRef = ref(null);
@@ -67,7 +71,7 @@ const breakLineHeight = () => {
 	}
 }
 
-const showAnswer = ref(false);
+const showAnswer = ref(props.showAnswer);
 const sendAnswer = ref(false);
 
 const fetchComments = () => {
@@ -98,8 +102,15 @@ const returnToFirstPosition = () => {
 				ref="commentRef"
 		>
 			<div class="comment-box">
-				<div class="comment-box-head">Комментарий {{ comment.name }} от {{ getFormattedDate('d ru_mouths_name Y', comment.created_at) }}</div>
-				<div class="message-box">{{ comment.message }}</div>
+				<div class="flex">
+					<div>
+						<div class="comment-box-head">Комментарий {{ comment.name }} от {{ getFormattedDate('d ru_mouths_name Y', comment.created_at) }}</div>
+						<div class="message-box">{{ comment.message }}</div>
+					</div>
+<!--					<div>-->
+<!--						Это место под аватар пользователя-->
+<!--					</div>-->
+				</div>
 				<div class="action-box">
 					<a @click="sendAnswer = !sendAnswer">{{ sendAnswer ? 'Отменить' : 'Ответить' }}</a>
 					<span v-if="!isAnswer && comment.answers"> | </span>

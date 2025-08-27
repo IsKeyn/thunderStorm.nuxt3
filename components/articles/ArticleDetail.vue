@@ -33,6 +33,10 @@ const props = defineProps({
 		type: Number,
 		required: true,
 	},
+	showPageHeader: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 import { date } from '@/composables/date.js';
@@ -143,6 +147,7 @@ const openSendCommentForm = () => {
 <template>
 	<div v-if="fetchedData">
 		<PageHeader
+				v-if="showPageHeader"
 				:title="fetchedData.name"
 				:breadCrumbs="getBreadCrumbs()"
 		/>

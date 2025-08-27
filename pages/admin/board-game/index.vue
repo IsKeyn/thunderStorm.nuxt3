@@ -20,6 +20,12 @@ const titles = ref(
 			description: {
 				name: 'Описание',
 			},
+			started_at: {
+				name: 'Дата начала',
+			},
+			ended_at: {
+				name: 'Дата конца',
+			},
 			active: {
 				name: 'Активность',
 			},

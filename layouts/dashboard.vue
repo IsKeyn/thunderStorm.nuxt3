@@ -13,13 +13,14 @@ const theme = computed(() => {
 <template>
 	<div :class="theme">
 		<SystemComponents />
+		<MediaById />
+
 		<div class="main">
-			<div id="modals"></div>
+			<div id="modals" />
 			<article>
 				<slot />
 			</article>
 			<Notifications />
-			<MediaById />
 		</div>
 	</div>
 </template>
@@ -27,12 +28,13 @@ const theme = computed(() => {
 <style lang="scss">
 @import url('~/assets/scss/vars.scss');
 @import url('~/assets/scss/style.scss');
+
 @import url('~/assets/scss/InSilentHill/vars.scss');
 @import url('~/assets/scss/InSilentHill/style.scss');
 @import url('~/assets/scss/InSilentHill/fonts.scss');
 @import url('~/assets/scss/InSilentHill/imports.scss');
-@import url('~/assets/scss/Dashboard/style.scss');
 
+@import url('~/assets/scss/Dashboard/style.scss');
 @import url('~/assets/scss/Dashboard/themes/Green.scss');
 @import url('~/assets/scss/Dashboard/themes/Ocean.scss');
 @import url('~/assets/scss/Dashboard/themes/Street.scss');

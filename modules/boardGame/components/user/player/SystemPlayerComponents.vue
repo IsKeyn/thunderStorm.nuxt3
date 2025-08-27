@@ -1,4 +1,7 @@
 <script setup>
+import { useLoadStateStore } from '@/stores/loadState';
+const loadState = useLoadStateStore();
+
 import { api } from '@/composables/api.js'
 const {
 	apiUrl,
@@ -12,12 +15,14 @@ const userStore = useUserStore();
 
 const route = useRoute();
 
+const requestName = 'boardGamePlayerInfoRequest';
+
 const {
 	data: requestData,
 	pending: requestInProgress,
 	refresh
 } = await useAsyncData(
-		'boardGamePlayerInfoRequest',
+		requestName,
 		async () => {
 			if (userStore.user && Object.keys(userStore.user).length > 0 && route.params.slug) {
 				let request = `${apiUrl.value}board-game/v2/player/current/${route.params.slug}`;
@@ -26,6 +31,13 @@ const {
 				const sessionCookie = useCookie(sessionCookieName.value);
 
 				try {
+					loadState.loadList[requestName] = {
+						name: requestName,
+						type: 'useAsyncData',
+						preloaderType: 'fullscreen',
+						status: 'load',
+					};
+
 					const response = await $fetch(
 							request,
 							{
@@ -40,10 +52,16 @@ const {
 							},
 					);
 
-					if (response && response?.date) {
-						userStore.player = response.date;
+					if (response && response?.data) {
+						userStore.player = response.data;
+						if (loadState.loadList[requestName]) {
+							loadState.loadList[requestName].status = 'finish';
+						}
 					}
 				} catch (e) {
+					if (loadState.loadList[requestName]) {
+						loadState.loadList[requestName].status = 'error';
+					}
 					errorHandler(e);
 				}
 			}

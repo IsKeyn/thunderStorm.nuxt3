@@ -32,6 +32,10 @@ const props = defineProps({
 		type: Number,
 		default: 10,
 	},
+	showAnswer: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const route = useRoute();
@@ -97,8 +101,10 @@ const { data: requestData, pending: requestInProgress, refresh } = await useAsyn
 );
 
 const setFetchedData = () => {
-	fetchedData.value = typeAddedData.value === 'show_more' ? fetchedData.value.concat(requestData.value.data) : requestData.value.data;
-	pagination.value = requestData.value.meta;
+	if (requestData && requestData.value) {
+		fetchedData.value = typeAddedData.value === 'show_more' ? fetchedData.value.concat(requestData.value.data) : requestData.value.data;
+		pagination.value = requestData.value.meta;
+	}
 }
 
 setFetchedData();
@@ -124,6 +130,7 @@ const getNextPage = async () => {
 			:entityType="entityType"
 			:entityId="entityId"
 			:firstParent="comment.id"
+			:showAnswer="showAnswer"
 			@fetchComments="fetchComments"
 	/>
 

@@ -32,6 +32,9 @@ const titles = ref(
 			active: {
 				name: 'Активность',
 			},
+			author: {
+				name: 'Автор',
+			},
 		}
 );
 
@@ -65,6 +68,6 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/BoardGame/BoardGameItem"
+		fetchUrl="admin/BoardGame/Item"
 	/>
 </template>
