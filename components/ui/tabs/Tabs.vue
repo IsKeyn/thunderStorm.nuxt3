@@ -2,6 +2,10 @@
 import { onMounted } from "vue";
 
 const props = defineProps({
+	name: {
+		type: String,
+		default: 'tab',
+	},
 	tabs: {
 		type: Array,
 		default: [
@@ -23,6 +27,10 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	useQueryParam: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const currentTab = ref(1);
@@ -30,9 +38,9 @@ const currentTab = ref(1);
 const router = useRouter();
 const route = useRoute();
 
-if (route.query?.tab) {
+if (props.useQueryParam && route.query[props.name]) {
 	for (let key in props.tabs) {
-		if (String(props.tabs[key].id) === route.query.tab) {
+		if (String(props.tabs[key].id) === route.query[props.name]) {
 			currentTab.value = props.tabs[key].id;
 			break;
 		}
@@ -41,13 +49,16 @@ if (route.query?.tab) {
 
 const setTab = (tabID) => {
 	currentTab.value = tabID;
-	router.push({
-		name: route.name,
-		query: {
-			...route.query,
-			tab: tabID,
-		},
-	});
+
+	if (props.useQueryParam) {
+		router.push({
+			name: route.name,
+			query: {
+				...route.query,
+				[props.name]: tabID,
+			},
+		});
+	}
 }
 </script>
 
