@@ -16,6 +16,9 @@ const { funcDelay,} = system();
 import { notifications } from '@/composables/notifications.js';
 const { error } = notifications();
 
+import { useLoadStateStore } from '@/stores/loadState';
+const loadState = useLoadStateStore();
+
 const showSettingsBlock = ref(false);
 
 const toggleSettingsBlock = () => {
@@ -46,6 +49,8 @@ const setSettings = () => {
 
 const requestInProgress = ref(false);
 
+const requestName = 'setUserPreferencesSettings';
+
 const setSettingsRequest = async () => {
 	requestInProgress.value = true;
 
@@ -55,13 +60,27 @@ const setSettingsRequest = async () => {
 			theme: theme.value,
 		}
 
+		loadState.loadList[requestName] = {
+			name: requestName,
+			type: 'fetch',
+			preloaderType: 'small',
+			status: 'load',
+		};
+
 		const response = await sendApiRequest('auth/set-settings', 'PUT', body);
 
 		if (response.data) {
+			if (loadState.loadList[requestName]) {
+				loadState.loadList[requestName].status = 'finish';
+			}
+
 			userStore.user = response.data;
 		}
 	} catch (e) {
 		error(e);
+		if (loadState.loadList[requestName]) {
+			loadState.loadList[requestName].status = 'error';
+		}
 		requestInProgress.value = false;
 	}
 }
@@ -140,7 +159,7 @@ onMounted(() => {
 
 	.settings-block {
 		@apply
-			absolute right-0
+			absolute right-0 z-[30000]
 			bg-[var(--main-bg-color)]
 			min-w-[300px]
 			p-[1rem]

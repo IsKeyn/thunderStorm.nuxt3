@@ -63,35 +63,30 @@ const setTab = (tabID) => {
 </script>
 
 <template>
-	<div>
-		<ul v-if="showTabs">
-			<li
-					v-for="tab in tabs"
-					:key="tab.id"
-					@click="setTab(tab.id)"
-			>
-				<div
-						style="display: inline-flex"
-						:class="{ 'active' : currentTab === tab.id }"
-				>
-					{{ tab.title }}
-				</div>
-			</li>
-		</ul>
-
-		<div
-				v-for="(tab, index) in tabs"
-				:key="index"
-				v-show="tab.id === currentTab"
+	<ul v-if="showTabs">
+		<li
+				v-for="tab in tabs"
+				:key="tab.id"
+				@click="setTab(tab.id)"
 		>
-			<slot :name="`tab-${tab.id}`" />
-		</div>
+			<div :class="['inline-flex', currentTab === tab.id ? 'active' : '']">
+				{{ tab.title }}
+			</div>
+		</li>
+	</ul>
+
+	<div
+			v-for="(tab, index) in tabs"
+			:key="index"
+			v-show="tab.id === currentTab"
+	>
+		<slot :name="`tab-${tab.id}`" />
 	</div>
 </template>
 
 <style lang="scss" scoped>
 ul {
-	@apply relative flex flex-nowrap mb-4 ml-0 list-none list-inside ;
+	@apply relative flex flex-nowrap mb-4 ml-0 list-none list-inside;
 
 	li {
 		@apply mr-6 last:mr-0;
@@ -100,13 +95,11 @@ ul {
 			@apply pb-2 whitespace-nowrap cursor-pointer;
 
 			&:hover {
-				color: var(--main-hover-color);
+				@apply text-[var(--main-hover-color)];
 			}
 
 			&.active {
-				@apply border-b-2 border-[var(--main-hover-color)];
-
-				color: var(--main-hover-color);
+				@apply border-b-2 border-[var(--main-hover-color)] text-[var(--main-hover-color)];
 			}
 		}
 	}

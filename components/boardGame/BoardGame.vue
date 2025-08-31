@@ -91,7 +91,7 @@ const toggleBoard = () => {
 	>
 		<ui-BigPreloader class="h-full" />
 	</div>
-	<div v-if="fetchedData && fetchedData.active === 1">
+	<div v-if="fetchedData && fetchedData.active">
 		<header>
 			<span class="title" v-if="fetchedData.name">{{ fetchedData.name }}</span>
 			<div class="menu-block">

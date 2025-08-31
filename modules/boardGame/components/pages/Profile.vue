@@ -1,6 +1,6 @@
 <script setup>
 import PlayerProfile from '@/modules/boardGame/components/user/player/PlayerProfile.vue';
-import UserProfile from '@/components/user/registration/UserProfile.vue';
+import UserProfile from '@/components/user/profile/UserProfile.vue';
 import Tabs from '@/components/ui/tabs/Tabs.vue';
 
 import { inject } from 'vue'

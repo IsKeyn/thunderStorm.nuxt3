@@ -54,6 +54,7 @@ watch(() => props.actionType, () => {
 		/>
 		<ResetPasswordForm
 				v-if="actionType === 'reset_password'"
+				description="Введите новый пароль"
 				@setActionType="setActionType"
 				@closeModal="emit('closeModal')"
 		/>

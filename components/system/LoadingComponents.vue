@@ -24,4 +24,12 @@ const smallLoad = computed(() => {
 	<system-loadingPreloaders-FullscreenPreloader
 		:loadList="fullscreenLoads"
 	/>
+
+	<system-loadingPreloaders-FullscreenTransparentPreloader
+			:loadList="fullscreenTransparentLoads"
+	/>
+
+	<system-loadingPreloaders-SmallPreloader
+			:loadList="smallLoad"
+	/>
 </template>

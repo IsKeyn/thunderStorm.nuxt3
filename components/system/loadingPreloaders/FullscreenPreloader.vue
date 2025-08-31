@@ -41,7 +41,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .fullscreen-preloader {
-	@apply fixed z-[50000] justify-center items-center w-[100vw] h-[100vh] bg-[var(--main-bg-color)];
-	//@apply flex justify-center items-center min-h-[10rem] text-[5rem] text-[var(--main-title-color)] bg-[var(--main-bg-color)];
+	@apply fixed z-[99999] justify-center items-center w-[100vw] h-[100vh] bg-[var(--main-bg-color)];
 }
 </style>

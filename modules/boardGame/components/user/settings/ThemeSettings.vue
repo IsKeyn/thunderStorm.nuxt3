@@ -6,13 +6,14 @@ const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
 	defaultTheme: {
 		type: String,
-		default: null,
+		default: 'InSilentHill',
 	},
 	modelValue: {},
 });
 
 const themeList = ref(
 		[
+			{ value: 'InSilentHill', name: 'InSilentHill', },
 			{ value: 'green', name: 'Зеленая', },
 			{ value: 'ocean', name: 'Океан', },
 			{ value: 'street', name: 'Улица', },
@@ -59,7 +60,7 @@ watch(() => selectedTheme, (newValue) => {
 
 		<div class="choice-theme-data">
 			<select v-model="selectedTheme">
-				<option value="">По умолчанию</option>
+				<option :value="defaultTheme">По умолчанию</option>
 				<option
 						v-for="theme in themeList"
 						:value="theme.value"
