@@ -83,9 +83,10 @@ const {
 
 					return response.data;
 				}
-			} catch (e) {				if (loadState.loadList[requestName]) {
-				loadState.loadList[requestName].status = 'error';
-			}
+			} catch (e) {
+				if (loadState.loadList[requestName]) {
+					loadState.loadList[requestName].status = 'error';
+				}
 				errorHandler(e);
 			}
 		},
@@ -111,7 +112,7 @@ const menu = ref([
 	},
 	{
 		name: 'Игроки',
-		path: '/players',
+		path: '/e/' + route.params.slug + '/player',
 		icon: ['fas', 'trophy']
 	},
 	{
@@ -203,7 +204,7 @@ const menu = ref([
 body {
 	.main {
 		article {
-			@apply pb-0 pl-0 pr-0;
+			@apply pb-0 pl-0;
 
 			.content-box {
 				@apply w-full m-[1rem];

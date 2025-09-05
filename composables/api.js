@@ -1,3 +1,5 @@
+import { useLoadStateStore } from '@/stores/loadState';
+
 export function api() {
     const apiUrl = computed(() => {
         const runtimeConfig = useRuntimeConfig();
@@ -95,30 +97,70 @@ export function api() {
 
     const responseErrors = ref({});
 
-    const sendApiRequest = async (url, method, body) => {
+    const sendApiRequest = async (
+        url,
+        method,
+        body,
+        requestName = null,
+        preloaderType = null,
+        loadListType = 'useAsyncData'
+    ) => {
+        const loadState = useLoadStateStore();
+
         responseErrors.value = {};
 
-        const request = `${apiUrl.value}${url}`;
-        const headers = { Accept: 'application/json' };
-
-        if (method === 'POST' || method === 'DELETE' || method === 'PUT') {
-            const csrfCookie = await getCsrfCookie();
-            headers['X-XSRF-TOKEN'] = csrfCookie.value;
-        }
-
-        const opts = {
-            method,
-            credentials: 'include',
-            headers,
-        };
-
-        if (method === 'POST' || method === 'DELETE' || method === 'PUT') {
-            opts.body = body;
-        }
-
         try {
-            return await $fetch(request, opts);
+            /* Использование loadList */
+            if (requestName) {
+                loadState.loadList[requestName] = {
+                    name: requestName,
+                    type: loadListType,
+                    preloaderType,
+                    status: 'load',
+                };
+            }
+
+            const request = `${apiUrl.value}${url}`;
+            const headers = {
+                Accept: 'application/json',
+                Referer: publicUrl.value,
+            };
+
+            if (method === 'POST' || method === 'DELETE' || method === 'PUT') {
+                const csrfCookie = await getCsrfCookie();
+                headers['X-XSRF-TOKEN'] = csrfCookie.value;
+            } else if (method === 'GET') {
+                const sessionCookie = useCookie(sessionCookieName.value);
+                headers.Cookie = `${sessionCookieName.value}=${sessionCookie.value};`;
+            }
+
+            const opts = {
+                method,
+                credentials: 'include',
+                headers,
+            };
+
+            /* body - для POST подобных запросов, query - для GET запросов */
+            if (method === 'POST' || method === 'DELETE' || method === 'PUT') {
+                opts.body = body;
+            } else if (method === 'GET') {
+                opts.query = body;
+            }
+
+            const response = await $fetch(request, opts);
+
+            if (requestName && response) {
+                if (loadState.loadList[requestName]) {
+                    loadState.loadList[requestName].status = 'finish';
+                }
+
+                return response;
+            }
         } catch (e) {
+            if (requestName && loadState.loadList[requestName]) {
+                loadState.loadList[requestName].status = 'error';
+            }
+
             responseErrors.value = errorHandler(e)
         }
     }

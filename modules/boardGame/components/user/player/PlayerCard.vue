@@ -1,0 +1,146 @@
+<script setup>
+const route = useRoute();
+const router = useRouter();
+
+import { inject } from 'vue';
+const layoutMethods = inject('layoutMethods');
+
+import { media } from '@/composables/media.js'
+const { getResizeImg } = media();
+
+const props = defineProps({
+	element: {
+		type: Object,
+		default: {},
+	},
+	place: {
+		type: Number,
+		default: null,
+	},
+	theme: {
+		type: String,
+		default: 'default',
+	},
+	useLightBox: {
+		type: Boolean,
+		default: false,
+	},
+});
+
+const getPlaceColor = (place) => {
+	switch (place) {
+		case 1: return 'gold';
+		case 2: return 'silver';
+		case 3: return 'bronze';
+	}
+}
+</script>
+
+<template>
+	<a
+			class="item-box"
+			:href="`/e/${route.params.slug}/player/${element.user.name}`"
+	>
+		<div class="avatar-box">
+			<img
+					v-if="element?.user?.avatar"
+					:src="getResizeImg(element.user.avatar)"
+					:alt="element.user.name"
+					:title="element.user.name"
+					@click.prevent="useLightBox ? layoutMethods.setOpenedImage(element.user.avatar) : false"
+			/>
+		</div>
+		<div class="info">
+			<span class="field name">
+				{{ element.user.name }}
+			</span>
+			<span
+					v-if="element.full_points && element.seconds"
+					class="field"
+			>
+				Очков в час: {{ Math.round((element.full_points / element.seconds) * 3600) }}
+			</span>
+			<span class="field">
+				Итоговый результат: {{ element.full_points }}
+			</span>
+			<span
+					v-if="theme === 'default'"
+					class="field"
+			>
+				Количество очков: {{ element.points }}
+			</span>
+			<span
+					v-if="theme === 'default'"
+					class="field"
+			>
+				Позиция на поле: {{ element.position ? element.position : 'Ходы не осуществлялись' }}
+			</span>
+		</div>
+		<div
+				v-if="place !== null"
+				class="control-panel"
+		>
+			<span :class="['place', getPlaceColor(place + 1)]">{{ place + 1 }}</span>
+		</div>
+	</a>
+</template>
+
+<style lang="scss" scoped>
+.item-box {
+	@apply
+		flex relative cursor-pointer rounded-none
+		p-2 pr-[3rem] mb-2
+		bg-[var(--second-bg-color)]
+	;
+
+	&:hover {
+		@apply no-underline bg-[var(--second-active-color)];
+	}
+
+	.avatar-box {
+		@apply flex items-center;
+
+		img {
+			@apply
+				w-[100px] h-[100px]
+				object-cover rounded-full cursor-pointer
+			;
+		}
+	}
+
+	.info {
+		@apply
+			pl-3 pr-3
+			text-[var(--main-text-color)]
+		;
+
+		.field {
+			@apply block mb-1;
+		}
+
+		.name {
+			@apply font-bold;
+		}
+	}
+
+	.control-panel {
+		@apply absolute right-[0.5rem];
+
+		.place {
+			@apply bg-[var(--success-color)] rounded-full block text-center mb-[0.3rem] w-[2rem] h-[2rem] flex items-center justify-center;
+
+			&.gold {
+				@apply bg-[#FFD700] text-[#000000];
+			}
+
+			&.silver {
+				@apply bg-[#C0C0C0] text-[#000000];
+			}
+
+			&.bronze {
+				@apply bg-[#CD7F32];
+			}
+		}
+	}
+}
+</style>
