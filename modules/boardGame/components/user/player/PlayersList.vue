@@ -3,6 +3,9 @@ import PlayerCard from '@/modules/boardGame/components/user/player/PlayerCard.vu
 
 import { computed, ref } from "vue";
 
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
+
 import { api } from '@/composables/api.js'
 const { sendApiRequest, responseErrors } = api();
 
@@ -78,16 +81,18 @@ const sortedPlayerList = computed(() => {
 			/>
 		</button>
 	</div>
-	<div
-			v-for="(player, key) in sortedPlayerList"
-			:key="key"
-	>
-		<PlayerCard
-				:element="player"
-				:place="sortDirection === 'desc' ? key : sortedPlayerList.length - key - 1"
-				:useLightBox="true"
-		/>
-	</div>
+	<template v-if="fetchedData">
+		<div
+				v-for="(player, key) in sortedPlayerList"
+				:key="key"
+		>
+			<PlayerCard
+					:element="player"
+					:place="sortDirection === 'desc' ? key : sortedPlayerList.length - key - 1"
+					:useLightBox="true"
+			/>
+		</div>
+	</template>
 </template>
 
 

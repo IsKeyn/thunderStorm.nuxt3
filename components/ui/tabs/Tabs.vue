@@ -1,6 +1,4 @@
 <script setup>
-import { onMounted } from "vue";
-
 const props = defineProps({
 	name: {
 		type: String,
@@ -23,6 +21,9 @@ const props = defineProps({
 			},
 		],
 	},
+	defaultCurrentTab: {
+		default: 1,
+	},
 	showTabs: {
 		type: Boolean,
 		default: true,
@@ -31,9 +32,17 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	useHardDisableTab: {
+		type: Boolean,
+		default: true,
+	},
 });
 
-const currentTab = ref(1);
+const currentTab = ref(props.defaultCurrentTab);
+
+watch(() => props.defaultCurrentTab, () => {
+		currentTab.value = props.defaultCurrentTab;
+});
 
 const router = useRouter();
 const route = useRoute();
@@ -80,7 +89,10 @@ const setTab = (tabID) => {
 			:key="index"
 			v-show="tab.id === currentTab"
 	>
-		<slot :name="`tab-${tab.id}`" />
+		<slot
+				v-if="useHardDisableTab ? tab.id === currentTab : true"
+				:name="`tab-${tab.id}`"
+		/>
 	</div>
 </template>
 

@@ -17,6 +17,10 @@ const props = defineProps({
 		type: String,
 		default: 'fontawesome',
 	},
+	hasFade: {
+		type: Boolean,
+		default: false,
+	},
 	iconText: {
 		type: String,
 		default: '',
@@ -64,7 +68,7 @@ const props = defineProps({
 						openType
 				]"
 		>
-			<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
+			<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" :fade="hasFade ? true : undefined" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
 		</button>
 	</a>
 	<router-link
@@ -81,7 +85,7 @@ const props = defineProps({
 						openType
 				]"
 		>
-			<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
+			<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" :fade="hasFade ? true : undefined" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
 		</button>
 	</router-link>
 	<button
@@ -95,7 +99,7 @@ const props = defineProps({
 						openType
 			]"
 	>
-		<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
+		<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" :fade="hasFade ? true : undefined" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
 	</button>
 </template>
 

@@ -122,7 +122,7 @@ const getUserData = async () => {
 	<div class="avatar">
 		<template v-if="isCurrentUser">
 			<label>
-				<font-awesome-icon class="change-avatar-button" icon="fa-solid fa-camera" />
+				<font-awesome-icon class="change-avatar-button shadow-lg" icon="fa-solid fa-camera" />
 
 				<FormGenerator
 						class="hidden"
@@ -161,7 +161,6 @@ const getUserData = async () => {
 
 		top: calc(50% - 1.5rem);
 		left: calc(50% - 1.5rem);
-
 	}
 
 	&:hover {

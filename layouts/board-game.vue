@@ -9,6 +9,7 @@ import Header from '@/modules/boardGame/components/layout/Header.vue';
 import Footer from '@/modules/boardGame/components/layout/Footer.vue';
 
 import SystemPlayerComponents from '@/modules/boardGame/components/user/player/SystemPlayerComponents.vue';
+import UpdatedData from '@/modules/boardGame/components/layout/UpdatedData.vue';
 
 import { useLoadStateStore } from '@/stores/loadState';
 const loadState = useLoadStateStore();
@@ -112,7 +113,7 @@ const menu = ref([
 	},
 	{
 		name: 'Игроки',
-		path: '/e/' + route.params.slug + '/player',
+		path: '/e/' + route.params.slug + '/player/',
 		icon: ['fas', 'trophy']
 	},
 	{
@@ -148,6 +149,7 @@ const menu = ref([
 	<LoadingComponents />
 	<MediaById />
 	<SystemPlayerComponents />
+	<UpdatedData :boardGameInfo="fetchedData" />
 <!--	<Head-->
 <!--			:seo="{-->
 <!--					title: fetchedData.name,-->
@@ -204,7 +206,7 @@ const menu = ref([
 body {
 	.main {
 		article {
-			@apply pb-0 pl-0;
+			@apply pb-0 pl-0 pr-0;
 
 			.content-box {
 				@apply w-full m-[1rem];

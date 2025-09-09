@@ -1,4 +1,7 @@
 <script setup>
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
+
 const route = useRoute();
 const router = useRouter();
 
@@ -37,9 +40,9 @@ const getPlaceColor = (place) => {
 </script>
 
 <template>
-	<a
+	<router-link
 			class="item-box"
-			:href="`/e/${route.params.slug}/player/${element.user.name}`"
+			:to="`/e/${route.params.slug}/player/${element.user.name}`"
 	>
 		<div class="avatar-box">
 			<img
@@ -49,10 +52,14 @@ const getPlaceColor = (place) => {
 					:title="element.user.name"
 					@click.prevent="useLightBox ? layoutMethods.setOpenedImage(element.user.avatar) : false"
 			/>
+			<img v-else src="/images/system/no-avatar.png">
 		</div>
 		<div class="info">
 			<span class="field name">
 				{{ element.user.name }}
+				<template v-if="boardGameStore.playersOnline[element.user.id]">
+					<a :href="`https://www.twitch.tv/${boardGameStore.playersOnline[element.user.id]}`" target="_blank">Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></a>
+				</template>
 			</span>
 			<span
 					v-if="element.full_points && element.seconds"
@@ -75,6 +82,9 @@ const getPlaceColor = (place) => {
 			>
 				Позиция на поле: {{ element.position ? element.position : 'Ходы не осуществлялись' }}
 			</span>
+			<span class="field">
+				Статус: <template v-if="element.active">Участвует</template><template v-else>Не участвует</template>
+			</span>
 		</div>
 		<div
 				v-if="place !== null"
@@ -82,14 +92,14 @@ const getPlaceColor = (place) => {
 		>
 			<span :class="['place', getPlaceColor(place + 1)]">{{ place + 1 }}</span>
 		</div>
-	</a>
+	</router-link>
 </template>
 
 <style lang="scss" scoped>
 .item-box {
 	@apply
 		flex relative cursor-pointer rounded-none
-		p-2 pr-[3rem] mb-2
+		p-4 pr-[3rem] mb-2
 		bg-[var(--second-bg-color)]
 	;
 
@@ -116,10 +126,18 @@ const getPlaceColor = (place) => {
 
 		.field {
 			@apply block mb-1;
+
+			a {
+				@apply bg-[var(--main-bg-color)] rounded-full p-1;
+
+				&:hover {
+					@apply no-underline;
+				}
+			}
 		}
 
 		.name {
-			@apply font-bold;
+			@apply font-bold mb-3;
 		}
 	}
 

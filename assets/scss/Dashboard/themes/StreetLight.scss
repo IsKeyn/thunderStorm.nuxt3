@@ -60,6 +60,7 @@
   --main-border-color: #453C41;
   --second-border-color: #333333;
   --third-border-color: #1c1c1c;
+  --four-border-color: #7B7C81;
   --main-very-light-color: #1d1d1d;
 
   /* Кнопки */
@@ -131,7 +132,8 @@
     }
 
     .info {
-      @apply text-[var(--main-dark-text-color)];
+      //@apply text-[var(--main-dark-text-color)];
+      color: var(--main-dark-text-color) !important;
     }
   }
 

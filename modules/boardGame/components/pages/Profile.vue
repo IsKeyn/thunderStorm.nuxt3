@@ -1,27 +1,30 @@
 <script setup>
+import Tabs from '@/components/ui/tabs/Tabs.vue';
 import PlayerProfile from '@/modules/boardGame/components/user/player/PlayerProfile.vue';
 import UserProfile from '@/components/user/profile/UserProfile.vue';
-import Tabs from '@/components/ui/tabs/Tabs.vue';
 
-import { inject } from 'vue'
+import {computed, inject} from 'vue'
 const boardGameInfo = inject('boardGameInfo')
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth } = userFunctions();
+
 const route = useRoute();
 
 const breadCrumbsArray = computed(() => {
-	const splitedPath = route.path.split('/');
+	const splitPath = route.path.split('/');
 
 	return [
 		{
 			name: boardGameInfo.value.name,
-			href: `/${splitedPath[1]}/${splitedPath[2]}`,
+			href: `/${splitPath[1]}/${splitPath[2]}`,
 		},
 		{
 			name: 'Профайл',
-			href: `/${splitedPath[1]}/${splitedPath[2]}/${splitedPath[3]}`,
+			href: `/${splitPath[1]}/${splitPath[2]}/${splitPath[3]}`,
 		},
 	];
 });
@@ -40,6 +43,14 @@ const tabsElements = [
 		title: 'Основной профиль',
 	},
 ];
+
+const nameForProfile = computed(() => {
+	if (route.params.name) {
+		return route.params.name;
+	} else if (isAuth) {
+		return userStore.user.name;
+	}
+});
 </script>
 
 <template>
@@ -54,7 +65,7 @@ const tabsElements = [
 	>
 		<template #tab-1>
 			<PlayerProfile
-					:userInfo="userStore.player"
+					:userName="nameForProfile"
 			/>
 		</template>
 		<template #tab-2>

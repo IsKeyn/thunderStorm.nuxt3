@@ -1,11 +1,13 @@
 <script setup>
 import UserInfoBlock from '@/modules/boardGame/components/user/UserInfoBlock.vue';
 
+import { computed } from "vue";
+
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
+
 import { date } from '@/composables/date.js';
-import {computed} from "vue";
-const {
-	getFormattedDate
-} = date();
+const { getFormattedDate } = date();
 
 const props = defineProps({
 	boardGameInfo: {
@@ -40,6 +42,10 @@ const dateString = computed(() => {
 
 	return returnData;
 });
+
+const playersOnline = computed(() => {
+	boardGameStore.playersOnline.length > 0
+});
 </script>
 
 <template>
@@ -69,6 +75,14 @@ const dateString = computed(() => {
 					:buttonText="dateString"
 					closeWidthClass="w-[140px]"
 					openType="t480"
+			/>
+
+			<ui-IconButton
+					v-if="Object.keys(boardGameStore.playersOnline).length > 0"
+					:faIcon="['fa-brands', 'fa-twitch']"
+					:hasFade="true"
+					buttonText="Участники онлайн"
+					:routerLinkUrl="`/e/${route.params.slug}/player/`"
 			/>
 		</div>
 		<div class="right-block">

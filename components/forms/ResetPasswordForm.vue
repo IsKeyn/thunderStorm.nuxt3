@@ -32,7 +32,7 @@ const props = defineProps({
 
 const form = ref({});
 
-if (isAuth) {
+if (isAuth.value) {
 	form.value.currentPassword = {
 		name: 'Текущий пароль',
 		value: '',

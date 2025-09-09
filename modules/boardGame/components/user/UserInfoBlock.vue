@@ -2,11 +2,19 @@
 // import Modal from '@/components/modals/Modal.vue';
 // import ChangeAvatar from '@/components/user/avatar/ChangeAvatar.vue';
 // import SetTwitchUrl from '@/components/boardGame/user/SetTwitchUrl.vue';
+import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
 import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
 import UserSettings from '@/modules/boardGame/components/user/settings/UserSettings.vue';
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
+
+import { userFunctions } from '@/composables/userFunctions.js';
+const {
+	isAuth,
+	logout,
+	sendLogoutRequest,
+} = userFunctions();
 
 import { userNotification } from '@/composables/userNotification.js';
 const {
@@ -14,6 +22,12 @@ const {
 	userNotificationModalRef,
 	showNotificationModal,
 } = userNotification();
+
+import { userMessage } from '@/composables/userMessage.js';
+const {
+	userMessagesModalRef,
+	showUserMessagesModal,
+} = userMessage();
 
 import { media } from '@/composables/media.js'
 const {
@@ -30,26 +44,49 @@ const openCloseBoxFunc = () => {
 };
 
 const route = useRoute();
+
+const showUserMenu = ref(false);
+const toggleUserMenu = () => {
+	showUserMenu.value = !showUserMenu.value;
+}
+
+const router = useRouter();
+
+const userMenuFunc = (type) => {
+	toggleUserMenu();
+
+	switch (type) {
+		case 'profile':
+			router.push({ path: `/e/${route.params.slug}/profile/` });
+			break;
+		case 'messages':
+			showUserMessagesModal();
+			break;
+		case 'notifications':
+			showNotificationModal();
+			break;
+		case 'logout':
+			logout();
+			break;
+	}
+}
 </script>
 
 <template>
 	<div class="wrapper">
-		<template v-if="userStore.user && Object.keys(userStore.user).length > 0">
+		<template v-if="isAuth">
 			<div class="info-block">
 				<span class="nickname">{{ userStore.user.name }}</span>
 				<span v-if="userStore.player" class="points">{{ userStore.player.full_points }} очков</span>
 			</div>
 			<div class="avatar">
-				<router-link
-						:to="`/e/${route.params.slug}/profile/`"
-				>
 					<img
 							:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
 							:alt="userStore.user.name"
 							:title="`${userStore.user.name} - профайл пользователя`"
-							@click="emit('showPlayer', userStore.user.id)"
+							@click="toggleUserMenu()"
 					/>
-				</router-link>
+
 				<span
 						v-if="useNotifications && useNotifications.currentUserNotificationCount && useNotifications.currentUserNotificationCount > 0"
 						class="notifications"
@@ -58,6 +95,37 @@ const route = useRoute();
 					{{ useNotifications.currentUserNotificationCount }}
 				</span>
 				<!--				<font-awesome-icon :icon="['fas', 'camera']" class="change-avatar" />-->
+				<div
+						class="user-menu"
+						v-show="showUserMenu"
+				>
+					<div @click="userMenuFunc('profile');">
+						<font-awesome-icon icon="fa-solid fa-user" class="mr-2" /> Профиль
+					</div>
+					<div @click="userMenuFunc('messages');">
+						<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Личные сообщения
+						<span v-if="
+							useNotifications
+							&& useNotifications.currentUserMessagesCount
+							&& useNotifications.currentUserMessagesCount > 0"
+						>
+							({{ useNotifications.currentUserMessagesCount }})
+						</span>
+					</div>
+					<div @click="userMenuFunc('notifications');">
+						<font-awesome-icon icon="fa-solid fa-bell" class="mr-2" /> Оповещения
+						<span v-if="
+							useNotifications
+							&& useNotifications.currentUserNotificationCount
+							&& useNotifications.currentUserNotificationCount > 0"
+						>
+							({{ useNotifications.currentUserNotificationCount }})
+						</span>
+					</div>
+					<div @click="userMenuFunc('logout');">
+						<font-awesome-icon :icon="['fas', 'right-from-bracket']" class="mr-2" /> Выйти
+					</div>
+				</div>
 			</div>
 	<!--		<div class="user-info-wrap">-->
 	<!--			<div class="line">-->
@@ -71,9 +139,13 @@ const route = useRoute();
 	<!--			</div>-->
 	<!--		</div>-->
 			<UserNotificationModal ref="userNotificationModalRef" />
+			<UserMessagesModal ref="userMessagesModalRef" />
 		</template>
 		<template v-else>
-			Авторизация
+			<user-AuthIconComponent
+					class="ml-[25px]"
+					@showHideMenu="showHideMenu"
+			/>
 		</template>
 
 		<UserSettings />
@@ -143,13 +215,34 @@ const route = useRoute();
 			@apply w-[4rem] h-[4rem] rounded-full object-cover;
 		}
 
-		//.change-avatar {
-		//	@apply absolute text-[2rem] top-[1.5rem] left-[1.5rem] hidden cursor-pointer;
-		//}
-		//
-		//&:hover .change-avatar {
+		//&:hover .user-menu {
 		//	@apply block;
 		//}
+
+		.user-menu {
+			@apply
+				absolute right-0 z-[30000]
+				bg-[var(--main-bg-color)]
+				min-w-[300px]
+				pl-2 pr-2
+			;
+
+			div {
+				@apply p-1;
+
+				border-bottom: 1px solid var(--four-border-color);
+
+				&:hover {
+					@apply bg-[var(--third-hover-color)];
+
+					border-bottom: 1px solid var(--third-hover-color);
+				}
+
+				&:last-child {
+					border-bottom: 1px solid var(--main-bg-color);
+				}
+			}
+		}
 	}
 }
 

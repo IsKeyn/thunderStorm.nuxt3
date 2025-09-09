@@ -5,6 +5,7 @@ export const useNotificationsStore = defineStore('notifications', {
         return {
             notifications: [],
             currentUserNotificationCount: null,
+            currentUserMessagesCount: null,
         }
     },
     actions: {
