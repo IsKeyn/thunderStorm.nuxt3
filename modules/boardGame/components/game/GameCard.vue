@@ -42,7 +42,7 @@ const getStatusName = (status) => {
 
 const getStatusClass = (status) => {
 	switch (status) {
-		case 0: return '';
+		case 0: return 'violet';
 		case 1: return 'red';
 		case 2: return 'green';
 		case 3: return 'blue';
@@ -143,6 +143,10 @@ const getLongPlayLink = () => {
 		block p-0
 		bg-[var(--second-bg-color)] rounded w-full mb-2
 	;
+
+	&.violet {
+		border-left: 8px solid #270062;
+	}
 
 	&.red {
 		border-left: 8px solid #600000;

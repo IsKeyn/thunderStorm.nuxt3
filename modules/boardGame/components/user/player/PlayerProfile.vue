@@ -2,13 +2,14 @@
 import Tabs from '@/components/ui/tabs/Tabs.vue';
 import TwitchCard from '@/components/twitch/TwitchCard.vue';
 import Timer from '@/modules/boardGame/components/timer/Timer.vue';
+import CurrentGame from '@/modules/boardGame/components/user/player/profileElement/CurrentGame.vue';
 import GameHistory from '@/modules/boardGame/components/user/player/profileElement/GameHistory.vue';
 import InventoryHistory from '@/modules/boardGame/components/user/player/profileElement/InventoryHistory.vue';
 
 
+
 import LogCard from '@/components/boardGame/bg-logs/LogCard.vue';
 import StepCard from '@/components/boardGame/user/StepCard.vue';
-import CurrentGameCard from '@/components/boardGame/game/CurrentGameCard.vue';
 
 
 import { computed, inject, onMounted, ref } from 'vue';
@@ -159,14 +160,14 @@ tabsElements.value.push(
 tabsElements.value.push(
 		{
 			id: 'gameHistory',
-			title: 'Истрия игр',
+			title: 'История игр',
 		}
 );
 
 tabsElements.value.push(
 		{
 			id: 'itemsHistory',
-			title: 'Истрия предметов',
+			title: 'История предметов',
 		}
 );
 
@@ -239,6 +240,9 @@ onMounted(() => {
 						>
 							Очков в час: {{ Math.round((userInfo.full_points / userInfo.seconds) * 3600) }}
 						</span>
+						<span class="field">
+							Статус: <template v-if="userInfo.active">Участвует</template><template v-else>Не участвует</template>
+						</span>
 
 <!--						Заменить на отправку ЛС-->
 <!--						<button-->
@@ -263,15 +267,7 @@ onMounted(() => {
 			</div>
 		</div>
 
-		<div class="mb-[2rem]" v-if="userInfo.current_game">
-			<h2 class="inv-title">Текущая игра</h2>
-<!--			<CurrentGameCard-->
-<!--					:currentGame="userInfo.current_game"-->
-<!--					:players="boardGameInfo.players"-->
-<!--					:showTitle="false"-->
-<!--					class="current-game"-->
-<!--			/>-->
-		</div>
+
 
 <!--		<ui-OpeningBox-->
 <!--				v-if="userInfo.player_games.length > 0"-->
@@ -324,10 +320,15 @@ onMounted(() => {
 				type="if"
 		>
 			<template #tab-stream>
-				<TwitchCard
-						v-if="hasStream && scriptTwitchIsOnline"
-						:channel="twitch.value"
-				/>
+				<div class="twitch">
+					<TwitchCard
+							v-if="hasStream && scriptTwitchIsOnline"
+							:channel="twitch.value"
+					/>
+				</div>
+			</template>
+			<template #tab-currentElement>
+				<CurrentGame :userName="userName" />
 			</template>
 			<template #tab-gameHistory>
 				<GameHistory :userName="userName" />
@@ -341,6 +342,14 @@ onMounted(() => {
 		</Tabs>
 	</div>
 </template>
+
+<style lang="scss">
+.twitch {
+	iframe {
+		@apply w-[50%] h-[40rem];
+	}
+}
+</style>
 
 <style lang="scss" scoped>
 .player-info {

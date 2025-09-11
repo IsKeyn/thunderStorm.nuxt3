@@ -14,6 +14,9 @@ import UpdatedData from '@/modules/boardGame/components/layout/UpdatedData.vue';
 import { useLoadStateStore } from '@/stores/loadState';
 const loadState = useLoadStateStore();
 
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
+
 const runtimeConfig = useRuntimeConfig();
 
 import { ref } from "vue";
@@ -82,7 +85,10 @@ const {
 						loadState.loadList[requestName].status = 'finish';
 					}
 
-					return response.data;
+					if (response && response.data) {
+						boardGameStore.boardGameInfo = response.data;
+						return response.data;
+					}
 				}
 			} catch (e) {
 				if (loadState.loadList[requestName]) {
@@ -127,8 +133,8 @@ const menu = ref([
 		icon: ['fas', 'gamepad']
 	},
 	{
-		name: 'Предметы',
-		path: '/items',
+		name: 'Инвентарь',
+		path: '/e/' + route.params.slug + '/inventory/',
 		icon: ['fas', 'hat-wizard']
 	},
 	{

@@ -14,26 +14,14 @@ const titles = ref(
 			item_id: {
 				name: 'id предмета',
 			},
-			name: {
-				name: 'Название',
-			},
-			slug: {
-				name: 'Slug',
-			},
-			description: {
-				name: 'Описание',
-			},
-			actions: {
-				name: 'Действия (json)',
-			},
-			type: {
-				name: 'Тип',
-			},
 			board_game_id: {
 				name: 'ID настолькой игры',
 			},
 			active: {
 				name: 'Активность',
+			},
+			created_by: {
+				name: 'Создан кем',
 			},
 		}
 );
@@ -56,7 +44,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Предметы в настолке',
+			name: 'Привязка предметов к настолке',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -68,6 +56,6 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/BoardGame/BoardGameItem"
+		fetchUrl="admin/BoardGame/ItemBind"
 	/>
 </template>

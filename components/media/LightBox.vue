@@ -383,7 +383,7 @@ const keydownHandler = (event) => {
 
 <style lang="scss" scoped>
 .light-box {
-	@apply fixed left-0 top-0 z-[1000] w-full h-full;
+	@apply fixed left-0 top-0 z-[1000] w-full h-full bg-[var(--body-bg-color)];
 	color: var(--second-text-color);
 
 	.background-img {

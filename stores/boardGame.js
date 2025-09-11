@@ -4,6 +4,7 @@ export const useBoardGameStore = defineStore('board_game', {
     state: () => {
         return {
             playersOnline: {},
+            boardGameInfo: {},
         }
     },
 })

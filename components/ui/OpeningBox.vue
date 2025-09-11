@@ -10,6 +10,10 @@ const props = defineProps({
 		type: String,
 		default: 'mb-4',
 	},
+	theme: {
+		type: String,
+		default: 'default',
+	},
 });
 
 const contentStatus = ref(false);
@@ -30,7 +34,7 @@ watch(injectToggleContent, () => {
 </script>
 
 <template>
-	<div :class="['opening-box', classes]">
+	<div :class="['opening-box', classes, theme]">
 		<div
 				class="header"
 				@click="toggleContent(null)"
@@ -53,29 +57,41 @@ watch(injectToggleContent, () => {
 
 <style lang="scss" scoped>
 .opening-box {
-	.header {
-		@apply
-		relative
-		w-full
-		pt-[10px] pr-[50px] pb-[10px] pl-[15px]
-		bg-[var(--second-bg-color)]
-		text-[18px]
-		cursor-pointer
-		;
-
-		.icon-box {
+	&.default {
+		.header {
 			@apply
-			absolute right-0 top-0
-			w-[50px] h-[50px]
-			text-[20px] text-center leading-[45px]
+				relative
+				w-full
+				pt-[10px] pr-[50px] pb-[10px] pl-[15px]
+				bg-[var(--second-bg-color)]
+				text-[18px]
+				cursor-pointer
+			;
+
+			.icon-box {
+				@apply
+					absolute right-0 top-0
+					w-[50px] h-[50px]
+					text-[20px] text-center leading-[45px]
+				;
+			}
+		}
+
+		.content {
+			@apply
+				pt-[10px] pb-[10px]
 			;
 		}
 	}
 
-	.content {
-		@apply
-		pt-[10px] pb-[10px]
-		;
+	&.short {
+		.header {
+			@apply cursor-pointer;
+		}
+
+		.icon-box {
+			@apply leading-[45px] inline;
+		}
 	}
 }
 </style>

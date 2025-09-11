@@ -1,5 +1,6 @@
 <script setup>
 import FileFromGallery from './fragments/FileFromGallery.vue';
+import EntityList from './fragments/EntityList.vue';
 
 import { watch } from 'vue'
 
@@ -427,6 +428,7 @@ const currentLength = computed(() => {
 					:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
 			/>
 		</template>
+		<EntityList v-else-if="element.type === 'EntityList'" v-model="element.value" :apiUrl="element.apiUrl" />
 		<span
 				v-if="showMaxLength && maxLength"
 				:class="['length-line', currentLength > maxLength ? 'max-length-exceeded' : '']"

@@ -17,8 +17,11 @@ const titles = ref(
 			slug: {
 				name: 'Slug',
 			},
-			description: {
-				name: 'Описание',
+			short_description: {
+				name: 'Короткое описание',
+			},
+			full_description: {
+				name: 'Полное описание',
 			},
 			actions: {
 				name: 'Действия (json)',
@@ -26,14 +29,14 @@ const titles = ref(
 			type: {
 				name: 'Тип',
 			},
-			board_game_id: {
-				name: 'ID настолькой игры',
-			},
 			active: {
 				name: 'Активность',
 			},
 			author: {
 				name: 'Автор',
+			},
+			created_by: {
+				name: 'Создан кем',
 			},
 		}
 );

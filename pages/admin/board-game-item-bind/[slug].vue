@@ -8,73 +8,36 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
+			active: {
+				name: 'Активность',
+				value: 1,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
 			item_id: {
-				name: 'ID предмета',
+				name: 'Предмет',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'board-game/v2/item/list',
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
-			},
-			name: {
-				name: 'Название',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			slug: {
-				name: 'Slug',
-				value: '',
-				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-				autoFill: {
-					sourceFieldKey: 'name',
-					rule: 'slug',
-				},
-			},
-			description: {
-				name: 'Описание',
-				value: '',
-				type: 'textarea',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
-			actions: {
-				name: 'Действия JSON',
-				value: '',
-				type: 'textarea',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			board_game_id: {
-				name: 'ID настолькой игры',
+				name: 'Настольная игра',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			type: {
-				name: 'Тип',
+			created_by: {
+				name: 'Кем создан',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			image: {
-				name: 'Медиа',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			active: {
-				name: 'Активность',
-				value: '',
-				type: 'text',
-				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -98,7 +61,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Предметы в настолке',
+			name: 'Привязка предметов к настолке',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -114,9 +77,9 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				:showAdditionalData="false"
 				:hasResource="true"
-				fetchUrl="admin/BoardGame/BoardGameItem"
+				:showAdditionalData="false"
+				fetchUrl="admin/BoardGame/ItemBind"
 		/>
 	</div>
 </template>

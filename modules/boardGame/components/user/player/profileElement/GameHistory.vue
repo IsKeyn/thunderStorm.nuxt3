@@ -1,6 +1,6 @@
 <script setup>
 import DoughnutChart from '@/components/ui/charts/DoughnutChart.vue';
-import ProfileGameCard from '@/modules/boardGame/components/game/ProfileGameCard.vue';
+import GameCard from '@/modules/boardGame/components/game/GameCard.vue';
 
 import { computed } from "vue";
 
@@ -95,25 +95,16 @@ const chartOptions = {
 		}
 	}
 }
-
-fetchedData.value = null;
 </script>
 
 <template>
 	<ui-BigPreloader v-if="requestInProgress" />
-	<template v-else-if="fetchedData">
+	<template v-else-if="fetchedData && fetchedData.length > 0">
 		<div class="item-box game-count-line">
 			<DoughnutChart :chart-data="chartData" :chart-options="chartOptions" />
-<!--			<span>Пройдено игр: {{ finishedGamesCount }}</span>-->
-<!--			<span>Рерольнуто игр: {{ rerolledGamesCount }}</span>-->
-<!--			<span>Отдано игр: {{ givenAwayGamesCount }}</span>-->
 		</div>
 		<div v-for="(element, key) in fetchedData" :key="key">
-			<ProfileGameCard
-					v-if="element.status !== 0"
-					:element="element"
-					@setOpenedImage="emit('setOpenedImage', $event)"
-			/>
+			<GameCard :element="element"/>
 		</div>
 	</template>
 	<template v-else>

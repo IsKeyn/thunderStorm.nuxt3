@@ -12,7 +12,7 @@ const props = defineProps({
 	},
 });
 
-const isExpanded = ref(false);
+const isExpanded = ref(true);
 const showHideText = ref(false);
 
 const toggleSidebar = () => {
