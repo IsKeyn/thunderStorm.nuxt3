@@ -195,9 +195,9 @@ watch(form.value.searchLine, () => {
 </template>
 
 <style lang="scss">
-input[name="search"] {
-	@apply bg-[var(--third-bg-color)];
-}
+//input[name="search"] {
+//	@apply bg-[var(--third-bg-color)];
+//}
 </style>
 
 <style lang="scss" scoped>

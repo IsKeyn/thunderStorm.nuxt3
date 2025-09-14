@@ -20,7 +20,7 @@ const {
 		requestName,
 		async () => {
 				const response = await Promise.resolve(
-						sendApiRequest(`board-game/v2/player/list/${route.params.slug}`, 'GET', {}, requestName, 'fullscreen')
+						sendApiRequest(`board-game/v2/player/list/${route.params.slug}`, 'GET', {}, requestName)
 				);
 
 				return response?.data || null;
@@ -81,7 +81,8 @@ const sortedPlayerList = computed(() => {
 			/>
 		</button>
 	</div>
-	<template v-if="fetchedData">
+	<ui-BigPreloader v-if="requestInProgress" />
+	<template v-else-if="fetchedData">
 		<div
 				v-for="(player, key) in sortedPlayerList"
 				:key="key"

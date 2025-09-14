@@ -111,6 +111,7 @@ const extensions = [
 				fetchUrl="admin/media-group"
 				:extensions="extensions"
 				:hasResource="true"
+				:showAdditionalData="true"
 		/>
 	</div>
 </template>

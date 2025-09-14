@@ -11,6 +11,14 @@ const props = defineProps({
 		required: true,
 		default: '',
 	},
+	body: {
+		type: Object,
+		default: {},
+	},
+	hasResource: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const items = ref({
@@ -22,7 +30,7 @@ import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
 
 const route = useRoute();
-const requestName = 'getItemList';
+const requestName = 'getItemList_' + props.apiUrl;
 
 const {
 	data: requestData,
@@ -32,17 +40,8 @@ const {
 		requestName,
 		async () => {
 			const response = await Promise.resolve(
-					sendApiRequest(props.apiUrl, 'GET', {}, requestName, '')
+					sendApiRequest(props.apiUrl, 'GET', props.body, requestName, '')
 			);
-
-			if (response) {
-				response.data.forEach((item) => {
-					items.value.options.push({
-						name: item.name,
-						value: item.id,
-					});
-				});
-			}
 
 			return response || null;
 		},
@@ -52,7 +51,32 @@ const {
 		}
 );
 
+watch(requestData, (newData) => {
+	items.value.options = [];
+
+	if (newData) {
+		const data = props.hasResource ? newData.data : newData;
+
+		if (typeof data === 'object') {
+			items.value.options.push({
+				name: 'Не выбрано',
+				value: null,
+			});
+
+			data.forEach((item) => {
+				const value = item.id ? item.id : item.value;
+
+				items.value.options.push({
+					name: item.name ? item.name : value,
+					value,
+				});
+			});
+		}
+	}
+}, { immediate: true });
+
 const fetchedData = computed(() => requestData.value || null);
+items.value.value = props.modelValue;
 
 watch(() => props.modelValue, (newValue) => {
 	items.value.value = newValue;
@@ -60,6 +84,10 @@ watch(() => props.modelValue, (newValue) => {
 
 watch(() => items.value.value, (newValue) => {
 	emit('update:modelValue', newValue);
+}, { deep: true });
+
+watch(() => props.body, () => {
+	refresh();
 }, { deep: true });
 </script>
 

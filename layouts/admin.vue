@@ -84,7 +84,8 @@ onMounted(() => {
 // Компоненте админки
 // Окно авторизации
 import Header from '@/components/admin/Header.vue';
-import Menu from '@/components/admin/Menu.vue';
+// import Menu from '@/components/admin/Menu.vue';
+import SideMenuByCode from '@/components/menu/SideMenuByCode.vue';
 </script>
 
 <template>
@@ -99,7 +100,8 @@ import Menu from '@/components/admin/Menu.vue';
 						<template v-if="userStore.user.email_verified_at">
 							<Header />
 							<div class="wrap">
-								<Menu class="menu" />
+<!--								<Menu class="menu" />-->
+								<SideMenuByCode code="admin" />
 								<div class="content">
 									<slot />
 								</div>
@@ -148,16 +150,14 @@ import Menu from '@/components/admin/Menu.vue';
 <style lang="scss" scoped>
 .wrap {
 	@apply
-		grid grid-cols-5
+		flex
 		mr-[var(--main-without-right-padding)] ml-[var(--main-without-left-padding)]
 	;
 
-	.menu {
-		@apply col-span-1;
-	}
+	.menu {}
 
 	.content {
-		@apply col-span-4 pt-[10px] pr-[25px] pb-[10px] pl-[25px];
+		@apply pt-[10px] pr-[25px] pb-[10px] pl-[25px];
 	}
 }
 </style>

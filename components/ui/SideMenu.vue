@@ -1,4 +1,7 @@
 <script setup>
+import Tabs from '@/components/ui/tabs/Tabs.vue';
+import SideMenuItem from '@/components/ui/SideMenu/SideMenuItem.vue';
+
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -10,10 +13,18 @@ const props = defineProps({
 		type: String,
 		default: 'left',
 	},
+	widthClass: {
+		type: String,
+		default: 'width450',
+	},
+	isExpandedProps: {
+		type: Boolean,
+		default: true,
+	},
 });
 
-const isExpanded = ref(true);
-const showHideText = ref(false);
+const isExpanded = ref(props.isExpandedProps);
+const showHideText = ref(props.isExpandedProps);
 
 const toggleSidebar = () => {
 	if (!isExpanded.value) {
@@ -26,48 +37,42 @@ const toggleSidebar = () => {
 
 	isExpanded.value = !isExpanded.value;
 };
+
+const textCutSize = computed(() => {
+	switch (props.widthClass) {
+		case 'width250': return 10;
+		case 'width450': return 28;
+	}
+});
 </script>
 
 <template>
 	<div
-			:class="['sidebar', isExpanded ? 'sidebar-expanded' : '']"
+			:class="['sidebar', isExpanded ? ['sidebar-expanded', props.widthClass] : '']"
 	>
 		<div
 				class="sidebar-header"
 		>
 			<button
 					class="sidebar-toggle"
-					@click="toggleSidebar">
+					@click="toggleSidebar"
+			>
 				<font-awesome-icon v-if="isExpanded" :icon="['fas', 'circle-left']" />
-				<font-awesome-icon v-else :icon="['fas', 'circle-right']" /> <span v-if="showHideText" class="sidebar__text">Скрыть</span>
+				<font-awesome-icon v-else :icon="['fas', 'circle-right']" /> <span v-if="showHideText" class="sidebar__text">Меню</span>
 			</button>
 		</div>
 
 		<nav class="sidebar-nav">
-			<ul
-					v-if="menu.length > 0"
-					class="sidebar-list"
-			>
-				<li
-						v-for="item in menu"
-						:key="item.name"
-						class="sidebar-item"
-						:title="item.name"
-				>
-					<NuxtLink :to="item.path" class="sidebar-link">
-						<font-awesome-icon
-								v-if="theme === 'left'"
-								:icon="item.icon"
-						/>
-						<span class="sidebar-text">{{ item.name }}</span>
-					</NuxtLink>
-				</li>
-			</ul>
+			<SideMenuItem
+					:menu="menu"
+					:theme="theme"
+					:textCutSize="textCutSize"
+			/>
 		</nav>
 	</div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .sidebar {
 	@apply
 		w-[60px]
@@ -78,13 +83,29 @@ const toggleSidebar = () => {
 	transition: width 0.3s ease;
 
 	&.sidebar-expanded {
-		@apply w-[250px];
+		&.width250 {
+			@apply w-[250px];
+		}
+
+		&.width450 {
+			@apply w-[450px];
+		}
 
 		.sidebar-nav {
 			.sidebar-list {
 				.sidebar-item {
 					.sidebar-link {
 						.sidebar-text {
+							@apply opacity-100;
+						}
+					}
+
+					.header {
+						.sidebar-text-op {
+							@apply opacity-100;
+						}
+
+						.icon-box {
 							@apply opacity-100;
 						}
 					}
@@ -102,7 +123,7 @@ const toggleSidebar = () => {
 		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
 		.sidebar-toggle {
-			@apply cursor-pointer p-[1rem] text-[var(--main-dark-text-color)];
+			@apply cursor-pointer p-[1rem] text-[var(--third-dark-text-color)];
 		}
 	}
 
@@ -119,7 +140,7 @@ const toggleSidebar = () => {
 
 				.sidebar-link {
 					@apply
-						flex items-center text-[var(--main-dark-text-color)]
+						flex items-center text-[var(--third-dark-text-color)]
 						pt-[12px] pb-[12px] pr-[20px] pl-[20px]
 					;
 
@@ -134,7 +155,22 @@ const toggleSidebar = () => {
 					.sidebar-text {
 						@apply ml-[1rem] opacity-0;
 
+						white-space: nowrap;
 						transition: opacity 0.3s;
+					}
+				}
+
+				.header {
+					@apply text-[1rem] pl-[20px] pr-[20px] bg-[var(--second-block-color)] flex items-center;
+
+					.sidebar-text-op {
+						@apply ml-[1rem] opacity-0;
+
+						white-space: nowrap;
+					}
+
+					.icon-box {
+						@apply opacity-0;
 					}
 				}
 			}

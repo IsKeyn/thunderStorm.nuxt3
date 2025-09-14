@@ -1,6 +1,7 @@
 <script setup>
 import FileFromGallery from './fragments/FileFromGallery.vue';
 import EntityList from './fragments/EntityList.vue';
+import EntityBind from './fragments/EntityBind.vue';
 
 import { watch } from 'vue'
 
@@ -116,6 +117,14 @@ watch(() => props.element.value, (newValue) => {
 	if (props.element.type === 'file' && newValue && typeof newValue === 'object') {
 		previewImage.value = URL.createObjectURL(newValue[0]);
 	}
+
+	if (props.element.type === 'EntityBind') {
+		bindValues.value.entity = props.element.value;
+
+		if (props.element.bindField && props.form[props.element.bindField]) {
+			bindValues.value.id = props.form[props.element.bindField].value;
+		}
+	}
 }, { deep: true });
 
 watch(() => props.element.validateResult, (newValue) => {
@@ -216,10 +225,26 @@ const maxLength = computed(() => {
 const currentLength = computed(() => {
 	return typeof props.element.value === 'string' ? props.element.value.length : 0;
 });
+
+/* НАЧАЛО: Laravel привязка сущности тип EntityBind */
+const bindValues = ref({});
+
+watch(() => bindValues.value, () => {
+	if (props.element.type === 'EntityBind') {
+		props.element.value = bindValues.value.entity;
+
+		if (props.element.bindField && props.form[props.element.bindField]) {
+			props.form[props.element.bindField].value = bindValues.value.id;
+		}
+	}
+}, { deep: true });
+
+/* КОНЕЦ: Laravel привязка сущности тип EntityBind */
 </script>
 
 <template>
 	<label
+			v-if="element.type !== 'disable'"
 			ref="label"
 			:class="[element.type === 'hidden' ? 'hidden' : getLabelClasses]"
 	>
@@ -428,7 +453,17 @@ const currentLength = computed(() => {
 					:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
 			/>
 		</template>
-		<EntityList v-else-if="element.type === 'EntityList'" v-model="element.value" :apiUrl="element.apiUrl" />
+		<EntityList
+				v-else-if="element.type === 'EntityList'"
+				v-model="element.value"
+				:apiUrl="element.apiUrl"
+				:body="element.body ? element.body : {}"
+				:hasResource="element?.hasResource"
+		/>
+		<EntityBind
+				v-else-if="element.type === 'EntityBind'"
+				v-model="bindValues"
+		/>
 		<span
 				v-if="showMaxLength && maxLength"
 				:class="['length-line', currentLength > maxLength ? 'max-length-exceeded' : '']"

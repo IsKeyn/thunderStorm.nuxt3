@@ -19,6 +19,7 @@
   /* Блоки */
   --main-block-color: #000000;
   --second-block-color: #4c4248;
+  --third-block-color: #352f33;
 
   /* Пелена */
   --main-veil-color: rgba(0, 0, 0, 0.5);
@@ -40,6 +41,7 @@
 
   --main-dark-text-color: #c3c3c3;
   --second-dark-text-color: #808080;
+  --third-dark-text-color: #c3c3c3;
 
   /* Размеры шрифтов */
   --main-font-size: 16px;
@@ -251,6 +253,17 @@
   // Аватар
   .avatar {
     .notifications {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  // Пагинатор components/navigation/Pagination.vue
+  .pagination-button {
+    &.current {
+      @apply text-[var(--main-dark-text-color)];
+    }
+
+    &:hover {
       @apply text-[var(--main-dark-text-color)];
     }
   }

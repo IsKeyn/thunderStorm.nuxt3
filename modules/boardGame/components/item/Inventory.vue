@@ -1,11 +1,12 @@
 <script setup>
-import GamblingGame from '@/components/boardGame/inventory/GamblingGame.vue'
+import GamblingGame from '@/modules/boardGame/components/item/GamblingGame.vue'
+
+import { computed } from "vue";
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
 import { api } from '@/composables/api.js';
-import { computed } from "vue";
 const { sendApiRequest, preparedRequestBody } = api();
 
 const props = defineProps({});
@@ -36,10 +37,8 @@ const fetchedData = computed(() => requestData.value || null);
 </script>
 
 <template>
-	<button @click="refresh">sfd</button>
-	<h2 class="inv-title">Рулетка предметов</h2>
 	<GamblingGame
-			v-if="fetchedData.length > 0"
+			v-if="fetchedData && fetchedData.length > 0"
 			:items="fetchedData"
 			:boardGameId="boardGameStore.boardGameInfo.id"
 			@setOpenedImage="setOpenedImage"

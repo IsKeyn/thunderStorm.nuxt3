@@ -179,6 +179,7 @@ const defaultValuesForAdditionalFields = [
 				:hasResource="true"
 				:useAdditionalData="true"
 				:useBlockEditor="true"
+				:showAdditionalData="true"
 				:extensions="extensions"
 		/>
 	</div>

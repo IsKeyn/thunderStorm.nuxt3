@@ -15,6 +15,10 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
+	classes: {
+		type: String,
+		default: '',
+	},
 	showControlPanel: {
 		type: Boolean,
 		default: false,
@@ -23,9 +27,17 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showFullDescription: {
+		type: Boolean,
+		default: true,
+	},
 	useLightBox: {
 		type: Boolean,
 		default: false,
+	},
+	theme: {
+		type: String,
+		default: 'default',
 	},
 });
 
@@ -43,13 +55,16 @@ const getTypeClass = (type) => {
 	<div :class="[
 			'item-box',
 			getTypeClass(element.item.type),
-			showControlPanel || element.quantity > 1 ? 'add-padding-right' : ''
+			showControlPanel || element.quantity > 1 ? 'add-padding-right' : '',
+			theme,
+			classes,
 	]">
 		<img
 				v-if="element.item.image"
 				:src="getResizeImg(element.item.image)"
 				:alt="element.item.name"
 				:title="element.item.name"
+				:class="[useLightBox ? 'cursor-pointer' : '']"
 				@click="useLightBox ? layoutMethods.setOpenedImage(element.item.image) : false"
 		>
 		<div class="info">
@@ -65,7 +80,10 @@ const getTypeClass = (type) => {
 				{{ element.item.short_description ? element.item.short_description : element.item.full_description }}
 			</span>
 			<ui-OpeningBox
-					v-if="(element.item.short_description && element.item.full_description) || element.item.authorUser"
+					v-if="
+						showFullDescription
+						&& ((element.item.short_description && element.item.full_description) || element.item.authorUser)
+					"
 					classes="mb-0"
 					theme="short"
 					title="Подробное описание"
@@ -106,26 +124,38 @@ const getTypeClass = (type) => {
 <style lang="scss" scoped>
 
 .item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative cursor-pointer min-h-[86px];
+	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative min-h-[86px];
 
-	&.red {
-		border-left: 8px solid #600000;
+	&.gamblingGame {
+		@apply w-full;
 	}
 
-	&.green {
-		border-left: 8px solid #005d00;
+	&.default {
+		&.red {
+			border-left: 8px solid #600000;
+		}
+
+		&.green {
+			border-left: 8px solid #005d00;
+		}
+
+		&.blue {
+			border-left: 8px solid #000460;
+		}
 	}
 
-	&.blue {
-		border-left: 8px solid #000460;
+	&.active {
+		@apply bg-[var(--second-active-color)];
 	}
 
 	&.add-padding-right {
 		@apply pr-[3rem];
 	}
 
-	&:hover {
-		@apply bg-[var(--second-active-color)];
+	&.default {
+		//&:hover {
+		//	@apply bg-[var(--second-active-color)];
+		//}
 	}
 
 	img {

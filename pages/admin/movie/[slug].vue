@@ -151,6 +151,7 @@ const defaultValuesForAdditionalFields = [
 				:hasResource="true"
 				:useAdditionalData="true"
 				:extensions="extensions"
+				:showAdditionalData="true"
 		/>
 	</div>
 </template>

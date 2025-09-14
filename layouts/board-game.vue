@@ -143,9 +143,21 @@ const menu = ref([
 		icon: ['fas', 'sliders']
 	},
 	{
-		name: 'Обсуждение',
-		path: '/e/' + route.params.slug + '/discussion/',
-		icon: ['fa-solid', 'fa-message']
+		name: 'Расширенные',
+		path: '/e/' + route.params.slug + '/log-list/',
+		icon: ['fa-solid', 'fa-arrow-up-right-from-square'],
+		group: [
+			{
+				name: 'Логи',
+				path: '/e/' + route.params.slug + '/log-list/',
+				icon: ['fa-solid', 'fa-rectangle-list'],
+			},
+			{
+				name: 'Обсуждение',
+				path: '/e/' + route.params.slug + '/discussion/',
+				icon: ['fa-solid', 'fa-message']
+			},
+		],
 	},
 ]);
 </script>
@@ -172,6 +184,7 @@ const menu = ref([
 				<div class="flex">
 					<ui-SideMenu
 							:menu="menu"
+							widthClass="width250"
 					/>
 					<div class="content-box">
 						<slot />

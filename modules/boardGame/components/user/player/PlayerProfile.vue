@@ -70,7 +70,7 @@ const {
 		async () => {
 			if (props.userName) {
 				const response = await Promise.resolve(
-						sendApiRequest(`board-game/v2/player/get/${route.params.slug}/${props.userName}`, 'GET', {}, requestName, 'fullscreenTransparent')
+						sendApiRequest(`board-game/v2/player/get/${route.params.slug}/${props.userName}`, 'GET', {}, requestName, 'fullscreen')
 				);
 
 				return response?.data || null;

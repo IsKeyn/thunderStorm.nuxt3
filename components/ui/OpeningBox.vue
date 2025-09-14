@@ -1,6 +1,11 @@
 <script setup>
 import { inject, watch } from "vue";
 
+import { helper } from '@/composables/helper.js'
+const {
+	cutText,
+} = helper();
+
 const props = defineProps({
 	title: {
 		type: String,
@@ -10,9 +15,29 @@ const props = defineProps({
 		type: String,
 		default: 'mb-4',
 	},
+	titleClasses: {
+		type: String,
+		default: '',
+	},
+	openIconClasses: {
+		type: String,
+		default: '',
+	},
+	contentClasses: {
+		type: String,
+		default: '',
+	},
+	maxTitleSize: {
+		type: Number,
+		default: null,
+	},
 	theme: {
 		type: String,
 		default: 'default',
+	},
+	faIcon: {
+		type: Array,
+		default: null,
 	},
 });
 
@@ -39,16 +64,15 @@ watch(injectToggleContent, () => {
 				class="header"
 				@click="toggleContent(null)"
 		>
-			{{ title }}
-
+			<font-awesome-icon v-if="faIcon" :icon="faIcon"/><span :class="titleClasses">{{ maxTitleSize ? cutText(title, maxTitleSize) : title }}</span>
 			<div class="icon-box">
-				<font-awesome-icon v-if="contentStatus" :icon="['fas', 'angle-up']" />
-				<font-awesome-icon v-else :icon="['fas', 'angle-down']" />
+				<font-awesome-icon v-if="contentStatus" :icon="['fas', 'angle-up']" :class="openIconClasses" />
+				<font-awesome-icon v-else :icon="['fas', 'angle-down']" :class="openIconClasses" />
 			</div>
 		</div>
 		<div
 				v-show="contentStatus"
-				class="content"
+				:class="['content', contentClasses]"
 		>
 			<slot />
 		</div>

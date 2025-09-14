@@ -1,8 +1,9 @@
 <script setup>
 import GameCard from '@/modules/boardGame/components/game/GameCard.vue';
 
+import { computed } from "vue";
+
 import { api } from '@/composables/api.js';
-import {computed} from "vue";
 const { sendApiRequest, preparedRequestBody } = api();
 
 const props = defineProps({

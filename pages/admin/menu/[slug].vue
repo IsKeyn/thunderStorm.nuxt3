@@ -24,24 +24,49 @@ const form = ref(
 			},
 			target: {
 				name: 'target',
-				value: '',
-				type: 'text',
+				value: null,
+				type: 'select',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+				options: [
+					{
+						name: 'Не выбрано',
+						value: null,
+					},
+					{
+						name: '_blank',
+						value: '_blank',
+					},
+				],
 			},
 			menu_type_id: {
 				name: 'ID типа меню',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'entity/getFields',
+				body: {
+					entity: 'App\\Models\\MenuType',
+				},
+				hasResource: false,
 				validateRules: 'required, maxLength_40',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			link_type: {
 				name: 'Тип ссылки',
-				value: '',
-				type: 'text',
+				value: null,
+				type: 'select',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+				options: [
+					{
+						name: 'Не выбрано',
+						value: null,
+					},
+					{
+						name: 'route',
+						value: 'route',
+					},
+				],
 			},
 			icon: {
 				name: 'Иконка',
@@ -50,12 +75,20 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			active: {
-				name: 'Активность',
+			sort: {
+				name: 'Сортировка',
 				value: '',
-				type: 'text',
+				type: 'number',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+			},
+			active: {
+				name: 'Активность',
+				value: 1,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
 			},
 		}
 );

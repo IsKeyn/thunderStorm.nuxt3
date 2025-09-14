@@ -127,7 +127,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .custom-select {
-	@apply relative w-full max-w-[20rem];
+	@apply relative w-full max-w-[30rem];
 
 	.select-trigger {
 		@apply flex items-center justify-between p-2 border border-[var(--second-border-color)] cursor-pointer transition-colors hover:border-[var(--third-hover-color)];

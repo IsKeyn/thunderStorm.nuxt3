@@ -18,11 +18,23 @@ const titles = ref(
 			group: {
 				name: 'Это группа',
 			},
+			group_name: {
+				name: 'Наименование группы',
+			},
+			group_icon: {
+				name: 'Иконка fa',
+			},
 			menu_type_bind_id: {
 				name: 'ID привязанной сущности',
 			},
 			menu_type_bind_type: {
 				name: 'Тип привязанной сущности',
+			},
+			sort: {
+				name: 'Сортировка',
+			},
+			active: {
+				name: 'Активность',
 			},
 		}
 );
