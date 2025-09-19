@@ -81,6 +81,13 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]'],
 				showTitle: false,
 			},
+			drop_chance: {
+				name: 'Шанс дропа',
+				value: 10,
+				type: 'number',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			author: {
 				name: 'Автор',
 				value: '',

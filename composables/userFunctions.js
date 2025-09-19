@@ -61,5 +61,6 @@ export function userFunctions() {
         sendLogoutRequest,
         isAuth,
         logout,
+        userStore,
     };
 }

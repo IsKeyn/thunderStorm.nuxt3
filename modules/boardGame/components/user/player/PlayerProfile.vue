@@ -4,7 +4,8 @@ import TwitchCard from '@/components/twitch/TwitchCard.vue';
 import Timer from '@/modules/boardGame/components/timer/Timer.vue';
 import CurrentGame from '@/modules/boardGame/components/user/player/profileElement/CurrentGame.vue';
 import GameHistory from '@/modules/boardGame/components/user/player/profileElement/GameHistory.vue';
-import InventoryHistory from '@/modules/boardGame/components/user/player/profileElement/InventoryHistory.vue';
+import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.vue';
+import PlayerLogs from '@/modules/boardGame/components/user/player/profileElement/PlayerLogs.vue';
 
 
 
@@ -269,51 +270,6 @@ onMounted(() => {
 
 
 
-<!--		<ui-OpeningBox-->
-<!--				v-if="userInfo.player_games.length > 0"-->
-<!--				title="История игр игрока"-->
-<!--		>-->
-
-<!--		</ui-OpeningBox>-->
-
-
-
-<!--		<div class="logs-and-steps">-->
-<!--			<div-->
-<!--					v-if="userInfo.logs"-->
-<!--					class="box"-->
-<!--			>-->
-<!--				<h2 class="inv-title">Логи игры</h2>-->
-<!--				<div v-if="userInfo.logs.length > 0" class="wrapper">-->
-<!--					<LogCard-->
-<!--							v-for="(log, key) in userInfo.logs"-->
-<!--							:key="key"-->
-<!--							:element="log"-->
-<!--							theme="simple"-->
-<!--							:boardGameInfo="boardGameInfo"-->
-<!--							@setOpenedImage="emit('setOpenedImage', $event)"-->
-<!--					/>-->
-<!--				</div>-->
-<!--			</div>-->
-<!--			<div-->
-<!--					v-if="userInfo.steps"-->
-<!--					class="box"-->
-<!--			>-->
-<!--				<h2 class="inv-title">Шаги игрока</h2>-->
-<!--				<div v-if="userInfo.steps.length > 0" class="wrapper">-->
-<!--					<StepCard-->
-<!--							v-for="(step, key) in userInfo.steps"-->
-<!--							:key="key"-->
-<!--							:stepNumber="userInfo.steps.length - key"-->
-<!--							:element="step"-->
-<!--							:prevStep="userInfo.steps[key + 1] ? userInfo.steps[key + 1] : {}"-->
-<!--							:boardGameInfo="boardGameInfo"-->
-<!--							@setOpenedImage="emit('setOpenedImage', $event)"-->
-<!--					/>-->
-<!--				</div>-->
-<!--			</div>-->
-<!--		</div>-->
-
 		<Tabs
 				:tabs="tabsElements"
 				:defaultCurrentTab="hasStream ? 'stream' : 'currentElement'"
@@ -334,10 +290,10 @@ onMounted(() => {
 				<GameHistory :userName="userName" />
 			</template>
 			<template #tab-itemsHistory>
-				<InventoryHistory :userName="userName" />
+				<InventoryItems :userName="userName" />
 			</template>
 			<template #tab-logsHistory>
-				2
+				<PlayerLogs :userName="userName" />
 			</template>
 		</Tabs>
 	</div>

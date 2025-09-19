@@ -73,6 +73,11 @@ const userMenuFunc = (type) => {
 </script>
 
 <template>
+	<layout-Overlay
+			v-if="showUserMenu"
+			classes="z-[29999] bg-black/0"
+			@click="toggleUserMenu()"
+	/>
 	<div class="wrapper">
 		<template v-if="isAuth">
 			<div class="info-block">

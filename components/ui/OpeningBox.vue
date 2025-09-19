@@ -39,9 +39,13 @@ const props = defineProps({
 		type: Array,
 		default: null,
 	},
+	defaultContentStatus: {
+		type: Boolean,
+		default: false,
+	},
 });
 
-const contentStatus = ref(false);
+const contentStatus = ref(props.defaultContentStatus);
 
 const toggleContent = (newStatus) => {
 	if (newStatus === undefined || newStatus === null) {
@@ -114,7 +118,7 @@ watch(injectToggleContent, () => {
 		}
 
 		.icon-box {
-			@apply leading-[45px] inline;
+			@apply leading-[45px] inline ml-[0.5rem];
 		}
 	}
 }

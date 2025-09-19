@@ -128,8 +128,8 @@ const menu = ref([
 		icon: ['fas', 'dice']
 	},
 	{
-		name: 'Игры',
-		path: '/games',
+		name: 'Игра',
+		path: '/e/' + route.params.slug + '/game/',
 		icon: ['fas', 'gamepad']
 	},
 	{
@@ -158,6 +158,11 @@ const menu = ref([
 				icon: ['fa-solid', 'fa-message']
 			},
 		],
+	},
+	{
+		name: 'Статистика',
+		path: '/e/' + route.params.slug + '/stats/',
+		icon: ['fas', 'chart-pie']
 	},
 ]);
 </script>
@@ -228,7 +233,7 @@ body {
 			@apply pb-0 pl-0 pr-0;
 
 			.content-box {
-				@apply w-full m-[1rem];
+				@apply w-full pt-[1rem] pb-[1rem] pl-[2rem] pr-[var(--main-right-padding)];
 			}
 		}
 	}

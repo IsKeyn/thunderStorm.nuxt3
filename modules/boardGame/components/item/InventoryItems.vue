@@ -1,13 +1,23 @@
 <script setup>
 import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
+import Modal from '@/components/modals/Modal.vue';
+import UseItem from '@/modules/boardGame/components/item/UseItem.vue';
 
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 const props = defineProps({
+	items: {
+		type: Array,
+		default: [],
+	},
 	userName: {
 		type: String,
-		default: {},
+		default: null,
 	},
+	canUse: {
+		type: Boolean,
+		default: false,
+	}
 });
 
 import { api } from '@/composables/api.js';
@@ -37,7 +47,13 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || null);
+const fetchedData = computed(() => {
+	if (requestData.value) {
+		return requestData.value;
+	} else {
+		return props.items;
+	}
+});
 
 const usedItems = computed(() => {
 	const grouped = {};
@@ -59,6 +75,21 @@ const usedItems = computed(() => {
 		return b.item.quantity - a.item.quantity;
 	});
 });
+
+/* Использование предмета */
+const modalOpen = ref(false);
+
+const openCloseModalFunc = () => {
+	modalOpen.value = !modalOpen.value;
+};
+
+const itemForUse = ref();
+
+const useItem = (item) => {
+	openCloseModalFunc();
+
+	itemForUse.value = item;
+}
 </script>
 
 <template>
@@ -76,6 +107,8 @@ const usedItems = computed(() => {
 						:key="key"
 						:element="element.item"
 						:useLightBox="true"
+						:showControlPanel="canUse"
+						@useItem="useItem"
 				/>
 			</div>
 		</div>
@@ -95,6 +128,24 @@ const usedItems = computed(() => {
 	<template v-else>
 		Предметы отсутствуют
 	</template>
+
+	<Modal
+			:showOpenModal="modalOpen"
+			size="full-width"
+			:fullCloseModal="true"
+			@toggleModal="openCloseModalFunc"
+	>
+		<div class="modal-parent">
+			<h3 class="modal-title">Применение предмета</h3>
+			<div class="link-parent-box">
+				<UseItem
+						:item="itemForUse"
+						@openCloseModalFunc="openCloseModalFunc"
+						@useItemFromEmit="useItemFromEmit"
+				/>
+			</div>
+		</div>
+	</Modal>
 </template>
 
 <style lang="scss" scoped>

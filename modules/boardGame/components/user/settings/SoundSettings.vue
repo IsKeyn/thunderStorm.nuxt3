@@ -8,6 +8,12 @@ const props = defineProps({
 	modelValue: {},
 });
 
+import { userFunctions } from '@/composables/userFunctions.js';
+const {
+	isAuth,
+	userStore,
+} = userFunctions();
+
 const soundVolume = ref({
 	name: 'Громкость звука',
 	value: 50,
@@ -26,7 +32,11 @@ watch(() => props.modelValue, (newValue, oldValue) => {
 }, { deep: true });
 
 watch(() => soundVolume.value, (newValue) => {
-		emit('update:modelValue', newValue.value);
+	if (isAuth) {
+		userStore.user.settings.soundVolume = Number(newValue.value);
+	}
+
+	emit('update:modelValue', newValue.value);
 }, { deep: true });
 
 const lastVolume = ref(null);

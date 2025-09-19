@@ -4,13 +4,8 @@ import Pagination from '@/components/navigation/Pagination.vue';
 
 import { computed, onMounted, onUnmounted } from 'vue'
 
-const emit = defineEmits(['showPlayer']);
-
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
-
-import { useUserStore } from '@/stores/user';
-const userStore = useUserStore();
 
 const props = defineProps({
 	perPage: {
@@ -20,11 +15,11 @@ const props = defineProps({
 });
 
 const route = useRoute();
-const requestName = 'getBoardGameLogList';
 
-const pagination = ref(null);
-const page = ref(1);
-const perPageCount = ref(props.perPage);
+const page = ref(route.query.page ? Number(route.query.page) : 1);
+const perPageCount = ref(route.query.perPage ? Number(route.query.perPage) : props.perPage);
+
+const requestName = 'getBoardGameLogList';
 
 const {
 	data: requestData,
@@ -34,7 +29,6 @@ const {
 		requestName,
 		async () => {
 			const query = {
-				boardGameId: props.boardGameId,
 				page: page.value,
 				perPage: perPageCount.value,
 			};
@@ -43,8 +37,7 @@ const {
 					sendApiRequest(`board-game/v2/log/list/${route.params.slug}`, 'GET', query, requestName, '')
 			);
 
-			pagination.value = response.meta;
-			return response?.data || null;
+			return response || null;
 		},
 		{
 			server: true,
@@ -52,8 +45,8 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || null);
-
+const fetchedData = computed(() => requestData.value?.data || null);
+const paginationData = computed(() => requestData.value?.meta || null);
 
 const updateLogs = async () => {
 	await refresh();
@@ -81,6 +74,12 @@ const changePage = async (p) => {
 }
 
 const setPerPage = (count) => {
+	const maxPage = Math.ceil(paginationData.value.total / count);
+
+	if (page.value > maxPage) {
+		page.value = maxPage;
+	}
+
 	perPageCount.value = count;
 	refresh();
 }
@@ -95,13 +94,11 @@ const setPerPage = (count) => {
 				v-for="(log, key) in fetchedData"
 				:key="key"
 				:element="log"
-				:boardGameInfo="boardGameInfo"
-				@setOpenedImage="setOpenedImage"
-				@showPlayer="$emit('showPlayer', $event)"
+				:useLightBox="true"
 		/>
 		<Pagination
-				v-if="pagination"
-				:pagination="pagination"
+				v-if="paginationData"
+				:pagination="paginationData"
 				:navigationButtons="true"
 				@changePage="changePage"
 				@setPerPage="setPerPage"
@@ -112,10 +109,4 @@ const setPerPage = (count) => {
 	</template>
 </template>
 
-<style lang="scss" scoped>
-.log-box {
-	.log-title {
-		@apply block mb-2 text-[1.5rem];
-	}
-}
-</style>
+<style lang="scss" scoped></style>

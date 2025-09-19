@@ -29,6 +29,9 @@ const titles = ref(
 			active: {
 				name: 'Активность',
 			},
+			created_by: {
+				name: 'Кем создан',
+			},
 		}
 );
 

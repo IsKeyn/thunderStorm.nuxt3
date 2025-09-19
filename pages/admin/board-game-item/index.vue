@@ -29,6 +29,9 @@ const titles = ref(
 			type: {
 				name: 'Тип',
 			},
+			drop_chance: {
+				name: 'Шанс дропа',
+			},
 			active: {
 				name: 'Активность',
 			},

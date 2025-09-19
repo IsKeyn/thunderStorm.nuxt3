@@ -20,8 +20,17 @@ const titles = ref(
 			points: {
 				name: 'Количество очков',
 			},
+			item_roll_count: {
+				name: 'Доступное количество ролов игры',
+			},
 			created_by: {
 				name: 'Создан',
+			},
+			active: {
+				name: 'Активность',
+			},
+			not_active_reason: {
+				name: 'Причина не активности',
 			},
 		}
 );

@@ -78,10 +78,11 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			created_by: {
-				name: 'ID автора',
+				name: 'Кем создан',
 				value: '',
-				type: 'text',
-				validateRules: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}

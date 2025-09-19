@@ -39,6 +39,10 @@ const props = defineProps({
 		type: String,
 		default: 'default',
 	},
+	openFullDescription: {
+		type: Boolean,
+		default: false,
+	}
 });
 
 const getTypeClass = (type) => {
@@ -87,10 +91,14 @@ const getTypeClass = (type) => {
 					classes="mb-0"
 					theme="short"
 					title="Подробное описание"
+					:defaultContentStatus="openFullDescription"
 			>
 				{{ element.item.full_description }}
 
-				<span class="author-box">
+				<span class="additional-box">
+					Шанс выпадения: {{ element.item.drop_chance }}%
+				</span>
+				<span class="additional-box">
 					Автор: {{ element.item.authorUser ? element.item.authorUser.name : 'InSH Event Team' }}
 				</span>
 			</ui-OpeningBox>
@@ -173,7 +181,7 @@ const getTypeClass = (type) => {
 			@apply block;
 
 			&.cut-description {
-				@apply w-[15ch];
+				@apply w-[200ch];
 
 				white-space: nowrap;
 				overflow: hidden;
@@ -181,7 +189,7 @@ const getTypeClass = (type) => {
 			}
 		}
 
-		.author-box {
+		.additional-box {
 			@apply block mt-2;
 		}
 	}
@@ -190,7 +198,7 @@ const getTypeClass = (type) => {
 		@apply absolute right-[1rem];
 
 		.use-button {
-			@apply bg-[var(--success-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center mb-[0.3rem];
+			@apply bg-[var(--success-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center mb-[0.3rem] cursor-pointer;
 		}
 
 		.close-button {

@@ -1,4 +1,6 @@
 <script setup>
+import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
+
 import { inject } from "vue";
 
 const route = useRoute();
@@ -29,6 +31,18 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	showStatusBar: {
+		type: Boolean,
+		default: true,
+	},
+	theme: { // default , PlayerActionWithGame , CurrentGame
+		type: String,
+		default: 'default',
+	},
+	showCover: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const getStatusName = (status) => {
@@ -41,6 +55,8 @@ const getStatusName = (status) => {
 }
 
 const getStatusClass = (status) => {
+	if (props.theme === 'CurrentGame') return;
+
 	switch (status) {
 		case 0: return 'violet';
 		case 1: return 'red';
@@ -48,16 +64,6 @@ const getStatusClass = (status) => {
 		case 3: return 'blue';
 	}
 }
-
-const getPlayerById = (id) => {
-	if (props.players) {
-		let player = props.players.filter((item) => item.user_id === id);
-
-		if (player && player[0]) {
-			return player[0];
-		}
-	}
-};
 
 const getLongPlayLink = () => {
 	let urlSearch = 'https://www.youtube.com/results?search_query=';
@@ -74,35 +80,57 @@ const getLongPlayLink = () => {
 </script>
 
 <template>
-	<div :class="['item-box',  getStatusClass(element.status)]">
-		<div :class="['status-bar']">
-			{{ getStatusName(element.status) }} <span v-if="getFormattedHoursFromSeconds(element.time)">(время прохождения {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
+	<div :class="['item-box',  getStatusClass(element.status), theme]">
+		<div
+				v-if="showStatusBar"
+				:class="['status-bar']"
+		>
+			<span v-if="theme === 'PlayerActionWithGame'"><router-link
+					:to="`/e/${route.params.slug}/player/${element.user.name}`"
+					target="_blank"
+					class="header-link"
+					title="Открыть профайл"
+			>{{ element.user.name }}</router-link> - </span>{{ getStatusName(element.status) }} <span v-if="getFormattedHoursFromSeconds(element.time)">(время прохождения {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
 		</div>
 		<div class="content-box">
 			<img
-					v-if="element.game.game.covers && element.game.game.covers[0]"
+					v-if="showCover && element.game.game.covers && element.game.game.covers[0]"
 					:src="getResizeImg(element.game.game.covers[0], 300)"
 					:alt="element.game.game.name"
 					:title="element.game.game.name"
 					@click="layoutMethods.setOpenedImage(element.game.game.covers[0])"
 			>
+			<PublicAvatar
+					v-if="theme === 'PlayerActionWithGame'"
+					:user="element.user"
+					:useLightBox="true"
+			/>
 			<div class="info">
-				<span class="name">
+				<span
+						v-if="theme === 'default' || theme === 'CurrentGame'"
+						class="name"
+				>
 					{{ element.game.game.name }} <span v-if="element.game.platform">({{ element.game.platform.name }})</span>
 				</span>
-				<div class="info-wrapper">
+				<div
+						v-if="theme === 'default' || theme === 'CurrentGame'"
+						class="info-wrapper"
+				>
 					<div>
 						<span class="line-info" v-if="element.game.platform">Платформа: {{ element.game.platform.name }}</span>
 						<span class="line-info" v-if="element.game.game?.release_dates[0]?.date">Год релиза: {{ getFormattedDate('Y', element.game.game.release_dates[0].date) }}</span>
 						<span class="line-info" v-if="element.game.points !== null && element.game.points !== undefined">Очки за игру: {{ element.game.points }}</span>
 						<span
-								v-if="element.game.added_by && element.user"
+								v-if="element.game.added_by && element.game.added_by_user.name"
 								class="line-info"
-								@click="$emit('showPlayer', element.game.added_by)"
 						>
-							Добавил: <router-link :to="`/e/${route.params.slug}/player/${element.user.name}`" class="hover-line">{{ element.user.name }}</router-link>
+							Добавил: <router-link
+								:to="`/e/${route.params.slug}/player/${element.game.added_by_user.name}`"
+								class="hover-line"
+								title="Открыть профайл"
+						>{{ element.game.added_by_user.name }}</router-link>
 						</span>
-						<span class="line-info" v-if="element.game.description">{{ element.game.description }}</span>
+						<span class="line-info mt-4" v-if="element.game.description">{{ element.game.description }}</span>
 					</div>
 					<div v-if="showInfoButtons">
 						<div class="mb-2">Ссылки:</div>
@@ -124,10 +152,18 @@ const getLongPlayLink = () => {
 						</ul>
 					</div>
 				</div>
+				<div
+						v-if="theme === 'PlayerActionWithGame'"
+						class="comment-box"
+				>
+					<div class="message">
+						{{ element.comment ? element.comment.message : 'Игрок не оставил комментария об игре' }}
+					</div>
+				</div>
 			</div>
 		</div>
 		<div
-				v-if="element.comment"
+				v-if="theme === 'default' && element.comment"
 				class="comment-box"
 		>
 			<div class="message">
@@ -171,7 +207,7 @@ const getLongPlayLink = () => {
 		}
 
 		.info {
-			@apply pl-3 pr-3 text-[var(--main-text-color)];
+			@apply w-full pl-3 pr-3 text-[var(--main-dark-text-color)];
 
 			.info-wrapper {
 				@apply block lg:flex gap-6;
@@ -183,6 +219,10 @@ const getLongPlayLink = () => {
 
 			.line-info {
 				@apply block mb-[0.3rem];
+
+				.router-link-active {
+					@apply bg-[initial];
+				}
 			}
 		}
 
@@ -193,6 +233,10 @@ const getLongPlayLink = () => {
 
 	.status-bar {
 		@apply w-full p-2 text-center bg-[var(--button-color-1)];
+
+		.header-link {
+			@apply text-[var(--main-dark-text-color)];
+		}
 	}
 
 	.comment-box {
@@ -200,6 +244,22 @@ const getLongPlayLink = () => {
 
 		.message {
 			@apply bg-[var(--button-color-1)] p-4;
+		}
+	}
+
+	&.CurrentGame {
+		@apply bg-[initial];
+
+		.content-box {
+			@apply p-0;
+
+			.info {
+				@apply text-[var(--main-text-color)];
+
+				a {
+					@apply text-[var(--main-text-color)];
+				}
+			}
 		}
 	}
 }

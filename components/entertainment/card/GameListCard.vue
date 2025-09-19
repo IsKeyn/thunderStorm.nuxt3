@@ -89,11 +89,11 @@ const props = defineProps({
 
 	.info-box {
 		@apply
-		absolute bottom-[0] left-[0]
-		w-full h-full
-		hidden
-		p-[1rem] cursor-pointer
-		items-center
+			absolute bottom-[0] left-[0]
+			w-full h-full
+			hidden
+			p-[1rem] cursor-pointer
+			items-center
 		;
 
 		background: rgba(0, 0, 0, 0.7);

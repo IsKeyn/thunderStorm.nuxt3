@@ -1,15 +1,11 @@
 <script setup>
+import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
+
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
 const route = useRoute();
 const router = useRouter();
-
-import { inject } from 'vue';
-const layoutMethods = inject('layoutMethods');
-
-import { media } from '@/composables/media.js'
-const { getResizeImg } = media();
 
 const props = defineProps({
 	element: {
@@ -28,6 +24,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	openProfile: {
+		type: Boolean,
+		default: true,
+	}
 });
 
 const getPlaceColor = (place) => {
@@ -40,20 +40,14 @@ const getPlaceColor = (place) => {
 </script>
 
 <template>
-	<router-link
+	<Nuxt-link
 			class="item-box"
-			:to="`/e/${route.params.slug}/player/${element.user.name}`"
+			:to="openProfile ? `/e/${route.params.slug}/player/${element.user.name}` : null"
 	>
-		<div class="avatar-box">
-			<img
-					v-if="element?.user?.avatar"
-					:src="getResizeImg(element.user.avatar)"
-					:alt="element.user.name"
-					:title="element.user.name"
-					@click.prevent="useLightBox ? layoutMethods.setOpenedImage(element.user.avatar) : false"
-			/>
-			<img v-else src="/images/system/no-avatar.png">
-		</div>
+		<PublicAvatar
+				:user="element.user"
+				:useLightBox="useLightBox"
+		/>
 		<div class="info">
 			<span class="field name">
 				{{ element.user.name }}
@@ -92,7 +86,7 @@ const getPlaceColor = (place) => {
 		>
 			<span :class="['place', getPlaceColor(place + 1)]">{{ place + 1 }}</span>
 		</div>
-	</router-link>
+	</Nuxt-link>
 </template>
 
 <style lang="scss" scoped>
@@ -105,17 +99,6 @@ const getPlaceColor = (place) => {
 
 	&:hover {
 		@apply no-underline bg-[var(--second-active-color)];
-	}
-
-	.avatar-box {
-		@apply flex items-center;
-
-		img {
-			@apply
-				w-[100px] h-[100px]
-				object-cover rounded-full cursor-pointer
-			;
-		}
 	}
 
 	.info {

@@ -60,27 +60,13 @@ const setSettingsRequest = async () => {
 			theme: theme.value,
 		}
 
-		loadState.loadList[requestName] = {
-			name: requestName,
-			type: 'fetch',
-			preloaderType: 'small',
-			status: 'load',
-		};
-
-		const response = await sendApiRequest('auth/set-settings', 'PUT', body);
+		const response = await sendApiRequest('auth/set-settings', 'PUT', body, {}, requestName);
 
 		if (response.data) {
-			if (loadState.loadList[requestName]) {
-				loadState.loadList[requestName].status = 'finish';
-			}
-
 			userStore.user = response.data;
 		}
 	} catch (e) {
 		error(e);
-		if (loadState.loadList[requestName]) {
-			loadState.loadList[requestName].status = 'error';
-		}
 		requestInProgress.value = false;
 	}
 }
@@ -122,6 +108,11 @@ onMounted(() => {
 </script>
 
 <template>
+	<layout-Overlay
+			v-if="showSettingsBlock"
+			classes="z-[29999] bg-black/0"
+			@click="toggleSettingsBlock"
+	/>
 	<div class="parent-settings-block">
 		<div class="icon-block" @click="toggleSettingsBlock">
 			<font-awesome-icon icon="fa-solid fa-gears" />

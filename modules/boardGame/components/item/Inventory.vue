@@ -1,10 +1,18 @@
 <script setup>
-import GamblingGame from '@/modules/boardGame/components/item/GamblingGame.vue'
+import GamblingGame from '@/components/games/GamblingGame.vue'
+import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
+import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.vue';
 
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
+
+import { userFunctions } from '@/composables/userFunctions.js';
+const {
+	isAuth,
+	userStore,
+} = userFunctions();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
@@ -12,7 +20,10 @@ const { sendApiRequest, preparedRequestBody } = api();
 const props = defineProps({});
 
 const route = useRoute();
-const requestName = 'getBoardGameItemList';
+
+const requestName = 'getBoardGameGamblingGameItemList';
+
+const hiddenRefresh = ref(false);
 
 const {
 	data: requestData,
@@ -22,10 +33,11 @@ const {
 		requestName,
 		async () => {
 			const response = await Promise.resolve(
-					sendApiRequest(`board-game/v2/item/list/${route.params.slug}/`, 'GET', {}, requestName, '')
+					sendApiRequest(`board-game/v2/player/item/gamblingGame/${route.params.slug}/`, 'GET', {}, requestName, '')
 			);
 
-			return response?.data || null;
+			hiddenRefresh.value = false;
+			return response || null;
 		},
 		{
 			server: true,
@@ -34,18 +46,64 @@ const {
 );
 
 const fetchedData = computed(() => requestData.value || null);
+
+const requestObj = ref({
+	url: `board-game/v2/player/rollItem/${route.params.slug}/`,
+	method: 'POST',
+	requestName: 'boardGameRollItem',
+});
+
+const droppedItem = ref(null);
+
+const showItem = (item) => {
+	droppedItem.value = item;
+	hiddenRefresh.value = true;
+	refresh();
+}
+
+const closeDroppedItemBox = () => {
+	droppedItem.value = null;
+}
 </script>
 
 <template>
-	<GamblingGame
-			v-if="fetchedData && fetchedData.length > 0"
-			:items="fetchedData"
-			:boardGameId="boardGameStore.boardGameInfo.id"
-			@setOpenedImage="setOpenedImage"
-			@addItemToInventory="addItemToInventoryEmit"
-	/>
+	<ui-BigPreloader v-if="requestInProgress && !hiddenRefresh" />
+	<div class="item-box" v-else-if="fetchedData && fetchedData.status === 'error' && fetchedData.status_message">
+		{{ fetchedData.status_message }}
+	</div>
+	<div v-else-if="fetchedData && fetchedData.items && fetchedData.items.length > 0">
+		<div v-if="droppedItem" class="flex flex-col items-center">
+			<ItemCard
+					class="w-full"
+					:element="droppedItem"
+					:openFullDescription="true"
+					:useLightBox="true"
+			/>
+			<button class="btn btn-simple" @click="closeDroppedItemBox">{{ fetchedData.player.item_roll_count > 0 ? 'Крутить ещё' : 'Закрыть' }}</button>
+		</div>
+		<GamblingGame
+				v-else
+				:items="fetchedData.items"
+				:roll_count="fetchedData.player.item_roll_count"
+				:requestObj="requestObj"
+				:easeOutType="1"
+				:requestParentData="requestInProgress"
+				@funcAfterRollWithDelay2="showItem"
+		/>
+		<ui-BigPreloader v-if="requestInProgress" />
+		<InventoryItems
+				v-else
+				class="mt-4"
+				:items="fetchedData.player.inventory"
+				:canUse="true"
+		/>
+	</div>
 </template>
 
 <style lang="scss" scoped>
-
+.item-box {
+	a {
+		@apply text-[var(--main-dark-text-color)];
+	}
+}
 </style>
