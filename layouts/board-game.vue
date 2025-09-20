@@ -179,7 +179,7 @@ const menu = ref([
 <!--			}"-->
 <!--	/>-->
 
-	<div class="main">
+	<div class="board-game-main">
 		<div id="modals" />
 		<template v-if="fetchedData">
 			<Header
@@ -226,9 +226,11 @@ const menu = ref([
 @import url('~/assets/scss/Dashboard/themes/Ocean.scss');
 @import url('~/assets/scss/Dashboard/themes/Street.scss');
 @import url('~/assets/scss/Dashboard/themes/StreetLight.scss');
+</style>
 
+<style lang="scss" scoped>
 body {
-	.main {
+	.board-game-main {
 		article {
 			@apply pb-0 pl-0 pr-0;
 
