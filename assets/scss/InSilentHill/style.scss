@@ -217,3 +217,7 @@ ol {
   }
 }
 /* КОНЕЦ Списки */
+
+.text-rounded-box {
+  @apply bg-[var(--main-bg-color)] rounded-full p-1 pr-4 pl-4 cursor-pointer;
+}

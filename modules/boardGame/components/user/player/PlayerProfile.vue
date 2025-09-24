@@ -1,19 +1,21 @@
 <script setup>
 import Tabs from '@/components/ui/tabs/Tabs.vue';
-import TwitchCard from '@/components/twitch/TwitchCard.vue';
 import Timer from '@/modules/boardGame/components/timer/Timer.vue';
+import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
+import TwitchCard from '@/components/twitch/TwitchCard.vue';
 import CurrentGame from '@/modules/boardGame/components/user/player/profileElement/CurrentGame.vue';
 import GameHistory from '@/modules/boardGame/components/user/player/profileElement/GameHistory.vue';
 import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.vue';
 import PlayerLogs from '@/modules/boardGame/components/user/player/profileElement/PlayerLogs.vue';
+import PlayerEvents from '@/modules/boardGame/components/user/player/profileElement/PlayerEvents.vue';
+import ProfileSettings from '@/components/user/profile/fragments/Settings.vue';
+import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
+import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
 
+import {computed, inject, onMounted, ref, watch} from 'vue';
 
+const route = useRoute();
 
-import LogCard from '@/components/boardGame/bg-logs/LogCard.vue';
-import StepCard from '@/components/boardGame/user/StepCard.vue';
-
-
-import { computed, inject, onMounted, ref } from 'vue';
 const boardGameInfo = inject('boardGameInfo');
 const layoutMethods = inject('layoutMethods');
 
@@ -23,43 +25,38 @@ const userStore = useUserStore();
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
+import { userNotification } from '@/composables/userNotification.js';
+const {
+	userNotificationModalRef,
+	showNotificationModal,
+} = userNotification();
+
+import { userMessage } from '@/composables/userMessage.js';
+const {
+	userMessagesModalRef,
+	showUserMessagesModal,
+} = userMessage();
+
 import { api } from '@/composables/api.js'
 const { sendApiRequest, responseErrors } = api();
 
-import { media } from '@/composables/media.js'
+import { userFunctions } from '@/composables/userFunctions.js';
 const {
-	getResizeImg,
-} = media();
+	isAuth,
+	logout,
+	sendLogoutRequest,
+} = userFunctions();
 
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
-
 
 const props = defineProps({
 	userName: {
 		type: String,
 		default: '',
 	},
-	// userInfo: {
-	// 	type: Object,
-	// 	default: {},
-	// },
-	boardGameId: {
-		type: Number,
-		default: 1,
-	},
-	boardGameInfo: {
-		type: Object,
-		default: {},
-	},
 });
 
-
-
-
-
-
-const route = useRoute();
 const requestName = 'getBoardGamePlayerInfo';
 
 const {
@@ -85,29 +82,15 @@ const {
 
 const userInfo = computed(() => requestData.value || null);
 
-
-
-
-
-
-
-
-
-
-const currentPlayer = computed(() => {
-	let curPlayer = null;
-
-	if (props.boardGameInfo && props.boardGameInfo.players) {
-		let curPlayer = props.boardGameInfo.players.filter((item) => item.user_id === userInfo.value.user_id);
+const isCurrentUser = computed(() => {
+	if (isAuth && userInfo.value && userStore.user.id === userInfo.value.user_id) {
+		return true;
 	}
 
-	if (curPlayer && curPlayer[0]) {
-		return curPlayer[0];
-	}
+	return false;
 });
 
 /* НАЧАЛО: Поля профайла */
-
 const twitch = computed(() => {
 	if (userInfo.value && userInfo.value.user && userInfo.value.user.additional_fields) {
 		const twitchField = userInfo.value.user.additional_fields.filter((item) => item.slug === 'twitch_channel');
@@ -119,7 +102,6 @@ const twitch = computed(() => {
 
 	return false;
 });
-
 /* КОНЕЦ: Поля профайла */
 
 /* Табы профайла */
@@ -157,7 +139,6 @@ tabsElements.value.push(
 		}
 );
 
-
 tabsElements.value.push(
 		{
 			id: 'gameHistory',
@@ -179,6 +160,45 @@ tabsElements.value.push(
 		}
 );
 
+tabsElements.value.push(
+		{
+			id: 'playerEvents',
+			title: 'Участие в ивентах',
+		}
+);
+
+// TODO Вывести бафы дебафы, вывести доп. соц сети
+
+if (isCurrentUser.value) {
+	tabsElements.value.push(
+			{
+				id: 'settings',
+				title: 'Настройки',
+			}
+	);
+}
+
+watch(() => isCurrentUser.value, (newValue) => {
+	const result = findElementById(tabsElements.value, 'settings');
+
+	if (newValue) {
+		if (result === undefined) {
+			tabsElements.value.push(
+					{
+						id: 'settings',
+						title: 'Настройки',
+					}
+			);
+		}
+	} else {
+		tabsElements.value = tabsElements.value.filter(item => item.id !== 'settings');
+	}
+}, { deep: true });
+
+const findElementById = (array, targetId) => {
+	return array.find(item => item.id === targetId);
+}
+
 const scriptTwitchIsOnline = ref(false);
 
 onMounted(() => {
@@ -194,21 +214,16 @@ onMounted(() => {
 </script>
 
 <template>
-	<button @click="refresh">Обновить</button>
 	<div v-if="userInfo">
 		<div
 				v-if="userInfo && userInfo.user"
 				class="player-info"
 		>
 			<div class="box">
-				<img
-						v-if="userInfo.user.avatar"
-						:src="getResizeImg(userInfo.user.avatar)"
-						:alt="userInfo.user.name"
-						:title="userInfo.user.name"
-						@click="layoutMethods.setOpenedImage(userInfo.user.avatar)"
-				>
-				<img v-else src="/images/system/no-avatar.png">
+				<PublicAvatar
+						:user="userInfo.user"
+						classes="w-[150px] h-[150px]"
+				/>
 			</div>
 			<div class="box w-full">
 				<h2 class="inv-title">{{ userInfo.user.name }}</h2>
@@ -218,14 +233,14 @@ onMounted(() => {
 								v-if="twitch"
 								class="field"
 						>
-							Канал на twitch: <a :href="`${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">{{ twitch.value }}</a>
+							Канал на twitch: <NuxtLink :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">{{ twitch.value }}</NuxtLink>
 						</span>
 						<span class="field">
-							Участвует в игре с {{ getFormattedDate('d.m.Y H:i', userInfo.created_at) }}
+							Участвует в ивенте с {{ getFormattedDate('d ru_mouths_name Y', userInfo.created_at) }}
 						</span>
-						<span class="field">
-							Пройдено игр: {{ finishedGamesCount }}
-						</span>
+<!--						<span class="field">-->
+<!--							Пройдено игр: {{ finishedGamesCount }}-->
+<!--						</span>-->
 						<span class="field">
 							Количество очков: {{ userInfo.points }}
 						</span>
@@ -242,7 +257,7 @@ onMounted(() => {
 							Очков в час: {{ Math.round((userInfo.full_points / userInfo.seconds) * 3600) }}
 						</span>
 						<span class="field">
-							Статус: <template v-if="userInfo.active">Участвует</template><template v-else>Не участвует</template>
+							Статус: <span v-if="userInfo.active" class="text-rounded-box">Участвует</span><span v-else class="text-rounded-box">Не участвует</span>
 						</span>
 
 <!--						Заменить на отправку ЛС-->
@@ -265,10 +280,43 @@ onMounted(() => {
 <!--						/>-->
 					</div>
 				</div>
+
+				<div
+						v-if="isAuth"
+						class="mt-2"
+				>
+					<template v-if="isCurrentUser">
+						<button
+								class="btn btn-simple-1 mr-2"
+								@click="showUserMessagesModal"
+						>
+							<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Мои сообщения
+						</button>
+						<button
+								class="btn btn-simple-1 mr-2"
+								@click="showNotificationModal"
+						>
+							<font-awesome-icon icon="fa-solid fa-bell" class="mr-2" /> Мои уведомления
+						</button>
+						<button
+								class="btn btn-simple-1 mr-2"
+								@click="logout"
+						>
+							<font-awesome-icon :icon="['fas', 'right-from-bracket']" class="mr-2" /> Выйти
+						</button>
+					</template>
+					<template v-else>
+						<button
+								v-if="(userStore.user && Object.keys(userStore.user).length > 0) && (userInfo.user_id !== userStore.user.id)"
+								class="btn btn-simple-1"
+								@click="emit('sendNotification', userInfo.user_id)"
+						>
+							<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Отправить сообщение
+						</button>
+					</template>
+				</div>
 			</div>
 		</div>
-
-
 
 		<Tabs
 				:tabs="tabsElements"
@@ -295,8 +343,16 @@ onMounted(() => {
 			<template #tab-logsHistory>
 				<PlayerLogs :userName="userName" />
 			</template>
+			<template #tab-settings>
+				<ProfileSettings />
+			</template>
+			<template #tab-playerEvents>
+				<PlayerEvents :userName="userName" />
+			</template>
 		</Tabs>
 	</div>
+	<UserNotificationModal ref="userNotificationModalRef" />
+	<UserMessagesModal ref="userMessagesModalRef" />
 </template>
 
 <style lang="scss">
@@ -366,7 +422,7 @@ onMounted(() => {
 	@apply font-bold mb-4 uppercase;
 }
 
-img {
-	@apply w-[150px] h-[150px] object-cover cursor-pointer;
+.text-rounded-box {
+	@apply bg-[var(--second-bg-color)] text-[var(--main-dark-text-color)];
 }
 </style>

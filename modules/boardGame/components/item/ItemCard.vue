@@ -211,3 +211,13 @@ const getTypeClass = (type) => {
 	}
 }
 </style>
+
+<style lang="scss" scoped>
+.street-light-theme {
+	.item-box {
+		.info {
+			@apply text-[var(--main-dark-text-color)];
+		}
+	}
+}
+</style>

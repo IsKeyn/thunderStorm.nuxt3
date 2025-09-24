@@ -8,6 +8,12 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
+			id: {
+				name: 'ID',
+				value: '',
+				type: 'notEditable',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			name: {
 				name: 'Название',
 				value: '',
@@ -40,7 +46,7 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			media_id: {
+			media: {
 				name: 'Медиа',
 				value: '',
 				keyValueFromObject: 'id',
@@ -85,6 +91,18 @@ const form = ref(
 				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			created_at: {
+				name: 'Дата создания',
+				value: '',
+				type: 'notEditable',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			updated_at: {
+				name: 'Дата обновления',
+				value: '',
+				type: 'notEditable',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 
@@ -122,8 +140,8 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				:showAdditionalData="false"
-				fetchUrl="admin/entity/BoardGame/BoardGame"
+				:hasResource="true"
+				fetchUrl="admin/BoardGame/BoardGame"
 		/>
 	</div>
 </template>

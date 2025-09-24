@@ -149,7 +149,6 @@ const userMenuFunc = (type) => {
 		<template v-else>
 			<user-AuthIconComponent
 					class="ml-[25px]"
-					@showHideMenu="showHideMenu"
 			/>
 		</template>
 

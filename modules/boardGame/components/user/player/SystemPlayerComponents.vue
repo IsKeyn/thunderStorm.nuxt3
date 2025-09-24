@@ -71,6 +71,12 @@ const {
 			lazy: true, // ждать выполнения запроса перед рендерингом
 		}
 );
+
+watch(() => route.params.slug, (newSlug) => {
+	if (newSlug) {
+		refresh();
+	}
+});
 </script>
 
 <template />

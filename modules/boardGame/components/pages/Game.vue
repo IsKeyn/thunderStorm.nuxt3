@@ -3,10 +3,10 @@ import Tabs from '@/components/ui/tabs/Tabs.vue';
 import GameList from '@/modules/boardGame/components/game/GameList.vue';
 import GameProfile from '@/modules/boardGame/components/game/GameProfile.vue';
 
-import { inject } from 'vue'
-const boardGameInfo = inject('boardGameInfo')
-
 const route = useRoute();
+
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
 
 const pageName = 'Игра';
 const breadCrumbsArray = computed(() => {
@@ -14,7 +14,7 @@ const breadCrumbsArray = computed(() => {
 
 	return [
 		{
-			name: boardGameInfo.value.name,
+			name: boardGameStore.boardGameInfo?.name,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{

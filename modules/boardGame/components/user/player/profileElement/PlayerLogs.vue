@@ -76,7 +76,7 @@ const getNextPage = async () => {
 
 <template>
 	<ui-BigPreloader v-if="typeAddedData !== 'show_more' && requestInProgress" />
-	<template v-else>
+	<template v-else-if="logsResult && logsResult.length > 0">
 		<LogCard
 				v-for="(log, key) in logsResult"
 				:key="key"
@@ -94,6 +94,9 @@ const getNextPage = async () => {
 					@startAction="getNextPage"
 			/>
 		</div>
+	</template>
+	<template v-else>
+		Логов пока нет
 	</template>
 </template>
 

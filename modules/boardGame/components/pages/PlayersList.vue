@@ -1,8 +1,8 @@
 <script setup>
 import PlayersList from '@/modules/boardGame/components/user/player/PlayersList.vue';
 
-import { inject } from 'vue'
-const boardGameInfo = inject('boardGameInfo')
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
 
 const route = useRoute();
 
@@ -12,7 +12,7 @@ const breadCrumbsArray = computed(() => {
 
 	return [
 		{
-			name: boardGameInfo.value.name,
+			name: boardGameStore.boardGameInfo?.name,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -29,6 +29,6 @@ const breadCrumbsArray = computed(() => {
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<PlayersList
-			:boardGameId="boardGameInfo.id"
+			:boardGameId="boardGameStore.boardGameInfo.id"
 	/>
 </template>

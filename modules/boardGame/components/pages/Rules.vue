@@ -1,6 +1,6 @@
 <script setup>
-import { inject } from 'vue'
-const boardGameInfo = inject('boardGameInfo')
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
 
 const route = useRoute();
 
@@ -9,7 +9,7 @@ const breadCrumbsArray = computed(() => {
 
 	return [
 		{
-			name: boardGameInfo.value.name,
+			name: boardGameStore.boardGameInfo?.name,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -28,8 +28,8 @@ const breadCrumbsArray = computed(() => {
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<articles-ArticleDetail
-			:entityType="boardGameInfo.entity_type"
-			:entityId="boardGameInfo.id"
+			:entityType="boardGameStore.boardGameInfo.entity_type"
+			:entityId="boardGameStore.boardGameInfo.id"
 			:sendFullPath="false"
 			:showPageHeader="false"
 	/>

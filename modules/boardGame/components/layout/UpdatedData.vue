@@ -30,8 +30,16 @@ const getUpdatedData = async() => {
 	boardGameStore.playersOnline = response;
 }
 
+watch(() => props.boardGameInfo, () => {
+	if (props.boardGameInfo && props.boardGameInfo.id) {
+		getUpdatedData();
+	}
+}, { deep: true });
+
 onMounted(() => {
-	getUpdatedData();
+	if (props.boardGameInfo && props.boardGameInfo.id) {
+		getUpdatedData();
+	}
 
 	setInterval(() => {
 		getUpdatedData();

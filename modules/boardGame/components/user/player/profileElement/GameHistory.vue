@@ -5,7 +5,7 @@ import GameCard from '@/modules/boardGame/components/game/GameCard.vue';
 import { computed } from "vue";
 
 import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody } = api();
+const { sendApiRequest } = api();
 
 const props = defineProps({
 	userName: {

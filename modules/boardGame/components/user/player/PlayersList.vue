@@ -1,8 +1,6 @@
 <script setup>
 import PlayerCard from '@/modules/boardGame/components/user/player/PlayerCard.vue';
-
 import { computed, ref } from "vue";
-
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
@@ -19,11 +17,11 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-				const response = await Promise.resolve(
-						sendApiRequest(`board-game/v2/player/list/${route.params.slug}`, 'GET', {}, requestName)
-				);
+			const response = await Promise.resolve(
+					sendApiRequest(`board-game/v2/player/list/${route.params.slug}`, 'GET', {}, requestName)
+			);
 
-				return response?.data || null;
+			return response?.data || null;
 		},
 		{
 			server: true,
@@ -31,14 +29,17 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || null);
+const fetchedData = computed(() => requestData.value || []);
 
 /* Сортировка списка игроков */
 const sortType = ref('byFullPoints');
 const sortDirection = ref('desc');
 
 const sortedPlayerList = computed(() => {
-	return fetchedData.value.sort((a, b) => {
+	// Создаем копию массива для сортировки
+	const dataToSort = [...fetchedData.value];
+
+	return dataToSort.sort((a, b) => {
 		if (sortType.value === 'byFullPoints') {
 			return sortDirection.value === 'desc' ? b.full_points - a.full_points : a.full_points - b.full_points;
 		}
@@ -56,6 +57,8 @@ const sortedPlayerList = computed(() => {
 
 			return sortDirection.value === 'desc' ? ppSecondB - ppSecondA : ppSecondA - ppSecondB;
 		}
+
+		return 0; // Добавляем возврат по умолчанию
 	});
 });
 </script>
@@ -82,20 +85,19 @@ const sortedPlayerList = computed(() => {
 		</button>
 	</div>
 	<ui-BigPreloader v-if="requestInProgress" />
-	<template v-else-if="fetchedData">
+	<template v-else-if="fetchedData && fetchedData.length">
 		<div
-				v-for="(player, key) in sortedPlayerList"
-				:key="key"
+				v-for="(player, index) in sortedPlayerList"
+				:key="player.id || index"
 		>
 			<PlayerCard
 					:element="player"
-					:place="sortDirection === 'desc' ? key : sortedPlayerList.length - key - 1"
+					:place="sortDirection === 'desc' ? index : sortedPlayerList.length - index - 1"
 					:useLightBox="true"
 			/>
 		</div>
 	</template>
 </template>
-
 
 <style lang="scss" scoped>
 .sort-box {

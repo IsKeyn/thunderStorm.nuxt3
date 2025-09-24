@@ -115,7 +115,7 @@
 
     .content-box {
       .info {
-        //@apply text-[var(--main-dark-text-color)];
+        @apply text-[var(--main-dark-text-color)];
 
         a {
           @apply text-[var(--main-dark-text-color)];

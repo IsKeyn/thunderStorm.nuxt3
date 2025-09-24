@@ -464,6 +464,11 @@ watch(() => bindValues.value, () => {
 				v-else-if="element.type === 'EntityBind'"
 				v-model="bindValues"
 		/>
+		<template v-else-if="element.type === 'notEditable'">
+			<div class="pt-2 pb-2">
+				{{ element.value }}
+			</div>
+		</template>
 		<span
 				v-if="showMaxLength && maxLength"
 				:class="['length-line', currentLength > maxLength ? 'max-length-exceeded' : '']"

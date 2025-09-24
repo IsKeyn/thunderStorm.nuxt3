@@ -3,8 +3,10 @@ import Tabs from '@/components/ui/tabs/Tabs.vue';
 import PlayerProfile from '@/modules/boardGame/components/user/player/PlayerProfile.vue';
 import UserProfile from '@/components/user/profile/UserProfile.vue';
 
-import {computed, inject} from 'vue'
-const boardGameInfo = inject('boardGameInfo')
+import { computed, inject } from 'vue'
+
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -19,7 +21,7 @@ const breadCrumbsArray = computed(() => {
 
 	return [
 		{
-			name: boardGameInfo.value.name,
+			name: boardGameStore.boardGameInfo?.name,
 			href: `/${splitPath[1]}/${splitPath[2]}`,
 		},
 		{

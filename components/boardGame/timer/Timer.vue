@@ -380,7 +380,8 @@ const formattedLimitTime = computed(() => {
 </script>
 
 <template>
-	<div class="timer-container">
+	<ui-BigPreloader v-if="requestInProgress" />
+	<div v-else class="timer-container">
 		<span
 				v-if="showName"
 				class="user-interface-title"

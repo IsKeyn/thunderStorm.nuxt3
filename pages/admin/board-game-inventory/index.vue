@@ -12,7 +12,9 @@ const titles = ref(
 				name: 'id',
 			},
 			user_id: {
-				name: 'ID пользователя',
+				name: 'Пользователь',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 			board_game_id: {
 				name: 'ID настолки',

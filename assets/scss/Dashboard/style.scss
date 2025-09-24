@@ -33,8 +33,14 @@
 }
 
 body {
-  .main {
-    @apply w-full;
+  .board-game-main {
+    @apply
+      w-full
+      overflow-auto
+      mr-auto ml-auto
+      bg-[var(--main-bg-color)]
+      min-h-[500px]
+    ;
   }
 }
 

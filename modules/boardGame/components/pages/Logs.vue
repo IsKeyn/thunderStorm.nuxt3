@@ -1,10 +1,10 @@
 <script setup>
 import LogsList from '@/modules/boardGame/components/log-list/LogsList.vue';
 
-import { inject } from 'vue'
-const boardGameInfo = inject('boardGameInfo')
-
 const route = useRoute();
+
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
 
 const pageName = 'Логи ивента';
 const breadCrumbsArray = computed(() => {
@@ -12,7 +12,7 @@ const breadCrumbsArray = computed(() => {
 
 	return [
 		{
-			name: boardGameInfo.value.name,
+			name: boardGameStore.boardGameInfo?.name,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{

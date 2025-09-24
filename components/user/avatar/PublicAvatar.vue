@@ -16,6 +16,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	classes: {
+		type: String,
+		default: 'w-[100px] h-[100px]',
+	}
 });
 </script>
 
@@ -26,12 +30,13 @@ const props = defineProps({
 	>
 		<img
 				v-if="user.avatar"
+				:class="classes"
 				:src="getResizeImg(user.avatar)"
 				:alt="user.name"
 				:title="user.name"
 				@click.prevent="useLightBox ? layoutMethods.setOpenedImage(user.avatar) : false"
 		>
-		<img v-else src="/images/system/no-avatar.png">
+		<img v-else src="/images/system/no-avatar.png" :class="classes">
 	</div>
 </template>
 
@@ -40,9 +45,7 @@ const props = defineProps({
 	@apply flex items-center;
 
 	img {
-		@apply
-			w-[100px] h-[100px]
-			object-cover rounded-full cursor-pointer
+		@apply object-cover rounded-full cursor-pointer
 		;
 	}
 }

@@ -1,15 +1,15 @@
 <script setup>
-import { inject } from 'vue'
-
-const boardGameInfo = inject('boardGameInfo')
 const route = useRoute();
+
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
 
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
 	return [
 		{
-			name: boardGameInfo.value.name,
+			name: boardGameStore.boardGameInfo.name,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -27,7 +27,7 @@ const breadCrumbsArray = computed(() => {
 	/>
 	<Comments
 			entityType="App\Models\BoardGame"
-			:entityId="boardGameInfo.id"
+			:entityId="boardGameStore.boardGameInfo.id"
 			:showAnswer="true"
 	/>
 </template>

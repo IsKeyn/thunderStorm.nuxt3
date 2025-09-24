@@ -9,39 +9,15 @@ const boardGameStore = useBoardGameStore();
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
 
-const props = defineProps({
-	boardGameInfo: {
-		type: Object,
-		default: {},
-		require: true,
-	},
-});
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const {
+	statusName,
+	dateString,
+	getStatusName,
+	getDateString,
+} = boardGame(boardGameStore.boardGameInfo);
 
 const route = useRoute();
-
-const statusName = computed(() => {
-	return props.boardGameInfo.status ? 'Проводится' : 'Окончено';
-});
-
-const dateString = computed(() => {
-	let returnData = '(';
-
-	if (props.boardGameInfo.started_at) {
-		returnData += getFormattedDate('d ru_mouths_name Y', props.boardGameInfo.started_at);
-	}
-
-	if (props.boardGameInfo.started_at && props.boardGameInfo.ended_at) {
-		returnData += ' - ';
-	}
-
-	if (props.boardGameInfo.ended_at) {
-		returnData += getFormattedDate('d ru_mouths_name Y', props.boardGameInfo.ended_at);
-	}
-
-	returnData += ')';
-
-	return returnData;
-});
 
 const playersOnline = computed(() => {
 	boardGameStore.playersOnline.length > 0
@@ -51,8 +27,8 @@ const playersOnline = computed(() => {
 <template>
 	<header>
 		<div class="left-block">
-			<span v-if="boardGameInfo.name" class="title">
-				{{ boardGameInfo.name }}
+			<span v-if="boardGameStore.boardGameInfo.name" class="title">
+				{{ boardGameStore.boardGameInfo.name }}
 			</span>
 
 			<ui-IconButton
@@ -71,8 +47,8 @@ const playersOnline = computed(() => {
 
 			<ui-IconButton
 					iconType="text"
-					:iconText="statusName"
-					:buttonText="dateString"
+					:iconText="getStatusName(boardGameStore.boardGameInfo)"
+					:buttonText="getDateString(boardGameStore.boardGameInfo)"
 					closeWidthClass="w-[140px]"
 					openType="t480"
 			/>

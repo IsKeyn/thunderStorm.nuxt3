@@ -15,7 +15,7 @@ const theme = computed(() => {
 		<SystemComponents />
 		<MediaById />
 
-		<div class="main">
+		<div class="board-game-main">
 			<div id="modals" />
 			<article>
 				<slot />

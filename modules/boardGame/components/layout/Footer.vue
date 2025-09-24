@@ -49,6 +49,10 @@ const toggleSendBugModal = () => {
 			<!--			</span>-->
 		</div>
 		<div class="cutting" />
+		<div>
+			<a href="/e/" title="Список событий">Список событий</a>
+		</div>
+		<div class="cutting" />
 		<MenuByTypes
 				:arColumnsTypes="arColumnsTypes"
 				parentClass="menu-block col-span-2"

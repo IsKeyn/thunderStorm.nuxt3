@@ -55,11 +55,13 @@ const toggleContent = (newStatus) => {
 	}
 }
 
-const injectToggleContent = inject('injectToggleContent');
+const injectToggleContent = inject('injectToggleContent', null);
 
-watch(injectToggleContent, () => {
-	toggleContent(injectToggleContent.value);
-})
+if (injectToggleContent !== null) {
+	watch(injectToggleContent, () => {
+		toggleContent(injectToggleContent.value);
+	});
+}
 </script>
 
 <template>
