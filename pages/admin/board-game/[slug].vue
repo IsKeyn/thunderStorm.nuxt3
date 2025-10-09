@@ -39,13 +39,6 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			settings: {
-				name: 'Настройка',
-				value: '',
-				type: 'textarea',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
-			},
 			media: {
 				name: 'Медиа',
 				value: '',
@@ -142,6 +135,9 @@ const breadCrumbsArray = computed(() => {
 				:form="form"
 				:hasResource="true"
 				fetchUrl="admin/BoardGame/BoardGame"
+				:useBlockEditor="true"
+				:showTags="true"
+				:showSeo="true"
 		/>
 	</div>
 </template>

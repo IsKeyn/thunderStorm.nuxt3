@@ -17,13 +17,17 @@ const titles = ref(
 				apiUrl: 'user/list',
 			},
 			board_game_id: {
-				name: 'ID настолки',
+				name: 'Настольная игра',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
+				classes: '!bg-[#004251eb]',
 			},
 			board_game_item_id: {
-				name: 'ID предмета',
+				name: 'ID привязки предмета',
 			},
 			has_used: {
 				name: 'Был использован',
+				type: 'boolean',
 			},
 		}
 );

@@ -1,17 +1,30 @@
 <script setup>
-import { inject } from "vue";
+import { inject, watch } from "vue";
 
 const emit = defineEmits(['deleteItem', 'useItem']);
 
 const layoutMethods = inject('layoutMethods')
+
+import { useSoundStore } from '@/stores/sound';
+const soundStore = useSoundStore();
 
 import { media } from '@/composables/media.js'
 const {
 	getResizeImg,
 } = media();
 
+import { userFunctions } from '@/composables/userFunctions.js';
+const {
+	isAuth,
+	userStore,
+} = userFunctions();
+
 const props = defineProps({
 	element: {
+		type: Object,
+		default: {},
+	},
+	inventoryItem: {
 		type: Object,
 		default: {},
 	},
@@ -42,6 +55,10 @@ const props = defineProps({
 	openFullDescription: {
 		type: Boolean,
 		default: false,
+	},
+	playSound: {
+		type: Boolean,
+		default: false,
 	}
 });
 
@@ -53,12 +70,20 @@ const getTypeClass = (type) => {
 		case 3: return 'blue';
 	}
 }
+
+// Watcher для props.playSound
+watch(() => props.playSound, (newVal) => {
+	if (props.element.item?.sound && newVal) {
+		soundStore.soundObj = props.element.item.sound;
+		soundStore.playSound = true;
+	}
+}, { immediate: true });
 </script>
 
 <template>
 	<div :class="[
 			'item-box',
-			getTypeClass(element.item.type),
+			getTypeClass(element.item?.type),
 			showControlPanel || element.quantity > 1 ? 'add-padding-right' : '',
 			theme,
 			classes,
@@ -109,16 +134,10 @@ const getTypeClass = (type) => {
 		>
 			<span
 					class="use-button"
-					@click="emit('useItem', element)"
+					@click="emit('useItem', inventoryItem)"
 			>
 				<font-awesome-icon :icon="['fas', 'check']" />
 			</span>
-<!--			<span-->
-<!--					class="close-button"-->
-<!--					@click="emit('deleteItem', element)"-->
-<!--			>-->
-<!--				<font-awesome-icon :icon="['fas', 'xmark']" />-->
-<!--			</span>-->
 		</div>
 		<div
 				v-if="element.quantity > 1"
@@ -132,7 +151,7 @@ const getTypeClass = (type) => {
 <style lang="scss" scoped>
 
 .item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative min-h-[86px];
+	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded-none flex relative min-h-[86px];
 
 	&.gamblingGame {
 		@apply w-full;

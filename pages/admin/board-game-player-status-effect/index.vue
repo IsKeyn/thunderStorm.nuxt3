@@ -12,19 +12,34 @@ const titles = ref(
 				name: 'id',
 			},
 			user_id: {
-				name: 'UserId',
+				name: 'Игрок',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 			board_game_id: {
-				name: 'ID настольной игры',
+				name: 'Настольная игра',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
+				classes: '!bg-[#004251eb]',
 			},
 			status_effect_id: {
-				name: 'ID эффекта статуса',
+				name: 'Статус эффект',
+				type: 'EntityList',
+				apiUrl: 'entity/getFields',
+				body: {
+					entity: 'App\\Models\\BoardGame\\StatusEffect',
+				},
+				hasResource: false,
+				classes: '!bg-[#004251eb]',
 			},
 			active: {
 				name: 'Активность',
+				type: 'boolean',
 			},
 			created_by: {
 				name: 'Создан',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 		}
 );

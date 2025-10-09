@@ -77,7 +77,13 @@ const sendVerifyEmailRequest = async (params) => {
 					3000,
 					'#004d42',
 					() => {
-						router.push({ path: '/' })
+						const registrationPage = userStore.user.additional_fields.filter((item) => item.slug === 'registrationPage');
+
+						if (registrationPage.length > 0 && registrationPage[0]) {
+							router.push({ path: registrationPage[0].value })
+						} else {
+							router.push({ path: '/' })
+						}
 					}
 			);
 		}

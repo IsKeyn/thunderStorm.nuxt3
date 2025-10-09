@@ -1,5 +1,6 @@
 <script setup>
 import UserInfoBlock from '@/modules/boardGame/components/user/UserInfoBlock.vue';
+// import BrowserNotification from '@/components/notifications/BrowserNotification.vue';
 
 import { computed } from "vue";
 

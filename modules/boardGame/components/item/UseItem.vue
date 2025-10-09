@@ -22,6 +22,19 @@ const props = defineProps({
 	},
 });
 
+// Проверяем нужно ли грузить список игроков
+const needOtherPlayers = computed(() => {
+	let returnData = false;
+
+	props.item.item.item.actions.forEach((item) => {
+		if (item.target !== 'current') {
+			returnData = true;
+		}
+	});
+
+	return returnData;
+})
+
 const requestName = 'getBoardGamePlayersWithInventory';
 
 const {
@@ -31,11 +44,13 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			const response = await Promise.resolve(
-					sendApiRequest(`board-game/v2/player/listWithInventory/${route.params.slug}/`, 'GET', {}, requestName, '')
-			);
+			if (needOtherPlayers.value) {
+				const response = await Promise.resolve(
+						sendApiRequest(`board-game/v2/player/listWithInventory/${route.params.slug}/`, 'GET', {}, requestName, '')
+				);
 
-			return response.data || null;
+				return response.data || null;
+			}
 		},
 		{
 			server: true,
@@ -157,7 +172,7 @@ const form = ref({
 	message: {
 		name: 'Сообщение',
 		type: 'textarea',
-		value: 'Применил на вас предмет "' + props.item.item.name + '"',
+		value: 'Применил на вас предмет "' + props.item.item.item.name + '"',
 		placeholder: '',
 		classes: ['w-full', 'mt-[1rem]'],
 	},
@@ -170,25 +185,38 @@ const validate = () => {
 
 	validateErrors.value = [];
 
-	if (props.item.item.actions) {
-		props.item.item.actions.forEach((item) => {
+	if (props.item.item.item.actions) {
+		props.item.item.item.actions.forEach((item) => {
 			if (
-					(item.target === 'other' || item.target === 'fromTo')
+					(item.target === 'other' || item.target === 'fromTo' || item.target === 'nearestPlayer')
 					&& Object.keys(selectedPlayer.value).length === 0
 			) { // Проверка, если предмет требует выбора игрока
-				validateErrors.value.push('Данный предмет требует выбора игрока');
+				const errorMessage = 'Данный предмет требует выбора игрока';
+
+				if (!validateErrors.value.includes(errorMessage)) {
+					validateErrors.value.push(errorMessage);
+				}
 				validateResult = false;
 			} else if (
 					(item.type === 'removeNegativeItem' || item.type === 'stealItem' || item.type === 'changeUserOwner')
 					&& Object.keys(selectedItem.value).length === 0
 			) { // Проверка, если предмет требует выбора предмета
-				validateErrors.value.push('Данный предмет требует выбора предмета');
+				const errorMessage = 'Данный предмет требует выбора предмета';
+
+				if (!validateErrors.value.includes(errorMessage)) {
+					validateErrors.value.push(errorMessage);
+				}
 				validateResult = false;
 			} else if (
 					item.target === 'fromTo'
 					&& Object.keys(selectedSecondPlayer.value).length === 0
 			) {
-				validateErrors.value.push('Данный предмет требует выбора второго игрока');
+				const errorMessage = 'Данный предмет требует выбора второго игрока';
+
+				if (!validateErrors.value.includes(errorMessage)) {
+					validateErrors.value.push(errorMessage);
+				}
+
 				validateResult = false;
 			}
 		});
@@ -229,8 +257,8 @@ const logMessage = ref('');
 const notificationMessage = ref('');
 
 const setMessages = () => {
-	const defaultLogMessage = `Использовал предмет "${props.item.name}"`;
-	const defaultNotificationMessage = `Использовал на тебя предмет "${props.item.name}"`;
+	const defaultLogMessage = `Использовал предмет "${props.item.item.item.name}"`;
+	const defaultNotificationMessage = `Использовал на тебя предмет "${props.item.item.item.name}"`;
 
 	let message = '';
 	let log = '';
@@ -247,13 +275,13 @@ const setMessages = () => {
 			log = `${defaultLogMessage}`;
 		}
 
-		log += ` выбрал предмет "${selectedItem.value.item.name}"`;
+		log += ` выбрал предмет "${selectedItem.value.item.item.item.name}"`;
 
 		if (!message) {
 			message = `${defaultNotificationMessage}`;
 		}
 
-		message += ` выбрал предмет "${selectedItem.value.item.name}"`;
+		message += ` выбрал предмет "${selectedItem.value.item.item.item.name}"`;
 	}
 
 	/* Дополнение сообщений информацией о выбранном втором участнике */
@@ -346,18 +374,18 @@ const getPlayersForItem = (target) => {
 	<div v-else-if="Object.keys(item).length > 1">
 		<span class="inv-title">Вы собираетесь использовать предмет:</span>
 		<ItemCard
-				:element="item"
+				:element="item.item"
 				:useLightBox="true"
 		/>
 
-		<div v-if="item.item.actions">
+		<div v-if="item.item.item.actions">
 			<div class="inv-title">
 				Это предмет с автоматическим применением, он выполнит следующие действия:
 			</div>
 			<div class="items-do-list">
 				<div
 						class="item-do"
-						v-for="(action, key) in item.item.actions"
+						v-for="(action, key) in item.item.item.actions"
 						:key="key"
 				>
 					<span v-if="actions.type.hasOwnProperty(action.type)">Действие: {{ actions.type[action.type].name }}</span>
@@ -367,7 +395,7 @@ const getPlayersForItem = (target) => {
 				</div>
 			</div>
 			<div
-					v-for="(action, key) in item.item.actions"
+					v-for="(action, key) in item.item.item.actions"
 					:key="key"
 			>
 				<template v-if="action.showUi !== false">
@@ -425,10 +453,10 @@ const getPlayersForItem = (target) => {
 				/>
 			</div>
 		</div>
-		<div v-else class="use-item-description">
-			<font-awesome-icon :icon="['fas', 'circle-info']" />
-			<span>Это предмет с ручным примением, вы должны сами выполнить действия, которые описаны на предмете, после его применения</span>
-		</div>
+		<layout-InfoBlock
+				v-else
+				text="Это предмет с ручным примением, вы должны сами выполнить действия, которые описаны на предмете, после его применения"
+		/>
 
 		<template v-if="validateErrors.length > 0">
 			<div v-for="(error, key) in validateErrors" class="use-item-description error">

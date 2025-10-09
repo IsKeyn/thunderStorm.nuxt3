@@ -1,5 +1,6 @@
 <script setup>
 import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
+import StatusEffectSmallCard from '@/modules/boardGame/components/statusEffect/StatusEffectSmallCard.vue';
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
@@ -37,6 +38,8 @@ const getPlaceColor = (place) => {
 		case 3: return 'bronze';
 	}
 }
+
+// TODO добавить вывод времени
 </script>
 
 <template>
@@ -77,8 +80,15 @@ const getPlaceColor = (place) => {
 				Позиция на поле: {{ element.position ? element.position : 'Ходы не осуществлялись' }}
 			</span>
 			<span class="field">
-				Статус: <template v-if="element.active">Участвует</template><template v-else>Не участвует</template>
+				Статус: <template v-if="element.active">Участвует</template><template v-else>Не участвует <span v-if="element.active.not_active_reason">{{ element.active.not_active_reason }}</span></template>
 			</span>
+		</div>
+		<div v-if="element.status_effects.length > 0">
+			<StatusEffectSmallCard
+					v-for="(statusEffect, key) in element.status_effects"
+					:key="key"
+					:element="statusEffect"
+			/>
 		</div>
 		<div
 				v-if="place !== null"

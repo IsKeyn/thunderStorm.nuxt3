@@ -14,6 +14,10 @@ const props = defineProps({
 		type: String,
 		default: 'login',
 	},
+	registerOnEventBySlug: {
+		type: String,
+		default: null,
+	},
 });
 
 const emit = defineEmits(['сlosureFunc', 'reCalcHeight', 'closeModal']);

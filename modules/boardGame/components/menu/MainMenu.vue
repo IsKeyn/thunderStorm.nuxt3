@@ -17,7 +17,7 @@ const menu = computed(() => {
 		},
 		{
 			name: 'Доска',
-			path: '/board',
+			path: '/e/' + route.params.slug + '/board/',
 			icon: ['fas', 'dice']
 		},
 		{
@@ -31,9 +31,9 @@ const menu = computed(() => {
 			icon: ['fas', 'hat-wizard']
 		},
 		{
-			name: 'Настройки',
-			path: '/settings',
-			icon: ['fas', 'sliders']
+			name: 'Взаимодействия',
+			path: '/e/' + route.params.slug + '/player-interactions/',
+			icon: ['fa-solid', 'fa-people-group']
 		},
 		{
 			name: 'Расширенные',
@@ -64,6 +64,6 @@ const menu = computed(() => {
 <template>
 	<ui-SideMenu
 			:menu="menu"
-			widthClass="width250"
+			widthClass="width350"
 	/>
 </template>

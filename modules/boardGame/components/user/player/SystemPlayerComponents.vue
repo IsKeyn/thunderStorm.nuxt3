@@ -1,21 +1,13 @@
 <script setup>
-import { useLoadStateStore } from '@/stores/loadState';
-const loadState = useLoadStateStore();
-
-import { api } from '@/composables/api.js'
-const {
-	apiUrl,
-	publicUrl,
-	sessionCookieName,
-	errorHandler,
-} = api();
+const route = useRoute();
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
-const route = useRoute();
+import { api } from '@/composables/api.js';
+const { sendApiRequest } = api();
 
-const requestName = 'boardGamePlayerInfoRequest';
+const requestName = 'boardGameCurrentPlayerInfoRequest';
 
 const {
 	data: requestData,
@@ -24,50 +16,16 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			if (userStore.user && Object.keys(userStore.user).length > 0 && route.params.slug) {
-				let request = `${apiUrl.value}board-game/v2/player/current/${route.params.slug}`;
+			const response = await Promise.resolve(
+					sendApiRequest(`board-game/v2/player/current/${route.params.slug}`, 'GET', {}, requestName, 'small')
+			);
 
-				const query = {};
-				const sessionCookie = useCookie(sessionCookieName.value);
-
-				try {
-					loadState.loadList[requestName] = {
-						name: requestName,
-						type: 'useAsyncData',
-						preloaderType: 'fullscreen',
-						status: 'load',
-					};
-
-					const response = await $fetch(
-							request,
-							{
-								method: 'GET',
-								credentials: 'include',
-								query,
-								headers: {
-									Accept: 'application/json',
-									Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-									Referer: publicUrl.value,
-								}
-							},
-					);
-
-					if (response && response?.data) {
-						userStore.player = response.data;
-						if (loadState.loadList[requestName]) {
-							loadState.loadList[requestName].status = 'finish';
-						}
-					}
-				} catch (e) {
-					if (loadState.loadList[requestName]) {
-						loadState.loadList[requestName].status = 'error';
-					}
-					errorHandler(e);
-				}
+			if (response && response?.data) {
+				userStore.player = response.data;
 			}
 		},
 		{
-			server: true, // выполнять только на сервере
+			// server: true, // выполнять только на сервере
 			lazy: true, // ждать выполнения запроса перед рендерингом
 		}
 );
@@ -77,6 +35,16 @@ watch(() => route.params.slug, (newSlug) => {
 		refresh();
 	}
 });
+
+watch(() => userStore.user, () => {
+	if (
+			userStore.user
+			&& Object.keys(userStore.user).length > 0
+			&& (Object.keys(userStore.player).length === 0 || userStore.player.user_id !== userStore.user.id)
+	) {
+		refresh();
+	}
+}, { deep: true });
 </script>
 
 <template />

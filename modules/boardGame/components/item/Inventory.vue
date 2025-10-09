@@ -4,22 +4,12 @@ import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.vue';
 
 import { computed, ref } from "vue";
-
-import { useBoardGameStore } from '@/stores/boardGame';
-const boardGameStore = useBoardGameStore();
-
-import { userFunctions } from '@/composables/userFunctions.js';
-const {
-	isAuth,
-	userStore,
-} = userFunctions();
+const route = useRoute();
 
 import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody } = api();
+const { sendApiRequest } = api();
 
 const props = defineProps({});
-
-const route = useRoute();
 
 const requestName = 'getBoardGameGamblingGameItemList';
 
@@ -33,7 +23,7 @@ const {
 		requestName,
 		async () => {
 			const response = await Promise.resolve(
-					sendApiRequest(`board-game/v2/player/item/gamblingGame/${route.params.slug}/`, 'GET', {}, requestName, '')
+					sendApiRequest(`board-game/v2/player/item/gamblingGame/${route.params.slug}/`, 'GET', {}, requestName, 'fullscreenTransparent')
 			);
 
 			hiddenRefresh.value = false;
@@ -55,10 +45,14 @@ const requestObj = ref({
 
 const droppedItem = ref(null);
 
-const showItem = (item) => {
-	droppedItem.value = item;
+const hiddenUpdate = () => {
 	hiddenRefresh.value = true;
 	refresh();
+}
+
+const showItem = (item) => {
+	droppedItem.value = item;
+	hiddenUpdate();
 }
 
 const closeDroppedItemBox = () => {
@@ -78,6 +72,7 @@ const closeDroppedItemBox = () => {
 					:element="droppedItem"
 					:openFullDescription="true"
 					:useLightBox="true"
+					:playSound="true"
 			/>
 			<button class="btn btn-simple" @click="closeDroppedItemBox">{{ fetchedData.player.item_roll_count > 0 ? 'Крутить ещё' : 'Закрыть' }}</button>
 		</div>
@@ -87,15 +82,18 @@ const closeDroppedItemBox = () => {
 				:roll_count="fetchedData.player.item_roll_count"
 				:requestObj="requestObj"
 				:easeOutType="1"
+				:showItemCount="false"
 				:requestParentData="requestInProgress"
 				@funcAfterRollWithDelay2="showItem"
 		/>
-		<ui-BigPreloader v-if="requestInProgress" />
+		<ui-BigPreloader v-if="requestInProgress && !hiddenRefresh" />
 		<InventoryItems
 				v-else
-				class="mt-4"
+				classes="mt-8"
 				:items="fetchedData.player.inventory"
+				:statusEffects="fetchedData.player.status_effects"
 				:canUse="true"
+				@updateInventory="hiddenUpdate"
 		/>
 	</div>
 </template>

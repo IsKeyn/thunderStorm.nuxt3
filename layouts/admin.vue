@@ -157,7 +157,7 @@ import SideMenuByCode from '@/components/menu/SideMenuByCode.vue';
 	.menu {}
 
 	.content {
-		@apply pt-[10px] pr-[25px] pb-[10px] pl-[25px];
+		@apply w-full pt-[10px] pr-[25px] pb-[10px] pl-[25px];
 	}
 }
 </style>

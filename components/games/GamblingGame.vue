@@ -53,9 +53,21 @@ const props = defineProps({
 		type: Number,
 		default: 1,
 	},
+	showItemCount: {
+		type: Boolean,
+		default: false,
+	},
 	requestParentData: {
 		type: Boolean,
 		default: false,
+	},
+	sounds: {
+		type: Array,
+		default: [
+			'/sounds/roll.wav',
+			'/sounds/baraban_sg.mp3',
+			'/sounds/BennyHill.mp3',
+		],
 	},
 });
 
@@ -124,25 +136,52 @@ const spinning = ref(false);
 const spinSound = ref({});
 const resultId = ref(null);
 
-const setVolume = () => {
-	if (isAuth) {
-		if (
-				userStore.user.settings.soundVolume !== null
-				&& userStore.user.settings.soundVolume !== undefined
-				&& typeof userStore.user.settings.soundVolume === 'number'
-				&& !isNaN(userStore.user.settings.soundVolume)
-				&& isFinite(userStore.user.settings.soundVolume)
-		) {
-			spinSound.value.volume = userStore.user.settings.soundVolume ? userStore.user.settings.soundVolume / 100 : 0;
+// Массив для хранения всех звуков
+const audioElements = ref([]);
+
+// Инициализация звуков
+const initializeSounds = () => {
+	audioElements.value = props.sounds.map(soundUrl => {
+		const audio = new Audio(soundUrl);
+		audio.preload = 'auto';
+		return audio;
+	});
+
+	// Предзагрузка звуков
+	audioElements.value.forEach(audio => {
+		audio.load();
+	});
+};
+
+// Инициализируем звуки при монтировании компонента
+onMounted(() => {
+	initializeSounds();
+});
+
+const setVolume = (audioElement) => {
+	if (isAuth && userStore.user?.settings?.soundVolume !== undefined) {
+		const volume = userStore.user.settings.soundVolume;
+		if (typeof volume === 'number' && !isNaN(volume) && isFinite(volume)) {
+			audioElement.volume = volume ? volume / 100 : 0;
 		} else {
-			spinSound.value.volume = 0.2;
+			audioElement.volume = 0.2;
 		}
+	} else {
+		audioElement.volume = 0.2;
 	}
 }
 
-watch(() => userStore.user.settings.soundVolume, () => {
-	setVolume();
+watch(() => userStore.user?.settings?.soundVolume, () => {
+	// Обновляем громкость для всех звуков
+	audioElements.value.forEach(audio => {
+		setVolume(audio);
+	});
 }, { deep: true });
+
+const getRandomSound = () => {
+	const randomIndex = Math.floor(Math.random() * props.sounds.length);
+	return randomIndex;
+}
 
 const startSpin = (randomIndex) => {
 	if (spinning.value) return;
@@ -150,9 +189,28 @@ const startSpin = (randomIndex) => {
 	resultId.value = null;
 	spinning.value = true;
 
-	setVolume();
-	spinSound.value.currentTime = 0;
-	spinSound.value.play();
+	const soundIndex = getRandomSound();
+	const currentSound = audioElements.value[soundIndex];
+
+	// Останавливаем все звуки перед воспроизведением нового
+	audioElements.value.forEach(audio => {
+		audio.pause();
+		audio.currentTime = 0;
+	});
+
+	setVolume(currentSound);
+
+	// Обработка ошибок воспроизведения звука
+	currentSound.play().catch(e => {
+		console.error('Ошибка воспроизведения звука:', e);
+		// Пытаемся воспроизвести следующий звук в случае ошибки
+		const fallbackIndex = (soundIndex + 1) % props.sounds.length;
+		const fallbackSound = audioElements.value[fallbackIndex];
+		setVolume(fallbackSound);
+		fallbackSound.play().catch(e2 => {
+			console.error('Ошибка воспроизведения запасного звука:', e2);
+		});
+	});
 
 	const itemHeight = props.itemHeight;					// высота одного элемента
 	const windowHeight = mainBlockHeight.value;   // высота окна рулетки
@@ -192,10 +250,14 @@ const startSpin = (randomIndex) => {
 				requestAnimationFrame(animate)
 			} else {
 				spinning.value = false
-				spinSound.value.pause()
-				spinSound.value.currentTime = 0
 
-				/* Используется для выделения цветом выпавшего прдмета */
+				// Останавливаем все звуки
+				audioElements.value.forEach(audio => {
+					audio.pause();
+					audio.currentTime = 0;
+				});
+
+				/* Используется для выделения цветом выпавшего предмета */
 				resultId.value = items.value[randomIndex].id;
 
 				setTimeout(() => {
@@ -269,20 +331,21 @@ const startSpin = (randomIndex) => {
 				</div>
 			</div>
 
-			<div class="count-info">
+			<div
+					v-if="showItemCount"
+					class="count-info"
+			>
 				Элементов в рулетке: {{ items.length }}
 			</div>
 
 			<button
 					v-if="roll_count > 0"
-					:class="`btn ${spinning || requestInProgress || requestParentData ? 'btn-disable' : 'btn-simple' }`"
+					:class="`!mt-4 btn ${spinning || requestInProgress || requestParentData ? 'btn-disable' : 'btn-simple' }`"
 					:disabled="spinning || requestInProgress || requestParentData"
 					@click="getRandomItem"
 			>
 				Крутануть рулетку x{{ roll_count }}
 			</button>
-			<audio ref="spinSound" src="/sounds/roll.wav" preload="auto"></audio>
-<!--			<audio ref="spinSound" src="/sounds/baraban_sg.mp3" preload="auto"></audio>-->
 		</div>
 		<div v-else class="item-box">Больше нечего крутить *(</div>
 	</div>
@@ -302,13 +365,13 @@ const startSpin = (randomIndex) => {
 		border: 4px solid var(--third-active-color);
 
 		.left-triangle {
-			@apply absolute left-0 z-[1] text-[var(--third-active-color)] text-[1.4rem];
+			@apply absolute left-[-2px] z-[1] text-[var(--third-active-color)] text-[1.4rem];
 
 			top: calc(50% - 0.7rem);
 		}
 
 		.right-triangle {
-			@apply absolute right-[-1px] z-[1] text-[var(--third-active-color)] text-[1.4rem];
+			@apply absolute right-[-2px] z-[1] text-[var(--third-active-color)] text-[1.4rem];
 
 			top: calc(50% - 0.7rem);
 		}

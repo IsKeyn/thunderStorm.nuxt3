@@ -14,6 +14,8 @@ import SystemPlayerComponents from '@/modules/boardGame/components/user/player/S
 import UpdatedData from '@/modules/boardGame/components/layout/UpdatedData.vue';
 import MainMenu from '@/modules/boardGame/components/menu/MainMenu.vue';
 
+import Sound from '@/components/audio/Sound.vue';
+
 import { ref } from "vue";
 
 import { useBoardGameStore } from '@/stores/boardGame';
@@ -67,6 +69,7 @@ provide('layoutMethods', {
 			:setViewsLog="true"
 			@setCurrentElement="setOpenedImage"
 	/>
+	<Sound />
 </template>
 
 <style lang="scss">
@@ -86,6 +89,7 @@ provide('layoutMethods', {
 @import url('~/assets/scss/Dashboard/themes/Ocean.scss');
 @import url('~/assets/scss/Dashboard/themes/Street.scss');
 @import url('~/assets/scss/Dashboard/themes/StreetLight.scss');
+@import url('~/assets/scss/Dashboard/themes/WinterLight.scss');
 </style>
 
 <style lang="scss" scoped>

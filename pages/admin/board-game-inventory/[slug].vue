@@ -9,32 +9,40 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 const form = ref(
 		{
 			user_id: {
-				name: 'ID пользователя',
+				name: 'Игрок',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			board_game_id: {
-				name: 'ID настолки',
+				name: 'Настольная игра',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			board_game_item_id: {
-				name: 'ID предмета',
+				name: 'ID привязки предмета',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'entity/getFields',
+				body: {
+					entity: 'App\\Models\\BoardGame\\ItemBind',
+				},
+				hasResource: false,
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			has_used: {
-				name: 'Был ли использоан',
-				value: '',
-				type: 'text',
-				validateRules: 'required, maxLength_255',
+				name: 'Был использован',
+				value: false,
+				type: 'checkbox',
+				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
 			},
 		}
 );

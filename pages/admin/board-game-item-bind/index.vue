@@ -12,16 +12,23 @@ const titles = ref(
 				name: 'id',
 			},
 			item_id: {
-				name: 'id предмета',
+				name: 'Предмет',
+				type: 'EntityList',
+				apiUrl: 'board-game/v2/item/list',
 			},
 			board_game_id: {
 				name: 'ID настолькой игры',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
 			},
 			active: {
 				name: 'Активность',
+				type: 'boolean',
 			},
 			created_by: {
 				name: 'Создан кем',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 		}
 );

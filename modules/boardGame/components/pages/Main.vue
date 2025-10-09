@@ -1,33 +1,34 @@
 <script setup>
-// import { inject } from 'vue'
-// const boardGameInfo = inject('boardGameInfo')
-//
-// const route = useRoute();
-//
-// const breadCrumbsArray = computed(() => {
-// 	const splitedPath = route.path.split('/');
-//
-// 	return [
-// 		{
-// 			name: boardGameInfo.value.name,
-// 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
-// 		},
-// 	];
-// });
+import MainStepsComponent from '@/modules/boardGame/components/steps/MainStepsComponent.vue';
 
+const route = useRoute();
 
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
+
+const pageName = ref('Главная');
+
+const breadCrumbsArray = computed(() => {
+	const splitedPath = route.path.split('/');
+
+	return [
+		{
+			name: boardGameStore.boardGameInfo?.name,
+			href: `/${splitedPath[1]}/${splitedPath[2]}`,
+		},
+	];
+});
+
+const setPageName = (name) => {
+	pageName.value = name;
+}
 </script>
 
 <template>
-<!--	<layout-PageHeader-->
-<!--			:title="boardGameInfo.name"-->
-<!--			:breadCrumbs="breadCrumbsArray"-->
-<!--	/>-->
-	Информация игры для главной страницы
+	<layout-PageHeader
+			:title="pageName"
+			:breadCrumbs="breadCrumbsArray"
 
-	Если до старта игры ещё есть время показывать промо страницу
-
-	Если игра идет показывать пошаговый ход
-
-	Если игра законченна, то показывать страницу благодарностей и победителей
+	/>
+	<MainStepsComponent @setPageName="setPageName" />
 </template>

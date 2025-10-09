@@ -1,6 +1,8 @@
 <script setup>
 import PlayerCard from '@/modules/boardGame/components/user/player/PlayerCard.vue';
+
 import { computed, ref } from "vue";
+
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 

@@ -11,6 +11,14 @@ export function userFunctions() {
         return userStore.user && Object.keys(userStore.user).length > 0;
     });
 
+    const isEmailVerified = computed(() => {
+        return userStore.user.email_verified_at;
+    });
+
+    const isAuthAndVerified = computed(() => {
+        return userStore.user && Object.keys(userStore.user).length > 0 && userStore.user.email_verified_at;
+    });
+
     const logout = () => {
         choiceAlert(
             {
@@ -60,6 +68,8 @@ export function userFunctions() {
     return {
         sendLogoutRequest,
         isAuth,
+        isEmailVerified,
+        isAuthAndVerified,
         logout,
         userStore,
     };

@@ -137,7 +137,7 @@ const entityValue = computed(() => {
 			{{ cutText(item[keyName], 15) }}
 		</template>
 		<template v-else-if="titleEl.type && titleEl.type === 'EntityList' && item[keyName]">
-			<span class="text-rounded-box entity">{{ entityValue }}</span>
+			<span :class="[titleEl.classes ?? 'entity', 'text-rounded-box']">{{ entityValue }}</span>
 		</template>
 		<template v-else>
 			{{ item[keyName] }}

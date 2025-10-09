@@ -22,12 +22,16 @@ const titles = ref(
 			},
 			description: {
 				name: 'Описание',
+				type: 'cutText',
 			},
 			board_game_id: {
-				name: 'ID настольной игры',
+				name: 'Настольная игра',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
 			},
 			debuff: {
 				name: 'Дебаф',
+				type: 'boolean',
 			},
 		}
 );
@@ -63,5 +67,6 @@ const breadCrumbsArray = computed(() => {
 		:titles="titles"
 		titleKey="title"
 		fetchUrl="admin/entity/BoardGame/StatusEffect"
+		:hasResource="true"
 	/>
 </template>

@@ -6,6 +6,7 @@ import TwitchCard from '@/components/twitch/TwitchCard.vue';
 import CurrentGame from '@/modules/boardGame/components/user/player/profileElement/CurrentGame.vue';
 import GameHistory from '@/modules/boardGame/components/user/player/profileElement/GameHistory.vue';
 import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.vue';
+import StatusEffects from '@/modules/boardGame/components/statusEffect/StatusEffects.vue';
 import PlayerLogs from '@/modules/boardGame/components/user/player/profileElement/PlayerLogs.vue';
 import PlayerEvents from '@/modules/boardGame/components/user/player/profileElement/PlayerEvents.vue';
 import ProfileSettings from '@/components/user/profile/fragments/Settings.vue';
@@ -150,6 +151,13 @@ tabsElements.value.push(
 		{
 			id: 'itemsHistory',
 			title: 'История предметов',
+		}
+);
+
+tabsElements.value.push(
+		{
+			id: 'statusEffectsHistory',
+			title: 'История статус эффектов',
 		}
 );
 
@@ -338,7 +346,17 @@ onMounted(() => {
 				<GameHistory :userName="userName" />
 			</template>
 			<template #tab-itemsHistory>
-				<InventoryItems :userName="userName" />
+				<InventoryItems
+						:userName="userName"
+						:showUsedItemsBox="true"
+				/>
+			</template>
+			<template #tab-statusEffectsHistory>
+				<StatusEffects
+						:userName="userName"
+						:canUse="isCurrentUser"
+						:showUsedItemsBox="true"
+				/>
 			</template>
 			<template #tab-logsHistory>
 				<PlayerLogs :userName="userName" />

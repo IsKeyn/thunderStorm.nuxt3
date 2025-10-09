@@ -43,7 +43,7 @@ export function validate() {
         return { status, validateResult };
     }
 
-    const validateElement = (value, rules, allElements = {}) => {
+    const validateElement = (value, rules, allElements = {}, errorText = null) => {
         if (rules) {
             const arRules = rules.replaceAll(' ', '').split(',');
             let error = null;
@@ -193,6 +193,14 @@ export function validate() {
 
                     console.log('isNotSameFieldsRegex');
                 }
+            }
+
+            /*
+                Если у элемента есть конкретный текст ошибки, не зависимо от ошибки валидации, то возвращаем его.
+                Пример политика конфиденциальности
+            */
+            if (error && errorText) {
+                error = errorText;
             }
 
             return error;

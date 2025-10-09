@@ -149,8 +149,8 @@ export function api() {
 
             const response = await $fetch(request, opts);
 
-            if (requestName && response) {
-                if (loadState.loadList[requestName]) {
+            if (response) {
+                if (requestName && loadState.loadList[requestName]) {
                     loadState.loadList[requestName].status = 'finish';
                 }
 

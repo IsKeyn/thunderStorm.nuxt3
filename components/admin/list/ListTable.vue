@@ -227,8 +227,10 @@ const entities = ref({});
 const getEntities = async () => {
 	for (const key in props.titles) {
 		if (props.titles[key].type === 'EntityList' && props.titles[key].apiUrl) {
+			const body = props.titles[key].body ?? {};
+
 			const requestName = 'getItemList_' + props.apiUrl;
-			const response = await sendApiRequest(props.titles[key].apiUrl, 'GET', {}, requestName, '');
+			const response = await sendApiRequest(props.titles[key].apiUrl, 'GET', body, requestName, '');
 
 			entities.value[props.titles[key].apiUrl] = props.titles[key].hasResource === false ? response : response.data;
 		}

@@ -41,6 +41,7 @@ const toggleSidebar = () => {
 const textCutSize = computed(() => {
 	switch (props.widthClass) {
 		case 'width250': return 10;
+		case 'width350': return 15;
 		case 'width450': return 28;
 	}
 });
@@ -85,6 +86,10 @@ const textCutSize = computed(() => {
 	&.sidebar-expanded {
 		&.width250 {
 			@apply w-[250px];
+		}
+
+		&.width350 {
+			@apply w-[350px];
 		}
 
 		&.width450 {

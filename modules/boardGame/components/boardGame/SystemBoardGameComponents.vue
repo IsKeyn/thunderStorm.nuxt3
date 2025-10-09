@@ -25,7 +25,7 @@ const {
 		requestName,
 		async () => {
 			// Проверяем наличие slug перед выполнением запроса
-			let request = `${apiUrl.value}board-game/get/${route.params.slug}`;
+			let request = `${apiUrl.value}board-game/v2/get/${route.params.slug}`;
 
 			const query = {
 				type: 'short',

@@ -19,12 +19,15 @@ const titles = ref(
 			},
 			short_description: {
 				name: 'Короткое описание',
+				type: 'cutText',
 			},
 			full_description: {
 				name: 'Полное описание',
+				type: 'cutText',
 			},
 			actions: {
 				name: 'Действия (json)',
+				type: 'cutText',
 			},
 			type: {
 				name: 'Тип',
@@ -34,12 +37,17 @@ const titles = ref(
 			},
 			active: {
 				name: 'Активность',
+				type: 'boolean',
 			},
 			author: {
 				name: 'Автор',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 			created_by: {
 				name: 'Создан кем',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 		}
 );
