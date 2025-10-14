@@ -51,9 +51,15 @@ const incoming = computed(() => {
 const outgoing = computed(() => {
 	return fetchedData.value?.interaction.filter(item => item.created_by === userStore.user.id);
 });
+
+const description = 'Станица взаимодействия с другими игроками. На этой странице вы можете отслеживать свои запросы на взаимодействие с другими игроками, а также принимать решения о входящих предложениях.';
 </script>
 
 <template>
+	<layout-InfoBlock
+			:text="description"
+			classes="!mb-6"
+	/>
 	<ui-BigPreloader v-if="requestInProgress" />
 	<div class="item-box" v-else-if="fetchedData && fetchedData.status === 'error' && fetchedData.status_message">
 		{{ fetchedData.status_message }}
@@ -70,6 +76,7 @@ const outgoing = computed(() => {
 						v-for="(element, key) in incoming"
 						:key="key"
 						:element="element"
+						@update="refresh"
 				/>
 <!--				<ItemCard-->
 <!--						v-for="(element, key) in fetchedData.filter(item => !item.has_used)"-->
@@ -90,6 +97,7 @@ const outgoing = computed(() => {
 						v-for="(element, key) in outgoing"
 						:key="key"
 						:element="element"
+						@update="refresh"
 				/>
 <!--				<ItemCard-->
 <!--						v-for="(element, key) in usedItems"-->

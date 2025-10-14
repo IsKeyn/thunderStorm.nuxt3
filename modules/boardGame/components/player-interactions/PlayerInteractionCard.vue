@@ -1,7 +1,15 @@
 <script setup>
 import UserShortCard from '@/modules/boardGame/components/user/UserShortCard.vue';
 
+const emit = defineEmits(['update']);
+
 const route = useRoute();
+
+import { api } from '@/composables/api.js';
+const { sendApiRequest } = api();
+
+import { notifications } from '@/composables/notifications.js';
+const { alert, error, choiceAlert } = notifications();
 
 import { userFunctions } from '@/composables/userFunctions.js';
 const {
@@ -50,12 +58,28 @@ const statusClass = computed(() => {
 });
 
 /* Функции изменения запросов */
+// TODO добавить Вы уверены? да нет
+
 const startAction = (type) => {
-	switch (type) {
-		case 'accept': return 'blue';
-		case 'refuse': return 'green';
-		case 'recall': return 'red';
-	}
+	choiceAlert(
+			{
+				title: 'Вы уверены?',
+				message: 'Это действие нельзя отменить. Вы уверены?',
+				buttons: [
+					{
+						name: 'Да',
+						func: () => {
+							sendRequest(type);
+						},
+						additionalKeywordFunc: 'close',
+					},
+					{
+						name: 'Нет',
+						additionalKeywordFunc: 'close',
+					},
+				],
+			}
+	);
 }
 
 const requestInProgress = ref(false);
@@ -66,13 +90,17 @@ const sendRequest = async (type) => {
 	try {
 		const body = {
 			type,
-			interactionId: props.element.id,
+			id: props.element.id,
 			slug: route.params.slug,
 		};
 
-		const response = await sendApiRequest('board-game/v2/player/interactions/action/', 'POST', body, 'SetActionBoardGamePlayerInteractions', 'fullscreenTransparent');
+		const response = await sendApiRequest('board-game/v2/interactions/action/', 'POST', body, 'SetActionBoardGamePlayerInteractions', 'fullscreenTransparent');
 
-		if (response) {
+		if (response.error) {
+			error(response.error);
+		} else if (response) {
+			// Обработка ошибок
+
 			requestInProgress.value = false;
 
 			switch (type) {
@@ -80,6 +108,8 @@ const sendRequest = async (type) => {
 				case 'refuse': alert('Вы отказались от предложения'); break;
 				case 'recall': alert('Вы отозвали предложение'); break;
 			}
+
+			emit('update');
 		}
 	} catch (e) {
 		error(e);
@@ -110,17 +140,17 @@ const sendRequest = async (type) => {
 				<div v-if="type === 'incoming'">
 					<button
 							class="btn btn-simple mr-2"
-							@click="sendRequest('accept')"
+							@click="startAction('accept')"
 					>Принять</button>
 					<button
 							class="btn btn-simple"
-							@click="sendRequest('refuse')"
+							@click="startAction('refuse')"
 					>Отказаться</button>
 				</div>
 				<div v-else-if="type === 'outgoing'">
 					<button
 							class="btn btn-simple"
-							@click="sendRequest('recall')"
+							@click="startAction('recall')"
 					>Отозвать</button>
 				</div>
 			</div>

@@ -6,6 +6,8 @@ const emit = defineEmits(['updateTimerList']);
 
 import { ref, computed, onBeforeUnmount, onMounted } from 'vue'
 
+const route = useRoute();
+
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
@@ -19,10 +21,6 @@ import { boardGameLog } from '@/composables/BoardGame/boardGameLog.js'
 const { setLog } = boardGameLog();
 
 const props = defineProps({
-	boardGameId: {
-		type: Number,
-		default: 1,
-	},
 	userId: {
 		type: Number,
 		default: null,
@@ -119,7 +117,7 @@ const getTimerStatus = async () => {
 	try {
 		const body = {};
 
-		body.board_game_id = props.boardGameId;
+		body.boardGameSlug = route.params.slug;
 		body.slug = slug.value;
 
 		if (props.userId) {
@@ -179,7 +177,7 @@ const timerApiRequest = async (type = 'start') => {
 	try {
 		const body = {};
 
-		body.board_game_id = props.boardGameId;
+		body.boardGameSlug = route.params.slug;
 		body.slug = slug.value;
 
 		const response = await sendApiRequest(`board-game/timer/${type}`, 'POST', body);
@@ -274,7 +272,7 @@ const editTimeRequest = async (secondsValue) => {
 	try {
 		const body = {};
 
-		body.board_game_id = props.boardGameId;
+		body.boardGameSlug = route.params.slug;
 		body.seconds = secondsValue;
 		body.slug = slug.value;
 
@@ -302,7 +300,7 @@ const editTimeRequest = async (secondsValue) => {
 }
 
 const copyObsLink = () => {
-	const text = `${window.location.protocol}//${publicUrl.value}/obs/timer/?bg_id=${props.boardGameId}&user_id=${userStore.user.id}&slug=${slug.value}`;
+	const text = `${window.location.protocol}//${publicUrl.value}/obs/timer/?bg_slug=${route.params.slug}&user_id=${userStore.user.id}&slug=${slug.value}`;
 
 	navigator.clipboard.writeText(text)
 			.then(() => {
@@ -342,7 +340,7 @@ const deleteTimer = async () => {
 	try {
 		const body = {};
 
-		body.board_game_id = props.boardGameId;
+		body.boardGameSlug = route.params.slug;
 		body.slug = slug.value;
 
 		const response = await sendApiRequest('board-game/timer/delete', 'DELETE', body);
@@ -377,6 +375,9 @@ const formattedLimitTime = computed(() => {
 		secs.toString().padStart(2, '0')
 	].join(':');
 })
+
+
+// TODO теперь выборка по SLUG настольной игры
 </script>
 
 <template>
@@ -455,6 +456,7 @@ const formattedLimitTime = computed(() => {
 							@startAction="toggleEditTimeMode()"
 					/>
 					<layout-buttons-ActionButton
+							v-if="timer.slug !== 'main'"
 							buttonClasses="btn btn-simple-1 w-full"
 							buttonName="Сбросить"
 							:actionInProgress="requestInProgress"

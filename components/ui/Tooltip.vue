@@ -48,6 +48,7 @@ const calcTooltipPosition = (useToggle = true) => {
 			tooltip.value.style.left = '0px';
 			break;
 		case 'center':
+			// TODO сделать расчет для центральной позиции
 			break;
 		case 'left':
 			tooltip.value.style.right = '0px';

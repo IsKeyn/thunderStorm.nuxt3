@@ -55,7 +55,8 @@ watch(requestData, (newData) => {
 	items.value.options = [];
 
 	if (newData) {
-		const data = props.hasResource ? newData.data : newData;
+		const data = newData.data ? newData.data : newData;
+		// const data = props.hasResource ? newData.data : newData;
 
 		if (typeof data === 'object') {
 			items.value.options.push({

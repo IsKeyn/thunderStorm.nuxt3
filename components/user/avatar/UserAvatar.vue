@@ -31,6 +31,10 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
+	classes: {
+		type: String,
+		default: 'w-[100px] h-[100px]',
+	}
 });
 
 const isCurrentUser = computed(() => {
@@ -142,9 +146,14 @@ const getUserData = async () => {
 				:src="getResizeImg(userInfo.avatar)"
 				:alt="userInfo.name"
 				:title="userInfo.name"
+				:class="classes"
 				@click="layoutMethods.setOpenedImage(userInfo.avatar)"
 		>
-		<img v-else src="/images/system/no-avatar.png">
+		<img
+				v-else
+				:class="classes"
+				src="/images/system/no-avatar.png"
+		>
 	</div>
 </template>
 
@@ -153,7 +162,7 @@ const getUserData = async () => {
 	@apply relative;
 
 	img {
-		@apply w-[150px] h-[150px] object-cover cursor-pointer mx-auto rounded-full;
+		@apply object-cover cursor-pointer mx-auto rounded-full;
 	}
 
 	.change-avatar-button {

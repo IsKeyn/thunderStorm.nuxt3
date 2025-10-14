@@ -163,9 +163,16 @@ const sendActivateSeRequest = async (type) => {
 <!--			theme,-->
 <!--			classes,-->
 <!--	]">-->
-	<div class="relative">
+	<div class="status-effect-small-card">
 		<Tooltip>
-			<div class="promt">Количество просмотров</div>
+			<div class="description">
+				<div class="mb-2">
+					{{ element.statusEffect.name }}
+				</div>
+				<div>
+					{{ element.statusEffect.description }}
+				</div>
+			</div>
 		</Tooltip>
 		<img
 				v-if="element.statusEffect?.image"
@@ -221,93 +228,107 @@ const sendActivateSeRequest = async (type) => {
 </template>
 
 <style lang="scss" scoped>
-.item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded-none flex relative min-h-[86px];
+.status-effect-small-card {
+	@apply relative w-[60px] h-[60px];
 
-	&.gamblingGame {
-		@apply w-full;
-	}
-
-	&.default {
-		&.red {
-			border-left: 8px solid #600000;
-		}
-
-		&.green {
-			border-left: 8px solid #005d00;
-		}
-
-		&.blue {
-			border-left: 8px solid #000460;
-		}
-	}
-
-	&.active {
-		@apply bg-[var(--second-active-color)];
-	}
-
-	&.add-padding-right {
-		@apply pr-[3rem];
-	}
-
-	&.default {
-		//&:hover {
-		//	@apply bg-[var(--second-active-color)];
-		//}
-	}
+	border: 2px solid var(--third-block-color);
 
 	img {
-		@apply w-[70px] h-[70px];
+		width: 100%;
 	}
 
-	.info {
-		@apply pl-3 pr-3 text-[var(--main-text-color)];
-
-		.name {
-			@apply block mb-1 uppercase;
-		}
-
-		.description {
-			@apply block;
-
-			&.cut-description {
-				@apply w-[200ch];
-
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-		}
-
-		.additional-box {
-			@apply block mt-2;
-		}
-	}
-
-	.control-panel {
-		@apply absolute right-[1rem];
-
-		.use-button {
-			@apply bg-[var(--success-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center mb-[0.3rem] cursor-pointer;
-		}
-
-		.close-button {
-			@apply bg-[var(--error-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center;
-		}
-	}
-
-	.count-panel {
-		@apply absolute right-0 top-0 flex justify-between items-center text-[1.5rem] h-full p-[1rem];
+	.description {
+		@apply bg-[var(--second-bg-color)] w-[150px] text-center mb-[2px] p-[5px] text-[var(--main-dark-text-color)];
 	}
 }
+//
+//.item-box {
+//	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded-none flex relative min-h-[86px];
+//
+//	&.gamblingGame {
+//		@apply w-full;
+//	}
+//
+//	&.default {
+//		&.red {
+//			border-left: 8px solid #600000;
+//		}
+//
+//		&.green {
+//			border-left: 8px solid #005d00;
+//		}
+//
+//		&.blue {
+//			border-left: 8px solid #000460;
+//		}
+//	}
+//
+//	&.active {
+//		@apply bg-[var(--second-active-color)];
+//	}
+//
+//	&.add-padding-right {
+//		@apply pr-[3rem];
+//	}
+//
+//	&.default {
+//		//&:hover {
+//		//	@apply bg-[var(--second-active-color)];
+//		//}
+//	}
+//
+//	img {
+//		@apply w-[70px] h-[70px];
+//	}
+//
+//	.info {
+//		@apply pl-3 pr-3 text-[var(--main-text-color)];
+//
+//		.name {
+//			@apply block mb-1 uppercase;
+//		}
+//
+//		.description {
+//			@apply block;
+//
+//			&.cut-description {
+//				@apply w-[200ch];
+//
+//				white-space: nowrap;
+//				overflow: hidden;
+//				text-overflow: ellipsis;
+//			}
+//		}
+//
+//		.additional-box {
+//			@apply block mt-2;
+//		}
+//	}
+//
+//	.control-panel {
+//		@apply absolute right-[1rem];
+//
+//		.use-button {
+//			@apply bg-[var(--success-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center mb-[0.3rem] cursor-pointer;
+//		}
+//
+//		.close-button {
+//			@apply bg-[var(--error-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center;
+//		}
+//	}
+//
+//	.count-panel {
+//		@apply absolute right-0 top-0 flex justify-between items-center text-[1.5rem] h-full p-[1rem];
+//	}
+//}
 </style>
 
 <style lang="scss" scoped>
-.street-light-theme {
-	.item-box {
-		.info {
-			@apply text-[var(--main-dark-text-color)];
-		}
-	}
-}
+//.street-light-theme {
+//	.item-box {
+//		.info {
+//			@apply text-[var(--main-dark-text-color)];
+//		}
+//	}
+//}
 </style>

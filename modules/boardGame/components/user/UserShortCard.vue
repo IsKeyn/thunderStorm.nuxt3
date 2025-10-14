@@ -29,7 +29,7 @@ const props = defineProps({
 
 <template>
 	<Nuxt-link
-			class="user-box"
+			:class="['user-box', theme]"
 			:to="openProfile ? `/e/${route.params.slug}/player/${user.name}` : null"
 			target="_blank"
 	>
@@ -48,11 +48,22 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 .user-box {
-	@apply
-		flex justify-center items-center cursor-pointer rounded-none
-		p-2
-		bg-[var(--second-bg-color)]
-	;
+	&.default {
+		@apply
+			flex justify-center items-center cursor-pointer rounded-none
+			p-2
+			bg-[var(--second-bg-color)]
+		;
+	}
+
+	&.vertical {
+		@apply
+			block cursor-pointer rounded-none
+			p-2
+			bg-none
+			text-center
+		;
+	}
 
 	&:hover {
 		@apply no-underline bg-[var(--second-active-color)];

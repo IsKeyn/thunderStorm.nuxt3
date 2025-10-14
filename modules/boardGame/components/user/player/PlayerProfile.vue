@@ -1,8 +1,9 @@
 <script setup>
 import Tabs from '@/components/ui/tabs/Tabs.vue';
 import Timer from '@/modules/boardGame/components/timer/Timer.vue';
-import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
+import UserAvatar from '@/components/user/avatar/UserAvatar.vue';
 import TwitchCard from '@/components/twitch/TwitchCard.vue';
+
 import CurrentGame from '@/modules/boardGame/components/user/player/profileElement/CurrentGame.vue';
 import GameHistory from '@/modules/boardGame/components/user/player/profileElement/GameHistory.vue';
 import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.vue';
@@ -10,10 +11,11 @@ import StatusEffects from '@/modules/boardGame/components/statusEffect/StatusEff
 import PlayerLogs from '@/modules/boardGame/components/user/player/profileElement/PlayerLogs.vue';
 import PlayerEvents from '@/modules/boardGame/components/user/player/profileElement/PlayerEvents.vue';
 import ProfileSettings from '@/components/user/profile/fragments/Settings.vue';
+
 import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
 import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
 
-import {computed, inject, onMounted, ref, watch} from 'vue';
+import { computed, inject, onMounted, ref, watch } from 'vue';
 
 const route = useRoute();
 
@@ -26,6 +28,14 @@ const userStore = useUserStore();
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
+import { api } from '@/composables/api.js'
+const { sendApiRequest, responseErrors } = api();
+
+import { helper } from '@/composables/helper.js'
+const {
+	findElementById,
+} = helper();
+
 import { userNotification } from '@/composables/userNotification.js';
 const {
 	userNotificationModalRef,
@@ -37,9 +47,6 @@ const {
 	userMessagesModalRef,
 	showUserMessagesModal,
 } = userMessage();
-
-import { api } from '@/composables/api.js'
-const { sendApiRequest, responseErrors } = api();
 
 import { userFunctions } from '@/composables/userFunctions.js';
 const {
@@ -175,8 +182,6 @@ tabsElements.value.push(
 		}
 );
 
-// TODO Вывести бафы дебафы, вывести доп. соц сети
-
 if (isCurrentUser.value) {
 	tabsElements.value.push(
 			{
@@ -203,10 +208,6 @@ watch(() => isCurrentUser.value, (newValue) => {
 	}
 }, { deep: true });
 
-const findElementById = (array, targetId) => {
-	return array.find(item => item.id === targetId);
-}
-
 const scriptTwitchIsOnline = ref(false);
 
 onMounted(() => {
@@ -219,6 +220,8 @@ onMounted(() => {
 		};
 	}
 });
+
+// TODO Вывести бафы дебафы, вывести доп. соц сети
 </script>
 
 <template>
@@ -227,28 +230,30 @@ onMounted(() => {
 				v-if="userInfo && userInfo.user"
 				class="player-info"
 		>
-			<div class="box">
-				<PublicAvatar
-						:user="userInfo.user"
+			<div class="box avatar-and-social-box">
+				<UserAvatar
+						:userInfo="userInfo.user"
 						classes="w-[150px] h-[150px]"
 				/>
+				<div class="social">
+					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
+						<font-awesome-icon icon="fa-brands fa-youtube" />
+					</NuxtLink>
+					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
+						<font-awesome-icon icon="fa-brands fa-twitch" />
+					</NuxtLink>
+					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
+						<font-awesome-icon icon="fa-regular fa-circle-play" />
+					</NuxtLink>
+				</div>
 			</div>
-			<div class="box w-full">
+			<div class="box w-full main-info-box">
 				<h2 class="inv-title">{{ userInfo.user.name }}</h2>
 				<div class="info">
 					<div class="column1">
-						<span
-								v-if="twitch"
-								class="field"
-						>
-							Канал на twitch: <NuxtLink :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">{{ twitch.value }}</NuxtLink>
-						</span>
 						<span class="field">
 							Участвует в ивенте с {{ getFormattedDate('d ru_mouths_name Y', userInfo.created_at) }}
 						</span>
-<!--						<span class="field">-->
-<!--							Пройдено игр: {{ finishedGamesCount }}-->
-<!--						</span>-->
 						<span class="field">
 							Количество очков: {{ userInfo.points }}
 						</span>
@@ -267,28 +272,16 @@ onMounted(() => {
 						<span class="field">
 							Статус: <span v-if="userInfo.active" class="text-rounded-box">Участвует</span><span v-else class="text-rounded-box">Не участвует</span>
 						</span>
-
-<!--						Заменить на отправку ЛС-->
-<!--						<button-->
-<!--								v-if="(userStore.user && Object.keys(userStore.user).length > 0) && (userInfo.user_id !== userStore.user.id)"-->
-<!--								class="btn btn-primary"-->
-<!--								@click="emit('sendNotification', userInfo.user_id)"-->
-<!--						>-->
-<!--							Отправить уведомление-->
-<!--						</button>-->
-
 					</div>
 					<div class="column2">
-<!--						<Timer-->
-<!--								class="w-2/3"-->
-<!--								:boardGameId="boardGameInfo.id"-->
-<!--								:userId="userInfo.user_id"-->
-<!--								:showName="false"-->
-<!--								:showControlButtons="false"-->
-<!--						/>-->
+						<Timer
+								class="w-2/3"
+								:userId="userInfo.user_id"
+								:showName="false"
+								:showControlButtons="false"
+						/>
 					</div>
 				</div>
-
 				<div
 						v-if="isAuth"
 						class="mt-2"
@@ -383,14 +376,38 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .player-info {
-	@apply block lg:flex gap-4 mb-[2rem];
+	@apply block lg:grid grid-cols-12 mb-[2rem];
 
 	.box {
 		@apply mb-[1rem] lg:mb-0;
 
+		&.avatar-and-social-box {
+			@apply lg:col-span-1 2xl:col-span-1;
+
+			.social {
+				@apply mt-[1rem] flex justify-center gap-1;
+
+				a {
+					@apply text-[var(--main-text-color)] p-2 bg-[var(--second-block-color)] flex justify-center items-center;
+
+					&:hover {
+						@apply bg-[var(--main-hover-color)];
+					}
+
+					svg {
+						@apply text-[1.3rem] cursor-pointer;
+					}
+				}
+			}
+		}
+
+		&.main-info-box {
+			@apply lg:col-span-10 2xl:col-span-10;
+		}
+
 		span {
 			&.field {
-				@apply block mb-[0.2rem];
+				@apply block mb-[0.5rem];
 			}
 		}
 
@@ -403,7 +420,6 @@ onMounted(() => {
 
 			.column2 {
 				@apply flex justify-center lg:justify-end w-full lg:w-1/2;
-				//@apply w-2/3;
 			}
 		}
 

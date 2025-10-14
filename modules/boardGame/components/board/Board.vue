@@ -1,5 +1,7 @@
 <script setup>
 import Modal from '@/components/modals/Modal.vue';
+import Dices from '@/modules/boardGame/components/board/Dices.vue';
+import BoardCellInfo from '@/modules/boardGame/components/board/BoardCellInfo.vue';
 
 import { computed, ref } from "vue";
 
@@ -102,10 +104,16 @@ const getPlayerOnCol = (col) => {
 const playersOnCols = ref([]);
 
 watch(() => fetchedData.value, () => {
+	playersOnCols.value = [];
+
 	if (fetchedData.value && fetchedData.value.players) {
 		fetchedData.value.players.forEach((item) => {
-			if (item.position) {
-				playersOnCols.value[item.position] = item;
+			if (item.position && item.user.id !== userStore.user.id) {
+				if (playersOnCols.value[item.position]) {
+					playersOnCols.value[item.position].push(item);
+				} else {
+					playersOnCols.value[item.position] = [item];
+				}
 			}
 		});
 	}
@@ -116,69 +124,217 @@ watch(() => fetchedData.value, () => {
 // Кубики
 // Анимация хождения, бекграунд на яейку с эффектом
 // При клике на ячейке показывать попап с информацией об ячейке, игроках на ячейке и активных эффектах
+// Вывести доступное количество ходов
+
+const currentPlayerConst = ref(null);
+
+const changePosition = (positionData) => {
+	if (positionData) {
+		const oldPosition = currentPlayer.value.position;
+		const newPosition = positionData.position;
+
+		let steps = newPosition - oldPosition;
+		let direction = null;
+
+		if (steps > 0) {
+			direction = 'forward';
+		} else if (steps > 0)  {
+			direction = 'back';
+		}
+
+		if (direction) {
+			currentPlayerConst.value = fetchedData.value.players.filter((item) => item.user_id === userStore.user.id)[0];
+
+			if (currentPlayerConst.value) {
+				setTimeout(() => {
+					scrollToElement('currentPlayer');
+
+					for (let i = 0; i < Math.abs(steps); i++) {
+						if (direction === 'forward') {
+							setTimeout(() => {
+								currentPlayerConst.value.position++;
+
+								if (Math.abs(steps) - 1 === i) {
+									refresh();
+								}
+							}, 500 + i * 500);
+						}
+
+						if (direction === 'back') {
+							setTimeout(() => {
+								currentPlayerConst.value.position--;
+
+								if (Math.abs(steps) - 1 === i) {
+									refresh();
+								}
+							}, 500 + i * 500);
+						}
+					}
+				}, 1500);
+			}
+		}
+	}
+}
+
+const scrollToElement = (elementId, offset = 150) => {
+	const element = document.getElementById(elementId)
+	if (element) {
+		const elementRect = element.getBoundingClientRect()
+		const absoluteElementTop = elementRect.top + window.pageYOffset
+		const scrollTo = absoluteElementTop - offset
+
+		window.scrollTo({
+			top: scrollTo,
+			behavior: 'smooth'
+		})
+	}
+}
+
+const getEffectsByPosition = (position) => {
+	return fetchedData.value.effects.filter((item) => item.position === position);
+}
+
+const selectedPositionNumber = ref(null);
+
+const showCellInfo = (position) => {
+	selectedPositionNumber.value = position;
+	openCloseBoxFunc();
+}
+
+const boxOpen = ref(false);
+const openCloseBoxFunc = () => {
+	boxOpen.value = !boxOpen.value;
+};
+
+const cellBackgroundImage = (position) => {
+	const effects = fetchedData.value.effects.filter((item) => item.position === position);
+
+	if (effects.length > 0 && effects[0] && effects[0].boardPositionEffect) {
+		return getResizeImg(effects[0].boardPositionEffect?.title_image);
+	}
+}
 </script>
 
 <template>
 	<div v-if="fetchedData">
-		<span class="user-interface-title">Игровая доска</span>
-		<table class="theme-4">
-			<tr
-					v-for="(row, rowNumber) in JSON.parse(fetchedData.board.columns)"
-					:key="rowNumber"
-			>
-				<td
-						v-for="(col, colNumber) in row.cols"
-						:key="col.index"
-						:data-index="col.index"
-						:class="getTdClasses(col)"
-						@dragover.prevent
-						@drop="col.useThisField ? onDrop(col.index) : false"
+		<div class="dice-and-info-block">
+			<Dices
+					:size="80"
+					position="vertical"
+					:dices="['d6']"
+					:rollCount="currentPlayer.step_count"
+					@changePosition="changePosition"
+			/>
+			<div class="item-box">
+				<span class="block">Текущая позиция на поле: {{ currentPlayer.position }}</span>
+				<span class="block">Доступное количество бросков кубика: {{ currentPlayer.step_count }}</span>
+			</div>
+		</div>
+		<div class="flex items-center justify-center">
+			<table class="theme-4">
+				<tr
+						v-for="(row, rowNumber) in JSON.parse(fetchedData.board.columns)"
+						:key="rowNumber"
 				>
-					<template v-if="col.useThisField">
-						<img
-								v-if="currentPlayer && currentPlayer.position === col.index"
-								class="player-token"
-								draggable="true"
-								@dragstart="onDragStart"
-								@dragend="onDragEnd"
-								:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
-								@click="emit('showPlayer', userStore.user.id)"
-						>
-						<span class="field-number">{{ col.name }}</span>
-						<font-awesome-icon
-								v-if="col.description"
-								:icon="['fas', 'circle-info']"
-								class="info-button"
-								@click="showCellDescription(col.description)"
-						/>
-						<div
-								v-if="playersOnCols[col.index]"
-								class="other-players"
-						>
-							<!--Показывать всех игроков при нажатии, записывать куда ни будь -->
-<!--							<img-->
-<!--									v-for="(player, key) in playersOnCols[col.index]"-->
-<!--									class="other-player-token"-->
-<!--									:key="key"-->
-<!--									:src="player.user.avatar ? getResizeImg(player.user.avatar) : '/images/system/no-avatar.png'"-->
-<!--									:alt="player.user.name"-->
-<!--									:title="player.user.name"-->
-<!--									@click="emit('showPlayer', player.info.id)"-->
-<!--							>-->
-<!--							<font-awesome-icon-->
-<!--									v-if="playersOnCols[col.index].length > 3"-->
-<!--									:icon="['fas', 'ellipsis']"-->
-<!--									class="more-players"-->
-<!--							/>-->
-						</div>
-					</template>
-				</td>
-			</tr>
-		</table>
+					<td
+							v-for="(col, colNumber) in row.cols"
+							:key="col.index"
+							:data-index="col.index"
+							:class="getTdClasses(col)"
+							:style="`background-image: url('${cellBackgroundImage(col.index)}'); background-size: cover; background-position: center; background-repeat: no-repeat;`"
+					>
+						<template v-if="col.useThisField">
+							<nuxt-link
+									target="_blank"
+									:to="`/e/${route.params.slug}/player/${currentPlayer.user.name}`"
+									:title="currentPlayer.user.name"
+							>
+								<img
+										v-if="currentPlayer && currentPlayer.position === col.index"
+										id="currentPlayer"
+										class="player-token"
+										:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
+										:title="currentPlayer.user.name"
+								>
+							</nuxt-link>
+							<span class="field-number">{{ col.name }}</span>
+							<font-awesome-icon
+									v-if="getEffectsByPosition(col.index).length > 0"
+									:icon="['fas', 'circle-info']"
+									class="info-button"
+									@click="showCellInfo(col.index)"
+							/>
+							<div
+									v-if="playersOnCols[col.index]"
+									class="other-players"
+							>
+								<nuxt-link
+										v-for="(player, key) in playersOnCols[col.index]"
+										:key="key"
+										target="_blank"
+										:to="`/e/${route.params.slug}/player/${player.user.name}`"
+										:title="player.user.name"
+								>
+									<img
+											class="other-player-token"
+											:src="player.user.avatar ? getResizeImg(player.user.avatar) : '/images/system/no-avatar.png'"
+											:alt="player.user.name"
+											:title="player.user.name"
+									>
+								</nuxt-link>
+								<font-awesome-icon
+										v-if="playersOnCols[col.index].length > 2"
+										:icon="['fas', 'ellipsis']"
+										class="more-players"
+										@click="showCellInfo(col.index)"
+								/>
+							</div>
+						</template>
+					</td>
+				</tr>
+			</table>
+		</div>
 	</div>
+
+	<Modal
+			:showOpenModal="boxOpen"
+			size="small"
+			@toggleModal="openCloseBoxFunc"
+	>
+		<div class="modal-parent">
+			<h3 class="modal-title">Информация о ячейке</h3>
+			<div class="link-parent-box">
+				<BoardCellInfo
+						:position="selectedPositionNumber"
+						:playersOnCols="playersOnCols"
+						:effects="getEffectsByPosition(selectedPositionNumber)"
+				/>
+			</div>
+		</div>
+	</Modal>
 </template>
 
 <style lang="scss" scoped>
+.dice-and-info-block {
+	@apply flex mb-[2rem];
+
+	.item-box {
+		@apply block ml-4 w-full rounded-none mb-0 p-4;
+	}
+}
+
+.board {
+	@apply block lg:grid grid-cols-12;
+
+	.left-block {
+		@apply lg:col-span-2 2xl:col-span-2;
+	}
+
+	.board-block {
+		@apply lg:col-span-11 2xl:col-span-11;
+	}
+}
+
 .choice-theme-box {
 	@apply flex items-center mb-[1rem];
 
@@ -242,7 +398,7 @@ watch(() => fetchedData.value, () => {
 		}
 
 		&.playable-field {
-			border: 1px solid var(--color1-or);
+			//border: 1px solid var(--color1-or);
 		}
 
 		.player-token {
@@ -287,7 +443,7 @@ watch(() => fetchedData.value, () => {
 		}
 
 		&.playable-field {
-			border: 1px solid var(--color1);
+			//border: 1px solid var(--color1);
 		}
 
 		.player-token {
@@ -332,7 +488,7 @@ watch(() => fetchedData.value, () => {
 		}
 
 		&.playable-field {
-			border: 1px solid var(--color1-t2);
+			//border: 1px solid var(--color1-t2);
 		}
 
 		.player-token {
@@ -377,7 +533,7 @@ watch(() => fetchedData.value, () => {
 		}
 
 		&.playable-field {
-			border: 1px solid var(--color1-t3);
+			//border: 1px solid var(--color1-t3);
 		}
 
 		.player-token {
@@ -445,10 +601,7 @@ td {
 			@apply cursor-pointer;
 		}
 
-		img,
-		.more-players {
-			@apply object-cover rounded-full;
-
+		a {
 			&:nth-child(2),
 			&:nth-child(3),
 			&:nth-child(4) {
@@ -456,12 +609,17 @@ td {
 			}
 		}
 
+		img,
+		.more-players {
+			@apply object-cover rounded-full;
+		}
+
 		img {
 			@apply w-[40px] h-[40px];
 		}
 
 		.more-players {
-			@apply w-[21px] h-[21px];
+			@apply w-[36px] h-[36px] cursor-pointer;
 		}
 	}
 }

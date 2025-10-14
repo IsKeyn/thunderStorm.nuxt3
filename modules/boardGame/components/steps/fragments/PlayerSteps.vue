@@ -113,7 +113,7 @@ const tabsGameElements = [
 	<layout-InfoBlock
 			v-if="currentStep"
 			:text="steps[currentStep].description"
-			classes="mb-6"
+			classes="!mb-6"
 	/>
 
 	<div v-if="currentStep === 1">

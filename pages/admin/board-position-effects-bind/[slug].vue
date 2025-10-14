@@ -8,76 +8,41 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
-			game_id: {
-				name: 'Игра',
+			position_effect_id: {
+				name: 'Эффект',
 				value: '',
 				type: 'EntityList',
-				apiUrl: 'game/list',
-				validateRules: 'required, maxLength_255',
+				apiUrl: 'entity/getFields',
+				body: {
+					entity: 'App\\Models\\BoardGame\\BoardPositionEffect',
+				},
+				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
-			},
-			gaming_platform_id: {
-				name: 'Платформа',
-				value: '',
-				type: 'EntityList',
-				apiUrl: 'admin/entity/GamingPlatform',
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			description: {
-				name: 'Описание',
-				value: '',
-				type: 'textarea',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			board_game_id: {
-				name: 'Ивент',
+				name: 'Настольная игра',
 				value: '',
 				type: 'EntityList',
 				apiUrl: 'board-game/get-list',
-				validateRules: 'required, maxLength_255',
+				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			points: {
-				name: 'Количество очков',
+			position: {
+				name: 'Позиция',
 				value: '',
-				type: 'number',
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			difficult: {
-				name: 'Сложность в процентах',
-				value: '',
-				type: 'number',
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			game_completion_time: {
-				name: 'Время на прохождение (в минутах)',
-				value: '',
-				type: 'number',
-				validateRules: 'required, maxLength_255',
+				type: 'text',
+				validateRules: 'required',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			active: {
 				name: 'Активность',
 				value: true,
 				type: 'checkbox',
-				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-				showTitle: false,
-			},
-			added_by: {
-				name: 'Кто добавил',
-				value: '',
-				type: 'EntityList',
-				apiUrl: 'user/list',
-				validateRules: 'maxLength_255',
+				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			created_by: {
-				name: 'Кто создал',
+				name: 'Кем создан',
 				value: '',
 				type: 'EntityList',
 				apiUrl: 'user/list',
@@ -105,7 +70,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Список игр в настолке',
+			name: 'Привязка эффектов к ячейки игрового поля',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -122,7 +87,7 @@ const breadCrumbsArray = computed(() => {
 		<CreateEditForm
 				:form="form"
 				:showAdditionalData="false"
-				fetchUrl="admin/entity/BoardGame/BoardGameGameList"
+				fetchUrl="admin/entity/BoardGame/BoardPositionEffectsBind"
 		/>
 	</div>
 </template>

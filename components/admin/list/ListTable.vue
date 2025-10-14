@@ -212,6 +212,7 @@ const updateTable = async () => {
 				onResponse({response}) {
 					if (response.status === 200) {
 						fetchedData.value = props.hasResource ? response._data.data : response._data;
+						// fetchedData.value = response._data.data ? response._data.data : response._data;
 
 						if (props.usePagination) {
 							pagination.value = response._data.meta;
@@ -232,7 +233,8 @@ const getEntities = async () => {
 			const requestName = 'getItemList_' + props.apiUrl;
 			const response = await sendApiRequest(props.titles[key].apiUrl, 'GET', body, requestName, '');
 
-			entities.value[props.titles[key].apiUrl] = props.titles[key].hasResource === false ? response : response.data;
+			// entities.value[props.titles[key].apiUrl] = props.titles[key].hasResource === false ? response : response.data;
+			entities.value[props.titles[key].apiUrl] = response.data ? response.data : response;
 		}
 	}
 }

@@ -4,7 +4,7 @@ import UserProfile from '@/components/user/profile/UserProfile.vue';
 
 <template>
 	<div>
-		<UserProfile />
+<!--		<UserProfile />-->
 	</div>
 </template>
 

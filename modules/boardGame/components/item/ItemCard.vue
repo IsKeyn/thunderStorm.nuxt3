@@ -127,18 +127,24 @@ watch(() => props.playSound, (newVal) => {
 					Автор: {{ element.item.authorUser ? element.item.authorUser.name : 'InSH Event Team' }}
 				</span>
 			</ui-OpeningBox>
+			<div v-if="showControlPanel">
+				<button
+						class="btn btn-simple mr-2"
+						@click="emit('useItem', inventoryItem)"
+				>Использовать</button>
+			</div>
 		</div>
-		<div
-				v-if="showControlPanel"
-				class="control-panel"
-		>
-			<span
-					class="use-button"
-					@click="emit('useItem', inventoryItem)"
-			>
-				<font-awesome-icon :icon="['fas', 'check']" />
-			</span>
-		</div>
+<!--		<div-->
+<!--				v-if="showControlPanel"-->
+<!--				class="control-panel"-->
+<!--		>-->
+<!--			<span-->
+<!--					class="use-button"-->
+<!--					@click="emit('useItem', inventoryItem)"-->
+<!--			>-->
+<!--				<font-awesome-icon :icon="['fas', 'check']" />-->
+<!--			</span>-->
+<!--		</div>-->
 		<div
 				v-if="element.quantity > 1"
 				class="count-panel"

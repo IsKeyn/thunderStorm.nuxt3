@@ -19,8 +19,13 @@ export function helper() {
             : text;
     }
 
+    const findElementById = (array, targetId) => {
+        return array.find(item => item.id === targetId);
+    }
+
     return {
         filterByPairFieldValue,
         cutText,
+        findElementById,
     };
 }

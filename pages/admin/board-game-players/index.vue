@@ -13,9 +13,13 @@ const titles = ref(
 			},
 			user_id: {
 				name: 'User ID',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 			board_game_id: {
 				name: 'ID настольной игры',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
 			},
 			points: {
 				name: 'Количество очков',
@@ -23,11 +27,20 @@ const titles = ref(
 			item_roll_count: {
 				name: 'Доступное количество ролов игры',
 			},
+			step_count: {
+				name: 'Доступное количество ходов',
+			},
+			streak: {
+				name: 'Стрик',
+			},
 			created_by: {
 				name: 'Создан',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 			active: {
 				name: 'Активность',
+				type: 'boolean',
 			},
 			not_active_reason: {
 				name: 'Причина не активности',

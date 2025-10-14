@@ -458,7 +458,7 @@ watch(() => bindValues.value, () => {
 				v-model="element.value"
 				:apiUrl="element.apiUrl"
 				:body="element.body ? element.body : {}"
-				:hasResource="element?.hasResource"
+				:hasResource="element?.hasResource === true"
 		/>
 		<EntityBind
 				v-else-if="element.type === 'EntityBind'"

@@ -11,45 +11,33 @@ const titles = ref(
 			id: {
 				name: 'id',
 			},
-			game_id: {
-				name: 'Игра',
-				type: 'EntityList',
-				apiUrl: 'game/list',
+			name: {
+				name: 'Название',
 			},
-			gaming_platform_id: {
-				name: 'Платформа',
-				type: 'EntityList',
-				apiUrl: 'admin/entity/GamingPlatform',
+			slug: {
+				name: 'Slug',
 			},
 			description: {
 				name: 'Описание',
 				type: 'cutText',
 			},
-			board_game_id: {
-				name: 'Ивент',
-				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
+			action: {
+				name: 'Действие',
+				type: 'cutText',
 			},
-			points: {
-				name: 'Количество очков за игру',
+			title_image: {
+				name: 'Медиа',
+				type: 'media'
 			},
-			difficult: {
-				name: 'Сложность в процентах',
-			},
-			game_completion_time: {
-				name: 'Время на прохождение (в минутах)',
+			sort: {
+				name: 'Сортирвока',
 			},
 			active: {
 				name: 'Активность',
 				type: 'boolean',
 			},
-			added_by: {
-				name: 'Кто добавил',
-				type: 'EntityList',
-				apiUrl: 'user/list',
-			},
 			created_by: {
-				name: 'Кто создал',
+				name: 'Создан кем',
 				type: 'EntityList',
 				apiUrl: 'user/list',
 			},
@@ -74,7 +62,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Список игр в настолке',
+			name: 'Эффекты на позиции',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -86,6 +74,7 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/entity/BoardGame/BoardGameGameList"
+		fetchUrl="admin/entity/BoardGame/BoardPositionEffect"
+		:hasResource="true"
 	/>
 </template>

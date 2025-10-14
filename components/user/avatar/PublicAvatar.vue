@@ -28,14 +28,23 @@ const props = defineProps({
 			v-if="user"
 			class="avatar-box"
 	>
-		<img
-				v-if="user.avatar"
-				:class="classes"
-				:src="getResizeImg(user.avatar)"
-				:alt="user.name"
-				:title="user.name"
-				@click.prevent="useLightBox ? layoutMethods.setOpenedImage(user.avatar) : false"
-		>
+		<tempalate v-if="user.avatar">
+			<img
+					v-if="useLightBox"
+					:class="classes"
+					:src="getResizeImg(user.avatar)"
+					:alt="user.name"
+					:title="user.name"
+					@click.prevent="layoutMethods.setOpenedImage(user.avatar)"
+			>
+			<img
+					v-else
+					:class="classes"
+					:src="getResizeImg(user.avatar)"
+					:alt="user.name"
+					:title="user.name"
+			>
+		</tempalate>
 		<img v-else src="/images/system/no-avatar.png" :class="classes">
 	</div>
 </template>

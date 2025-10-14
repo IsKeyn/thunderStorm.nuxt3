@@ -11,45 +11,28 @@ const titles = ref(
 			id: {
 				name: 'id',
 			},
-			game_id: {
-				name: 'Игра',
+			position_effect_id: {
+				name: 'Эффект',
 				type: 'EntityList',
-				apiUrl: 'game/list',
-			},
-			gaming_platform_id: {
-				name: 'Платформа',
-				type: 'EntityList',
-				apiUrl: 'admin/entity/GamingPlatform',
-			},
-			description: {
-				name: 'Описание',
-				type: 'cutText',
+				apiUrl: 'entity/getFields',
+				body: {
+					entity: 'App\\Models\\BoardGame\\BoardPositionEffect',
+				},
 			},
 			board_game_id: {
-				name: 'Ивент',
+				name: 'Настольная игра',
 				type: 'EntityList',
 				apiUrl: 'board-game/get-list',
 			},
-			points: {
-				name: 'Количество очков за игру',
-			},
-			difficult: {
-				name: 'Сложность в процентах',
-			},
-			game_completion_time: {
-				name: 'Время на прохождение (в минутах)',
+			position: {
+				name: 'Позиция',
 			},
 			active: {
 				name: 'Активность',
 				type: 'boolean',
 			},
-			added_by: {
-				name: 'Кто добавил',
-				type: 'EntityList',
-				apiUrl: 'user/list',
-			},
 			created_by: {
-				name: 'Кто создал',
+				name: 'Кем создан',
 				type: 'EntityList',
 				apiUrl: 'user/list',
 			},
@@ -74,7 +57,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Список игр в настолке',
+			name: 'Привязка эффектов к ячейки игрового поля',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -86,6 +69,6 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/entity/BoardGame/BoardGameGameList"
+		fetchUrl="admin/entity/BoardGame/BoardPositionEffectsBind"
 	/>
 </template>

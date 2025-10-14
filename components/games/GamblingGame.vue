@@ -249,8 +249,6 @@ const startSpin = (randomIndex) => {
 			if (elapsed < spinTime) {
 				requestAnimationFrame(animate)
 			} else {
-				spinning.value = false
-
 				// Останавливаем все звуки
 				audioElements.value.forEach(audio => {
 					audio.pause();
@@ -265,6 +263,7 @@ const startSpin = (randomIndex) => {
 				}, 500);
 
 				setTimeout(() => {
+					spinning.value = false;
 					emit('funcAfterRollWithDelay2', items.value[randomIndex]);
 				}, 1000);
 			}

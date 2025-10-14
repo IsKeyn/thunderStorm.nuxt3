@@ -1,6 +1,7 @@
 <script setup>
 import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
 import StatusEffectSmallCard from '@/modules/boardGame/components/statusEffect/StatusEffectSmallCard.vue';
+import Timer from '@/modules/boardGame/components/timer/Timer.vue';
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
@@ -39,7 +40,13 @@ const getPlaceColor = (place) => {
 	}
 }
 
-// TODO добавить вывод времени
+const statusEffectForShow = computed(() => {
+	if (props.element.status_effects.length > 4) {
+		return props.element.status_effects.slice(0, 3);
+	} else {
+		return props.element.status_effects;
+	}
+});
 </script>
 
 <template>
@@ -50,6 +57,7 @@ const getPlaceColor = (place) => {
 		<PublicAvatar
 				:user="element.user"
 				:useLightBox="useLightBox"
+				classes="w-[90%] aspect-square object-cover"
 		/>
 		<div class="info">
 			<span class="field name">
@@ -83,12 +91,21 @@ const getPlaceColor = (place) => {
 				Статус: <template v-if="element.active">Участвует</template><template v-else>Не участвует <span v-if="element.active.not_active_reason">{{ element.active.not_active_reason }}</span></template>
 			</span>
 		</div>
-		<div v-if="element.status_effects.length > 0">
+		<div
+				v-if="element.status_effects.length > 0"
+				class="status-effects"
+		>
 			<StatusEffectSmallCard
-					v-for="(statusEffect, key) in element.status_effects"
+					v-for="(statusEffect, key) in statusEffectForShow"
 					:key="key"
 					:element="statusEffect"
 			/>
+			<div
+					v-if="element.status_effects.length > 4"
+					class="status-effect-small-card-count"
+			>
+				+{{ element.status_effects.length - 3 }}
+			</div>
 		</div>
 		<div
 				v-if="place !== null"
@@ -102,7 +119,7 @@ const getPlaceColor = (place) => {
 <style lang="scss" scoped>
 .item-box {
 	@apply
-		flex relative cursor-pointer rounded-none
+		lg:grid grid-cols-12 relative cursor-pointer rounded-none
 		p-4 pr-[3rem] mb-2
 		bg-[var(--second-bg-color)]
 	;
@@ -111,8 +128,13 @@ const getPlaceColor = (place) => {
 		@apply no-underline bg-[var(--second-active-color)];
 	}
 
+	.avatar-box {
+		@apply col-span-1 flex items-center justify-center;
+	}
+
 	.info {
 		@apply
+			lg:col-span-4 2xl:col-span-4
 			pl-3 pr-3
 			text-[var(--main-text-color)]
 		;
@@ -134,8 +156,12 @@ const getPlaceColor = (place) => {
 		}
 	}
 
+	.status-effects {
+		@apply lg:col-span-7 2xl:col-span-7 flex gap-1 items-center justify-end;
+	}
+
 	.control-panel {
-		@apply absolute right-[0.5rem];
+		@apply absolute right-[0.5rem] top-[0.5rem];
 
 		.place {
 			@apply bg-[var(--success-color)] rounded-full block text-center mb-[0.3rem] w-[2rem] h-[2rem] flex items-center justify-center;
@@ -153,6 +179,12 @@ const getPlaceColor = (place) => {
 			}
 		}
 	}
+}
+
+.status-effect-small-card-count {
+	@apply relative w-[60px] h-[60px] bg-[var(--third-block-color)] text-[1.5rem] text-[var(--main-dark-text-color)] flex items-center justify-center;
+
+	border: 2px solid var(--third-block-color);
 }
 </style>
 

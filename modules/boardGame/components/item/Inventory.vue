@@ -61,7 +61,8 @@ const closeDroppedItemBox = () => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress && !hiddenRefresh" />
+<!--	<ui-BigPreloader v-if="requestInProgress && !hiddenRefresh" />-->
+	<div v-if="requestInProgress && !hiddenRefresh"></div>
 	<div class="item-box" v-else-if="fetchedData && fetchedData.status === 'error' && fetchedData.status_message">
 		{{ fetchedData.status_message }}
 	</div>

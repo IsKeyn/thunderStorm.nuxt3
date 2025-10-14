@@ -38,6 +38,20 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			step_count: {
+				name: 'Доступное количество ходов',
+				value: '',
+				type: 'text',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			streak: {
+				name: 'Стрик',
+				value: '',
+				type: 'text',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			created_by: {
 				name: 'Кем создан',
 				value: '',
