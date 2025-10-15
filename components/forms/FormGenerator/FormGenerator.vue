@@ -7,6 +7,9 @@ import { watch } from 'vue'
 
 const emit = defineEmits(['update:modelValue']);
 
+import { notifications } from '@/composables/notifications.js';
+const { alert, error } = notifications();
+
 import { file } from '@/composables/file.js'
 const {
 	getFileType,
@@ -71,6 +74,11 @@ const props = defineProps({
 	},
 	// Отображать или скрывать кнопку очистки формы
 	clearButton: {
+		type: Boolean,
+		default: false,
+	},
+	// Отображать или скрывать кнопку копирования значения поля
+	showCopyButton: {
 		type: Boolean,
 		default: false,
 	},
@@ -240,6 +248,16 @@ watch(() => bindValues.value, () => {
 }, { deep: true });
 
 /* КОНЕЦ: Laravel привязка сущности тип EntityBind */
+
+const copyValue = () => {
+	navigator.clipboard.writeText(props.element.value)
+			.then(() => {
+				alert('Значение поля скопированно в буфер обмена');
+			})
+			.catch(err => {
+				alert('Ошибка копирования:', err);
+			});
+}
 </script>
 
 <template>
@@ -274,44 +292,53 @@ watch(() => bindValues.value, () => {
 						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
 						@input="onInput"
 				/>
-				<span
-						v-if="element.showChangeTypeButton"
-						@click="showPassword"
-						class="additional-action-wrap"
-				>
-					<font-awesome-icon
-							v-if="element.type === 'password'"
-							:icon="['far', 'eye-slash']"
-							class="additional-action-icon"
-					/>
-					<font-awesome-icon
-							v-if="element.type === 'text'"
-							:icon="['far', 'eye']"
-							class="additional-action-icon"
-					/>
-				</span>
-				<span
-						v-if="element.autoFill"
-						class="additional-action-wrap"
-						@click="fillField()"
-				>
-					<font-awesome-icon
-							:icon="['fas', 'arrow-right-to-bracket']"
-							rotation=90
-							class="additional-action-icon"
-							:title='`Заполнить поле "${element.name ? element.name : name}" значением из поля "${element.autoFill.sourceFieldKey && form[element.autoFill.sourceFieldKey].name ? form[element.autoFill.sourceFieldKey].name : element.autoFill.sourceFieldKey}" ${element.autoFill.rule ? " по правилу " + element.autoFill.rule : ""}`'
-					/>
-				</span>
-				<span
-						v-if="clearButton && element.value"
-						class="additional-action-wrap"
-						@click="element.value = null"
-				>
-					<font-awesome-icon
-							:icon="['fas', 'circle-xmark']"
-							class="additional-action-icon"
-							title="Очистить поле"
-					/>
+				<span class="additional-action-wrap">
+					<span
+							v-if="showCopyButton && element.value"
+							@click="copyValue"
+					>
+						<font-awesome-icon
+								:icon="['fa-solid', 'fa-copy']"
+								class="additional-action-icon"
+								title="Скопировать значение поля"
+						/>
+					</span>
+					<span
+							v-if="element.showChangeTypeButton"
+							@click="showPassword"
+					>
+						<font-awesome-icon
+								v-if="element.type === 'password'"
+								:icon="['far', 'eye-slash']"
+								class="additional-action-icon"
+						/>
+						<font-awesome-icon
+								v-if="element.type === 'text'"
+								:icon="['far', 'eye']"
+								class="additional-action-icon"
+						/>
+					</span>
+					<span
+							v-if="element.autoFill"
+							@click="fillField()"
+					>
+						<font-awesome-icon
+								:icon="['fas', 'arrow-right-to-bracket']"
+								rotation=90
+								class="additional-action-icon"
+								:title='`Заполнить поле "${element.name ? element.name : name}" значением из поля "${element.autoFill.sourceFieldKey && form[element.autoFill.sourceFieldKey].name ? form[element.autoFill.sourceFieldKey].name : element.autoFill.sourceFieldKey}" ${element.autoFill.rule ? " по правилу " + element.autoFill.rule : ""}`'
+						/>
+					</span>
+					<span
+							v-if="clearButton && element.value"
+							@click="element.value = null"
+					>
+						<font-awesome-icon
+								:icon="['fas', 'circle-xmark']"
+								class="additional-action-icon"
+								title="Очистить поле"
+						/>
+					</span>
 				</span>
 			</span>
 		</template>

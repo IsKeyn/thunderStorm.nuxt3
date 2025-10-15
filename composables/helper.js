@@ -1,4 +1,7 @@
 export function helper() {
+    const route = useRoute();
+    const router = useRouter();
+
     const filterByPairFieldValue = (obj, field, filteredValue) => {
         return Object.entries(obj).reduce((acc, [key, value]) => {
             if (value[field] === filteredValue) {
@@ -24,6 +27,8 @@ export function helper() {
     }
 
     return {
+        route,
+        router,
         filterByPairFieldValue,
         cutText,
         findElementById,

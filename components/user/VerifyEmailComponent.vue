@@ -7,9 +7,9 @@ import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
 import { useUserStore } from '@/stores/user';
-import { api } from '@/composables/api.js';
-
 const userStore = useUserStore();
+
+import { api } from '@/composables/api.js';
 const { apiUrl, errorHandler, sendApiRequest } = api();
 
 const route = useRoute();
