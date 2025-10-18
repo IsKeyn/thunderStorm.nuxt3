@@ -38,6 +38,7 @@ const type = computed(() => {
 const name = computed(() => {
 	switch (props.element.type) {
 		case 'switchGame': return 'Обмен игрой';
+		case 'battleForPoints': return 'Битва за очки';
 	}
 });
 
@@ -96,7 +97,7 @@ const sendRequest = async (type) => {
 
 		const response = await sendApiRequest('board-game/v2/interactions/action/', 'POST', body, 'SetActionBoardGamePlayerInteractions', 'fullscreenTransparent');
 
-		if (response.error) {
+		if (response && response.error) {
 			error(response.error);
 		} else if (response) {
 			// Обработка ошибок
@@ -110,6 +111,8 @@ const sendRequest = async (type) => {
 			}
 
 			emit('update');
+		} else {
+			error('Пустой ответ');
 		}
 	} catch (e) {
 		error(e);
@@ -124,9 +127,15 @@ const sendRequest = async (type) => {
 			{{ name }} ({{ status }}) - {{ getFormattedDate('d ru_mouths_name Y в H:i', element.created_at) }}
 		</div>
 		<div class="info">
+			<div
+					v-if="element.description"
+					class="description"
+			>
+				{{ element.description }}
+			</div>
 			<div class="from-to-box">
 				<template v-if="type === 'incoming'">
-					<UserShortCard :user="element.with_player_data" />
+					<UserShortCard :user="element.created_by_data" />
 					<font-awesome-icon class="icon" icon="fa-regular fa-circle-right" />
 					<UserShortCard :user="userStore.user" />
 				</template>
@@ -138,20 +147,43 @@ const sendRequest = async (type) => {
 			</div>
 			<div class="choice-btn">
 				<div v-if="type === 'incoming'">
-					<button
-							class="btn btn-simple mr-2"
-							@click="startAction('accept')"
-					>Принять</button>
-					<button
-							class="btn btn-simple"
-							@click="startAction('refuse')"
-					>Отказаться</button>
+					<div v-if="element.type === 'battleForPoints'">
+						<template v-if="element.status === 2">
+							Игрок, пригласивший вас, должен отметить победителя
+						</template>
+					</div>
+
+					<template v-if="element.status === 1">
+						<button
+								class="btn btn-simple mr-2"
+								@click="startAction('accept')"
+						>Принять</button>
+						<button
+								class="btn btn-simple"
+								@click="startAction('refuse')"
+						>Отказаться</button>
+					</template>
 				</div>
 				<div v-else-if="type === 'outgoing'">
-					<button
-							class="btn btn-simple"
-							@click="startAction('recall')"
-					>Отозвать</button>
+					<div v-if="element.type === 'battleForPoints'">
+						<template v-if="element.status === 2">
+							<button
+									class="btn btn-simple mr-2"
+									@click="startAction('iwin')"
+							>Я победил</button>
+							<button
+									class="btn btn-simple"
+									@click="startAction('ilose')"
+							>Оппонент победил</button>
+						</template>
+					</div>
+
+					<template v-if="element.status === 1">
+						<button
+								class="btn btn-simple"
+								@click="startAction('recall')"
+						>Отозвать</button>
+					</template>
 				</div>
 			</div>
 		</div>
@@ -187,6 +219,10 @@ const sendRequest = async (type) => {
 
 	.info {
 		@apply p-4;
+
+		.description {
+			@apply mb-4;
+		}
 
 		.from-to-box {
 			@apply flex items-center;

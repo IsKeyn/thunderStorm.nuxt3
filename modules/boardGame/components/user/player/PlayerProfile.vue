@@ -61,7 +61,7 @@ const { getFormattedDate } = date();
 const props = defineProps({
 	userName: {
 		type: String,
-		default: '',
+		default: null,
 	},
 });
 

@@ -5,15 +5,20 @@ import SelectItem from '@/modules/boardGame/components/item/SelectItem.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { computed, ref, watch } from "vue";
-const route = useRoute();
 
 const emit = defineEmits(['openCloseModalFunc', 'useItemFromEmit']);
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
+
+import { players } from '@/composables/BoardGame/players.js';
+const { getPlayersForItem } = players();
 
 const props = defineProps({
 	item: {
@@ -58,7 +63,7 @@ const {
 		}
 );
 
-const players = computed(() => requestData.value || null);
+const fetchedPlayers = computed(() => requestData.value || null);
 
 const actions = {
 	type: {
@@ -317,56 +322,6 @@ const effectFor = (action) => {
 		return `На игрока не дальше ${maxDistance} клеток от тебя`;
 	}
 }
-
-const getPlayersForItem = (target) => {
-	if (target === 'other' || target === 'fromTo') {
-		return players.value.filter((item) => item.user_id !== userStore.user.id);
-	}
-
-	if (target === 'nearestPlayer') {
-		const currentPlayerPosition = players.value.filter((item) => item.user_id === userStore.user.id)[0].position;
-
-		const otherPlayersPositions = [];
-
-		players.value.filter((item) => item.user_id !== userStore.user.id).forEach((item) => {
-			otherPlayersPositions[item.user_id] = item.position;
-		});
-
-		/* Сравнение позиций */
-		let minDiff = Infinity;
-		const closestIndexes = [];
-
-		otherPlayersPositions.forEach((num, index) => {
-			const diff = Math.abs(num - currentPlayerPosition);
-
-			if (diff < minDiff) {
-				minDiff = diff;
-				closestIndexes.length = 0; // Очищаем массив, если нашли новый минимум
-				closestIndexes.push(index);
-			} else if (diff === minDiff) {
-				closestIndexes.push(index); // Добавляем, если разница такая же
-			}
-		});
-
-		return players.value.filter((item) => closestIndexes.includes(item.user_id));
-	}
-
-	if (target.includes('noFurther')) {
-		const maxDistance = Number(target.split('_')[1]);
-
-		const currentPlayerPosition = Number(players.value.filter((item) => item.user_id === userStore.user.id)[0].position);
-
-		return players.value.filter((item) => {
-			if (item.position > currentPlayerPosition && item.position - currentPlayerPosition <= maxDistance) {
-				return true;
-			}
-
-			if (item.position < currentPlayerPosition && currentPlayerPosition - item.position <= maxDistance) {
-				return true;
-			}
-		});
-	}
-}
 </script>
 
 <template>
@@ -409,7 +364,7 @@ const getPlayersForItem = (target) => {
 					>
 						<span class="inv-title">Данный предмет требует выбора игрока:</span>
 						<SelectPlayer
-								:players="getPlayersForItem(action.target)"
+								:players="getPlayersForItem(action.target, fetchedPlayers)"
 								v-model="selectedPlayer"
 						/>
 					</template>
@@ -434,7 +389,7 @@ const getPlayersForItem = (target) => {
 					<template v-if="Object.keys(selectedPlayer).length > 0 && Object.keys(selectedItem).length !== 0 && (action.target === 'fromTo')">
 						<span class="inv-title">Данный предмет требует выбора второго игрока:</span>
 						<SelectPlayer
-								:players="players.filter((item) => item.user_id !== userStore.user.id).filter((item) => item.user_id !== selectedPlayer.user_id)"
+								:players="fetchedPlayers.filter((item) => item.user_id !== userStore.user.id).filter((item) => item.user_id !== selectedPlayer.user_id)"
 								v-model="selectedSecondPlayer"
 						/>
 					</template>

@@ -48,7 +48,7 @@ const repeaterItem = {
 	},
 };
 
-const repeaterItems = ref ([]);
+const repeaterItems = ref([]);
 
 const addRepeaterItem = () => {
 	repeaterItems.value.push(structuredClone(repeaterItem));

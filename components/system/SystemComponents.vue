@@ -1,8 +1,8 @@
 <script setup>
-import UserSystemComponent from '@/components/user/UserSystemComponent.vue';
-import SettingsComponent from '@/components/system/SettingsComponent.vue';
-import UserNotifications from '@/components/user/notifications/UserNotifications.vue';
 import LoadingComponents from '@/components/system/LoadingComponents.vue';
+import SettingsComponent from '@/components/system/SettingsComponent.vue';
+import UserSystemComponent from '@/components/user/UserSystemComponent.vue';
+import UserNotificationMainComponent from '@/components/user/UserNotificationMainComponent.vue';
 </script>
 
 <template>
@@ -10,6 +10,6 @@ import LoadingComponents from '@/components/system/LoadingComponents.vue';
 		<LoadingComponents />
 		<SettingsComponent />
 		<UserSystemComponent />
-		<UserNotifications />
+		<UserNotificationMainComponent />
 	</div>
 </template>

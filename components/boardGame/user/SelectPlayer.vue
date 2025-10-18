@@ -32,7 +32,10 @@ const selectOption = (option) => {
 </script>
 
 <template>
-	<div class="select-wrapper">
+	<div
+			v-if="players.length > 0"
+			class="select-wrapper"
+	>
 		<div
 				class="selected"
 				@click="toggleOptions"
@@ -40,6 +43,7 @@ const selectOption = (option) => {
 			<PlayerCard
 					v-if="selectedOption"
 					:element="selectedOption"
+					:hideStatusEffect="true"
 			/>
 			<span v-else class="choice-player">Выберите игрока</span>
 		</div>
@@ -54,10 +58,14 @@ const selectOption = (option) => {
 			>
 				<PlayerCard
 						:element="player"
+						:hideStatusEffect="true"
 						@click="selectOption(player)"
 				/>
 			</div>
 		</div>
+	</div>
+	<div v-else>
+		Нет игроков, подходящих под условия
 	</div>
 </template>
 

@@ -39,7 +39,7 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			action: {
+			actions: {
 				name: 'Действия',
 				value: '',
 				type: 'textarea',

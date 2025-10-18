@@ -21,7 +21,7 @@ const titles = ref(
 				name: 'Описание',
 				type: 'cutText',
 			},
-			action: {
+			actions: {
 				name: 'Действие',
 				type: 'cutText',
 			},

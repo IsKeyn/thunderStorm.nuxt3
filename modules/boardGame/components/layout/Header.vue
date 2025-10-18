@@ -1,6 +1,5 @@
 <script setup>
 import UserInfoBlock from '@/modules/boardGame/components/user/UserInfoBlock.vue';
-// import BrowserNotification from '@/components/notifications/BrowserNotification.vue';
 
 import { computed } from "vue";
 
@@ -50,7 +49,7 @@ const playersOnline = computed(() => {
 					iconType="text"
 					:iconText="getStatusName(boardGameStore.boardGameInfo)"
 					:buttonText="getDateString(boardGameStore.boardGameInfo)"
-					closeWidthClass="w-[140px]"
+					:closeWidthClass="boardGameStore.boardGameInfo.status === 2 ? 'w-[200px]' : 'w-[140px]'"
 					openType="t480"
 			/>
 
@@ -109,7 +108,7 @@ header {
 	border-bottom: 1px solid var(--second-border-color);
 
 	.left-block {
-		@apply w-1/3 flex items-center gap-2;
+		@apply w-2/3 flex items-center gap-2;
 
 		.date-block,
 		.status {
@@ -120,7 +119,7 @@ header {
 	.right-block {
 		@apply
 			flex flex-wrap
-			w-full lg:w-2/3
+			w-full lg:w-1/3
 			justify-center lg:justify-end
 		;
 	}

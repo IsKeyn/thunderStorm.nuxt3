@@ -29,7 +29,11 @@ const props = defineProps({
 	openProfile: {
 		type: Boolean,
 		default: true,
-	}
+	},
+	hideStatusEffect: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const getPlaceColor = (place) => {
@@ -92,7 +96,7 @@ const statusEffectForShow = computed(() => {
 			</span>
 		</div>
 		<div
-				v-if="element.status_effects.length > 0"
+				v-if="!hideStatusEffect && element.status_effects.length > 0"
 				class="status-effects"
 		>
 			<StatusEffectSmallCard

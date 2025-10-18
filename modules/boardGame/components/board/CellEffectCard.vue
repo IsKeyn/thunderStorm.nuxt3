@@ -1,10 +1,12 @@
 <script setup>
-import { inject, watch } from "vue";
+import SelectPlayer from '@/modules/boardGame/components/user/player/SelectPlayer.vue';
 
-const route = useRoute();
+import { computed, inject, ref } from "vue";
 
-const emit = defineEmits(['updateList']);
 const layoutMethods = inject('layoutMethods')
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
@@ -17,6 +19,9 @@ const { isAuth, userStore } = userFunctions();
 
 import { notifications } from '@/composables/notifications.js';
 const { choiceAlert, error, alert } = notifications();
+
+import { players } from '@/composables/BoardGame/players.js';
+const { getPlayersForItem } = players();
 
 const props = defineProps({
 	element: {
@@ -53,75 +58,72 @@ const getTypeClass = (type) => {
 	}
 }
 
-/* Активация статус эффекта */
-const activateSe = (type) => {
-	let title = '';
-	let message = '';
+// Проверяем нужно ли грузить список игроков
+const needOtherPlayers = computed(() => {
+	let returnData = false;
 
-	if (type === 'accept') {
-		title = 'Применение статус эффекта';
-		message = 'Вы выполнили условие статус эффекта?';
+	JSON.parse(props.element.boardPositionEffect.actions).forEach((item) => {
+		if (item.target !== 'current') {
+			returnData = true;
+		}
+	});
 
-		JSON.parse(props.element.boardPositionEffect.actions).forEach((item) => {
-			if (item.actions) {
-				item.actions.forEach((action, key) => {
-					if (key === 1 && action.message) {
-						message = action.message;
+	return returnData;
+})
+
+const requestName = 'getBoardGamePlayersWithInventory';
+
+const {
+	data: requestData,
+	pending: requestInProgress,
+	refresh
+} = await useAsyncData(
+		requestName,
+		async () => {
+			if (needOtherPlayers.value) {
+				let type = null;
+
+				JSON.parse(props.element.boardPositionEffect.actions).forEach((item, key) => {
+					if (key === 0 && item.value) {
+						type = item.value;
 					}
 				});
+
+				const response = await Promise.resolve(
+						sendApiRequest(`board-game/v2/player/listWithInventory/${route.params.slug}/`, 'GET', { type }, requestName, '')
+				);
+
+				return response.data || null;
 			}
-		});
-	} else if (type === 'denied') {
-		title = 'Отказ от выполнения статус эффекта';
-		message = 'При отказе от статус эффекта, вы получите штраф.';
+		},
+		{
+			server: true,
+			lazy: true,
+		}
+);
 
-		JSON.parse(props.element.boardPositionEffect.actions).forEach((item) => {
-			if (item.actions) {
-				item.actions.forEach((action, key) => {
-					if (key === 0 && action.message) {
-						message = action.message;
-					}
-				});
-			}
-		});
-	} else {
-		return false;
-	}
+const fetchedPlayers = computed(() => requestData.value || null);
 
-	choiceAlert(
-			{
-				title,
-				message,
-				buttons: [
-					{
-						name: 'Да',
-						func: () => {
-							sendActivateSeRequest(type);
-						},
-						additionalKeywordFunc: 'close',
-					},
-					{
-						name: 'Нет',
-						additionalKeywordFunc: 'close',
-					},
-				],
-			}
-	);
-}
+const selectedPlayer = ref({});
 
-const requestInProgress = ref(false);
-
-const sendActivateSeRequest = async (type) => {
-	requestInProgress.value = true;
-
+const sendInvitation = async () => {
 	try {
+		const elementAction = JSON.parse(props.element.boardPositionEffect.actions);
+
+		const additionalParams = {};
+		additionalParams.player = selectedPlayer.value.id;
+
+		if (elementAction[0]) {
+			additionalParams.message = `приглашает тебя посоревноваться за очки в игре ${elementAction[0].name}, победитель получит ${elementAction[0].pointsForWin} очков`;
+		}
+
 		const body = {
 			id: props.element.id,
 			slug: route.params.slug,
-			type,
+			additionalParams,
 		}
 
-		const response = await sendApiRequest('board-game/v2/status-effect/use', 'POST', body, 'bg_useStatusEffect', '', 'method');
+		const response = await sendApiRequest('board-game/v2/boardStatusEffect/use', 'POST', body, 'bg_usePositionEffect', 'small', 'method');
 
 		if (response) {
 			if (response.error) {
@@ -130,22 +132,14 @@ const sendActivateSeRequest = async (type) => {
 				if (response.message) {
 					alert(response.message, 10000);
 				} else {
-					if (type === 'accept') {
-						alert(`Вы применили статус эффект "${props.element.boardPositionEffect.name}"`);
-					} else if (type === 'denied') {
-						alert(`Вы отказались от статус эффекта "${props.element.boardPositionEffect.name}"`);
-					}
+					alert(`Предложение было отправлено`);
 				}
 
-				requestInProgress.value = false;
-
-				await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
-				emit('updateList');
+				await refreshNuxtData('getBoardGameBoard');
 			}
 		}
 	} catch (e) {
 		error(e);
-		requestInProgress.value = false;
 	}
 }
 </script>
@@ -153,14 +147,15 @@ const sendActivateSeRequest = async (type) => {
 <template>
 	<ui-BigPreloader v-if="requestInProgress" />
 	<div
-			v-else-if="element"
+			v-else-if="Object.keys(element).length > 0"
 			:class="[
-			'item-box',
-			getTypeClass(element.boardPositionEffect.debuff),
-			showControlPanel || element.quantity > 1 ? 'add-padding-right' : '',
-			theme,
-			classes,
-	]">
+				'item-box',
+				getTypeClass(element?.boardPositionEffect?.debuff),
+				showControlPanel || element.quantity > 1 ? 'add-padding-right' : '',
+				theme,
+				classes,
+			]"
+		>
 		<img
 				v-if="element.boardPositionEffect?.title_image"
 				:src="getResizeImg(element.boardPositionEffect?.title_image)"
@@ -182,33 +177,28 @@ const sendActivateSeRequest = async (type) => {
 			>
 				{{ element.boardPositionEffect.description }}
 			</span>
-<!--			<div-->
-<!--					v-if="element.active"-->
-<!--					v-for="(action, key) in JSON.parse(element.boardPositionEffect.actions)"-->
-<!--					class="actions"-->
-<!--			>-->
-<!--				<template v-if="showControlPanel && action && action.type === 'choice'">-->
-<!--					<button-->
-<!--							class="btn btn-simple mr-2"-->
-<!--							@click="activateSe('accept')"-->
-<!--					>Выполнен</button>-->
-<!--					<button-->
-<!--							class="btn btn-simple"-->
-<!--							@click="activateSe('denied')"-->
-<!--					>Отказаться</button>-->
-<!--				</template>-->
-<!--			</div>-->
-		</div>
-		<div
-				v-if="showControlPanel"
-				class="control-panel"
-		>
-		</div>
-		<div
-				v-if="element.boardPositionEffect.quantity > 1"
-				class="count-panel"
-		>
-			x{{ element.boardPositionEffect.quantity }}
+			<div
+					v-if="element.boardPositionEffect && element.boardPositionEffect.actions"
+					v-for="(action, key) in JSON.parse(element.boardPositionEffect.actions)"
+					:key="key"
+					class="actions"
+			>
+				<template v-if="showControlPanel && action && action.type === 'playerInteractions'">
+					<span class="">Выберите игрока для приглашения</span>
+					<SelectPlayer
+							v-if="fetchedPlayers"
+							:players="getPlayersForItem(action.target, fetchedPlayers)"
+							v-model="selectedPlayer"
+					/>
+					<button
+							v-if="Object.keys(selectedPlayer).length > 0"
+							class="btn btn-simple"
+							@click="sendInvitation()"
+					>
+						Отправить приглашение
+					</button>
+				</template>
+			</div>
 		</div>
 	</div>
 </template>
@@ -216,10 +206,6 @@ const sendActivateSeRequest = async (type) => {
 <style lang="scss" scoped>
 .item-box {
 	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded-none flex relative min-h-[86px];
-
-	&.gamblingGame {
-		@apply w-full;
-	}
 
 	&.default {
 		&.red {
@@ -243,18 +229,12 @@ const sendActivateSeRequest = async (type) => {
 		@apply pr-[3rem];
 	}
 
-	&.default {
-		//&:hover {
-		//	@apply bg-[var(--second-active-color)];
-		//}
-	}
-
 	img {
 		@apply w-[70px] h-[70px];
 	}
 
 	.info {
-		@apply pl-3 pr-3 text-[var(--main-text-color)];
+		@apply pl-3 pr-3 text-[var(--main-text-color)] w-full;
 
 		.name {
 			@apply block mb-1 uppercase;
@@ -271,26 +251,6 @@ const sendActivateSeRequest = async (type) => {
 				text-overflow: ellipsis;
 			}
 		}
-
-		.additional-box {
-			@apply block mt-2;
-		}
-	}
-
-	.control-panel {
-		@apply absolute right-[1rem];
-
-		.use-button {
-			@apply bg-[var(--success-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center mb-[0.3rem] cursor-pointer;
-		}
-
-		.close-button {
-			@apply bg-[var(--error-color)] block pl-[0.6rem] pr-[0.6rem] pt-[0.3rem] pb-[0.3rem] text-center;
-		}
-	}
-
-	.count-panel {
-		@apply absolute right-0 top-0 flex justify-between items-center text-[1.5rem] h-full p-[1rem];
 	}
 }
 </style>

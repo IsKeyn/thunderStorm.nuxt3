@@ -139,7 +139,6 @@ import SideMenuByCode from '@/components/menu/SideMenuByCode.vue';
 </template>
 
 <style lang="scss">
-@import url('~/assets/scss/vars.scss');
 @import url('~/assets/scss/style.scss');
 @import url('~/assets/scss/InSilentHill/vars.scss');
 @import url('~/assets/scss/InSilentHill/style.scss');

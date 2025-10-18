@@ -343,7 +343,7 @@ const getDotSizeClasses = () => {
 
 		.dot {
 			@apply
-				bg-[var(--main-text-color)]
+				bg-[var(--main-dark-text-color)]
 				absolute
 			;
 

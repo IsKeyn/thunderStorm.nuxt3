@@ -2,11 +2,13 @@
 import Modal from '@/components/modals/Modal.vue';
 import Dices from '@/modules/boardGame/components/board/Dices.vue';
 import BoardCellInfo from '@/modules/boardGame/components/board/BoardCellInfo.vue';
+import CellEffectCard from '@/modules/boardGame/components/board/CellEffectCard.vue';
+import PlayerInteractionCard from '@/modules/boardGame/components/player-interactions/PlayerInteractionCard.vue';
 
 import { computed, ref } from "vue";
 
-import { useUserStore } from '@/stores/user';
-const userStore = useUserStore();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { media } from '@/composables/media.js'
 const { getResizeImg } = media();
@@ -14,9 +16,11 @@ const { getResizeImg } = media();
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
 
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth, userStore } = userFunctions();
+
 const props = defineProps({});
 
-const route = useRoute();
 const requestName = 'getBoardGameBoard';
 
 const {
@@ -40,10 +44,11 @@ const {
 
 const fetchedData = computed(() => requestData.value || null);
 
-/* НАЧАЛО Элементы таблицы */
+/* Элементы таблицы */
 const firstFieldIndex = computed(() => {
 	return 1;
 });
+
 const lastFieldIndex = computed(() => {
 	let maxIndex = 1;
 
@@ -59,9 +64,8 @@ const lastFieldIndex = computed(() => {
 
 	return maxIndex;
 });
-/* КОНЕЦ Элементы таблицы */
 
-/* НАЧАЛО  */
+/* Игроки */
 const currentPlayer = computed(() => {
 	return fetchedData.value.players.filter((item) => item.user_id === userStore.user.id)[0];
 });
@@ -69,33 +73,6 @@ const currentPlayer = computed(() => {
 const otherPlayers = computed(() => {
 	return fetchedData.value.players.filter((item) => item.user_id !== userStore.user.id);
 });
-
-/* НАЧАЛО Функционал ручного переноса ячейки */
-const tokenPosition = ref(1) // индекс ячейки, где находится фишка
-const droppingIndex = ref(null)
-/* КОНЕЦ: Функционал ручного переноса ячейки */
-
-/* НАЧАЛО Получение класса ячейки */
-const getTdClasses = (col) => {
-	const returnData = [];
-
-	if (col.useThisField) {
-		returnData.push('playable-field');
-
-		droppingIndex.value === col.index ? returnData.push('dropping') : '';
-
-		if (firstFieldIndex.value === col.index || lastFieldIndex.value === col.index ) {
-			returnData.push('color4');
-		} else if (col.index % 2 === 0) {
-			returnData.push('color2');
-		} else {
-			returnData.push('color3');
-		}
-
-		return returnData;
-	}
-};
-/* КОНЕЦ Получение класса ячейки */
 
 const getPlayerOnCol = (col) => {
 	return otherPlayers.value.filter((player) => player.position === col);
@@ -108,23 +85,14 @@ watch(() => fetchedData.value, () => {
 
 	if (fetchedData.value && fetchedData.value.players) {
 		fetchedData.value.players.forEach((item) => {
-			if (item.position && item.user.id !== userStore.user.id) {
 				if (playersOnCols.value[item.position]) {
 					playersOnCols.value[item.position].push(item);
 				} else {
 					playersOnCols.value[item.position] = [item];
 				}
-			}
 		});
 	}
 }, { deep: true, immediate: true });
-
-// Обновлять данные каждые 5 минут
-// Ячейки из другой таблицы
-// Кубики
-// Анимация хождения, бекграунд на яейку с эффектом
-// При клике на ячейке показывать попап с информацией об ячейке, игроках на ячейке и активных эффектах
-// Вывести доступное количество ходов
 
 const currentPlayerConst = ref(null);
 
@@ -190,6 +158,26 @@ const scrollToElement = (elementId, offset = 150) => {
 	}
 }
 
+/* Получение класса ячейки */
+const getTdClasses = (col) => {
+	const returnData = [];
+
+	if (col.useThisField) {
+		returnData.push('playable-field');
+
+		if (firstFieldIndex.value === col.index || lastFieldIndex.value === col.index ) {
+			returnData.push('color4');
+		} else if (col.index % 2 === 0) {
+			returnData.push('color2');
+		} else {
+			returnData.push('color3');
+		}
+
+		return returnData;
+	}
+};
+
+/* Ячейки, эффекты и информация об ячейки */
 const getEffectsByPosition = (position) => {
 	return fetchedData.value.effects.filter((item) => item.position === position);
 }
@@ -213,6 +201,18 @@ const cellBackgroundImage = (position) => {
 		return getResizeImg(effects[0].boardPositionEffect?.title_image);
 	}
 }
+
+const hasUsed = (position) => {
+	if (isAuth && fetchedData?.value?.current_player?.position_has_use_effect) {
+		const filteredPositions = fetchedData.value.current_player.position_has_use_effect.filter((item) => item.position === position);
+
+		if (filteredPositions && filteredPositions[0]) {
+			return true;
+		}
+	} else {
+		return false;
+	}
+}
 </script>
 
 <template>
@@ -225,9 +225,26 @@ const cellBackgroundImage = (position) => {
 					:rollCount="currentPlayer.step_count"
 					@changePosition="changePosition"
 			/>
-			<div class="item-box">
+			<div class="item-box player-position-info">
 				<span class="block">Текущая позиция на поле: {{ currentPlayer.position }}</span>
 				<span class="block">Доступное количество бросков кубика: {{ currentPlayer.step_count }}</span>
+				<div
+						v-if="isAuth && !hasUsed(currentPlayer.position)"
+						class="mt-4"
+				>
+					<PlayerInteractionCard
+							v-if="fetchedData?.current_player?.board_interaction && fetchedData.current_player.board_interaction.length > 0"
+							v-for="(element, key) in fetchedData.current_player.board_interaction"
+							:key="key"
+							:element="element"
+							@update="refresh"
+					/>
+					<CellEffectCard
+							v-else
+							:showControlPanel="true"
+							:element="getEffectsByPosition(currentPlayer.position)[0]"
+					/>
+				</div>
 			</div>
 		</div>
 		<div class="flex items-center justify-center">
@@ -240,10 +257,19 @@ const cellBackgroundImage = (position) => {
 							v-for="(col, colNumber) in row.cols"
 							:key="col.index"
 							:data-index="col.index"
-							:class="getTdClasses(col)"
-							:style="`background-image: url('${cellBackgroundImage(col.index)}'); background-size: cover; background-position: center; background-repeat: no-repeat;`"
+							:class="[getTdClasses(col)]"
+							:style="[
+									`
+									background-image: url('${cellBackgroundImage(col.index)}');
+									background-size: cover;
+									background-position: center;
+									background-repeat: no-repeat;
+									`,
+									hasUsed(col.index) ? 'filter: grayscale(100%)' : '',
+							]"
 					>
 						<template v-if="col.useThisField">
+							<div v-if="currentPlayer && currentPlayer.position > col.index" class="veil" />
 							<nuxt-link
 									target="_blank"
 									:to="`/e/${route.params.slug}/player/${currentPlayer.user.name}`"
@@ -269,7 +295,7 @@ const cellBackgroundImage = (position) => {
 									class="other-players"
 							>
 								<nuxt-link
-										v-for="(player, key) in playersOnCols[col.index]"
+										v-for="(player, key) in playersOnCols[col.index].filter((item) => item.user.id !== userStore.user.id)"
 										:key="key"
 										target="_blank"
 										:to="`/e/${route.params.slug}/player/${player.user.name}`"
@@ -318,7 +344,7 @@ const cellBackgroundImage = (position) => {
 .dice-and-info-block {
 	@apply flex mb-[2rem];
 
-	.item-box {
+	.player-position-info {
 		@apply block ml-4 w-full rounded-none mb-0 p-4;
 	}
 }
@@ -333,42 +359,6 @@ const cellBackgroundImage = (position) => {
 	.board-block {
 		@apply lg:col-span-11 2xl:col-span-11;
 	}
-}
-
-.choice-theme-box {
-	@apply flex items-center mb-[1rem];
-
-	span {
-		@apply mr-[1rem];
-	}
-
-	.choice-theme {
-		@apply w-[2rem] h-[2rem] mr-[1rem] cursor-pointer;
-
-		&.theme-1 {
-			@apply bg-[var(--color4-or)];
-		}
-
-		&.theme-2 {
-			@apply bg-[var(--color1)];
-		}
-
-		&.theme-3 {
-			@apply bg-[var(--color1-t2)];
-		}
-
-		&.theme-4 {
-			@apply bg-[var(--color1-t3)];
-		}
-
-		&.active {
-			border: 3px solid var(--second-active-color);
-		}
-	}
-}
-
-.theme-control {
-	@apply flex;
 }
 
 .theme-1 {
@@ -558,6 +548,10 @@ td {
 	relative
 	;
 
+	.veil {
+		@apply absolute top-0 left-0 w-full h-full bg-black/40;
+	}
+
 	span.field-number {
 		@apply
 		absolute top-[0.2rem] left-[0.2rem]
@@ -566,12 +560,6 @@ td {
 
 	&.playable-field {
 		@apply relative;
-	}
-
-	&.dropping {
-		.player-token {
-			animation: dropEffect 0.3s ease;
-		}
 	}
 
 	.player-token {
@@ -621,15 +609,6 @@ td {
 		.more-players {
 			@apply w-[36px] h-[36px] cursor-pointer;
 		}
-	}
-}
-
-@keyframes dropEffect {
-	0% {
-		transform: scale(1.3);
-	}
-	100% {
-		transform: scale(1);
 	}
 }
 </style>

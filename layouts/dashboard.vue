@@ -26,7 +26,6 @@ const theme = computed(() => {
 </template>
 
 <style lang="scss">
-@import url('~/assets/scss/vars.scss');
 @import url('~/assets/scss/style.scss');
 
 @import url('~/assets/scss/InSilentHill/vars.scss');

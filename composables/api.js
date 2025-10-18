@@ -155,6 +155,10 @@ export function api() {
                 }
 
                 return response;
+            } else {
+                if (requestName && loadState.loadList[requestName]) {
+                    loadState.loadList[requestName].status = 'finish';
+                }
             }
         } catch (e) {
             if (requestName && loadState.loadList[requestName]) {

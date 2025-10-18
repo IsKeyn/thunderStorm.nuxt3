@@ -1,22 +1,27 @@
 <script setup>
 import SystemComponents from '@/components/system/SystemComponents.vue';
 
+import SystemBoardGameComponents from '@/modules/boardGame/components/boardGame/SystemBoardGameComponents.vue';
+import SystemPlayerComponents from '@/modules/boardGame/components/user/player/SystemPlayerComponents.vue';
+
+import Seo from '@/modules/boardGame/components/boardGame/Seo.vue';
+
+
+
 import Notifications from '@/components/notifications/Notifications.vue';
-import MediaById from '@/components/media/MediaById.vue';
-// import Head from '@/components/seo/Head.vue';
+
+
 
 import Header from '@/modules/boardGame/components/layout/Header.vue';
 import Footer from '@/modules/boardGame/components/layout/Footer.vue';
 
-import SystemBoardGameComponents from '@/modules/boardGame/components/boardGame/SystemBoardGameComponents.vue';
-import SystemPlayerComponents from '@/modules/boardGame/components/user/player/SystemPlayerComponents.vue';
 
-import UpdatedData from '@/modules/boardGame/components/layout/UpdatedData.vue';
+
+
+// import UpdatedData from '@/modules/boardGame/components/layout/UpdatedData.vue';
 import MainMenu from '@/modules/boardGame/components/menu/MainMenu.vue';
 
 import Sound from '@/components/audio/Sound.vue';
-
-import { ref } from "vue";
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
@@ -27,7 +32,7 @@ const {
 	setOpenedImage
 } = lightBox();
 
-// Предоставляем данные через provide
+/* Предоставляем данные через provide */
 provide('layoutMethods', {
 	setOpenedImage,
 })
@@ -35,16 +40,15 @@ provide('layoutMethods', {
 
 <template>
 	<SystemComponents />
-	<MediaById />
 
 	<SystemBoardGameComponents />
 	<SystemPlayerComponents />
+
+	<Seo />
+
+
 <!--	<UpdatedData :boardGameInfo="fetchedData" />-->
-<!--	<Head-->
-<!--			:seo="{-->
-<!--					title: fetchedData.name,-->
-<!--			}"-->
-<!--	/>-->
+
 
 	<div class="board-game-main">
 		<div id="modals" />
@@ -74,7 +78,6 @@ provide('layoutMethods', {
 
 <style lang="scss">
 /* Основные стили сайта */
-@import url('~/assets/scss/vars.scss');
 @import url('~/assets/scss/style.scss');
 
 /* Стили темы, используемой на сайту */
@@ -99,7 +102,8 @@ body {
 			@apply pb-0 pl-0 pr-0;
 
 			.content-box {
-				@apply w-full pt-[1rem] pb-[1rem] pl-[2rem] pr-[var(--main-right-padding)];
+				@apply
+					w-full pt-[1rem] pb-[1rem] pl-[2rem] pr-[var(--main-right-padding)];
 			}
 		}
 	}

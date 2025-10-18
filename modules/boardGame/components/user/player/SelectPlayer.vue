@@ -14,6 +14,10 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
+	classes: {
+		type: String,
+		default: '',
+	},
 });
 
 const selectedOption = ref(null);
@@ -32,7 +36,10 @@ const selectOption = (option) => {
 </script>
 
 <template>
-	<div class="select-wrapper">
+	<div
+			v-if="players.length > 0"
+			class="select-wrapper"
+	>
 		<div
 				class="selected"
 				@click="toggleOptions"
@@ -41,9 +48,13 @@ const selectOption = (option) => {
 					v-if="selectedOption"
 					:element="selectedOption"
 					theme="short"
+					:hideStatusEffect="true"
 					:openProfile="false"
 			/>
-			<span v-else class="choice-player">Выберите игрока</span>
+			<span
+					v-else
+					class="choice-player"
+			>Выберите игрока</span>
 		</div>
 		<div
 				v-if="isOpen"
@@ -58,10 +69,14 @@ const selectOption = (option) => {
 						:element="player"
 						theme="short"
 						:openProfile="false"
+						:hideStatusEffect="true"
 						@click="selectOption(player)"
 				/>
 			</div>
 		</div>
+	</div>
+	<div v-else>
+		Нет игроков, подходящих под условия
 	</div>
 </template>
 

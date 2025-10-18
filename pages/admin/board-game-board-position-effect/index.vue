@@ -17,7 +17,7 @@ const titles = ref(
 			description: {
 				name: 'Описание',
 			},
-			action: {
+			actions: {
 				name: 'Действие',
 			},
 			media: {
