@@ -3,6 +3,7 @@ import SystemComponents from '@/components/system/SystemComponents.vue';
 
 import SystemBoardGameComponents from '@/modules/boardGame/components/boardGame/SystemBoardGameComponents.vue';
 import SystemPlayerComponents from '@/modules/boardGame/components/user/player/SystemPlayerComponents.vue';
+import UpdatedData from '@/modules/boardGame/components/layout/UpdatedData.vue';
 
 import Seo from '@/modules/boardGame/components/boardGame/Seo.vue';
 
@@ -18,7 +19,6 @@ import Footer from '@/modules/boardGame/components/layout/Footer.vue';
 
 
 
-// import UpdatedData from '@/modules/boardGame/components/layout/UpdatedData.vue';
 import MainMenu from '@/modules/boardGame/components/menu/MainMenu.vue';
 
 import Sound from '@/components/audio/Sound.vue';
@@ -43,12 +43,9 @@ provide('layoutMethods', {
 
 	<SystemBoardGameComponents />
 	<SystemPlayerComponents />
+	<UpdatedData />
 
 	<Seo />
-
-
-<!--	<UpdatedData :boardGameInfo="fetchedData" />-->
-
 
 	<div class="board-game-main">
 		<div id="modals" />

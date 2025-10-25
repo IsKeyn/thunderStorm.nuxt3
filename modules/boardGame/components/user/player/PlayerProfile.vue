@@ -220,8 +220,6 @@ onMounted(() => {
 		};
 	}
 });
-
-// TODO Вывести бафы дебафы, вывести доп. соц сети
 </script>
 
 <template>
@@ -234,17 +232,18 @@ onMounted(() => {
 				<UserAvatar
 						:userInfo="userInfo.user"
 						classes="w-[150px] h-[150px]"
+						@afterChangeAvatar="refresh"
 				/>
 				<div class="social">
 					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
-						<font-awesome-icon icon="fa-brands fa-youtube" />
+						Twitch канал <font-awesome-icon class="ml-2" icon="fa-brands fa-twitch" />
 					</NuxtLink>
-					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
-						<font-awesome-icon icon="fa-brands fa-twitch" />
-					</NuxtLink>
-					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
-						<font-awesome-icon icon="fa-regular fa-circle-play" />
-					</NuxtLink>
+<!--					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">-->
+<!--						<font-awesome-icon icon="fa-brands fa-youtube" />-->
+<!--					</NuxtLink>-->
+<!--					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">-->
+<!--						<font-awesome-icon icon="fa-regular fa-circle-play" />-->
+<!--					</NuxtLink>-->
 				</div>
 			</div>
 			<div class="box w-full main-info-box">
@@ -258,7 +257,7 @@ onMounted(() => {
 							Количество очков: {{ userInfo.points }}
 						</span>
 						<span class="field">
-							Стрик: {{ userInfo.streak }}
+							Стрик: x{{ userInfo.streak }}
 						</span>
 						<span class="field">
 							Позиция на поле: {{ userInfo.position ? userInfo.position : 'Не делал ходов' }}
@@ -290,12 +289,12 @@ onMounted(() => {
 						class="mt-2"
 				>
 					<template v-if="isCurrentUser">
-						<button
-								class="btn btn-simple-1 mr-2"
-								@click="showUserMessagesModal"
-						>
-							<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Мои сообщения
-						</button>
+<!--						<button-->
+<!--								class="btn btn-simple-1 mr-2"-->
+<!--								@click="showUserMessagesModal"-->
+<!--						>-->
+<!--							<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Мои сообщения-->
+<!--						</button>-->
 						<button
 								class="btn btn-simple-1 mr-2"
 								@click="showNotificationModal"
@@ -310,13 +309,13 @@ onMounted(() => {
 						</button>
 					</template>
 					<template v-else>
-						<button
-								v-if="(userStore.user && Object.keys(userStore.user).length > 0) && (userInfo.user_id !== userStore.user.id)"
-								class="btn btn-simple-1"
-								@click="emit('sendNotification', userInfo.user_id)"
-						>
-							<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Отправить сообщение
-						</button>
+<!--						<button-->
+<!--								v-if="(userStore.user && Object.keys(userStore.user).length > 0) && (userInfo.user_id !== userStore.user.id)"-->
+<!--								class="btn btn-simple-1"-->
+<!--								@click="emit('sendNotification', userInfo.user_id)"-->
+<!--						>-->
+<!--							<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Отправить сообщение-->
+<!--						</button>-->
 					</template>
 				</div>
 			</div>

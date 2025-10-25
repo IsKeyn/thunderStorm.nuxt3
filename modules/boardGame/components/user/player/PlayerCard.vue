@@ -71,7 +71,11 @@ const statusEffectForShow = computed(() => {
 			<span class="field name">
 				{{ element.user.name }}
 				<template v-if="boardGameStore.playersOnline[element.user.id]">
-					<a :href="`https://www.twitch.tv/${boardGameStore.playersOnline[element.user.id]}`" target="_blank">Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></a>
+					<a
+							class="twitch"
+							:href="`https://www.twitch.tv/${boardGameStore.playersOnline[element.user.id]}`"
+							target="_blank"
+					>Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></a>
 				</template>
 			</span>
 			<span class="field">
@@ -90,7 +94,7 @@ const statusEffectForShow = computed(() => {
 				Позиция на поле: {{ element.position ? element.position : 'Ходы не осуществлялись' }}
 			</span>
 			<span class="field">
-				Текущий стрик: {{ element.streak }}
+				Стрик: x{{ element.streak }}
 			</span>
 <!--			<span-->
 <!--					v-if="theme === 'default'"-->
@@ -155,6 +159,10 @@ const statusEffectForShow = computed(() => {
 
 			a {
 				@apply bg-[var(--main-bg-color)] rounded-full p-1;
+
+				&.twitch {
+					@apply bg-[#9147ff] text-[#ffffff] pl-4 pr-4;
+				}
 
 				&:hover {
 					@apply no-underline;

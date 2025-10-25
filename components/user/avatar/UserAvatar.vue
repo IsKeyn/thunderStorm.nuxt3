@@ -1,6 +1,8 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
+const emit = defineEmits(['afterChangeAvatar']);
+
 import { inject, ref, watch } from 'vue'
 const layoutMethods = inject('layoutMethods')
 
@@ -112,8 +114,8 @@ const getUserData = async () => {
 			requestInProgress.value = false;
 
 			alert('Аватарка успешно изменена');
-			//
-			// emit('afterChangeAvatar');
+
+			emit('afterChangeAvatar');
 		}
 	} catch (e) {
 		error(e);

@@ -231,7 +231,10 @@ const hasUsed = (position) => {
 
 <template>
 	<div v-if="fetchedData">
-		<div class="dice-and-info-block">
+		<div
+				v-if="isAuth && showEffectsBox"
+				class="dice-and-info-block"
+		>
 			<Dices
 					:size="80"
 					position="vertical"
@@ -242,25 +245,23 @@ const hasUsed = (position) => {
 			<div class="item-box player-position-info">
 				<span class="block">Текущая позиция на поле: {{ currentPlayer.position }}</span>
 				<span class="block">Доступное количество бросков кубика: {{ currentPlayer.step_count }}</span>
-				<template v-if="isAuth && showEffectsBox">
-					<PlayerInteractionCard
-							v-if="fetchedData?.current_player?.board_interaction && fetchedData.current_player.board_interaction.length > 0"
-							v-for="(element, key) in fetchedData.current_player.board_interaction"
-							:key="key"
-							class="mt-4"
-							:element="element"
-							@update="refresh"
-					/>
-					<CellEffectCard
-							v-else
-							class="mt-4"
-							name="head"
-							:hasUsed="hasUsed(currentPlayer.position)"
-							:showControlPanel="true"
-							:element="getEffectsByPosition(currentPlayer.position)[0]"
-							:useLightBox="true"
-					/>
-				</template>
+				<PlayerInteractionCard
+						v-if="fetchedData?.current_player?.board_interaction && fetchedData.current_player.board_interaction.length > 0"
+						v-for="(element, key) in fetchedData.current_player.board_interaction"
+						:key="key"
+						class="mt-4"
+						:element="element"
+						@update="refresh"
+				/>
+				<CellEffectCard
+						v-else
+						class="mt-4"
+						name="head"
+						:hasUsed="hasUsed(currentPlayer.position)"
+						:showControlPanel="true"
+						:element="getEffectsByPosition(currentPlayer.position)[0]"
+						:useLightBox="true"
+				/>
 			</div>
 		</div>
 		<div class="flex items-center justify-center">
@@ -289,8 +290,9 @@ const hasUsed = (position) => {
 									hasUsed(col.index) ? 'filter: grayscale(100%)' : '',
 							]"
 							/>
-							<div v-if="currentPlayer && currentPlayer.position > col.index" class="veil" />
+							<div v-if="isAuth && currentPlayer && currentPlayer.position > col.index" class="veil" />
 							<nuxt-link
+									v-if="isAuth"
 									target="_blank"
 									:to="`/e/${route.params.slug}/player/${currentPlayer.user.name}`"
 									:title="currentPlayer.user.name"

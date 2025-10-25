@@ -3,18 +3,9 @@ import { onMounted } from "vue";
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
-/* TODO надо как-то очищать BoardGameStorage при смене игры */
 
 import { api } from '@/composables/api.js'
 const { sendApiRequest, responseErrors } = api();
-
-const props = defineProps({
-	boardGameInfo: {
-		type: Object,
-		default: {},
-		require: true,
-	},
-});
 
 const requestName = 'boardGameStreamersOnlineKey';
 
@@ -22,7 +13,7 @@ const getUpdatedData = async() => {
 	const response = await sendApiRequest(
 			'board-game/getStreamersOnline',
 			'GET',
-			{ boardGameId: props.boardGameInfo.id },
+			{ boardGameId: boardGameStore.boardGameInfo.id },
 			requestName,
 			null
 	);
@@ -30,14 +21,14 @@ const getUpdatedData = async() => {
 	boardGameStore.playersOnline = response;
 }
 
-watch(() => props.boardGameInfo, () => {
-	if (props.boardGameInfo && props.boardGameInfo.id) {
+watch(() => boardGameStore.boardGameInfo, () => {
+	if (boardGameStore.boardGameInfo && boardGameStore.boardGameInfo.id) {
 		getUpdatedData();
 	}
 }, { deep: true });
 
 onMounted(() => {
-	if (props.boardGameInfo && props.boardGameInfo.id) {
+	if (boardGameStore.boardGameInfo && boardGameStore.boardGameInfo.id) {
 		getUpdatedData();
 	}
 

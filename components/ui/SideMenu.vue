@@ -181,9 +181,9 @@ const textCutSize = computed(() => {
 			}
 		}
 	}
-}
 
-.router-link-active {
-	background-color: rgba(255, 255, 255, 0.2);
+	.router-link-active {
+		background-color: rgba(255, 255, 255, 0.2);
+	}
 }
 </style>

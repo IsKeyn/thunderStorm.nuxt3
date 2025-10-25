@@ -12,6 +12,7 @@ const {
 	publicUrl,
 	sessionCookieName,
 	errorHandler,
+	sendApiRequest,
 } = api();
 
 import { useUserStore } from '@/stores/user';
@@ -71,10 +72,19 @@ const { refresh } = await useAsyncData(
 const updateData = () => {
 	refresh();
 }
+
+const setAllLikeViewed = async () => {
+	await sendApiRequest('auth/notification/set-viewed-all', 'POST', {}, 'setAllNotificationLikeViewed');
+	updateData();
+}
 </script>
 
 <template>
 	<div v-if="fetchedData.length > 0">
+		<button
+				class="btn btn-simple"
+				@click="setAllLikeViewed"
+		>Отметить все как прочитанные <font-awesome-icon  class="ml-2" icon="fa-solid fa-check-double" /></button>
 		<UserNotificationCard
 				v-for="(item, key) in fetchedData"
 				:key="key"
