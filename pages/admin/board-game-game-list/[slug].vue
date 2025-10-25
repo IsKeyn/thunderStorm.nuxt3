@@ -60,6 +60,31 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			coop: {
+				name: 'Кооп',
+				value: false,
+				type: 'checkbox',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
+			list_type: {
+				name: 'Тип списка',
+				value: null,
+				type: 'select',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				options: [
+					{
+						name: 'Не выбрано',
+						value: null,
+					},
+					{
+						name: 'Золотой список',
+						value: 1,
+					},
+				],
+			},
 			active: {
 				name: 'Активность',
 				value: true,

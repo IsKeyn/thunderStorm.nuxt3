@@ -39,6 +39,7 @@ const name = computed(() => {
 	switch (props.element.type) {
 		case 'switchGame': return 'Обмен игрой';
 		case 'battleForPoints': return 'Битва за очки';
+		case 'inviteToCoop': return 'Приглашение в кооп';
 	}
 });
 

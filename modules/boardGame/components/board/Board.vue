@@ -96,17 +96,21 @@ watch(() => fetchedData.value, () => {
 
 const currentPlayerConst = ref(null);
 
-const changePosition = (positionData) => {
+const showEffectsBox = ref(true);
+
+const changePosition = (positionData, oldPositionNumber = null) => {
 	if (positionData) {
-		const oldPosition = currentPlayer.value.position;
-		const newPosition = positionData.position;
+		showEffectsBox.value = false;
+
+		const oldPosition = oldPositionNumber ? oldPositionNumber : currentPlayer.value.position;
+		const newPosition = positionData.firstPosition.position;
 
 		let steps = newPosition - oldPosition;
 		let direction = null;
 
 		if (steps > 0) {
 			direction = 'forward';
-		} else if (steps > 0)  {
+		} else if (steps < 0)  {
 			direction = 'back';
 		}
 
@@ -123,7 +127,12 @@ const changePosition = (positionData) => {
 								currentPlayerConst.value.position++;
 
 								if (Math.abs(steps) - 1 === i) {
-									refresh();
+									if (positionData.firstPosition.position !== positionData.finalPosition.position) {
+										changePosition({ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition}, positionData.firstPosition.position);
+									} else {
+										showEffectsBox.value = true;
+										refresh();
+									}
 								}
 							}, 500 + i * 500);
 						}
@@ -133,7 +142,12 @@ const changePosition = (positionData) => {
 								currentPlayerConst.value.position--;
 
 								if (Math.abs(steps) - 1 === i) {
-									refresh();
+									if (positionData.firstPosition.position !== positionData.finalPosition.position) {
+										changePosition({ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition}, positionData.firstPosition.position);
+									} else {
+										showEffectsBox.value = true;
+										refresh();
+									}
 								}
 							}, 500 + i * 500);
 						}
@@ -228,23 +242,25 @@ const hasUsed = (position) => {
 			<div class="item-box player-position-info">
 				<span class="block">Текущая позиция на поле: {{ currentPlayer.position }}</span>
 				<span class="block">Доступное количество бросков кубика: {{ currentPlayer.step_count }}</span>
-				<div
-						v-if="isAuth && !hasUsed(currentPlayer.position)"
-						class="mt-4"
-				>
+				<template v-if="isAuth && showEffectsBox">
 					<PlayerInteractionCard
 							v-if="fetchedData?.current_player?.board_interaction && fetchedData.current_player.board_interaction.length > 0"
 							v-for="(element, key) in fetchedData.current_player.board_interaction"
 							:key="key"
+							class="mt-4"
 							:element="element"
 							@update="refresh"
 					/>
 					<CellEffectCard
 							v-else
+							class="mt-4"
+							name="head"
+							:hasUsed="hasUsed(currentPlayer.position)"
 							:showControlPanel="true"
 							:element="getEffectsByPosition(currentPlayer.position)[0]"
+							:useLightBox="true"
 					/>
-				</div>
+				</template>
 			</div>
 		</div>
 		<div class="flex items-center justify-center">
@@ -258,17 +274,21 @@ const hasUsed = (position) => {
 							:key="col.index"
 							:data-index="col.index"
 							:class="[getTdClasses(col)]"
-							:style="[
+					>
+						<template v-if="col.useThisField">
+							<div
+									v-if="cellBackgroundImage(col.index)"
+									class="cell-image"
+									:style="[
 									`
-									background-image: url('${cellBackgroundImage(col.index)}');
-									background-size: cover;
-									background-position: center;
-									background-repeat: no-repeat;
+										background-image: url('${cellBackgroundImage(col.index)}');
+										background-size: cover;
+										background-position: center;
+										background-repeat: no-repeat;
 									`,
 									hasUsed(col.index) ? 'filter: grayscale(100%)' : '',
 							]"
-					>
-						<template v-if="col.useThisField">
+							/>
 							<div v-if="currentPlayer && currentPlayer.position > col.index" class="veil" />
 							<nuxt-link
 									target="_blank"
@@ -328,7 +348,7 @@ const hasUsed = (position) => {
 			@toggleModal="openCloseBoxFunc"
 	>
 		<div class="modal-parent">
-			<h3 class="modal-title">Информация о ячейке</h3>
+			<h3 class="modal-title">Информация о ячейке №{{ selectedPositionNumber }}</h3>
 			<div class="link-parent-box">
 				<BoardCellInfo
 						:position="selectedPositionNumber"
@@ -548,14 +568,24 @@ td {
 	relative
 	;
 
+	.cell-image {
+		@apply absolute top-0 left-0 w-full h-full;
+	}
+
 	.veil {
 		@apply absolute top-0 left-0 w-full h-full bg-black/40;
 	}
 
 	span.field-number {
 		@apply
-		absolute top-[0.2rem] left-[0.2rem]
+			absolute top-[0.2rem] left-[0.2rem]
 		;
+
+		text-shadow:
+				-1px -1px 0 #000,
+				1px -1px 0 #000,
+				-1px 1px 0 #000,
+				1px 1px 0 #000;
 	}
 
 	&.playable-field {
@@ -567,7 +597,7 @@ td {
 		object-cover
 		w-[68px] h-[68px]
 		rounded-full
-		absolute top-[15px] left-[15px] z-[100]
+		absolute top-[15px] left-[15px] z-[8]
 		cursor-grab
 		;
 
@@ -576,10 +606,16 @@ td {
 
 	.info-button {
 		@apply
-		absolute top-[5px] right-[5px]
-		text-[1.4rem]
-		cursor-pointer
+			absolute top-[5px] right-[5px]
+			text-[1.4rem]
+			cursor-pointer
 		;
+
+		text-shadow:
+				-1px -1px 0 #000,
+				1px -1px 0 #000,
+				-1px 1px 0 #000,
+				1px 1px 0 #000;
 	}
 
 	.other-players {

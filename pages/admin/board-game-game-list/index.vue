@@ -39,6 +39,13 @@ const titles = ref(
 			game_completion_time: {
 				name: 'Время на прохождение (в минутах)',
 			},
+			coop: {
+				name: 'Кооп',
+				type: 'boolean',
+			},
+			list_type: {
+				name: 'Тип списка',
+			},
 			active: {
 				name: 'Активность',
 				type: 'boolean',

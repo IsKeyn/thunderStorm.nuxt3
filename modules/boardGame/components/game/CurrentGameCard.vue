@@ -1,14 +1,17 @@
 <script setup>
 import GameCard from '@/modules/boardGame/components/game/GameCard.vue';
 import GameFinishForm from '@/modules/boardGame/components/game/GameFinishForm.vue';
+import InviteToCoopForm from '@/modules/boardGame/components/game/InviteToCoopForm.vue';
+import PlayerInteractionCard from '@/modules/boardGame/components/player-interactions/PlayerInteractionCard.vue';
 
 import { inject } from "vue";
 
-const emit = defineEmits(['setStep', 'toggleFormVisible']);
-
-const route = useRoute();
-
 const layoutMethods = inject('layoutMethods')
+
+const emit = defineEmits(['setStep', 'toggleFormVisible', 'updateData']);
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { media } from '@/composables/media.js'
 const { getResizeImg } = media();
@@ -17,13 +20,17 @@ import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
 
 const props = defineProps({
-	boardGameId: {
-		type: Number,
-		default: 1,
-	},
 	currentGame: {
 		type: Object,
 		default: {},
+	},
+	player: {
+		type: Object,
+		default: {},
+	},
+	coopInteraction: {
+		type: Array,
+		default: [],
 	},
 	showTitle: {
 		type: Boolean,
@@ -36,15 +43,18 @@ const props = defineProps({
 	showOtherPlayersActions: {
 		type: Boolean,
 		default: false,
-	}
+	},
+	editListAvailable: {
+		type: Boolean,
+		default: false,
+	},
 });
 
-
-const showFinishGameForm = ref(false);
+const showForm = ref(false);
 const type = ref(null);
 
 const toggleFormVisible = (typeValue = null) => {
-	showFinishGameForm.value = !showFinishGameForm.value;
+	showForm.value = !showForm.value;
 
 	if (typeValue) {
 		type.value = typeValue;
@@ -66,19 +76,36 @@ const toggleFormVisible = (typeValue = null) => {
 			:showStatusBar="false"
 	/>
 
-	<div class="mt-5" v-if="showActionButtons && !showFinishGameForm">
+	<div class="mt-5" v-if="showActionButtons && !showForm">
 		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(1)">Рерольнуть</button>
-		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(3)">Отдал</button>
+		<button v-if="currentGame.game.coop && coopInteraction.length === 0" class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible('coop')">Пригласить в кооп</button>
 		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(2)">Игра пройдена</button>
-		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="emit('showEditList')">Редактировать списки</button>
+		<button v-if="editListAvailable" class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="emit('showEditList')">Редактировать списки</button>
 	</div>
-	<GameFinishForm
-			v-if="showFinishGameForm"
-			:boardGameId="boardGameId"
+	<PlayerInteractionCard
+			v-if="coopInteraction.length > 0 && !showForm"
+			v-for="(element, key) in coopInteraction"
+			:key="key"
+			class="mt-4"
+			:element="element"
+			@update="emit('updateData')"
+	/>
+	<InviteToCoopForm
+			v-if="showForm && type === 'coop' && coopInteraction.length === 0"
 			:game="currentGame.game.game"
-			:points="currentGame.game.points"
+			:points="currentGame.game.computed_points ? currentGame.game.computed_points : currentGame.game.points"
+			@toggleFormVisible="toggleFormVisible"
+			@updateData="emit('updateData')"
+	/>
+	<GameFinishForm
+			v-if="showForm && type !== 'coop'"
+			:game="currentGame.game.game"
+			:points="currentGame.game.computed_points ? currentGame.game.computed_points : currentGame.game.points"
+			:rerolled_points="currentGame.game.rerolled_points"
+			:streak="player.streak"
 			:type="type"
 			@toggleFormVisible="toggleFormVisible"
+			@updateData="emit('updateData')"
 	/>
 	<template v-if="showOtherPlayersActions">
 		<span class="user-interface-title text-left">Действия других игроков с данной игрой</span>

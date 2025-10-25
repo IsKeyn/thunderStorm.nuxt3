@@ -20,7 +20,7 @@ const initAutologin = async () => {
 
 	if (route.params && route.params.slug) {
 		try {
-			const response = await sendApiRequest(`admin/magical-link/login/${route.params.slug}`, 'GET', {}, 'userAutoLogin', '');
+			const response = await sendApiRequest(`auth/magical-link/login/${route.params.slug}`, 'GET', {}, 'userAutoLogin', '');
 
 			if (response) {
 				if (response.error) {

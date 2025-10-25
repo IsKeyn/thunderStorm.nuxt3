@@ -57,6 +57,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showRollCount: {
+		type: Boolean,
+		default: false,
+	},
 	requestParentData: {
 		type: Boolean,
 		default: false,
@@ -68,6 +72,10 @@ const props = defineProps({
 			'/sounds/baraban_sg.mp3',
 			'/sounds/BennyHill.mp3',
 		],
+	},
+	editListAvailable: {
+		type: Boolean,
+		default: false,
 	},
 });
 
@@ -343,7 +351,7 @@ const startSpin = (randomIndex) => {
 					:disabled="spinning || requestInProgress || requestParentData"
 					@click="getRandomItem"
 			>
-				Крутануть рулетку x{{ roll_count }}
+				Крутануть рулетку<template v-if="showRollCount"> x{{ roll_count }}</template>
 			</button>
 		</div>
 		<div v-else class="item-box">Больше нечего крутить *(</div>

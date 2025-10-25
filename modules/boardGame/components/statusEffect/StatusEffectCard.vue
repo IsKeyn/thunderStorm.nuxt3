@@ -65,8 +65,8 @@ const activateSe = (type) => {
 		JSON.parse(props.element.statusEffect.actions).forEach((item) => {
 			if (item.actions) {
 				item.actions.forEach((action, key) => {
-					if (key === 1 && action.message) {
-						message = action.message;
+					if (key === 1 && action.choiceMessage) {
+						message = action.choiceMessage;
 					}
 				});
 			}
@@ -78,8 +78,8 @@ const activateSe = (type) => {
 		JSON.parse(props.element.statusEffect.actions).forEach((item) => {
 			if (item.actions) {
 				item.actions.forEach((action, key) => {
-					if (key === 0 && action.message) {
-						message = action.message;
+					if (key === 0 && action.choiceMessage) {
+						message = action.choiceMessage;
 					}
 				});
 			}

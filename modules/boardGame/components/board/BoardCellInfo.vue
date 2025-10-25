@@ -15,6 +15,10 @@ const props = defineProps({
 		type: Object,
 		required: true,
 	},
+	name: {
+		type: String,
+		default: null,
+	},
 });
 </script>
 
@@ -41,7 +45,9 @@ const props = defineProps({
 		<CellEffectCard
 				v-for="(element, key) in effects"
 				:key="key"
+				:name="name"
 				:element="element"
+				:useLightBox="true"
 		/>
 	</div>
 </template>

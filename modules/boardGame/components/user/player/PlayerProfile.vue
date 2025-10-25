@@ -258,6 +258,9 @@ onMounted(() => {
 							Количество очков: {{ userInfo.points }}
 						</span>
 						<span class="field">
+							Стрик: {{ userInfo.streak }}
+						</span>
+						<span class="field">
 							Позиция на поле: {{ userInfo.position ? userInfo.position : 'Не делал ходов' }}
 						</span>
 						<span class="field">

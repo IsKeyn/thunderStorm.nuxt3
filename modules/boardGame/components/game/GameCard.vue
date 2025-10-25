@@ -51,6 +51,7 @@ const getStatusName = (status) => {
 		case 1: return 'Рерольнута';
 		case 2: return 'Пройдена';
 		case 3: return 'Отдана';
+		case 4: return 'В очереди';
 	}
 }
 
@@ -62,6 +63,7 @@ const getStatusClass = (status) => {
 		case 1: return 'red';
 		case 2: return 'green';
 		case 3: return 'blue';
+		case 4: return 'yellow';
 	}
 }
 
@@ -119,7 +121,7 @@ const getLongPlayLink = () => {
 					<div>
 						<span class="line-info" v-if="element.game.platform">Платформа: {{ element.game.platform.name }}</span>
 						<span class="line-info" v-if="element.game.game?.release_dates[0]?.date">Год релиза: {{ getFormattedDate('Y', element.game.game.release_dates[0].date) }}</span>
-						<span class="line-info" v-if="element.game.points !== null && element.game.points !== undefined">Очки за игру: {{ element.game.points }}</span>
+						<span class="line-info" v-if="element.game.points !== null && element.game.points !== undefined">Очки за игру: {{ element.game.computed_points ? element.game.computed_points : element.game.points }}</span>
 						<span
 								v-if="element.game.added_by && element.game.added_by_user.name"
 								class="line-info"
@@ -194,6 +196,10 @@ const getLongPlayLink = () => {
 
 	&.blue {
 		border-left: 8px solid #000460;
+	}
+
+	&.yellow {
+		border-left: 8px solid #bea300;
 	}
 
 	.content-box {

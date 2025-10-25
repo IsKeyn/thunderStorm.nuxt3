@@ -4,10 +4,23 @@ import CurrentGameCard from '@/modules/boardGame/components/game/CurrentGameCard
 import EditorForPlayerGamesList from '@/components/boardGame/game/EditorForPlayerGamesList.vue';
 
 import { ref } from "vue";
-const route = useRoute();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
+
+const props = defineProps({
+	editListAvailable: {
+		type: Boolean,
+		default: false,
+	},
+	selectPlatformAvailable: {
+		type: Boolean,
+		default: false,
+	},
+});
 
 /* Получение данных */
 const requestName = 'getBoardGameGamblingGameGameList';
@@ -22,9 +35,11 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			const query = {
-				platform_id: selectedPlatform.value,
-			};
+			const query = {};
+
+			if (selectedPlatform.value) {
+				query.platform_id = selectedPlatform.value;
+			}
 
 			const response = await Promise.resolve(
 					sendApiRequest(`board-game/v2/player-game/get-player-list/${route.params.slug}/`, 'GET', query, requestName, '')
@@ -47,7 +62,7 @@ const refreshGameList = () => {
 
 /* Рулетка */
 const requestObj = ref({
-	url: `board-game/v2/player/rollItem/${route.params.slug}/`,
+	url: `board-game/v2/player-game/roll/${route.params.slug}/`,
 	method: 'POST',
 	requestName: 'boardGameRollItem',
 });
@@ -90,6 +105,17 @@ const editListShow = ref(false);
 const editListToggle = () => {
 	editListShow.value = !editListShow.value;
 }
+
+const listDescription = computed(() => {
+	switch (fetchedData.value.listType) {
+		case 'default':
+			return 'Стандартный список - игры которые добавлены в ивент';
+		case 'rerolled':
+			return 'Список реролов - список игр, который состоит из рерольнутых игр всеми участниками ивента';
+		case 'golden':
+			return 'Золотая коллекция - список игр, который включает отобранные игры, которые считаются простыми';
+	}
+});
 </script>
 
 <template>
@@ -98,8 +124,7 @@ const editListToggle = () => {
 	/>
 	<div
 			class="item-box"
-			v-else-if="fetchedData && fetchedData.status === 'error'
-			&& fetchedData.status_message"
+			v-else-if="fetchedData && fetchedData.status === 'error' && fetchedData.status_message"
 	>
 		{{ fetchedData.status_message }}
 	</div>
@@ -109,7 +134,7 @@ const editListToggle = () => {
 	>
 		<div
 				class="platforms-container"
-				v-if="!fetchedData.player.current_game || (fetchedData.player.current_game && editListShow === true)"
+				v-if="selectPlatformAvailable && (!fetchedData.player.current_game || (fetchedData.player.current_game && editListShow === true))"
 		>
 			<div
 					:class="['platform', selectedPlatform === null ? 'active' : '']"
@@ -126,7 +151,7 @@ const editListToggle = () => {
 		</div>
 
 		<EditorForPlayerGamesList
-				v-if="editListShow === true"
+				v-if="editListAvailable && editListShow === true"
 				:boardGameId="boardGameId"
 				:items="fetchedData.games"
 				@editListToggle="editListToggle"
@@ -137,24 +162,33 @@ const editListToggle = () => {
 			<CurrentGameCard
 					v-if="fetchedData.player.current_game"
 					:currentGame="fetchedData.player.current_game"
+					:player="fetchedData.player"
+					:coopInteraction="fetchedData.coopInteraction"
 					:showActionButtons="true"
 					:showOtherPlayersActions="true"
 					:showTitle="false"
 					@showPlayer="$emit('showPlayer', $event)"
-					@updateBoardGameInfo="emit('updateBoardGameInfo')"
+					@updateData="refresh"
 					@showEditList="editListToggle"
 			/>
 			<template v-else>
+				<div v-if="listDescription" class="item-box">
+					{{ listDescription }}
+				</div>
 				<GamblingGame
 						:items="fetchedData.games"
-						:roll_count="fetchedData.player.item_roll_count"
+						roll_count="1"
 						:requestObj="requestObj"
 						:easeOutType="1"
 						:requestParentData="requestInProgress"
 						cardType="GameGamblingCard"
 						:itemHeight="130"
+						:editListAvailable="editListAvailable"
+						:showItemCount="true"
+						@funcAfterRollWithDelay2="refresh()"
 				/>
 				<button
+						v-if="editListAvailable"
 						:class="`btn mr-[1rem] ${spinning || requestInProgress ? 'btn-disable' : 'btn-simple-1' }`"
 						@click="editListToggle()"
 				>

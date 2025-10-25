@@ -33,6 +33,9 @@ const titles = ref(
 			streak: {
 				name: 'Стрик',
 			},
+			rerolled_own_game_count: {
+				name: 'Рерольнуто своих игр',
+			},
 			created_by: {
 				name: 'Создан',
 				type: 'EntityList',

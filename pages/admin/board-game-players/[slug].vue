@@ -52,6 +52,13 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			rerolled_own_game_count: {
+				name: 'Рерольнуто своих игр',
+				value: '',
+				type: 'text',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			created_by: {
 				name: 'Кем создан',
 				value: '',

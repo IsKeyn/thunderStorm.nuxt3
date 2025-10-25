@@ -1,15 +1,21 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
 
+const getStatusInterval = ref(null);
+
 onMounted(() => {
 	getTimerStatus();
 
-	setInterval(() => {
+	getStatusInterval.value = setInterval(() => {
 		getTimerStatus();
 	}, 5000);
+});
+
+onUnmounted(() => {
+	clearInterval(getStatusInterval.value);
 });
 
 const showMessage = ref('');

@@ -34,6 +34,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	bgClasses: {
+		type: String,
+		default: '',
+	},
 });
 
 const getPlaceColor = (place) => {
@@ -55,7 +59,7 @@ const statusEffectForShow = computed(() => {
 
 <template>
 	<Nuxt-link
-			class="item-box"
+			:class="['item-box', bgClasses]"
 			:to="openProfile ? `/e/${route.params.slug}/player/${element.user.name}` : null"
 	>
 		<PublicAvatar
@@ -75,6 +79,9 @@ const statusEffectForShow = computed(() => {
 					class="field"
 			>
 				Очков в час: {{ Math.round((element.full_points / element.seconds) * 3600) }}
+			</span>
+			<span class="field">
+				Текущий стрик: {{ element.streak }}
 			</span>
 			<span class="field">
 				Итоговый результат: {{ element.full_points }}

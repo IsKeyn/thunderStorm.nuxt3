@@ -48,6 +48,14 @@ const props = defineProps({
 		type: String,
 		default: 'default',
 	},
+	hasUsed: {
+		type: Boolean,
+		default: false,
+	},
+	name: {
+		type: String,
+		default: null,
+	},
 });
 
 const getTypeClass = (type) => {
@@ -71,14 +79,26 @@ const needOtherPlayers = computed(() => {
 	return returnData;
 })
 
-const requestName = 'getBoardGamePlayersWithInventory';
+const requestName = computed(() => {
+	let returnData = 'getBoardGamePlayersWithInventory';
+
+	if (props?.name) {
+		returnData += '_' + props.name;
+	}
+
+	if (props?.element?.id) {
+		returnData += '_' + props.element.id;
+	}
+
+	return returnData;
+});
 
 const {
 	data: requestData,
 	pending: requestInProgress,
 	refresh
 } = await useAsyncData(
-		requestName,
+		requestName.value,
 		async () => {
 			if (needOtherPlayers.value) {
 				let type = null;
@@ -90,7 +110,7 @@ const {
 				});
 
 				const response = await Promise.resolve(
-						sendApiRequest(`board-game/v2/player/listWithInventory/${route.params.slug}/`, 'GET', { type }, requestName, '')
+						sendApiRequest(`board-game/v2/player/listWithInventory/${route.params.slug}/`, 'GET', { type }, requestName.value, '')
 				);
 
 				return response.data || null;
@@ -136,6 +156,62 @@ const sendInvitation = async () => {
 				}
 
 				await refreshNuxtData('getBoardGameBoard');
+				await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+			}
+		}
+	} catch (e) {
+		error(e);
+	}
+}
+
+const setAction = (type) => {
+	switch(type) {
+		case "fightWithBoss-win":
+			choiceAlert(
+					{
+						title: 'Вы уверены?',
+						message: 'Чтобы отправить это действие вы должны победить босса ячейки, вы победили босса?',
+						buttons: [
+							{
+								name: 'Да',
+								func: () => {
+									setRequest(type);
+								},
+								additionalKeywordFunc: 'close',
+							},
+							{
+								name: 'Нет',
+								additionalKeywordFunc: 'close',
+							},
+						],
+					}
+			);
+			break;
+	}
+}
+
+const setRequest = async (type) => {
+	try {
+		const body = {
+			id: props.element.id,
+			slug: route.params.slug,
+			type,
+		}
+
+		const response = await sendApiRequest('board-game/v2/boardStatusEffect/use', 'POST', body, 'bg_usePositionEffect', 'small', 'method');
+
+		if (response) {
+			if (response.error) {
+				error(response.error);
+			} else {
+				if (response.message) {
+					alert(response.message, 10000);
+				} else {
+					alert(`Успешно выполнено`);
+				}
+
+				await refreshNuxtData('getBoardGameBoard');
+				await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
 			}
 		}
 	} catch (e) {
@@ -183,10 +259,19 @@ const sendInvitation = async () => {
 					:key="key"
 					class="actions"
 			>
+				<template v-if="showControlPanel && action && action.effectType === 'fightWithBoss'">
+					<button
+							class="btn btn-simple"
+							@click="setAction('fightWithBoss-win')"
+					>
+						Я победил босса
+					</button>
+				</template>
 				<template v-if="showControlPanel && action && action.type === 'playerInteractions'">
 					<span class="">Выберите игрока для приглашения</span>
 					<SelectPlayer
 							v-if="fetchedPlayers"
+							bgClasses="!bg-[var(--main-hover-color)]"
 							:players="getPlayersForItem(action.target, fetchedPlayers)"
 							v-model="selectedPlayer"
 					/>

@@ -4,7 +4,7 @@ import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 const emit = defineEmits(['updateTimerList']);
 
-import { ref, computed, onBeforeUnmount, onMounted } from 'vue'
+import { ref, computed, onBeforeUnmount, onMounted, onUnmounted } from 'vue'
 
 const route = useRoute();
 
@@ -48,6 +48,9 @@ if (Object.keys(props.timer)) {
 }
 
 const canDelete = ref(true);
+const canStart = computed(() => {
+	return !(seconds.value && limit.value && seconds.value >= limit.value);
+});
 
 if (slug.value === 'main') {
 	// limit.value = 100 * 60 * 60;
@@ -106,9 +109,18 @@ onBeforeUnmount(() => {
 })
 
 const requestInProgress = ref(false);
+const getStatusInterval = ref(null);
 
 onMounted(() => {
 	getTimerStatus();
+
+	getStatusInterval.value = setInterval(() => {
+		getTimerStatus();
+	}, 15000);
+});
+
+onUnmounted(() => {
+	clearInterval(getStatusInterval.value);
 });
 
 const getTimerStatus = async () => {
@@ -148,6 +160,10 @@ const getTimerStatus = async () => {
 							seconds.value++
 						}, 1000);
 					}
+				} else {
+					isRunning.value = false;
+					clearInterval(timerInterval.value);
+					timerInterval.value = null;
 				}
 			}
 		} else {
@@ -165,7 +181,11 @@ const timerInterval = ref(null);
 
 const toggleTimer = (value = null) => {
 	if (!isRunning.value) {
-		timerApiRequest('start');
+		if (canStart.value) {
+			timerApiRequest('start');
+		} else {
+			alert('Вы не можете запустить этот таймер, так как он достиг лимита');
+		}
 	} else {
 		timerApiRequest('stop');
 	}
@@ -375,9 +395,6 @@ const formattedLimitTime = computed(() => {
 		secs.toString().padStart(2, '0')
 	].join(':');
 })
-
-
-// TODO теперь выборка по SLUG настольной игры
 </script>
 
 <template>
@@ -435,6 +452,7 @@ const formattedLimitTime = computed(() => {
 		<template v-if="showControlButtons">
 			<div class="flex gap-2" v-if="!editTimeMode">
 				<layout-buttons-ActionButton
+						v-if="canStart"
 						buttonClasses="btn btn-simple-1 w-full"
 						:buttonName="isRunning ? 'Стоп' : 'Старт'"
 						:actionInProgress="requestInProgress"

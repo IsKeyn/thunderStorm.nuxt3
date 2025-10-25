@@ -14,7 +14,7 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
-	classes: {
+	bgClasses: {
 		type: String,
 		default: '',
 	},
@@ -41,19 +41,20 @@ const selectOption = (option) => {
 			class="select-wrapper"
 	>
 		<div
-				class="selected"
+				:class="['selected']"
 				@click="toggleOptions"
 		>
 			<PlayerCard
 					v-if="selectedOption"
 					:element="selectedOption"
 					theme="short"
+					:bgClasses="bgClasses"
 					:hideStatusEffect="true"
 					:openProfile="false"
 			/>
 			<span
 					v-else
-					class="choice-player"
+					:class="['choice-player', bgClasses]"
 			>Выберите игрока</span>
 		</div>
 		<div
@@ -68,6 +69,7 @@ const selectOption = (option) => {
 				<PlayerCard
 						:element="player"
 						theme="short"
+						:bgClasses="bgClasses"
 						:openProfile="false"
 						:hideStatusEffect="true"
 						@click="selectOption(player)"

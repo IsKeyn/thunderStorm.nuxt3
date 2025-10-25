@@ -1,6 +1,7 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
+import CountdownTimer from '@/components/additional/CountdownTimer.vue';
 
 import { ref } from "vue";
 
@@ -27,6 +28,7 @@ const form = ref(
 );
 
 const requestInProgress = ref(false);
+const fetchedData = ref({});
 
 const generateLinkRequest = async () => {
 	requestInProgress.value = true;
@@ -39,6 +41,7 @@ const generateLinkRequest = async () => {
 				error(response.error);
 			} else {
 				requestInProgress.value = false;
+				fetchedData.value = response;
 
 				if (response.token) {
 					form.value.autoLoginUrl.value = `${window.location.protocol}//${publicUrl.value}/auth/autologin/${response.token}`;
@@ -76,6 +79,31 @@ const generateLinkRequest = async () => {
 				@startAction="generateLinkRequest()"
 		/>
 	</div>
+	<div class="qr-code">
+		<a
+				v-if="fetchedData.qr_code"
+				:href="fetchedData.qr_code"
+				target="_blank"
+				title="QR код для авторизации"
+		>
+			<img
+					:src="fetchedData.qr_code"
+					alt="QR код для авторизации"
+					title="Просканируйте QR код для авторизации"
+			>
+		</a>
+		<CountdownTimer
+				v-if="fetchedData.expires_at"
+				:targetDate="fetchedData.expires_at"
+				title="Истечет через"
+				endTitle="Действие кода закончилось"
+				:showColumns="{ days: false, hours: false, minutes: true, seconds: true }"
+		/>
+	</div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.qr-code {
+	@apply flex mt-4;
+}
+</style>

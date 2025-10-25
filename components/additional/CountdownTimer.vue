@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
+const emit = defineEmits(['activeParentFunc']);
+
 const props = defineProps({
 	targetDate: {
 		type: String,
@@ -13,7 +15,16 @@ const props = defineProps({
 	endTitle: {
 		type: String,
 		default: 'Время истекло!'
-	}
+	},
+	showColumns: {
+		type: Array,
+		default: {
+			days: true,
+			hours: true,
+			minutes: true,
+			seconds: true,
+		},
+	},
 })
 
 const timeRemaining = ref(0);
@@ -24,6 +35,10 @@ const calculateTimeRemaining = () => {
 	const target = new Date(props.targetDate).getTime();
 	const now = new Date().getTime();
 	timeRemaining.value = Math.max(0, target - now);
+
+	if (timeRemaining.value === 0) {
+		emit('activeParentFunc');
+	}
 }
 
 // Форматируем время для отображения
@@ -75,26 +90,40 @@ onUnmounted(() => {
 
 <template>
 	<div class="countdown-timer">
-		<h2 v-if="title">{{ title }}</h2>
-		<div class="timer-display">
-			<div class="time-unit">
-				<span class="time-value">{{ formattedTime.days }}</span>
-				<span class="time-label">дней</span>
+		<template v-if="timeRemaining > 0">
+			<h2 v-if="title">{{ title }}</h2>
+			<div class="timer-display">
+				<div
+						v-if="showColumns.days"
+						class="time-unit"
+				>
+					<span class="time-value">{{ formattedTime.days }}</span>
+					<span class="time-label">дней</span>
+				</div>
+				<div
+						class="time-unit"
+						v-if="showColumns.hours"
+				>
+					<span class="time-value">{{ formattedTime.hours }}</span>
+					<span class="time-label">часов</span>
+				</div>
+				<div
+						class="time-unit"
+						v-if="showColumns.minutes"
+				>
+					<span class="time-value">{{ formattedTime.minutes }}</span>
+					<span class="time-label">минут</span>
+				</div>
+				<div
+						class="time-unit"
+						v-if="showColumns.seconds"
+				>
+					<span class="time-value">{{ formattedTime.seconds }}</span>
+					<span class="time-label">секунд</span>
+				</div>
 			</div>
-			<div class="time-unit">
-				<span class="time-value">{{ formattedTime.hours }}</span>
-				<span class="time-label">часов</span>
-			</div>
-			<div class="time-unit">
-				<span class="time-value">{{ formattedTime.minutes }}</span>
-				<span class="time-label">минут</span>
-			</div>
-			<div class="time-unit">
-				<span class="time-value">{{ formattedTime.seconds }}</span>
-				<span class="time-label">секунд</span>
-			</div>
-		</div>
-		<div v-if="timeRemaining <= 0" class="expired-message">
+		</template>
+		<div v-else-if="timeRemaining <= 0" class="expired-message">
 			{{ endTitle }}
 		</div>
 	</div>
@@ -106,7 +135,6 @@ onUnmounted(() => {
 
 	text-align: center;
 	padding: 2rem;
-	margin: 2rem 0;
 }
 
 .countdown-timer h2 {
@@ -147,7 +175,6 @@ onUnmounted(() => {
 .expired-message {
 	font-size: 2rem;
 	font-weight: bold;
-	margin-top: 1rem;
 	animation: pulse 1.5s infinite;
 }
 
