@@ -74,23 +74,14 @@ const statusEffectForShow = computed(() => {
 					<a :href="`https://www.twitch.tv/${boardGameStore.playersOnline[element.user.id]}`" target="_blank">Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></a>
 				</template>
 			</span>
+			<span class="field">
+				Итоговый результат: {{ element.full_points }}
+			</span>
 			<span
 					v-if="element.full_points && element.seconds"
 					class="field"
 			>
 				Очков в час: {{ Math.round((element.full_points / element.seconds) * 3600) }}
-			</span>
-			<span class="field">
-				Текущий стрик: {{ element.streak }}
-			</span>
-			<span class="field">
-				Итоговый результат: {{ element.full_points }}
-			</span>
-			<span
-					v-if="theme === 'default'"
-					class="field"
-			>
-				Количество очков: {{ element.points }}
 			</span>
 			<span
 					v-if="theme === 'default'"
@@ -98,6 +89,15 @@ const statusEffectForShow = computed(() => {
 			>
 				Позиция на поле: {{ element.position ? element.position : 'Ходы не осуществлялись' }}
 			</span>
+			<span class="field">
+				Текущий стрик: {{ element.streak }}
+			</span>
+<!--			<span-->
+<!--					v-if="theme === 'default'"-->
+<!--					class="field"-->
+<!--			>-->
+<!--				Количество очков: {{ element.points }}-->
+<!--			</span>-->
 			<span class="field">
 				Статус: <template v-if="element.active">Участвует</template><template v-else>Не участвует <span v-if="element.active.not_active_reason">{{ element.active.not_active_reason }}</span></template>
 			</span>

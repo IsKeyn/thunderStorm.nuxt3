@@ -114,9 +114,9 @@ const getStatusInterval = ref(null);
 onMounted(() => {
 	getTimerStatus();
 
-	getStatusInterval.value = setInterval(() => {
-		getTimerStatus();
-	}, 15000);
+	// getStatusInterval.value = setInterval(() => {
+	// 	getTimerStatus();
+	// }, 15000);
 });
 
 onUnmounted(() => {
@@ -395,6 +395,22 @@ const formattedLimitTime = computed(() => {
 		secs.toString().padStart(2, '0')
 	].join(':');
 })
+
+watch(() => isRunning.value, () => {
+	if (getStatusInterval.value) {
+		clearInterval(getStatusInterval.value);
+	}
+
+	if (isRunning.value) {
+		getStatusInterval.value = setInterval(() => {
+			getTimerStatus();
+		}, 15000);
+	} else {
+		getStatusInterval.value = setInterval(() => {
+			getTimerStatus();
+		}, 300000);
+	}
+}, { immediate: true });
 </script>
 
 <template>
