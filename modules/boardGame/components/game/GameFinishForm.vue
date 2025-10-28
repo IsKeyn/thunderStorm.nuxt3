@@ -35,6 +35,10 @@ const props = defineProps({
 		type: Number,
 		default: 1,
 	},
+	gameType: { // Тип игры 0 - переданная игра, 1 - ультра-мошна
+		type: Number,
+		default: null,
+	},
 	doType: {
 		type: String,
 		default: 'update',
@@ -189,7 +193,15 @@ const sendRequest = async () => {
 
 			form.value.comment.value = null;
 
-			emit('updateData');
+			// Обновляем данные игрока, в данном случае, чтобы обновить очки
+			await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+
+			if (props.type === 2) { // Если игра пройдена переводим игрока на шаг 1
+				emit('updateData', 1);
+			} else {
+				emit('updateData');
+			}
+
 			emit('toggleFormVisible');
 		}
 	} catch (e) {
@@ -200,6 +212,10 @@ const sendRequest = async () => {
 
 const pointsForFinishGame = computed(() => {
 	let resultPoints = props.points;
+
+	if (props.gameType === 0) {
+		resultPoints = resultPoints / 2;
+	}
 
 	if (props.streak) {
 		resultPoints = Math.round(resultPoints + (resultPoints/100 * (props.streak * 2)));
@@ -262,8 +278,10 @@ const pointsForFinishGame = computed(() => {
 			/>
 
 			<div v-if="props.doType === 'update'" class="item-box">
-				<template v-if="type === 1">При рероле игры, вы потеряете {{ rerolled_points }} очков, а также накомленный стрик</template>
-				<template v-if="type === 2">За прохождение игры, вам будут начислены {{ pointsForFinishGame }} очков, очки подсчитаны с учетом вашего стрика, который сейчас равен {{ streak }}</template>
+				<template v-if="type === 1">При рероле игры, вы потеряете {{ rerolled_points }} очков, а также накомленный стрик x{{ streak }}</template>
+				<template v-if="type === 2">
+					За прохождение игры, вам будут начислены {{ pointsForFinishGame }} очков, очки подсчитаны с учетом вашего стрика, который сейчас равен x{{ streak }}
+				</template>
 				<template v-if="type === 3">Используйте данную кнопку, если передаете игру другому игроку</template>
 			</div>
 			<div class="flex">

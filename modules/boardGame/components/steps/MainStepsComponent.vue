@@ -23,7 +23,7 @@ const {
 
 const route = useRoute();
 
-const setPageName = (name) => {
+const setPageNameFunc = (name) => {
 	emit('setPageName', name);
 }
 </script>
@@ -37,7 +37,7 @@ const setPageName = (name) => {
 				<template v-if="isEmailVerified">
 					<PlayerSteps
 							v-if="Object.keys(userStore.player).length > 0"
-							@setPageName="setPageName"
+							@setPageName="setPageNameFunc($event)"
 					/>
 					<JoinTheGame v-else />
 				</template>

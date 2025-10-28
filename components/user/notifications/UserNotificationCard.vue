@@ -15,7 +15,7 @@ const { sendApiRequest } = api();
 const emit = defineEmits(['updateData']);
 
 const setViewed = async (id) => {
- await sendApiRequest('auth/notification/set-viewed', 'POST', { id });
+ await sendApiRequest('auth/notification/set-viewed', 'POST', { id }, 'setUserNotificationLikeViewed', 'small');
  emit('updateData');
 }
 </script>
@@ -54,6 +54,10 @@ const setViewed = async (id) => {
 
 	&.not-viewed {
 		@apply bg-[var(--second-active-color)];
+
+		.info {
+			@apply text-[var(--main-text-color)];
+		}
 	}
 
 	img {
@@ -61,7 +65,7 @@ const setViewed = async (id) => {
 	}
 
 	.info {
-		@apply pl-3 pr-3 text-[var(--main-text-color)] w-full;
+		@apply pl-3 pr-3 text-[var(--main-dark-text-color)] w-full;
 
 		.header {
 			@apply

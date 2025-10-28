@@ -235,7 +235,7 @@ onMounted(() => {
 						@afterChangeAvatar="refresh"
 				/>
 				<div class="social">
-					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
+					<NuxtLink class="btn btn-simple" v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
 						Twitch канал <font-awesome-icon class="ml-2" icon="fa-brands fa-twitch" />
 					</NuxtLink>
 <!--					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">-->
@@ -390,7 +390,7 @@ onMounted(() => {
 				@apply mt-[1rem] flex justify-center gap-1;
 
 				a {
-					@apply text-[var(--main-text-color)] p-2 bg-[var(--second-block-color)] flex justify-center items-center;
+					@apply text-[var(--main-dark-text-color)] p-2 bg-[var(--second-block-color)] flex justify-center items-center;
 
 					&:hover {
 						@apply bg-[var(--main-hover-color)];

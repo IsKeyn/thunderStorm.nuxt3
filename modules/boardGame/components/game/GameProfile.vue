@@ -3,6 +3,8 @@ import GamblingGame from '@/components/games/GamblingGame.vue'
 import CurrentGameCard from '@/modules/boardGame/components/game/CurrentGameCard.vue';
 import EditorForPlayerGamesList from '@/components/boardGame/game/EditorForPlayerGamesList.vue';
 
+const emit = defineEmits(['setStep']);
+
 import { ref } from "vue";
 
 import { helper } from '@/composables/helper.js'
@@ -27,6 +29,7 @@ const requestName = 'getBoardGameGamblingGameGameList';
 
 const selectedPlatform = ref(null);
 const hiddenRefresh = ref(false);
+const check = ref(false);
 
 const {
 	data: requestData,
@@ -46,6 +49,15 @@ const {
 			);
 
 			hiddenRefresh.value = false;
+
+			if (check.value) {
+				check.value = false;
+
+				if (!response.player.current_game) {
+					emit('setStep', 1);
+				}
+			}
+
 			return response || null;
 		},
 		{
@@ -116,6 +128,14 @@ const listDescription = computed(() => {
 			return 'Золотая коллекция - список игр, который включает отобранные игры, которые считаются простыми';
 	}
 });
+
+const refreshDataWithCheck = (setCheck = false) => {
+	if (setCheck) {
+		check.value = true;
+	}
+
+	refresh();
+}
 </script>
 
 <template>
@@ -129,12 +149,12 @@ const listDescription = computed(() => {
 		{{ fetchedData.status_message }}
 	</div>
 	<div
-			v-else-if="fetchedData && fetchedData.games && fetchedData.games.length > 0"
+			v-else-if="fetchedData"
 			class="relative"
 	>
 		<div
 				class="platforms-container"
-				v-if="selectPlatformAvailable && (!fetchedData.player.current_game || (fetchedData.player.current_game && editListShow === true))"
+				v-if="selectPlatformAvailable && fetchedData.games && fetchedData.games.length > 0 && (!fetchedData.player.current_game || (fetchedData.player.current_game && editListShow === true))"
 		>
 			<div
 					:class="['platform', selectedPlatform === null ? 'active' : '']"
@@ -168,14 +188,15 @@ const listDescription = computed(() => {
 					:showOtherPlayersActions="true"
 					:showTitle="false"
 					@showPlayer="$emit('showPlayer', $event)"
-					@updateData="refresh"
+					@updateData="refreshDataWithCheck($event)"
 					@showEditList="editListToggle"
 			/>
-			<template v-else>
+			<template v-else-if="!fetchedData.player.timer_status.reached_the_limit">
 				<div v-if="listDescription" class="item-box">
 					{{ listDescription }}
 				</div>
 				<GamblingGame
+						v-if="fetchedData.games"
 						:items="fetchedData.games"
 						roll_count="1"
 						:requestObj="requestObj"
@@ -195,6 +216,9 @@ const listDescription = computed(() => {
 					Редактировать список
 				</button>
 			</template>
+			<div class="item-box" v-else-if="fetchedData.player.timer_status.reached_the_limit">
+				Вы достигли лимита таймера и более не можете использовать рулетку игр
+			</div>
 		</template>
 	</div>
 </template>

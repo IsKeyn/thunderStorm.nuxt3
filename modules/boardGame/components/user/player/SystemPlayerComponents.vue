@@ -19,7 +19,6 @@ const {
 			if (
 					userStore.user
 					&& Object.keys(userStore.user).length > 0
-					&& (Object.keys(userStore.player).length === 0 || userStore.player.user_id !== userStore.user.id)
 			) {
 				const response = await Promise.resolve(
 						sendApiRequest(`board-game/v2/player/current/${route.params.slug}`, 'GET', {}, requestName, 'small')
@@ -46,7 +45,6 @@ watch(() => userStore.user, () => {
 	if (
 			userStore.user
 			&& Object.keys(userStore.user).length > 0
-			&& (Object.keys(userStore.player).length === 0 || userStore.player.user_id !== userStore.user.id)
 	) {
 		refresh();
 	}

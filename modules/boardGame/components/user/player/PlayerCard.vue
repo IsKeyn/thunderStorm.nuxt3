@@ -93,7 +93,10 @@ const statusEffectForShow = computed(() => {
 			>
 				Позиция на поле: {{ element.position ? element.position : 'Ходы не осуществлялись' }}
 			</span>
-			<span class="field">
+			<span
+					v-if="theme === 'default'"
+					class="field"
+			>
 				Стрик: x{{ element.streak }}
 			</span>
 <!--			<span-->

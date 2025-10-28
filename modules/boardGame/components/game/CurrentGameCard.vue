@@ -8,7 +8,7 @@ import { inject } from "vue";
 
 const layoutMethods = inject('layoutMethods')
 
-const emit = defineEmits(['setStep', 'toggleFormVisible', 'updateData']);
+const emit = defineEmits(['toggleFormVisible', 'updateData']);
 
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
@@ -76,6 +76,14 @@ const toggleFormVisible = (typeValue = null) => {
 			:showStatusBar="false"
 	/>
 
+	<div v-if="currentGame.type === 0" class="item-box">
+		Эта игра передана вам на прохождении другим участником ивента, при её прохождении вы не трекаете время.
+		Но чтобы посчитать время, затраченное на прохождение вы можете создать отдельный таймер, используя страницу&nbsp;<nuxt-link class="underline" target="_blank" :to="`/e/${route.params.slug}/timers`">таймера</nuxt-link>
+	</div>
+	<div v-if="currentGame.type === 1" class="item-box">
+		Это игра передана вам "Ультра мошной", при её рероле вы потеряете 70% от стоимости игры
+	</div>
+
 	<div class="mt-5" v-if="showActionButtons && !showForm">
 		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(1)">Рерольнуть</button>
 		<button v-if="currentGame.game.coop && coopInteraction.length === 0" class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible('coop')">Пригласить в кооп</button>
@@ -101,11 +109,12 @@ const toggleFormVisible = (typeValue = null) => {
 			v-if="showForm && type !== 'coop'"
 			:game="currentGame.game.game"
 			:points="currentGame.game.computed_points ? currentGame.game.computed_points : currentGame.game.points"
-			:rerolled_points="currentGame.game.rerolled_points"
+			:rerolled_points="currentGame.rerolled_points"
 			:streak="player.streak"
 			:type="type"
+			:gameType="currentGame.type"
 			@toggleFormVisible="toggleFormVisible"
-			@updateData="emit('updateData')"
+			@updateData="emit('updateData', $event)"
 	/>
 	<template v-if="showOtherPlayersActions">
 		<span class="user-interface-title text-left">Действия других игроков с данной игрой</span>

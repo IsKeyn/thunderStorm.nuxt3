@@ -45,7 +45,7 @@ const form = ref({});
 
 form.value.comment = {
 	name: 'Комментарий',
-			value: 'Приглашаю тебя пройти игру ',
+			value: 'Приглашаю тебя пройти в коопе игру ',
 			type: 'textarea',
 			placeholder: '',
 			validateRules: 'minLength_2, maxLength_5000',

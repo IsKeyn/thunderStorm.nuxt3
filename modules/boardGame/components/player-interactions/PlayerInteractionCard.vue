@@ -40,6 +40,7 @@ const name = computed(() => {
 		case 'switchGame': return 'Обмен игрой';
 		case 'battleForPoints': return 'Битва за очки';
 		case 'inviteToCoop': return 'Приглашение в кооп';
+		case 'playForMe': return 'Пройди игру за меня';
 	}
 });
 
@@ -60,8 +61,6 @@ const statusClass = computed(() => {
 });
 
 /* Функции изменения запросов */
-// TODO добавить Вы уверены? да нет
-
 const startAction = (type) => {
 	choiceAlert(
 			{

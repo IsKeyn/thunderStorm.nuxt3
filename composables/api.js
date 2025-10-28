@@ -102,8 +102,9 @@ export function api() {
         method,
         body,
         requestName = null,
-        preloaderType = null,
-        loadListType = 'useAsyncData'
+        preloaderType = null, // fullscreen, fullscreenTransparent, small
+        loadListType = 'useAsyncData',
+        lazy = false
     ) => {
         const loadState = useLoadStateStore();
 
@@ -147,7 +148,14 @@ export function api() {
                 opts.query = body;
             }
 
-            const response = await $fetch(request, opts);
+            let response = null;
+
+            if (lazy === true) {
+                const { pending, data, error } = useLazyFetch(request, opts);
+                response = data;
+            } else {
+                response = await $fetch(request, opts);
+            }
 
             if (response) {
                 if (requestName && loadState.loadList[requestName]) {

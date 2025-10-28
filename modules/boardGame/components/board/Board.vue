@@ -232,7 +232,7 @@ const hasUsed = (position) => {
 <template>
 	<div v-if="fetchedData">
 		<div
-				v-if="isAuth && showEffectsBox"
+				v-if="isAuth"
 				class="dice-and-info-block"
 		>
 			<Dices

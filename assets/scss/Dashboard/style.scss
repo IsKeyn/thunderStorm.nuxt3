@@ -70,4 +70,8 @@ body {
 // Контейнер используемый для вывода сообщений
 .item-box {
   @apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex;
+
+  a {
+    @apply text-[var(--main-dark-text-color)];
+  }
 }

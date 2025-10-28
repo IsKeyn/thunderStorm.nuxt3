@@ -30,5 +30,5 @@ const setPageName = (name) => {
 			:breadCrumbs="breadCrumbsArray"
 
 	/>
-	<MainStepsComponent @setPageName="setPageName" />
+	<MainStepsComponent @setPageName="setPageName($event)" />
 </template>

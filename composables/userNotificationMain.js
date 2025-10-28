@@ -27,7 +27,7 @@ export function userNotificationMain() {
     }
 
     const setUserNotification = (data) => {
-        if (data.notification_count) {
+        if (data?.notification_count) {
             const notificationsCount = sessionStorage.getItem('notificationsCount');
             useNotifications.currentUserNotificationCount = data.notification_count;
 
@@ -52,7 +52,7 @@ export function userNotificationMain() {
             }
         }
 
-        if (data.message_count) {
+        if (data?.message_count) {
             const sessionStorageName = 'messagesCount';
 
             const messagesCount = sessionStorage.getItem(sessionStorageName);

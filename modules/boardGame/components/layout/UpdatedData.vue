@@ -15,23 +15,24 @@ const getUpdatedData = async() => {
 			'GET',
 			{ boardGameId: boardGameStore.boardGameInfo.id },
 			requestName,
-			null
+			null,
+			'func',
+			true
 	);
 
 	boardGameStore.playersOnline = response;
 }
 
+let boardGameId = null;
+
 watch(() => boardGameStore.boardGameInfo, () => {
-	if (boardGameStore.boardGameInfo && boardGameStore.boardGameInfo.id) {
+	if (boardGameId !== boardGameStore.boardGameInfo.id) {
+		boardGameId = boardGameStore.boardGameInfo.id;
 		getUpdatedData();
 	}
 }, { deep: true });
 
 onMounted(() => {
-	if (boardGameStore.boardGameInfo && boardGameStore.boardGameInfo.id) {
-		getUpdatedData();
-	}
-
 	setInterval(() => {
 		getUpdatedData();
 	}, 300000);

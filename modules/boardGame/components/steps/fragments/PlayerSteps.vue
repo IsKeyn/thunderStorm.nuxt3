@@ -38,26 +38,21 @@ const lastStep = computed(() => {
 
 const currentStep = ref(1);
 
+const setStep = (stepNumber) => {
+	emit('setPageName', steps.value[stepNumber].title);
+	currentStep.value = stepNumber;
+}
+
 const setCurrentStep = () => {
 	if (userStore.player) {
+		/* Шаг 3 - Профиль игры */
+		if (userStore.player.current_game) { setStep(3); return; }
+
+		/* Шаг 2 - Игровое поле */
+		if (userStore.player?.dice_roll_count > 0) { setStep(2); return; }
+
 		/* Шаг 1 - Рулетка предметов */
-		if (userStore.player?.item_roll_count > 0) {
-			const stemNumber = 1;
-			emit('setPageName', steps.value[stemNumber].title)
-			return stemNumber;
-		}
-
-		if (userStore.player?.dice_roll_count > 0) {
-			const stemNumber = 2;
-			emit('setPageName', steps.value[stemNumber].title)
-			return stemNumber;
-		}
-
-		if (userStore.player.current_game) {
-			const stemNumber = 3;
-			emit('setPageName', steps.value[stemNumber].title)
-			return stemNumber;
-		}
+		if (userStore.player?.item_roll_count > 0) { setStep(1); return; }
 	}
 };
 
@@ -69,14 +64,14 @@ const changeStep = (direction) => {
 			const nextStep = currentStep.value + 1;
 
 			if (steps.value[nextStep]) {
-				currentStep.value = nextStep;
+				setStep(nextStep);
 			}
 			break;
 		case 'prev':
 			const prevStep = currentStep.value - 1;
 
 			if (steps.value[prevStep]) {
-				currentStep.value = prevStep;
+				setStep(prevStep);
 			}
 			break;
 	}
@@ -113,8 +108,20 @@ const tabsGameElements = [
 	<layout-InfoBlock
 			v-if="currentStep"
 			:text="steps[currentStep].description"
-			classes="!mb-6"
+			classes="!mb-0"
 	/>
+	<div class="text-right">
+		<button
+				v-if="currentStep !== Number(firstStep)"
+				class="btn btn-simple"
+				@click="changeStep('prev')"
+		><font-awesome-icon icon="fa-solid fa-arrow-left" /> Шаг назад</button>
+		<button
+				v-if="currentStep !== Number(lastStep)"
+				class="btn btn-simple ml-2"
+				@click="changeStep('next')"
+		>Шаг вперед <font-awesome-icon icon="fa-solid fa-arrow-right" /></button>
+	</div>
 
 	<div v-if="currentStep === 1">
 		<Tabs
@@ -140,7 +147,7 @@ const tabsGameElements = [
 				defaultCurrentTab="game"
 		>
 			<template #tab-game>
-				<GameProfile />
+				<GameProfile @setStep="setStep($event)" />
 			</template>
 			<template #tab-game-list>
 				<div class="max-w-[1400px] m-auto">
@@ -148,19 +155,6 @@ const tabsGameElements = [
 				</div>
 			</template>
 		</Tabs>
-	</div>
-
-	<div class="text-center mt-6">
-		<button
-				v-if="currentStep !== Number(firstStep)"
-				class="btn btn-simple mr-2"
-				@click="changeStep('prev')"
-		><font-awesome-icon icon="fa-solid fa-arrow-left" /> Шаг назад</button>
-		<button
-				v-if="currentStep !== Number(lastStep)"
-				class="btn btn-simple"
-				@click="changeStep('next')"
-		>Шаг вперед <font-awesome-icon icon="fa-solid fa-arrow-right" /></button>
 	</div>
 </template>
 

@@ -13,6 +13,8 @@ const titles = ref(
 			},
 			user_id: {
 				name: 'ID пользователя',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 			board_game_game_list_id: {
 				name: 'ID игры в списке доступных на эвенте игр',
@@ -21,7 +23,17 @@ const titles = ref(
 				name: 'Текущий статус',
 			},
 			board_game_id: {
-				name: 'ID настольной игры',
+				name: 'Ивент',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
+			},
+			type: {
+				name: 'Тип',
+			},
+			from_user_id: {
+				name: 'От кого',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 			comment_id: {
 				name: 'ID комментария',
@@ -31,6 +43,8 @@ const titles = ref(
 			},
 			created_by: {
 				name: 'Создал',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 		}
 );
