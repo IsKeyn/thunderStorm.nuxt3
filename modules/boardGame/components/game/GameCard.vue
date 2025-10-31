@@ -79,6 +79,14 @@ const getLongPlayLink = () => {
 
 	return urlSearch;
 }
+
+const getHours = (minutes) => {
+	let formattedTime = '';
+
+	formattedTime += Math.floor(minutes / 60) + ':' + minutes % 60;
+
+	return formattedTime;
+}
 </script>
 
 <template>
@@ -132,6 +140,8 @@ const getLongPlayLink = () => {
 								title="Открыть профайл"
 						>{{ element.game.added_by_user.name }}</router-link>
 						</span>
+						<span class="line-info" v-if="element?.game?.difficult">Сложность: {{ element.game.difficult }}%</span>
+						<span class="line-info" v-if="element?.game?.game_completion_time">время прохождения (HLTB): {{ getHours(element.game.game_completion_time) }}</span>
 						<span class="line-info mt-4" v-if="element.game.description">{{ element.game.description }}</span>
 					</div>
 					<div v-if="showInfoButtons">

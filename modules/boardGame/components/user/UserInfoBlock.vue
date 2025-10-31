@@ -107,16 +107,16 @@ const userMenuFunc = (type) => {
 					<div @click="userMenuFunc('profile');">
 						<font-awesome-icon icon="fa-solid fa-user" class="mr-2" /> Профиль
 					</div>
-					<div @click="userMenuFunc('messages');">
-						<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Личные сообщения
-						<span v-if="
-							useNotifications
-							&& useNotifications.currentUserMessagesCount
-							&& useNotifications.currentUserMessagesCount > 0"
-						>
-							({{ useNotifications.currentUserMessagesCount }})
-						</span>
-					</div>
+<!--					<div @click="userMenuFunc('messages');">-->
+<!--						<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Личные сообщения-->
+<!--						<span v-if="-->
+<!--							useNotifications-->
+<!--							&& useNotifications.currentUserMessagesCount-->
+<!--							&& useNotifications.currentUserMessagesCount > 0"-->
+<!--						>-->
+<!--							({{ useNotifications.currentUserMessagesCount }})-->
+<!--						</span>-->
+<!--					</div>-->
 					<div @click="userMenuFunc('notifications');">
 						<font-awesome-icon icon="fa-solid fa-bell" class="mr-2" /> Оповещения
 						<span v-if="
@@ -149,6 +149,7 @@ const userMenuFunc = (type) => {
 		<template v-else>
 			<user-AuthIconComponent
 					class="ml-[25px]"
+					parentClasses="!w-[4rem] !h-[4rem] !mt-[0px] text-[var(--main-dark-text-color)]"
 			/>
 		</template>
 

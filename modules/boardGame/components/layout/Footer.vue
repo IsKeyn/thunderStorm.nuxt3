@@ -1,4 +1,18 @@
 <script setup>
+import Share from '@/components/actions/Share.vue';
+
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
+
+import { api } from '@/composables/api.js';
+const { publicUrl } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { media } from '@/composables/media.js'
+const { getResizeImg } = media();
+
 const { getSettingFirstValue } = settings();
 
 const lifespan = computed(() => {
@@ -9,27 +23,6 @@ const lifespan = computed(() => {
 const domain = computed(() => {
 	return getSettingFirstValue('domain');
 });
-
-const arColumnsTypes = ref([
-	'footer_column_1',
-	'footer_column_2',
-	'footer_column_3'
-]);
-
-// Модалки
-import Modal from '@/components/modals/Modal.vue';
-
-const activeFeedbackModal = ref(false);
-
-const toggleFeedbackModal = () => {
-	activeFeedbackModal.value = !activeFeedbackModal.value;
-}
-
-const activeSendBugModal = ref(false);
-
-const toggleSendBugModal = () => {
-	activeSendBugModal.value = !activeSendBugModal.value;
-}
 </script>
 
 <template>
@@ -39,51 +32,40 @@ const toggleSendBugModal = () => {
 				<font-awesome-icon :icon="['far', 'copyright']" /> <a :href="`https://${domain}`" rel="first">{{ domain }}</a> {{ lifespan }}
       </span>
 			<span>
-        Автор и разработчик: <a href="#" title="Написать письмо администратору сайта" @click.prevent="toggleFeedbackModal()">{{ getSettingFirstValue('creator') }}</a>
+        Автор и разработчик: {{ getSettingFirstValue('creator') }}
       </span>
-			<!--			<span class="mt-4">-->
-			<!--				<a href="#" title="Написать письмо администратору сайта" @click.prevent="toggleFeedbackModal()">Обратная связь</a>-->
-			<!--			</span>-->
-			<!--			<span>-->
-			<!--				<a href="#" title="Сообщить администрации об ошибке на сайте" @click.prevent="toggleSendBugModal()">Сообщить об ошибке</a>-->
-			<!--			</span>-->
 		</div>
 		<div class="cutting" />
-		<div>
-			<a href="/e/" title="Список событий">Список событий</a>
+		<div class="menu-block col-span-2">
+			<nuxt-link :to="'/e/' + route.params.slug + '/rules'" target="_blank" title="Правила ивента">Правила</nuxt-link>
+			<nuxt-link :to="'/e/' + route.params.slug + '/game?tab=game-list'" target="_blank" title="Игры ивента">Игры</nuxt-link>
+			<nuxt-link :to="'/e/' + route.params.slug + '/inventory?tab=item-list'" target="_blank" title="Предметы ивента">Предметы</nuxt-link>
+			<nuxt-link :to="'/e/' + route.params.slug + '/logs'" target="_blank" title="Логи ивента">Логи</nuxt-link>
 		</div>
 		<div class="cutting" />
-		<MenuByTypes
-				:arColumnsTypes="arColumnsTypes"
-				parentClass="menu-block col-span-2"
-		/>
+		<div class="menu-block col-span-2">
+			<nuxt-link to="https://t.me/game_events_tr" target="_blank" title="Телеграм канал">Телеграм-канала</nuxt-link>
+			<a href="/e/" title="Список событий">Список ивентов</a>
+			<nuxt-link to="/" target="_blank" title="Телеграм канал">Пользовательское соглашение</nuxt-link>
+		</div>
+		<div class="cutting" />
 		<div class="cutting" />
 		<div class="footer-icon-block">
-			<router-link to="/site_map" class="site-map"><font-awesome-icon :icon="['fas', 'map']" /></router-link>
+			<Share
+					:pageUrl="boardGameStore.boardGameInfo?.slug ? `${publicUrl}/e/${boardGameStore.boardGameInfo?.slug}` : null"
+					itemClass="text-[1rem]"
+					:title="boardGameStore.boardGameInfo?.name"
+					:description="boardGameStore.boardGameInfo?.description"
+					:image="getResizeImg(boardGameStore.boardGameInfo?.media, 500)"
+			/>
 		</div>
 	</footer>
-	<Modal
-			:showOpenModal="activeFeedbackModal"
-			size="small"
-			modalId="feedback-form"
-			@toggleModal="toggleFeedbackModal"
-	>
-		Форма фидбека
-	</Modal>
-	<Modal
-			:showOpenModal="activeSendBugModal"
-			size="small"
-			modal-id="send-bug-form"
-			@toggleModal="toggleSendBugModal"
-	>
-		Форма отправки бага
-	</Modal>
 </template>
 
 <style lang="scss" scoped>
 footer {
 	@apply
-		pt-[25px] pr-[var(--main-right-padding)] pb-[26px] pl-[var(--main-left-padding)]
+		pt-[2rem] pr-[var(--main-right-padding)] pb-[2rem] pl-[var(--main-left-padding)]
 		bg-[var(--second-block-color)] text-[var(--main-dark-text-color)]
 		grid grid-cols-12
 	;
@@ -104,15 +86,36 @@ footer {
 		@apply relative col-span-1;
 	}
 
-	.footer-icon-block {
-		@apply relative col-span-1 text-right;
+	.menu-block {
+		span {
+			&.menu-category-title {
+				@apply block pb-[1rem] text-[18px] font-semibold uppercase;
+			}
+		}
 
-		.site-map {
-			@apply text-[35px];
+		a {
+			@apply block text-[16px] mb-[10px];
+		}
+	}
+
+	.footer-icon-block {
+		@apply
+			col-span-1
+			flex relative
+			justify-end items-center
+			min-w-[40px] h-[40px]
+			mr-[2px]
+			pr-[10px] pl-[10px]
+			cursor-pointer
+			text-[2.5rem]
+		;
+
+		.icon-link-block {
+			@apply text-[2.5rem] cursor-pointer;
 			transition: 0.2s;
 
 			&:hover {
-				@apply text-[40px];
+				@apply text-[3rem];
 			}
 		}
 	}
@@ -135,15 +138,5 @@ footer {
 			}
 		}
 	}
-}
-</style>
-
-
-<style lang="scss" scoped>
-footer {
-	@apply
-		pt-[1rem] pb-[1rem] pl-[var(--main-left-padding)] pr-[var(--main-right-padding)]
-
-	;
 }
 </style>
