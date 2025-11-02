@@ -3,6 +3,7 @@ import { watch } from 'vue'
 
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ResentVerifyEmail from '@/components/user/fragments/ResentVerifyEmail.vue';
+import SocialAuthComponent from '@/components/user/auth/SocialAuthComponent.vue';
 
 import { useUserStore } from '@/stores/user';
 import { api } from '@/composables/api.js';
@@ -278,6 +279,7 @@ const getUserData = async () => {
 			</div>
 		</template>
 	</form>
+	<SocialAuthComponent class="mt-2" />
 </template>
 
 <style lang="scss">

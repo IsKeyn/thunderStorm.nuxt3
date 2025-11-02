@@ -1,6 +1,7 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ResentVerifyEmail from '@/components/user/fragments/ResentVerifyEmail.vue';
+import SocialAuthComponent from '@/components/user/auth/SocialAuthComponent.vue';
 
 const route = useRoute();
 
@@ -274,6 +275,7 @@ const getUserData = async () => {
 					</a>
 				</div>
 			</div>
+			<SocialAuthComponent class="mt-2" />
 		</template>
 	</div>
 </template>

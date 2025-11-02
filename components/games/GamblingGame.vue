@@ -77,6 +77,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	rollCountZeroMessage: {
+		type: String,
+		default: 'У вас не осталось круток, выполните условия для получения новой крутки',
+	}
 });
 
 const items = ref(props.items);
@@ -300,7 +304,7 @@ const startSpin = (randomIndex) => {
 					v-if="roll_count === 0"
 					class="item-box w-full p-5"
 			>
-				У вас не осталось круток, выполните условия для получения новой крутки
+				{{ rollCountZeroMessage }}
 			</div>
 
 			<div

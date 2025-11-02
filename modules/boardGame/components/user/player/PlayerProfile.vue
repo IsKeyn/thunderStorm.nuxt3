@@ -116,7 +116,7 @@ const twitch = computed(() => {
 const tabsElements = ref([]);
 
 watch(() => boardGameStore.playersOnline, () => {
-	if (userInfo.value && userInfo.value?.user?.id && boardGameStore.playersOnline[userInfo.value.user.id]) {
+	if (userInfo.value && userInfo.value?.user?.id && boardGameStore?.playersOnline && boardGameStore?.playersOnline[userInfo.value.user.id]) {
 		setUnsetTwitchTab();
 	}
 }, { deep: true });
@@ -124,7 +124,7 @@ watch(() => boardGameStore.playersOnline, () => {
 const hasStream = ref(false);
 
 const setUnsetTwitchTab = () => {
-	if (!hasStream.value && userInfo.value && userInfo.value?.user?.id && boardGameStore.playersOnline[userInfo.value.user.id]) {
+	if (!hasStream.value && userInfo.value && userInfo.value?.user?.id && boardGameStore?.playersOnline && boardGameStore?.playersOnline[userInfo.value.user.id]) {
 		tabsElements.value.unshift({
 			id: 'stream',
 			title: 'Стрим',

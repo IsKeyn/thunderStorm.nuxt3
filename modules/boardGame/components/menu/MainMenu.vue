@@ -36,14 +36,14 @@ const menu = computed(() => {
 			icon: ['fa-solid', 'fa-people-group']
 		},
 		{
-			name: 'Расширенные',
+			name: 'Дополнительно',
 			path: '/e/' + route.params.slug + '/log-list/',
 			icon: ['fa-solid', 'fa-arrow-up-right-from-square'],
 			group: [
 				{
 					name: 'Таймеры',
 					path: '/e/' + route.params.slug + '/timers/',
-					icon: ['fa-solid', 'fa-rectangle-list'],
+					icon: ['fa-solid', 'fa-stopwatch'],
 				},
 				{
 					name: 'Логи',

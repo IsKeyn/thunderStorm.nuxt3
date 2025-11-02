@@ -131,6 +131,7 @@ const changePosition = (positionData, oldPositionNumber = null) => {
 										changePosition({ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition}, positionData.firstPosition.position);
 									} else {
 										showEffectsBox.value = true;
+										refreshNuxtData('boardGameCurrentPlayerInfoRequest');
 										refresh();
 									}
 								}
@@ -146,6 +147,7 @@ const changePosition = (positionData, oldPositionNumber = null) => {
 										changePosition({ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition}, positionData.firstPosition.position);
 									} else {
 										showEffectsBox.value = true;
+										refreshNuxtData('boardGameCurrentPlayerInfoRequest');
 										refresh();
 									}
 								}
@@ -343,6 +345,7 @@ const hasUsed = (position) => {
 			</table>
 		</div>
 	</div>
+	<ui-BigPreloader v-else-if="requestInProgress" />
 
 	<Modal
 			:showOpenModal="boxOpen"

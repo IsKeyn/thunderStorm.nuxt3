@@ -70,7 +70,7 @@ const statusEffectForShow = computed(() => {
 		<div class="info">
 			<span class="field name">
 				{{ element.user.name }}
-				<template v-if="boardGameStore.playersOnline[element.user.id]">
+				<template v-if="boardGameStore.playersOnline && boardGameStore.playersOnline[element.user.id]">
 					<a
 							class="twitch"
 							:href="`https://www.twitch.tv/${boardGameStore.playersOnline[element.user.id]}`"

@@ -2,10 +2,14 @@ export function helper() {
     const route = useRoute();
     const router = useRouter();
 
-    const filterByPairFieldValue = (obj, field, filteredValue) => {
+    const filterByPairFieldValue = (obj, field, filteredValue, singleValue = false) => {
         return Object.entries(obj).reduce((acc, [key, value]) => {
             if (value[field] === filteredValue) {
-                acc[key] = value;
+                if (singleValue) {
+                    acc = value;
+                } else {
+                    acc[key] = value;
+                }
             }
             return acc;
         }, {});

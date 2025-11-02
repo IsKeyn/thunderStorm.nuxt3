@@ -1,48 +1,28 @@
 <script setup>
-import { useUserStore } from '@/stores/user';
-const userStore = useUserStore();
+import JoinTheGameForm from '@/modules/boardGame/components/user/JoinTheGameForm.vue';
 
-import { api } from '@/composables/api.js'
-const { sendApiRequest } = api();
+import { useBoardGameStore } from '@/stores/boardGame';
+const boardGameStore = useBoardGameStore();
 
-import { notifications } from '@/composables/notifications.js';
-const { alert, error } = notifications();
+import { helper } from '@/composables/helper.js'
+const { filterByPairFieldValue } = helper();
 
-import { ref } from "vue";
-
-const requestInProgress = ref(false);
-
-const goIn = async () => {
-	requestInProgress.value = true;
-
-	try {
-		const body = {
-			board_game_id: props.boardGameId,
-		}
-
-		const response = await sendApiRequest('board-game/player/add', 'POST', body);
-
-		if (response) {
-			requestInProgress.value = false;
-
-			emit('updateBoardGameInfo');
-
-			alert(`Теперь вы участвуюте в игре ${props.boardGameInfo.name}`);
-		}
-	} catch (e) {
-		error(e);
-		requestInProgress.value = false;
-	}
-}
-
-// TODO добавить по закрытую игру, только по приглашениям настройка или только по "принятию" приглашениям
+const eventType = computed(() => {
+	return filterByPairFieldValue(boardGameStore.boardGameInfo.settings, 'code', 'type', true);
+});
 </script>
 
 <template>
-	<div class="text-center">
-		<button
-				class="btn btn-primary"
-				@click="goIn()"
-		>Участвовать в этой игре</button>
+	<div>
+		<template v-if="eventType">
+			<div class="item-box mt-2 mb-2" v-if="eventType.value === 'upon-request'">
+				Участие в ивенте по запросам. Отправьте запрос на участие в ивенте и его рассмотрит модератор
+			</div>
+			<div class="item-box mt-2 mb-2" v-if="eventType.value === 'registrationIsClose'">
+				Регистрация в ивенте закрыта
+			</div>
+		</template>
+
+		<JoinTheGameForm v-if="eventType?.value !== 'registrationIsClose'" />
 	</div>
 </template>

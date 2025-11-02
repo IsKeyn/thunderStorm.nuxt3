@@ -54,6 +54,8 @@ export function userFunctions() {
                 userStore.user = {};
 
                 requestInProgress.value = false;
+
+                location.reload();
             }
         } catch (e) {
             const errorsPromise = errorHandler(e);

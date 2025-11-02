@@ -54,7 +54,7 @@ const playersOnline = computed(() => {
 			/>
 
 			<ui-IconButton
-					v-if="Object.keys(boardGameStore.playersOnline).length > 0"
+					v-if="boardGameStore.playersOnline && Object.keys(boardGameStore.playersOnline).length > 0"
 					:faIcon="['fa-brands', 'fa-twitch']"
 					:hasFade="true"
 					buttonText="Участники онлайн"

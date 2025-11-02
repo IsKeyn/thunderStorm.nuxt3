@@ -5,18 +5,10 @@ import PieChart from '@/components/ui/charts/PieChart.vue';
 
 import { ref } from "vue";
 
-const emit = defineEmits(['loadingToggle', 'showPlayer']);
+const emit = defineEmits(['showPlayer']);
 
-const props = defineProps({
-	boardGameId: {
-		type: Number,
-		default: 1,
-	},
-	boardGameInfo: {
-		type: Object,
-		default: {},
-	},
-});
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -36,43 +28,25 @@ const {
 	sendApiRequest,
 } = api();
 
-const route = useRoute();
+const requestName = 'boardGameStats';
 
-const { data: requestData, pending: requestInProgress, refresh } = await useAsyncData(
-		'boardGameStats',
+const {
+	data: requestData,
+	pending: requestInProgress,
+	refresh
+} = await useAsyncData(
+		requestName,
 		async () => {
-			emit('loadingToggle', true);
-
-			let request = `${apiUrl.value}board-game/stats/get`;
-
 			const query = {
-				board_game_id: props.boardGameId,
+				slug: route.params.slug,
 				limit: 10,
 			};
 
-			const sessionCookie = useCookie(sessionCookieName.value);
+			const response = await Promise.resolve(
+					sendApiRequest('board-game/v2/stats/get', 'GET', query, requestName, '')
+			);
 
-			try {
-				const response = await $fetch(
-						request,
-						{
-							method: 'GET',
-							credentials: 'include',
-							query,
-							headers: {
-								Accept: 'application/json',
-								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-								Referer: publicUrl.value,
-							}
-						},
-				);
-
-				emit('loadingToggle', false);
-
-				return response;
-			} catch (e) {
-				errorHandler(e);
-			}
+			return response || null;
 		},
 		{
 			server: true, // выполнять только на сервере
@@ -210,7 +184,8 @@ const activityChartOptions = {
 </script>
 
 <template>
-	<template v-if="!requestInProgress">
+	<ui-BigPreloader v-if="requestInProgress" />
+	<template v-else-if="fetchedData">
 		<div
 				v-for="(data, key) in fetchedData"
 				:key="key"
@@ -278,6 +253,9 @@ const activityChartOptions = {
 				/>
 			</div>
 		</div>
+	</template>
+	<template v-else>
+		Данные отсутствуют
 	</template>
 </template>
 

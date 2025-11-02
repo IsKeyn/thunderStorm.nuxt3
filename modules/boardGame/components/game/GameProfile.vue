@@ -136,6 +136,14 @@ const refreshDataWithCheck = (setCheck = false) => {
 
 	refresh();
 }
+
+const roll_count = computed(() => {
+	if (fetchedData.value.player.step_count === 0 && fetchedData.value.player.item_roll_count === 0) {
+		return 1;
+	} else {
+		return 0;
+	}
+});
 </script>
 
 <template>
@@ -198,7 +206,7 @@ const refreshDataWithCheck = (setCheck = false) => {
 				<GamblingGame
 						v-if="fetchedData.games"
 						:items="fetchedData.games"
-						roll_count="1"
+						:roll_count="roll_count"
 						:requestObj="requestObj"
 						:easeOutType="1"
 						:requestParentData="requestInProgress"
@@ -206,6 +214,7 @@ const refreshDataWithCheck = (setCheck = false) => {
 						:itemHeight="130"
 						:editListAvailable="editListAvailable"
 						:showItemCount="true"
+						rollCountZeroMessage="Перед круткой рулетки игр вы должны использовать доступные крутки рулетки предметов, а такж использовать доступные ходы на игровом поле"
 						@funcAfterRollWithDelay2="refresh()"
 				/>
 				<button

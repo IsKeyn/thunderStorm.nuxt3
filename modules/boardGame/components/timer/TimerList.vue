@@ -6,6 +6,11 @@ const emit = defineEmits(['loadingToggle']);
 
 const route = useRoute();
 
+import { userFunctions } from '@/composables/userFunctions.js';
+const {
+	isAuth,
+} = userFunctions();
+
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
@@ -67,7 +72,7 @@ const updateTimerList = async () => {
 </script>
 
 <template>
-	<div>
+	<div v-if="isAuth">
 		<div class="timer-body">
 			<Timer
 					v-if="!requestInProgress"
@@ -82,6 +87,9 @@ const updateTimerList = async () => {
 		<AddTimerForm
 				@updateTimerList="updateTimerList"
 		/>
+	</div>
+	<div class="item-box">
+		Функционал доступен только авторизованному пользователю
 	</div>
 </template>
 

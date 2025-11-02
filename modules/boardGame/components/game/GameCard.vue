@@ -15,7 +15,8 @@ const {
 import { date } from '@/composables/date.js';
 const {
 	getFormattedDate,
-	getFormattedHoursFromSeconds
+	getFormattedHoursFromSeconds,
+	twoDigits,
 } = date();
 
 const props = defineProps({
@@ -83,7 +84,7 @@ const getLongPlayLink = () => {
 const getHours = (minutes) => {
 	let formattedTime = '';
 
-	formattedTime += Math.floor(minutes / 60) + ':' + minutes % 60;
+	formattedTime += twoDigits(Math.floor(minutes / 60)) + ':' + twoDigits(minutes % 60);
 
 	return formattedTime;
 }

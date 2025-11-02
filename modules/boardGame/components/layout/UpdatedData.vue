@@ -30,7 +30,7 @@ watch(() => boardGameStore.boardGameInfo, () => {
 		boardGameId = boardGameStore.boardGameInfo.id;
 		getUpdatedData();
 	}
-}, { deep: true });
+}, { deep: true, immediate: true });
 
 onMounted(() => {
 	setInterval(() => {

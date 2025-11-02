@@ -37,15 +37,15 @@ const domain = computed(() => {
 		</div>
 		<div class="cutting" />
 		<div class="menu-block col-span-2">
-			<nuxt-link :to="'/e/' + route.params.slug + '/rules'" target="_blank" title="Правила ивента">Правила</nuxt-link>
-			<nuxt-link :to="'/e/' + route.params.slug + '/game?tab=game-list'" target="_blank" title="Игры ивента">Игры</nuxt-link>
-			<nuxt-link :to="'/e/' + route.params.slug + '/inventory?tab=item-list'" target="_blank" title="Предметы ивента">Предметы</nuxt-link>
-			<nuxt-link :to="'/e/' + route.params.slug + '/logs'" target="_blank" title="Логи ивента">Логи</nuxt-link>
+			<nuxt-link :to="'/e/' + route.params.slug + '/rules'" title="Правила ивента">Правила</nuxt-link>
+			<nuxt-link :to="'/e/' + route.params.slug + '/game?tab=game-list'" title="Игры ивента">Игры</nuxt-link>
+			<nuxt-link :to="'/e/' + route.params.slug + '/inventory?tab=item-list'" title="Предметы ивента">Предметы</nuxt-link>
+			<nuxt-link :to="'/e/' + route.params.slug + '/log-list'" title="Логи ивента">Логи</nuxt-link>
 		</div>
 		<div class="cutting" />
 		<div class="menu-block col-span-2">
 			<nuxt-link to="https://t.me/game_events_tr" target="_blank" title="Телеграм канал">Телеграм-канала</nuxt-link>
-			<a href="/e/" title="Список событий">Список ивентов</a>
+			<a href="/e/" target="_blank" title="Список событий">Список ивентов</a>
 			<nuxt-link to="/" target="_blank" title="Телеграм канал">Пользовательское соглашение</nuxt-link>
 		</div>
 		<div class="cutting" />

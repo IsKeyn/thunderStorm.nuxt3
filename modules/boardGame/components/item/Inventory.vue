@@ -84,6 +84,7 @@ const closeDroppedItemBox = () => {
 				:requestObj="requestObj"
 				:easeOutType="1"
 				:showItemCount="false"
+				:showRollCount="true"
 				:requestParentData="requestInProgress"
 				@funcAfterRollWithDelay2="showItem"
 		/>
