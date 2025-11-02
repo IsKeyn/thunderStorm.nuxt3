@@ -29,6 +29,9 @@ const titles = ref(
 			icon: {
 				name: 'Иконка',
 			},
+			sort: {
+				name: 'Сортировка',
+			},
 			active: {
 				name: 'Активность',
 			},

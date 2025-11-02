@@ -3,7 +3,7 @@ definePageMeta({
 	layout: 'obs',
 });
 
-import TimerObs from '@/components/boardGame/timer/TimerObs.vue';
+import TimerObs from '@/modules/boardGame/components/timer/TimerObs.vue';
 </script>
 
 <template>

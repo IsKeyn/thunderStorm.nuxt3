@@ -7,7 +7,8 @@ import { api } from '@/composables/api.js'
 const {
 	apiUrl,
 	backendUrl,
-	getCsrfCookie
+	getCsrfCookie,
+	sendApiRequest
 } = api();
 
 const props = defineProps({
@@ -59,7 +60,6 @@ const systemTitles = ref({
 		name: 'Действия',
 	},
 });
-
 
 const fetchedData = ref(null);
 const pagination = ref(null);
@@ -128,10 +128,12 @@ import { notifications } from '@/composables/notifications.js';
 const { alert, choiceAlert } = notifications();
 
 const deleteElement = (item) => {
+	const message = item[props.titleKey] ? `Удалить элемент "${item[props.titleKey]}"?` : 'Вы действительно уверены, что хотите удалить этот элемент?';
+
 	choiceAlert(
 			{
 				title: 'Удаление',
-				message: `Удалить элемент "${item[props.titleKey]}"?`,
+				message,
 				buttons: [
 					{
 						name: 'Да',
@@ -210,6 +212,7 @@ const updateTable = async () => {
 				onResponse({response}) {
 					if (response.status === 200) {
 						fetchedData.value = props.hasResource ? response._data.data : response._data;
+						// fetchedData.value = response._data.data ? response._data.data : response._data;
 
 						if (props.usePagination) {
 							pagination.value = response._data.meta;
@@ -219,6 +222,24 @@ const updateTable = async () => {
 			},
 	);
 }
+
+const entities = ref({});
+
+const getEntities = async () => {
+	for (const key in props.titles) {
+		if (props.titles[key].type === 'EntityList' && props.titles[key].apiUrl) {
+			const body = props.titles[key].body ?? {};
+
+			const requestName = 'getItemList_' + props.apiUrl;
+			const response = await sendApiRequest(props.titles[key].apiUrl, 'GET', body, requestName, '');
+
+			// entities.value[props.titles[key].apiUrl] = props.titles[key].hasResource === false ? response : response.data;
+			entities.value[props.titles[key].apiUrl] = response.data ? response.data : response;
+		}
+	}
+}
+
+getEntities();
 
 // TODO а нам нужны наблидатели за этими элементами?
 // import { watch } from "vue";
@@ -287,6 +308,7 @@ const setPerPage = (count) => {
 							:titleEl="titleEl"
 							:keyName="key"
 							:pageUrl="pageUrl"
+							:entities="entities"
 							@deleteElement="deleteElement"
 							@openImage="setOpenedImage"
 						/>

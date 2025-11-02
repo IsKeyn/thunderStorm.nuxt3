@@ -5,10 +5,26 @@ const props = defineProps({
 		type: String,
 		default: 'animated',
 	},
-	// widthClass: {
-	// 	type: String,
-	// 	default: 'w-[200px]',
-	// },
+	closeWidthClass: {
+		type: String,
+		default: 'w-[60px]',
+	},
+	openType: {
+		type: String,
+		default: 't240',
+	},
+	iconType: {
+		type: String,
+		default: 'fontawesome',
+	},
+	hasFade: {
+		type: Boolean,
+		default: false,
+	},
+	iconText: {
+		type: String,
+		default: '',
+	},
 	faIcon: {
 		type: Array,
 		default: ['fas', 'bell'],
@@ -19,7 +35,11 @@ const props = defineProps({
 	},
 	href: {
 		type: String,
-		default: 'javascript:void(0);',
+		default: null,
+	},
+	routerLinkUrl: {
+		type: String,
+		default: null,
 	},
 	target: {
 		type: String,
@@ -40,17 +60,46 @@ const props = defineProps({
 	>
 		<button
 				:title="buttonText"
-				:class="['btn btn-simple-1', type, alwaysOpened ? 'opened' : '']"
+				:class="[
+						'btn btn-simple-1',
+						type,
+						alwaysOpened ? 'opened' : '',
+						type === 'animated' ? closeWidthClass : '',
+						openType
+				]"
 		>
-			<font-awesome-icon :icon="faIcon" /> <span class="button-name">{{ buttonText }}</span>
+			<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" :fade="hasFade ? true : undefined" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
 		</button>
 	</a>
+	<router-link
+			v-else-if="routerLinkUrl"
+			:to="routerLinkUrl"
+	>
+		<button
+				:title="buttonText"
+				:class="[
+						'btn btn-simple-1',
+						type,
+						alwaysOpened ? 'opened' : '',
+						type === 'animated' ? closeWidthClass : '',
+						openType
+				]"
+		>
+			<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" :fade="hasFade ? true : undefined" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
+		</button>
+	</router-link>
 	<button
 			v-else
 			:title="buttonText"
-			:class="['btn btn-simple-1', type, alwaysOpened ? 'opened' : '']"
+			:class="[
+						'btn btn-simple-1',
+						type,
+						alwaysOpened ? 'opened' : '',
+						type === 'animated' ? closeWidthClass : '',
+						openType
+			]"
 	>
-		<font-awesome-icon :icon="faIcon" /> <span class="button-name">{{ buttonText }}</span>
+		<font-awesome-icon v-if="iconType === 'fontawesome'" :icon="faIcon" :fade="hasFade ? true : undefined" /><span  v-if="iconType === 'text'">{{ iconText }}</span> <span class="button-name">{{ buttonText }}</span>
 	</button>
 </template>
 
@@ -69,7 +118,7 @@ const props = defineProps({
 }
 
 .animated {
-	@apply w-[60px] whitespace-nowrap overflow-hidden;
+	@apply whitespace-nowrap overflow-hidden;
 	transition: width 0.5s ease; /* Уменьшил время анимации для лучшего UX */
 
 	.button-name {
@@ -80,7 +129,13 @@ const props = defineProps({
 
 	&:hover,
 	&.opened {
-		@apply lg:w-[240px];
+		&.t240 {
+			@apply lg:w-[240px];
+		}
+
+		&.t480 {
+			@apply lg:w-[480px];
+		}
 
 		.button-name {
 			@apply lg:inline;

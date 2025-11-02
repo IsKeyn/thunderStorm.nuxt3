@@ -36,7 +36,7 @@ watch(status, (value) => {
 	}
 });
 
-const calcTooltipPosition = () => {
+const calcTooltipPosition = (useToggle = true) => {
 	if (tooltip.value.offsetHeight > tooltip.value.parentElement.offsetHeight) {
 		tooltip.value.style.top = -(tooltip.value.parentElement.offsetHeight + tooltip.value.offsetHeight - tooltip.value.parentElement.offsetHeight) + 'px';
 	} else {
@@ -48,25 +48,30 @@ const calcTooltipPosition = () => {
 			tooltip.value.style.left = '0px';
 			break;
 		case 'center':
+			// TODO сделать расчет для центральной позиции
 			break;
 		case 'left':
 			tooltip.value.style.right = '0px';
 			break;
 	}
 
-	toggle();
+	if (useToggle) {
+		toggle();
+	}
 }
 
 onMounted(() => {
+	calcTooltipPosition(false);
 	tooltip.value.parentElement.addEventListener("mouseenter", () => { init(); });
 	tooltip.value.parentElement.addEventListener("mouseleave", () => { toggle(false); });
 })
 
-// TODO в onUnmounted	tooltip.value is undefine, выяснить причину и удалять слушателя
-// onUnmounted(() => {
-// 	tooltip.value.parentElement.removeEventListener("mouseenter", () => { init(); });
-// 	tooltip.value.parentElement.removeEventListener("mouseleave", () => { toggle(false); });
-// });
+onUnmounted(() => {
+	if (tooltip && tooltip.value) {
+		tooltip.value.parentElement.removeEventListener("mouseenter", () => { init(); });
+		tooltip.value.parentElement.removeEventListener("mouseleave", () => { toggle(false); });
+	}
+});
 </script>
 
 <template>

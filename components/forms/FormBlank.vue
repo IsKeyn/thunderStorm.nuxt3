@@ -414,6 +414,7 @@ const openBlockList = () => {
 		<Tabs
 				:tabs="tabsElements"
 				:showTabs="showTabs"
+				:useHardDisableTab="false"
 		>
 			<template #tab-1>
 				<FormGenerator

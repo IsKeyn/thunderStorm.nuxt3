@@ -54,13 +54,13 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
-	showAdditionControlPanel: {
+	showAdditionControlPanel: { // Боковая панель с кнопками сохранения
 		type: Boolean,
 		default: true,
 	},
-	showAdditionalData: {
+	showAdditionalData: { // Таб, включающий в себя расширения
 		type: Boolean,
-		default: true,
+		default: false,
 	},
 });
 

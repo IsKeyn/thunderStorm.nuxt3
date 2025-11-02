@@ -1,13 +1,15 @@
 <script setup>
-import UserSystemComponent from '@/components/user/UserSystemComponent.vue';
+import LoadingComponents from '@/components/system/LoadingComponents.vue';
 import SettingsComponent from '@/components/system/SettingsComponent.vue';
-import UserNotifications from '@/components/user/notifications/UserNotifications.vue';
+import UserSystemComponent from '@/components/user/UserSystemComponent.vue';
+import UserNotificationMainComponent from '@/components/user/UserNotificationMainComponent.vue';
 </script>
 
 <template>
 	<div>
+		<LoadingComponents />
 		<SettingsComponent />
 		<UserSystemComponent />
-		<UserNotifications />
+		<UserNotificationMainComponent />
 	</div>
 </template>

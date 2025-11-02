@@ -47,11 +47,21 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			board_game_id: {
-				name: 'ID настольной игры',
+			image: {
+				name: 'Медиа',
 				value: '',
-				type: 'text',
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
 				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			board_game_id: {
+				name: 'Настольная игра',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			debuff: {
@@ -101,6 +111,7 @@ const breadCrumbsArray = computed(() => {
 				:form="form"
 				:showAdditionalData="false"
 				fetchUrl="admin/entity/BoardGame/StatusEffect"
+				:hasResource="true"
 		/>
 	</div>
 </template>

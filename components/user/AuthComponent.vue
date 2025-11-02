@@ -14,6 +14,10 @@ const props = defineProps({
 		type: String,
 		default: 'login',
 	},
+	registerOnEventBySlug: {
+		type: String,
+		default: null,
+	},
 });
 
 const emit = defineEmits(['сlosureFunc', 'reCalcHeight', 'closeModal']);
@@ -54,6 +58,7 @@ watch(() => props.actionType, () => {
 		/>
 		<ResetPasswordForm
 				v-if="actionType === 'reset_password'"
+				description="Введите новый пароль"
 				@setActionType="setActionType"
 				@closeModal="emit('closeModal')"
 		/>

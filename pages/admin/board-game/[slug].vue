@@ -8,6 +8,12 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
 const form = ref(
 		{
+			id: {
+				name: 'ID',
+				value: '',
+				type: 'notEditable',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			name: {
 				name: 'Название',
 				value: '',
@@ -33,7 +39,7 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			media_id: {
+			media: {
 				name: 'Медиа',
 				value: '',
 				keyValueFromObject: 'id',
@@ -44,16 +50,50 @@ const form = ref(
 			},
 			active: {
 				name: 'Активность',
-				value: '',
-				type: 'text',
+				value: true,
+				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			created_by: {
-				name: 'ID автора',
-				value: '',
-				type: 'text',
+			is_close: {
+				name: 'Закрыто',
+				value: false,
+				type: 'checkbox',
 				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			started_at: {
+				name: 'Дата начала',
+				value: '',
+				type: 'datetime-local',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			ended_at: {
+				name: 'Дата конца',
+				value: '',
+				type: 'datetime-local',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			created_by: {
+				name: 'Кем создан',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			created_at: {
+				name: 'Дата создания',
+				value: '',
+				type: 'notEditable',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			updated_at: {
+				name: 'Дата обновления',
+				value: '',
+				type: 'notEditable',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -93,8 +133,11 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				:showAdditionalData="false"
-				fetchUrl="admin/entity/BoardGame/BoardGame"
+				:hasResource="true"
+				fetchUrl="admin/BoardGame/BoardGame"
+				:useBlockEditor="true"
+				:showTags="true"
+				:showSeo="true"
 		/>
 	</div>
 </template>

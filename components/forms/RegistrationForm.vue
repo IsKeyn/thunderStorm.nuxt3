@@ -1,6 +1,9 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ResentVerifyEmail from '@/components/user/fragments/ResentVerifyEmail.vue';
+import SocialAuthComponent from '@/components/user/auth/SocialAuthComponent.vue';
+
+const route = useRoute();
 
 import { validate } from '@/composables/validate.js';
 import { api } from '@/composables/api.js';
@@ -18,6 +21,14 @@ import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
 const userStore = useUserStore();
+
+const props = defineProps({
+	registerOnEventBySlug: {
+		type: String,
+		default: null,
+	},
+});
+
 
 const form = ref(
 		{
@@ -51,15 +62,16 @@ const form = ref(
 				showChangeTypeButton: true,
 				classes: ['w-full', 'pr-[25px]', 'mt-[5px]'],
 			},
-			// show_author: {
-			// 	name: 'Согласие на политики обработки персональных данных',
-			// 	showTitle: false,
-			// 	html: 'Я соглашаюсь с уловиями обработки персональных данных',
-			// 	value: 0,
-			// 	type: 'checkbox',
-			// 	validateRules: 'required',
-			// 	classes: ['w-full', 'mt-[5px]'],
-			// },
+			personal_data_processing_policy: {
+				name: 'Я согласен с правилами использования материалов сайта и политикой конфиденциальности',
+				showTitle: false,
+				html: 'Я согласен с <a href="" target="_blank">правилами использования материалов сайта</a> и <a href="" target="_blank">политикой конфиденциальности</a>',
+				value: false,
+				type: 'checkbox',
+				validateRules: 'required',
+				validateErrorText: 'Соглашение с правилами использования материалов сайта и политикой конфиденциальности обязательно для регистрации',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 
@@ -73,7 +85,7 @@ const sendForm = async () => {
 	const rawData = toRaw(form)._rawValue;
 
 	for (var key in rawData) {
-		form.value[key].validateResult = validateElement(rawData[key].value, rawData[key].validateRules, rawData);
+		form.value[key].validateResult = validateElement(rawData[key].value, rawData[key].validateRules, rawData, rawData[key]?.validateErrorText);
 
 		if (typeof form.value[key].validateResult === 'string') {
 			form.value[key].validateResult = form.value[key].validateResult.replaceAll('{fieldName}', form.value[key].name);
@@ -96,6 +108,25 @@ const sendRequest = async () => {
 	try {
 		const csrfCookie = await getCsrfCookie();
 
+		const body = {
+			name: form.value.name.value,
+			email: form.value.email.value,
+			password: form.value.password.value,
+			password_confirmation: form.value.repeatPassword.value,
+			additional_fields: [
+				{
+					name: 'Страница регистрации',
+					slug: 'registrationPage',
+					value: route.fullPath,
+					sort: 90,
+				},
+			],
+		};
+
+		if (props.registerOnEventBySlug) {
+			body.registerOnEventBySlug = props.registerOnEventBySlug;
+		}
+
 		const response = await $fetch(
 				`${apiUrl.value}auth/register`,
 				{
@@ -105,12 +136,7 @@ const sendRequest = async () => {
 						Accept: 'application/json',
 						'X-XSRF-TOKEN': csrfCookie.value,
 					},
-					body: {
-						name: form.value.name.value,
-						email: form.value.email.value,
-						password: form.value.password.value,
-						password_confirmation: form.value.repeatPassword.value,
-					},
+					body,
 				},
 		);
 
@@ -249,6 +275,7 @@ const getUserData = async () => {
 					</a>
 				</div>
 			</div>
+			<SocialAuthComponent class="mt-2" />
 		</template>
 	</div>
 </template>

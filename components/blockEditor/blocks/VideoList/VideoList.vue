@@ -44,7 +44,6 @@ const setSource = (repeaterKey, sourceKey) => {
 	<div :class="[
 			'video-list',
 			sideIndent,
-			blockStructure.settings.classes.value
 	]">
 		<Repeater
 				ref="repeaterComponent"

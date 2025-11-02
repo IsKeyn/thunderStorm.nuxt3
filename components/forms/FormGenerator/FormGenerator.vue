@@ -1,9 +1,14 @@
 <script setup>
 import FileFromGallery from './fragments/FileFromGallery.vue';
+import EntityList from './fragments/EntityList.vue';
+import EntityBind from './fragments/EntityBind.vue';
 
 import { watch } from 'vue'
 
 const emit = defineEmits(['update:modelValue']);
+
+import { notifications } from '@/composables/notifications.js';
+const { alert, error } = notifications();
 
 import { file } from '@/composables/file.js'
 const {
@@ -72,6 +77,11 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	// Отображать или скрывать кнопку копирования значения поля
+	showCopyButton: {
+		type: Boolean,
+		default: false,
+	},
 	// Отображать ошибки или нет
 	showValidateError: {
 		type: Boolean,
@@ -112,8 +122,16 @@ watch(() => props.element.value, (newValue) => {
 		props.element.value = newValue.replace(/[^+\(\)\d]/g, '');
 	}
 
-	if (props.element.type === 'file' && typeof newValue === 'object') {
+	if (props.element.type === 'file' && newValue && typeof newValue === 'object') {
 		previewImage.value = URL.createObjectURL(newValue[0]);
+	}
+
+	if (props.element.type === 'EntityBind') {
+		bindValues.value.entity = props.element.value;
+
+		if (props.element.bindField && props.form[props.element.bindField]) {
+			bindValues.value.id = props.form[props.element.bindField].value;
+		}
 	}
 }, { deep: true });
 
@@ -215,10 +233,36 @@ const maxLength = computed(() => {
 const currentLength = computed(() => {
 	return typeof props.element.value === 'string' ? props.element.value.length : 0;
 });
+
+/* НАЧАЛО: Laravel привязка сущности тип EntityBind */
+const bindValues = ref({});
+
+watch(() => bindValues.value, () => {
+	if (props.element.type === 'EntityBind') {
+		props.element.value = bindValues.value.entity;
+
+		if (props.element.bindField && props.form[props.element.bindField]) {
+			props.form[props.element.bindField].value = bindValues.value.id;
+		}
+	}
+}, { deep: true });
+
+/* КОНЕЦ: Laravel привязка сущности тип EntityBind */
+
+const copyValue = () => {
+	navigator.clipboard.writeText(props.element.value)
+			.then(() => {
+				alert('Значение поля скопированно в буфер обмена');
+			})
+			.catch(err => {
+				alert('Ошибка копирования:', err);
+			});
+}
 </script>
 
 <template>
 	<label
+			v-if="element.type !== 'disable'"
 			ref="label"
 			:class="[element.type === 'hidden' ? 'hidden' : getLabelClasses]"
 	>
@@ -246,45 +290,55 @@ const currentLength = computed(() => {
 						:friendly-name="element.name"
 						:placeholder="element.placeholder"
 						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+						@input="onInput"
 				/>
-				<span
-						v-if="element.showChangeTypeButton"
-						@click="showPassword"
-						class="additional-action-wrap"
-				>
-					<font-awesome-icon
-							v-if="element.type === 'password'"
-							:icon="['far', 'eye-slash']"
-							class="additional-action-icon"
-					/>
-					<font-awesome-icon
-							v-if="element.type === 'text'"
-							:icon="['far', 'eye']"
-							class="additional-action-icon"
-					/>
-				</span>
-				<span
-						v-if="element.autoFill"
-						class="additional-action-wrap"
-						@click="fillField()"
-				>
-					<font-awesome-icon
-							:icon="['fas', 'arrow-right-to-bracket']"
-							rotation=90
-							class="additional-action-icon"
-							:title='`Заполнить поле "${element.name ? element.name : name}" значением из поля "${element.autoFill.sourceFieldKey && form[element.autoFill.sourceFieldKey].name ? form[element.autoFill.sourceFieldKey].name : element.autoFill.sourceFieldKey}" ${element.autoFill.rule ? " по правилу " + element.autoFill.rule : ""}`'
-					/>
-				</span>
-				<span
-						v-if="clearButton && element.value"
-						class="additional-action-wrap"
-						@click="element.value = null"
-				>
-					<font-awesome-icon
-							:icon="['fas', 'circle-xmark']"
-							class="additional-action-icon"
-							title="Очистить поле"
-					/>
+				<span class="additional-action-wrap">
+					<span
+							v-if="showCopyButton && element.value"
+							@click="copyValue"
+					>
+						<font-awesome-icon
+								:icon="['fa-solid', 'fa-copy']"
+								class="additional-action-icon"
+								title="Скопировать значение поля"
+						/>
+					</span>
+					<span
+							v-if="element.showChangeTypeButton"
+							@click="showPassword"
+					>
+						<font-awesome-icon
+								v-if="element.type === 'password'"
+								:icon="['far', 'eye-slash']"
+								class="additional-action-icon"
+						/>
+						<font-awesome-icon
+								v-if="element.type === 'text'"
+								:icon="['far', 'eye']"
+								class="additional-action-icon"
+						/>
+					</span>
+					<span
+							v-if="element.autoFill"
+							@click="fillField()"
+					>
+						<font-awesome-icon
+								:icon="['fas', 'arrow-right-to-bracket']"
+								rotation=90
+								class="additional-action-icon"
+								:title='`Заполнить поле "${element.name ? element.name : name}" значением из поля "${element.autoFill.sourceFieldKey && form[element.autoFill.sourceFieldKey].name ? form[element.autoFill.sourceFieldKey].name : element.autoFill.sourceFieldKey}" ${element.autoFill.rule ? " по правилу " + element.autoFill.rule : ""}`'
+						/>
+					</span>
+					<span
+							v-if="clearButton && element.value"
+							@click="element.value = null"
+					>
+						<font-awesome-icon
+								:icon="['fas', 'circle-xmark']"
+								class="additional-action-icon"
+								title="Очистить поле"
+						/>
+					</span>
 				</span>
 			</span>
 		</template>
@@ -410,12 +464,37 @@ const currentLength = computed(() => {
 			<span class="input-wrap">
 			<input
 					v-model="element.value"
-					:checked="element.value"
 					:type="element.type"
-			>
+			/>
 				<span class="checkbox-name" v-if="element.html" v-html="element.html" />
 				<span class="checkbox-name" v-else>{{ element.name }}</span>
 			</span>
+		</template>
+		<template v-else-if="element.type === 'range'">
+			<input
+					v-model="element.value"
+					:type="element.type"
+					:min="element.min ? element.min : 0"
+					:max="element.max ? element.max : 1"
+					:step="element.step ? element.step : 0.1"
+					:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+			/>
+		</template>
+		<EntityList
+				v-else-if="element.type === 'EntityList'"
+				v-model="element.value"
+				:apiUrl="element.apiUrl"
+				:body="element.body ? element.body : {}"
+				:hasResource="element?.hasResource === true"
+		/>
+		<EntityBind
+				v-else-if="element.type === 'EntityBind'"
+				v-model="bindValues"
+		/>
+		<template v-else-if="element.type === 'notEditable'">
+			<div class="pt-2 pb-2">
+				{{ element.value }}
+			</div>
 		</template>
 		<span
 				v-if="showMaxLength && maxLength"

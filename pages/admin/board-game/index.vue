@@ -19,9 +19,30 @@ const titles = ref(
 			},
 			description: {
 				name: 'Описание',
+				type: 'cutText',
+			},
+			media: {
+				name: 'Изображение',
+				type: 'media'
+			},
+			started_at: {
+				name: 'Дата начала',
+			},
+			ended_at: {
+				name: 'Дата конца',
 			},
 			active: {
 				name: 'Активность',
+				type: 'boolean',
+			},
+			is_close: {
+				name: 'Закрыто',
+				type: 'boolean',
+			},
+			created_by: {
+				name: 'Кем создан',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 		}
 );
@@ -55,7 +76,7 @@ const breadCrumbsArray = computed(() => {
 	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 	<ListTable
 		:titles="titles"
-		titleKey="title"
-		fetchUrl="admin/entity/BoardGame/BoardGame"
+		:hasResource="true"
+		fetchUrl="admin/BoardGame/BoardGame"
 	/>
 </template>

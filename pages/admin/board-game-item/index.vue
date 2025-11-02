@@ -17,20 +17,37 @@ const titles = ref(
 			slug: {
 				name: 'Slug',
 			},
-			description: {
-				name: 'Описание',
+			short_description: {
+				name: 'Короткое описание',
+				type: 'cutText',
+			},
+			full_description: {
+				name: 'Полное описание',
+				type: 'cutText',
 			},
 			actions: {
 				name: 'Действия (json)',
+				type: 'cutText',
 			},
 			type: {
 				name: 'Тип',
 			},
-			board_game_id: {
-				name: 'ID настолькой игры',
+			drop_chance: {
+				name: 'Шанс дропа',
 			},
 			active: {
 				name: 'Активность',
+				type: 'boolean',
+			},
+			author: {
+				name: 'Автор',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+			},
+			created_by: {
+				name: 'Создан кем',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 		}
 );
@@ -65,6 +82,6 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/BoardGame/BoardGameItem"
+		fetchUrl="admin/BoardGame/Item"
 	/>
 </template>

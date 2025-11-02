@@ -12,28 +12,53 @@ const titles = ref(
 				name: 'id',
 			},
 			game_id: {
-				name: 'ID игры',
+				name: 'Игра',
+				type: 'EntityList',
+				apiUrl: 'game/list',
 			},
 			gaming_platform_id: {
-				name: 'ID платформы',
+				name: 'Платформа',
+				type: 'EntityList',
+				apiUrl: 'admin/entity/GamingPlatform',
 			},
 			description: {
 				name: 'Описание',
+				type: 'cutText',
 			},
 			board_game_id: {
-				name: 'ID настолки',
+				name: 'Ивент',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
 			},
 			points: {
 				name: 'Количество очков за игру',
 			},
+			difficult: {
+				name: 'Сложность в процентах',
+			},
+			game_completion_time: {
+				name: 'Время на прохождение (в минутах)',
+			},
+			coop: {
+				name: 'Кооп',
+				type: 'boolean',
+			},
+			list_type: {
+				name: 'Тип списка',
+			},
 			active: {
 				name: 'Активность',
+				type: 'boolean',
 			},
 			added_by: {
-				name: 'Добавил',
+				name: 'Кто добавил',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 			created_by: {
-				name: 'Создал',
+				name: 'Кто создал',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 		}
 );

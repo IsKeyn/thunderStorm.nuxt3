@@ -2,10 +2,10 @@ import { useNotificationsStore } from '@/stores/notifications';
 import { api } from '@/composables/api.js';
 import { date } from '@/composables/date.js';
 
-const { apiUrl } = api();
-const { getFormattedDate } = date();
-
 export function notifications() {
+    const { apiUrl } = api();
+    const { getFormattedDate } = date();
+
     const useNotifications = useNotificationsStore();
 
     const alert = (

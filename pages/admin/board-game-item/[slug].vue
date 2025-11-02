@@ -26,8 +26,15 @@ const form = ref(
 					rule: 'slug',
 				},
 			},
-			description: {
-				name: 'Описание',
+			short_description: {
+				name: 'Короткое описание',
+				value: '',
+				type: 'textarea',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+			},
+			full_description: {
+				name: 'Полное описание',
 				value: '',
 				type: 'textarea',
 				validateRules: null,
@@ -40,17 +47,20 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			board_game_id: {
-				name: 'ID настолькой игры',
-				value: '',
-				type: 'text',
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
 			type: {
 				name: 'Тип',
-				value: '',
-				type: 'text',
+				value: 0,
+				type: 'select',
+				options: [
+					{
+						name: 'Положительный',
+						value: 0,
+					},
+					{
+						name: 'Отрицательный',
+						value: 1,
+					},
+				],
 				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -63,11 +73,44 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			sound: {
+				name: 'Звук',
+				value: '',
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			active: {
 				name: 'Активность',
-				value: '',
-				type: 'text',
+				value: 1,
+				type: 'checkbox',
 				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
+			drop_chance: {
+				name: 'Шанс дропа',
+				value: 10,
+				type: 'number',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			author: {
+				name: 'Автор',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			created_by: {
+				name: 'Создан кем',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -107,9 +150,9 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				:showAdditionalData="false"
 				:hasResource="true"
-				fetchUrl="admin/BoardGame/BoardGameItem"
+				:showAdditionalData="false"
+				fetchUrl="admin/BoardGame/Item"
 		/>
 	</div>
 </template>

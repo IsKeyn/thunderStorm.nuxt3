@@ -36,6 +36,21 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			entity_type: {
+				name: 'Привязка сущности',
+				value: '',
+				type: 'EntityBind',
+				bindField: 'entity_id',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			entity_id: {
+				name: 'ID привязанной сущности',
+				value: '',
+				type: 'disable',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 

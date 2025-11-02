@@ -3,11 +3,11 @@
 import CommentCard from '@/components/comments/CommentCard.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 
+import { computed, watch } from "vue";
 const emit = defineEmits(['fetchComments']);
 
 // Сomposables
 import { api } from '@/composables/api.js'
-import { watch } from "vue";
 const {
 	apiUrl,
 	publicUrl,
@@ -32,18 +32,21 @@ const props = defineProps({
 		type: Number,
 		default: 10,
 	},
+	showAnswer: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const route = useRoute();
 const router = useRouter();
 
-const fetchedData = ref([]);
-const pagination = ref(null);
+const commentResult = ref([]);
 
 const page = ref(1);
 const perPageCount = ref(props.perPage);
 
-const typeAddedData = ref('show_more');
+const typeAddedData = ref('');
 
 const fetchComments = () => {
 	page.value = 1;
@@ -65,7 +68,7 @@ const { data: requestData, pending: requestInProgress, refresh } = await useAsyn
 				entityType: props.entityType,
 				entityId: props.entityId,
 				perPage: props.perPageCount,
-				page,
+				page: page.value,
 			};
 
 			const sessionCookie = useCookie(sessionCookieName.value);
@@ -96,19 +99,19 @@ const { data: requestData, pending: requestInProgress, refresh } = await useAsyn
 		}
 );
 
-const setFetchedData = () => {
-	fetchedData.value = typeAddedData.value === 'show_more' ? fetchedData.value.concat(requestData.value.data) : requestData.value.data;
-	pagination.value = requestData.value.meta;
-}
+const fetchedData = computed(() =>  requestData?.value?.data || null);
+const paginationData = computed(() => requestData.value?.meta || null);
 
-setFetchedData();
-
-watch(() => requestData.value, () => {
-	setFetchedData();
-}, { deep: true });
+watch(() => fetchedData.value, (newData) => {
+	if (typeAddedData.value === 'show_more') {
+		commentResult.value = commentResult.value.concat(newData);
+	} else {
+		commentResult.value = newData;
+	}
+}, { deep: true, immediate: true });
 
 const getNextPage = async () => {
-	if (pagination.value.current_page < pagination.value.last_page) {
+	if (paginationData.value.current_page < paginationData.value.last_page) {
 		typeAddedData.value = 'show_more';
 		page.value += 1;
 		await refresh();
@@ -118,22 +121,23 @@ const getNextPage = async () => {
 
 <template>
 	<CommentCard
-			v-for="comment in fetchedData"
+			v-for="comment in commentResult"
 			:key="comment.id"
 			:comment="comment"
 			:entityType="entityType"
 			:entityId="entityId"
 			:firstParent="comment.id"
+			:showAnswer="showAnswer"
 			@fetchComments="fetchComments"
 	/>
 
 	<div
-			v-if="pagination && pagination.current_page < pagination.last_page"
+			v-if="paginationData && paginationData.current_page < paginationData.last_page"
 			class="text-center"
 	>
 		<ActionButton
 				buttonName="Показать ещё"
-				:actionInProgress="pending"
+				:actionInProgress="requestInProgress"
 				@startAction="getNextPage"
 		/>
 	</div>

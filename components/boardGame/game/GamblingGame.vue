@@ -249,10 +249,12 @@ const startSpin = (randomIndex) => {
 }
 
 const currentPlayer = computed(() => {
-	let curPlayer = props.boardGameInfo.players.filter((item) => item.user_id === userStore.user.id);
+	if (props.boardGameInfo.players) {
+		let curPlayer = props.boardGameInfo.players.filter((item) => item.user_id === userStore.user.id);
 
-	if (curPlayer && curPlayer[0]) {
-		return curPlayer[0];
+		if (curPlayer && curPlayer[0]) {
+			return curPlayer[0];
+		}
 	}
 });
 

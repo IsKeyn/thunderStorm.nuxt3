@@ -13,10 +13,10 @@ const breadCrumbs = ref([
 
 <template>
 	<div>
-		<PageHeader
-				title="Галерея"
-				:breadCrumbs="breadCrumbs"
-		/>
-		<PublicProfile />
+<!--		<PageHeader-->
+<!--				title="Галерея"-->
+<!--				:breadCrumbs="breadCrumbs"-->
+<!--		/>-->
+<!--		<PublicProfile />-->
 	</div>
 </template>

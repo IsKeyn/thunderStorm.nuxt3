@@ -71,7 +71,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Таймеры',
+			name: 'Пользователи',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -80,6 +80,12 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
+
+const extensions = [
+	{
+		name: 'Autologin',
+	},
+];
 </script>
 
 <template>
@@ -87,8 +93,9 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				:showAdditionalData="false"
 				fetchUrl="admin/entity/user"
+				:extensions="extensions"
+				:showAdditionalData="true"
 		/>
 	</div>
 </template>

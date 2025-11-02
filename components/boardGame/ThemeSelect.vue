@@ -1,6 +1,13 @@
 <script setup>
 import { onMounted, watch } from "vue";
 
+const props = defineProps({
+	defaultTheme: {
+		type: String,
+		default: null,
+	},
+});
+
 const showThemeSettings = ref(false);
 
 const toggleThemeSettingsFunc = () => {
@@ -56,6 +63,8 @@ const getThemeConst = () => {
 		if (themeFromLocalStore.value !== null) {
 			showSvgAnimation.value = false;
 			selectedTheme.value = themeFromLocalStore.value;
+		} else if (props.defaultTheme) {
+			selectedTheme.value = props.defaultTheme;
 		}
 	}
 }

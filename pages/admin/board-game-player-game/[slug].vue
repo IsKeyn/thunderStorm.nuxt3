@@ -11,29 +11,87 @@ const form = ref(
 			user_id: {
 				name: 'ID пользователя',
 				value: '',
-				type: 'number',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			board_game_game_list_id: {
 				name: 'ID игры в списке доступных на эвенте игр',
 				value: '',
-				type: 'number',
+				type: 'EntityList',
+				apiUrl: 'admin/entity/BoardGame/BoardGameGameList',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			status: {
 				name: 'Текущий статус',
+				value: null,
+				type: 'select',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				options: [
+					{
+						name: 'Не выбрано',
+						value: null,
+					},
+					{
+						name: 'Текущая',
+						value: 0,
+					},
+					{
+						name: 'Рерольнута',
+						value: 1,
+					},
+					{
+						name: 'Пройдена',
+						value: 2,
+					},
+					{
+						name: 'Отдана',
+						value: 3,
+					},
+					{
+						name: 'В очереди',
+						value: 4,
+					},
+				],
+			},
+			board_game_id: {
+				name: 'Ивент',
 				value: '',
-				type: 'number',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			board_game_id: {
-				name: 'ID настольной игры',
+			type: {
+				name: 'Тип',
+				value: null,
+				type: 'select',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				options: [
+					{
+						name: 'Не выбрано',
+						value: null,
+					},
+					{
+						name: 'Отданная',
+						value: 0,
+					},
+					{
+						name: 'Мошна',
+						value: 1,
+					},
+				],
+			},
+			from_user_id: {
+				name: 'От кого',
 				value: '',
-				type: 'number',
-				validateRules: 'required, maxLength_255',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			comment_id: {
@@ -51,9 +109,10 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			created_by: {
-				name: 'Создал',
+				name: 'Кем создан',
 				value: '',
-				type: 'number',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},

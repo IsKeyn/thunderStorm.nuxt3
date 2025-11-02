@@ -1,7 +1,9 @@
 <script setup>
-import { onMounted } from "vue";
-
 const props = defineProps({
+	name: {
+		type: String,
+		default: 'tab',
+	},
 	tabs: {
 		type: Array,
 		default: [
@@ -19,20 +21,35 @@ const props = defineProps({
 			},
 		],
 	},
+	defaultCurrentTab: {
+		default: 1,
+	},
 	showTabs: {
 		type: Boolean,
 		default: true,
-	}
+	},
+	useQueryParam: {
+		type: Boolean,
+		default: true,
+	},
+	useHardDisableTab: {
+		type: Boolean,
+		default: true,
+	},
 });
 
-const currentTab = ref(1);
+const currentTab = ref(props.defaultCurrentTab);
+
+watch(() => props.defaultCurrentTab, () => {
+		currentTab.value = props.defaultCurrentTab;
+});
 
 const router = useRouter();
 const route = useRoute();
 
-if (route.query?.tab) {
+if (props.useQueryParam && route.query[props.name]) {
 	for (let key in props.tabs) {
-		if (String(props.tabs[key].id) === route.query.tab) {
+		if (String(props.tabs[key].id) === route.query[props.name]) {
 			currentTab.value = props.tabs[key].id;
 			break;
 		}
@@ -41,46 +58,47 @@ if (route.query?.tab) {
 
 const setTab = (tabID) => {
 	currentTab.value = tabID;
-	router.push({
-		name: route.name,
-		query: {
-			...route.query,
-			tab: tabID,
-		},
-	});
+
+	if (props.useQueryParam) {
+		router.push({
+			name: route.name,
+			query: {
+				...route.query,
+				[props.name]: tabID,
+			},
+		});
+	}
 }
 </script>
 
 <template>
-	<div>
-		<ul v-if="showTabs">
-			<li
-					v-for="tab in tabs"
-					:key="tab.id"
-					@click="setTab(tab.id)"
-			>
-				<div
-						style="display: inline-flex"
-						:class="{ 'active' : currentTab === tab.id }"
-				>
-					{{ tab.title }}
-				</div>
-			</li>
-		</ul>
-
-		<div
-				v-for="(tab, index) in tabs"
-				:key="index"
-				v-show="tab.id === currentTab"
+	<ul v-if="showTabs">
+		<li
+				v-for="tab in tabs"
+				:key="tab.id"
+				@click="setTab(tab.id)"
 		>
-			<slot :name="`tab-${tab.id}`" />
-		</div>
+			<div :class="['inline-flex', currentTab === tab.id ? 'active' : '']">
+				{{ tab.title }}
+			</div>
+		</li>
+	</ul>
+
+	<div
+			v-for="(tab, index) in tabs"
+			:key="index"
+			v-show="tab.id === currentTab"
+	>
+		<slot
+				v-if="useHardDisableTab ? tab.id === currentTab : true"
+				:name="`tab-${tab.id}`"
+		/>
 	</div>
 </template>
 
 <style lang="scss" scoped>
 ul {
-	@apply relative flex flex-nowrap mb-4  list-none list-inside ;
+	@apply relative flex flex-nowrap mb-4 ml-0 list-none list-inside;
 
 	li {
 		@apply mr-6 last:mr-0;
@@ -89,13 +107,11 @@ ul {
 			@apply pb-2 whitespace-nowrap cursor-pointer;
 
 			&:hover {
-				color: var(--main-hover-color);
+				@apply text-[var(--main-hover-color)];
 			}
 
 			&.active {
-				@apply border-b-2 border-[var(--main-hover-color)];
-
-				color: var(--main-hover-color);
+				@apply border-b-2 border-[var(--main-hover-color)] text-[var(--main-hover-color)];
 			}
 		}
 	}

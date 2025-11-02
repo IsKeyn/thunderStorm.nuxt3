@@ -286,8 +286,9 @@ const changePageDirection = (direction) => {
 			inline-block
 			mt-0 mr-[2px] mb-0 ml-[2px]
 			text-center
-			w-[30px] h-[30px]
+			min-w-[30px] min-h-[30px]
 			text-[20px] leading-[26px]
+			p-[0.2rem]
 		;
 
 		border: 2px solid var(--main-border-color);

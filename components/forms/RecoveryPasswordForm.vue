@@ -2,7 +2,11 @@
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { api } from '@/composables/api.js';
-const { apiUrl, errorHandler } = api();
+const {
+	apiUrl,
+	errorHandler,
+	getCsrfCookie,
+} = api();
 
 import { validate } from '@/composables/validate.js';
 const { validateForm, validateElement } = validate();
@@ -42,6 +46,8 @@ const sendRequest = async () => {
 	requestInProgress.value = true;
 
 	try {
+		const csrfCookie = await getCsrfCookie();
+
 		const response = await $fetch(
 				`${apiUrl.value}auth/forgot-password`,
 				{

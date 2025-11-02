@@ -14,6 +14,14 @@ const props = defineProps({
 		type: Number,
 		required: true,
 	},
+	showAnswer: {
+		type: Boolean,
+		default: false,
+	},
+	addCommentTitle: {
+		type: String,
+		default: 'Добавить комментарий',
+	},
 });
 
 const commentsListRef = ref(null);
@@ -26,7 +34,7 @@ const fetchComments = () => {
 
 <template>
 	<div>
-		<OpeningBox title="Добавить комментарий">
+		<OpeningBox :title="addCommentTitle">
 			<AddCommentForm
 					:entityType="entityType"
 					:entityId="entityId"
@@ -36,6 +44,7 @@ const fetchComments = () => {
 		<CommentsList
 				:entityType="entityType"
 				:entityId="entityId"
+				:showAnswer="showAnswer"
 				ref="commentsListRef"
 		/>
 	</div>

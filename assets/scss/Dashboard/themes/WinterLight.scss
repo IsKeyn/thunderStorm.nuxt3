@@ -1,0 +1,270 @@
+/*
+* https://color.romanuke.com/czvetovaya-palitra-4274/
+* #012e67 #9cacbf #2b6684 #032e42 #0a1417
+*/
+
+:root.winter-light-theme {
+  /* Цветовая схема InSilentHill  */
+  /* Цвета */
+  --alert-color: #800000;
+  --error-color: #500000;
+  --success-color: #453C41;
+
+  /* Фоны */
+  --body-bg-color: #012e67;
+  --main-bg-color: #9cacbf;
+  --second-bg-color: #2b6684;
+  --third-bg-color: #032e42;
+
+  /* Блоки */
+  --main-block-color: #000000;
+  --second-block-color: #2b6684;
+  --third-block-color: #352f33;
+
+  /* Пелена */
+  --main-veil-color: rgba(0, 0, 0, 0.5);
+
+  /* Модалки */
+  --modal-small-width: 400px;
+  --modal-medium-width: 900px;
+  --modal-full-screen-width: 100%;
+
+  /* Заголовки */
+  --main-title-color: #453C41;
+
+  /* Текст */
+  --main-text-color: #0a1417;
+  --main-text-font: Verdana;
+  --second-text-color: #0a1417;
+  --third-text-color: #0a1417;
+  --four-text-color: #2B2B2B;
+
+  --main-dark-text-color: #b7b7b7;
+  --second-dark-text-color: #808080;
+  --third-dark-text-color: #c3c3c3;
+
+  /* Размеры шрифтов */
+  --main-font-size: 16px;
+  --main-title-font-size: 18px;
+  --text-small-text: 14px;
+
+  /* Ссылки */
+  --main-href-color: #453C41;
+  --main-hover-color: #7B7C81;
+  --main-active-color: #7B7C81;
+  --second-active-color: #7B7C81;
+  --third-active-color: #7B7C81;
+  --second-href-color: #453C41;
+  --second-hover-color: #453C41;
+  --third-hover-color: #DDD;
+
+  /* Рамки */
+  --main-border-color: #453C41;
+  --second-border-color: #012e67;
+  --third-border-color: #1c1c1c;
+  --four-border-color: #7B7C81;
+  --main-very-light-color: #1d1d1d;
+
+  /* Кнопки */
+  --button-color-1: #322b2f;
+
+  /* Размеры */
+  --main-block-width: 1400px;
+
+  /* Отступлы контентной зоны */
+  --main-padding: 30px;
+  --main-left-padding: 60px;
+  --main-right-padding: 60px;
+  --main-without-left-padding: -60px;
+  --main-without-right-padding: -60px;
+
+  --main-mobile-padding: 20px;
+  --main-mobile-left-padding: 20px;
+  --main-mobile-right-padding: 20px;
+  --main-mobile-without-left-padding: -20px;
+  --main-mobile-without-right-padding: -20px;
+
+  /*
+   * Префикс первые три буквы, пример alerts - --ale-main-color
+   */
+
+  /* Notification */
+  --not-alert-bg-color: #453C41;
+  --not-error-bg-color: #453C41;
+
+  /* Статьи */
+  --item-color: #D4DBE2;
+  --heal-color: #9df700;
+  --ammo-color: #000bea;
+  --epic-color: #4700d8;
+}
+
+.winter-light-theme {
+  .btn,
+  .button,
+  .icon-box {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .item-box {
+    @apply text-[var(--main-dark-text-color)];
+
+    .status-bar {
+      @apply text-[var(--main-dark-text-color)];
+    }
+
+    .content-box {
+      .info {
+        @apply text-[var(--main-dark-text-color)];
+
+        a {
+          @apply text-[var(--main-dark-text-color)];
+        }
+      }
+    }
+
+    .count-panel {
+      @apply text-[var(--main-dark-text-color)];
+    }
+
+    .comment-box {
+      .message {
+        @apply text-[var(--main-dark-text-color)];
+      }
+    }
+
+    //.info {
+    //  //@apply text-[var(--main-dark-text-color)];
+    //  color: var(--main-dark-text-color) !important;
+    //}
+  }
+
+  .opening-box .header {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .modal-title {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .action-panel {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .dice-container {
+    .d20-container {
+      .d20-face {
+        @apply text-[var(--main-dark-text-color)];
+      }
+    }
+
+    .dice-d6 {
+      .d6-face {
+        @apply text-[var(--main-dark-text-color)];
+      }
+
+      .dot {
+        @apply bg-[var(--main-dark-text-color)];
+      }
+    }
+  }
+
+  .bar {
+    .percent {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  // Рулетка игры
+  .platforms-container {
+    .platform {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  // Игровая доска
+  .playable-field {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+    // Image LightBox
+  .item-info-block,
+  .btn-icon, {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .tag {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .tags-list {
+    .tag {
+      @apply text-[var(--main-text-color)];
+    }
+  }
+
+  .alert-block {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  // Уведомления
+  .alert-box {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  .error-box {
+    .wrap {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  // Инпуты
+  #modals {
+    input,
+    select {
+      @apply bg-[var(--third-bg-color)];
+
+      &::placeholder {
+        @apply text-[var(--main-dark-text-color)];
+      }
+    }
+  }
+
+  // Список игр
+  .game-card {
+    .info-box {
+      @apply text-[var(--four-text-color)];
+
+      background: rgba(140, 140, 140, 0.8);
+    }
+  }
+
+  // Предметы
+  .items-do-list {
+    .item-do {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  .choice-player {
+    @apply text-[var(--main-dark-text-color)];
+  }
+
+  // Аватар
+  .avatar {
+    .notifications {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+
+  // Пагинатор components/navigation/Pagination.vue
+  .pagination-button {
+    &.current {
+      @apply text-[var(--main-dark-text-color)];
+    }
+
+    &:hover {
+      @apply text-[var(--main-dark-text-color)];
+    }
+  }
+}

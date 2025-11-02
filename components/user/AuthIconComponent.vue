@@ -2,6 +2,13 @@
 import AuthComponent from '@/components/user/AuthComponent.vue';
 import Modal from '@/components/modals/Modal.vue';
 
+const props = defineProps({
+	parentClasses: {
+		type: String,
+		default: '',
+	},
+});
+
 const activeAuthModal = ref(false);
 const reCalc = ref(false);
 
@@ -119,7 +126,7 @@ const toggleUserMenu = () => {
 			</template>
 			<template v-else>
 				<div
-						class="user-profile-actions"
+						:class="['user-profile-actions', parentClasses]"
 						@click="toggleAuthModal()"
 				>
 					<span>
@@ -184,7 +191,7 @@ const toggleUserMenu = () => {
 	span {
 		@apply
 			flex justify-center items-center
-			bg-[var(--body-bg-color)]
+			bg-[var(--button-color-1)]
 			w-full h-full rounded-full
 		;
 
