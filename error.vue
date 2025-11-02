@@ -248,7 +248,11 @@ const redirectList = ref([
 	/* Редиректы настольной игры */
 	{
 		url: 'r2025',
-		redirectUrl: 'board-game/retro2025',
+		redirectUrl: 'e/retro2025',
+	},
+	{
+		url: 'board-game/retro2025',
+		redirectUrl: 'e/retro2025',
 	},
 ]);
 
