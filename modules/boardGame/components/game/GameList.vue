@@ -16,12 +16,8 @@ const {
 	sendApiRequest,
 } = api();
 
-const props = defineProps({
-	boardGameId: {
-		type: Number,
-		default: 1,
-	},
-});
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const form = ref(
 		{
@@ -103,10 +99,10 @@ const useFilter = () => {
 
 const { refresh } = await useAsyncData(
 		async () => {
-			let request = `${apiUrl.value}board-game/game-list/list/`;
+			let request = `${apiUrl.value}board-game/v2/game-list/list/`;
 
 			const query = {
-				board_game_id: props.boardGameId,
+				slug: route.params.slug,
 			};
 			const sessionCookie = useCookie(sessionCookieName.value);
 

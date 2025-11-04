@@ -50,6 +50,10 @@ const titles = ref(
 				name: 'Активность',
 				type: 'boolean',
 			},
+			source: {
+				name: 'Источник',
+				type: 'cutText',
+			},
 			added_by: {
 				name: 'Кто добавил',
 				type: 'EntityList',

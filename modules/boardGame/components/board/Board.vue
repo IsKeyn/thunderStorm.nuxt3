@@ -234,7 +234,7 @@ const hasUsed = (position) => {
 <template>
 	<div v-if="fetchedData">
 		<div
-				v-if="isAuth"
+				v-if="isAuth && currentPlayer"
 				class="dice-and-info-block"
 		>
 			<Dices
@@ -294,7 +294,7 @@ const hasUsed = (position) => {
 							/>
 							<div v-if="isAuth && currentPlayer && currentPlayer.position > col.index" class="veil" />
 							<nuxt-link
-									v-if="isAuth"
+									v-if="isAuth && currentPlayer"
 									target="_blank"
 									:to="`/e/${route.params.slug}/player/${currentPlayer.user.name}`"
 									:title="currentPlayer.user.name"

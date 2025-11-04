@@ -8,8 +8,11 @@ import ListTable from '@/components/admin/list/ListTable.vue';
 
 const titles = ref(
 		{
-			message: {
+			id: {
 				name: 'id',
+			},
+			message: {
+				name: 'Сообщение',
 			},
 			board_game_id: {
 				name: 'ID игры',
