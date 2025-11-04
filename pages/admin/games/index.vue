@@ -19,12 +19,19 @@ const titles = ref(
 			},
 			description: {
 				name: 'Описание',
+				type: 'cutText',
+			},
+			title_image: {
+				name: 'Титульное изображение',
+				type: 'media'
 			},
 			active: {
 				name: 'Активность',
+				type: 'boolean',
 			},
 			show_in_list: {
 				name: 'Отображать в списках',
+				type: 'boolean',
 			},
 		}
 );

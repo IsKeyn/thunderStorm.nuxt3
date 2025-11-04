@@ -43,7 +43,7 @@ const form = ref(
 				name: 'Количество очков',
 				value: '',
 				type: 'number',
-				validateRules: 'required, maxLength_255',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			difficult: {
@@ -92,6 +92,13 @@ const form = ref(
 				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 				showTitle: false,
+			},
+			source: {
+				name: 'Источник',
+				value: '',
+				type: 'text',
+				validateRules: 'maxLength_1024',
+				classes: ['w-full', 'mt-[5px]'],
 			},
 			added_by: {
 				name: 'Кто добавил',

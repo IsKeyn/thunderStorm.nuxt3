@@ -10,10 +10,24 @@ const form = ref(
 		{
 			type: {
 				name: 'Тип',
-				value: '',
-				type: 'text',
-				validateRules: 'required, maxLength_255',
+				value: null,
+				type: 'select',
+				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+				options: [
+					{
+						name: 'Не выбрано',
+						value: null,
+					},
+					{
+						name: 'Эффект кубика',
+						value: 0,
+					},
+					{
+						name: 'Эффект очков',
+						value: 1,
+					},
+				],
 			},
 			name: {
 				name: 'Название',

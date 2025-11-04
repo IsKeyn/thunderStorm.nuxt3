@@ -19,12 +19,15 @@ const titles = ref(
 			},
 			text_preview: {
 				name: 'Текст превью',
+				type: 'cutText',
 			},
 			text_full: {
 				name: 'Текст статьи',
+				type: 'cutText',
 			},
 			image: {
 				name: 'Изображение',
+				type: 'media'
 			},
 			type: {
 				name: 'Тип статьи',
