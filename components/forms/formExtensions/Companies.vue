@@ -52,6 +52,12 @@ const repeaterItem = { // Один элемент репитора
 		value: null,
 		placeholder: 'Роль компании в разработке',
 	},
+	additional_info: {
+		name: 'additional_info',
+		type: 'text',
+		value: '',
+		placeholder: 'Дополнительная информация',
+	},
 };
 
 const value = ref({});

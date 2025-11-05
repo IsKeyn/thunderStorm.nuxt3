@@ -1,4 +1,5 @@
 <script setup>
+import Repeater from '@/components/repeaters/Repeater.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { watch } from "vue";
@@ -9,6 +10,11 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
+	defaultValues: {
+		type: Array,
+		default: [],
+	},
+
 	// Дополнительные данные для построения, например списку из сущности. Пример селектор для игровых платформ (PS1, PS2, XBOX ... PC)
 	additionalData: {
 		type: Object,
@@ -17,10 +23,6 @@ const props = defineProps({
 	params: {
 		type: Object,
 		default: {},
-	},
-	defaultValues: {
-		type: Array,
-		default: [],
 	},
 });
 
@@ -70,25 +72,8 @@ const repeaterItem = { // Один элемент репитора
 	},
 };
 
-const repeaterItems = ref ([]); // Массив с элементами репитора
-
-const addRepeaterItem = () => {
-	repeaterItems.value.push(structuredClone(repeaterItem));
-}
-
-const deleteRepeaterItem = (index) => {
-	if (repeaterItems.value.length > 1) {
-		repeaterItems.value = repeaterItems.value.filter((item, inx) => {
-			if (index !== inx) {
-				return item;
-			}
-		});
-
-		setVmodel();
-	}
-}
-
-const hasFirstLoad = ref(false);
+const repeaterComponent = ref(null);
+const repeaterItems = ref([]);
 
 const setVmodel = () => {
 	const resultData = [];
@@ -107,22 +92,18 @@ const setVmodel = () => {
 }
 
 const updateItems = (currentValue) => {
-	const countItemForClear = repeaterItems.value.length;
+	dontChangeVModel.value = true;
+
 	if (currentValue && currentValue.length > 0) {
 		fillRepeaterItems(currentValue);
 	} else if (props.defaultValues && props.defaultValues.length > 0) { // Заполняем дефолтные значения
 		fillRepeaterItems(props.defaultValues);
-	} else {
-		repeaterItems.value.push(structuredClone(repeaterItem));
-	}
-
-	// Удаляем лишние элементы
-	if (countItemForClear) {
-		repeaterItems.value.splice(0, countItemForClear);
 	}
 }
 
 const fillRepeaterItems = (items) => {
+	let finishAr = [];
+
 	items.forEach((item) => {
 		const preparedData = structuredClone(repeaterItem);
 
@@ -134,20 +115,29 @@ const fillRepeaterItems = (items) => {
 			}
 		}
 
-		repeaterItems.value.push(preparedData);
+		finishAr.push(preparedData);
 	});
+
+	repeaterItems.value = finishAr;
 }
 
-watch(repeaterItems.value, () => {
-	if (hasFirstLoad.value) {
-		setVmodel();
-	}
-}, { deep: true });
+const dontChangeRepeaterItems = ref(false);
+const dontChangeVModel = ref(false);
 
 watch(() => props.modelValue, (newValue) => {
-	if (!hasFirstLoad.value) {
+	if (!dontChangeRepeaterItems.value) {
 		updateItems(toRaw(newValue));
-		hasFirstLoad.value = true;
+	} else {
+		dontChangeRepeaterItems.value = false;
+	}
+}, { deep: true, immediate: true });
+
+watch(() => repeaterItems.value, () => {
+	if (!dontChangeVModel.value) {
+		dontChangeRepeaterItems.value = true;
+		setVmodel();
+	} else {
+		dontChangeVModel.value = false;
 	}
 }, { deep: true });
 
@@ -168,55 +158,59 @@ watch(() => props.additionalData, (newValue) => {
 	setVmodel();
 	updateItems(props.modelValue);
 }, { deep: true });
-
-updateItems(props.modelValue);
 </script>
 
-
 <template>
-	<div class="release-date">
+	<div class="repeater-form-box">
 		<span class="form-title">Дополнительные поля</span>
-		<div
-				v-for="(item, index) in repeaterItems"
-				:key="index"
-				class="form"
+		<Repeater
+				ref="repeaterComponent"
+				:repeaterItem="repeaterItem"
+				v-model="repeaterItems"
+				#default="{ repeaterItems, reload }"
 		>
 			<div
-					v-for="(field, ind) in item"
-					:key="ind"
-					:class="field.type === 'hidden' ? 'hidden' : 'input-box'"
+					v-for="(element, index) in repeaterItems"
+					:key="index"
+					class="form"
 			>
-				<FormGenerator
-						v-if="field"
-						:name="field.name"
-						:element="field"
-						:form="item"
-						:showTitle="false"
-						validateErrorPosition="bottom"
-						fieldClasses="w-full"
-				/>
-			</div>
-			<div class="buttons-box">
-				<button
-						v-if="repeaterItems.length > 1"
-						class="btn btn-primary"
-						@click="deleteRepeaterItem(index)"
+				<div
+						v-for="(field, ind) in element"
+						:key="ind"
+						:class="field.type === 'hidden' ? 'hidden' : 'input-box'"
 				>
-					<font-awesome-icon :icon="['fas', 'xmark']" />
-				</button>
+					<FormGenerator
+							v-if="field"
+							:name="field.name"
+							:element="field"
+							:form="element"
+							:showTitle="false"
+							validateErrorPosition="bottom"
+							fieldClasses="w-full"
+					/>
+				</div>
+				<div class="buttons-box">
+					<button
+							v-if="repeaterItems.length > 1"
+							class="btn btn-primary"
+							@click="repeaterComponent.deleteRepeaterItem(index)"
+					>
+						<font-awesome-icon :icon="['fas', 'xmark']" />
+					</button>
+				</div>
 			</div>
-		</div>
-		<button
-				class="btn btn-primary"
-				@click="addRepeaterItem"
-		>
-			Добавить
-		</button>
+			<button
+					class="btn btn-primary block"
+					@click="repeaterComponent.addRepeaterItem()"
+			>
+				Добавить
+			</button>
+		</Repeater>
 	</div>
 </template>
 
 <style lang="scss" scoped>
-.release-date {
+.repeater-form-box {
 	@apply mt-[25px] mb-[25px];
 
 	.form-title {

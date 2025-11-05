@@ -100,12 +100,14 @@ const stringTransfer = (obj) => {
 			<span class="field" v-if="companies"><b>Компании:</b> <span v-html="companies" /></span>
 			<span class="field" v-if="anonsDates"><b>Дата анонса:</b> <span v-html="anonsDates" /></span>
 			<span class="field" v-if="releaseDates"><b>Дата выхода:</b> <span v-html="releaseDates" /></span>
-			<span
+			<template
 					v-for="(field, key) in props.game.additional_fields"
 					:key="key"
-					class="field">
-				<b>{{ field.name }}:</b> {{ field.value }}
-			</span>
+			>
+				<span v-if="field.value" class="field">
+					<b>{{ field.name }}:</b> {{ field.value }}
+				</span>
+			</template>
 			<span
 					v-if="game.links.length > 0"
 					class="field"><b>Ссылки:</b>
