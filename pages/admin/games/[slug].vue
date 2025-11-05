@@ -148,21 +148,6 @@ const extensions = [
 		params: null,
 	},
 ];
-
-const defaultValuesForAdditionalFields = [
-	{
-		name: 'Название',
-		slug: 'name',
-		value: '',
-		sort: '10',
-	},
-	{
-		name: 'Количество дисков',
-		slug: 'disc_count',
-		value: '',
-		sort: '20',
-	},
-];
 </script>
 
 <template>
@@ -172,7 +157,6 @@ const defaultValuesForAdditionalFields = [
 				:form="form"
 				fetchUrl="admin/game"
 				:additionalFieldsEnable="true"
-				:defaultValuesForAdditionalFields="defaultValuesForAdditionalFields"
 				:showTags="true"
 				:showSeo="true"
 				:showMenu="true"

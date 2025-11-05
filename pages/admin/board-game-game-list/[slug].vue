@@ -50,14 +50,14 @@ const form = ref(
 				name: 'Сложность в процентах',
 				value: '',
 				type: 'number',
-				validateRules: 'required, maxLength_255',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			game_completion_time: {
 				name: 'Время на прохождение (в минутах)',
 				value: '',
 				type: 'number',
-				validateRules: 'required, maxLength_255',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			coop: {
