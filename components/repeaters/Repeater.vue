@@ -31,6 +31,14 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
+	/*
+	 * Это конечно костыль, но если данные обновляются через watch в родителе, то необходимо убрать дублирующее
+	 * обновление данных в этом компоненте, пример AdditionalFields
+	 */
+	parentComponentUpdateData: {
+		type: Boolean,
+		default: false,
+	}
 });
 
 const {
@@ -113,6 +121,10 @@ function repeater() {
 
 	const addRepeaterItem = () => {
 		repeaterItems.value.push(structuredClone(props.repeaterItem));
+
+		if (props.parentComponentUpdateData) {
+			setVmodel();
+		}
 	}
 
 	const deleteRepeaterItem = (index) => {
@@ -151,7 +163,9 @@ function repeater() {
 
 	/* Наблюдатель за ручным добавлением и измением репитора, TODO: но удалением элемента репитора не перехватывается */
 	watch(() => repeaterItems.value, () => {
-		setVmodel();
+		if (!props.parentComponentUpdateData) {
+			setVmodel();
+		}
 	}, { deep: true });
 
 	/* Наблюдатель должен сработать один раз, при первом появлении данных v-model */

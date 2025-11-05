@@ -123,7 +123,6 @@ const fillRepeaterItems = (items) => {
 
 const dontChangeRepeaterItems = ref(false);
 const dontChangeVModel = ref(false);
-const firstFillRepeater = ref(false);
 
 watch(() => props.modelValue, (newValue) => {
 	if (!dontChangeRepeaterItems.value) {
@@ -134,14 +133,12 @@ watch(() => props.modelValue, (newValue) => {
 }, { deep: true, immediate: true });
 
 watch(() => repeaterItems.value, () => {
-	if (!dontChangeVModel.value && !firstFillRepeater.value) {
+	if (!dontChangeVModel.value) {
 		dontChangeRepeaterItems.value = true;
 		setVmodel();
 	} else {
 		dontChangeVModel.value = false;
 	}
-
-	firstFillRepeater.value = true;
 }, { deep: true });
 
 watch(() => props.additionalData, (newValue) => {
@@ -169,6 +166,7 @@ watch(() => props.additionalData, (newValue) => {
 		<Repeater
 				ref="repeaterComponent"
 				:repeaterItem="repeaterItem"
+				:parentComponentUpdateData="true"
 				v-model="repeaterItems"
 				#default="{ repeaterItems, reload }"
 		>
