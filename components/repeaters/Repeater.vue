@@ -47,6 +47,7 @@ const {
 	updateItems,
 	addRepeaterItem,
 	deleteRepeaterItem,
+	setVmodel,
 } = repeater();
 
 defineExpose({
@@ -200,8 +201,11 @@ function repeater() {
 		updateItems,
 		addRepeaterItem,
 		deleteRepeaterItem,
+		setVmodel,
 	};
 };
+
+setVmodel();
 </script>
 
 <template>
