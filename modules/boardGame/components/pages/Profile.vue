@@ -42,6 +42,7 @@ const breadCrumbsArray = computed(() => {
 	<layout-PageHeader
 			title="Профайл"
 			:breadCrumbs="breadCrumbsArray"
+			:showMainPageInBreadCrumbs="false"
 	/>
 	<PlayerProfile
 			:userName="nameForProfile"

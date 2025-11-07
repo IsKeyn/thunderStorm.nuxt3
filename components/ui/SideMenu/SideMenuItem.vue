@@ -1,6 +1,8 @@
 <script setup>
 import SideMenuItem from '@/components/ui/SideMenu/SideMenuItem.vue';
 
+const emit = defineEmits(['onClickEmit']);
+
 import { helper } from '@/composables/helper.js'
 const {
 	cutText,
@@ -48,6 +50,7 @@ const props = defineProps({
 						:menu="item.group"
 						:theme="theme"
 						:textCutSize="textCutSize"
+						@click="emit('onClickEmit')"
 				/>
 			</ui-OpeningBox>
 			<NuxtLink
@@ -55,6 +58,7 @@ const props = defineProps({
 					:to="item.path"
 					:target="item.target"
 					class="sidebar-link"
+					@click="emit('onClickEmit')"
 			>
 				<font-awesome-icon
 						v-if="theme === 'left'"

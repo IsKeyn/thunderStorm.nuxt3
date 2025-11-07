@@ -55,6 +55,10 @@ const statusEffectForShow = computed(() => {
 		return props.element.status_effects;
 	}
 });
+
+const goToTwitch = (twitchChanel) => {
+	window.open(`https://www.twitch.tv/${twitchChanel}`, '_blank');
+}
 </script>
 
 <template>
@@ -70,13 +74,11 @@ const statusEffectForShow = computed(() => {
 		<div class="info">
 			<span class="field name">
 				{{ element.user.name }}
-				<template v-if="boardGameStore.playersOnline && boardGameStore.playersOnline[element.user.id]">
-					<a
-							class="twitch"
-							:href="`https://www.twitch.tv/${boardGameStore.playersOnline[element.user.id]}`"
-							target="_blank"
-					>Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></a>
-				</template>
+				<span
+						v-if="boardGameStore.playersOnline && boardGameStore.playersOnline[element.user.id]"
+						class="twitch"
+						@click.prevent="goToTwitch(boardGameStore.playersOnline[element.user.id])"
+				>Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></span>
 			</span>
 			<span class="field">
 				Итоговый результат: {{ element.full_points }}

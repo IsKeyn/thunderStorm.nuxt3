@@ -27,6 +27,7 @@ const breadCrumbsArray = computed(() => {
 	<layout-PageHeader
 			:title="pageName"
 			:breadCrumbs="breadCrumbsArray"
+			:showMainPageInBreadCrumbs="false"
 	/>
 	<StatsList
 			:boardGameId="boardGameStore.boardGameInfo.id"

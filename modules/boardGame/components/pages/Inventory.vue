@@ -40,6 +40,7 @@ const tabsElements = [
 	<layout-PageHeader
 			:title="pageName"
 			:breadCrumbs="breadCrumbsArray"
+			:showMainPageInBreadCrumbs="false"
 	/>
 	<Tabs
 			:tabs="tabsElements"

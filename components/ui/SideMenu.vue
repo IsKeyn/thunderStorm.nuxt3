@@ -1,6 +1,7 @@
 <script setup>
 import Tabs from '@/components/ui/tabs/Tabs.vue';
 import SideMenuItem from '@/components/ui/SideMenu/SideMenuItem.vue';
+import MobileContentBox from '@/components/mobile/MobileContentBox.vue';
 
 import { ref } from 'vue';
 
@@ -45,11 +46,17 @@ const textCutSize = computed(() => {
 		case 'width450': return 28;
 	}
 });
+
+const mobileContentRef = ref(null);
+
+const closeModal = () => {
+	mobileContentRef.value.openCloseBoxFunc();
+}
 </script>
 
 <template>
 	<div
-			:class="['sidebar', isExpanded ? ['sidebar-expanded', props.widthClass] : '']"
+			:class="['sidebar hidden lg:block', isExpanded ? ['sidebar-expanded', props.widthClass] : '']"
 	>
 		<div
 				class="sidebar-header"
@@ -71,9 +78,29 @@ const textCutSize = computed(() => {
 			/>
 		</nav>
 	</div>
+	<MobileContentBox
+			ref="mobileContentRef"
+			:icon="['fa-solid', 'fa-bars']"
+	>
+		<div
+				:class="['sidebar', isExpanded ? ['sidebar-expanded', '!w-full'] : '']"
+		>
+			<nav class="sidebar-nav">
+				<SideMenuItem
+						:menu="menu"
+						:theme="theme"
+						:textCutSize="textCutSize"
+						@onClickEmit="closeModal()"
+				/>
+			</nav>
+		</div>
+	</MobileContentBox>
 </template>
 
 <style lang="scss">
+// Мобильная версия
+
+// Десктопная верси
 .sidebar {
 	@apply
 		w-[60px]

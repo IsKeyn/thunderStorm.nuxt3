@@ -10,16 +10,21 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
+	showMainPageInBreadCrumbs: {
+		type: Boolean,
+		default: true,
+	}
 });
 
 const breadCrumbsArray = computed(() => {
+	const mainPage = [];
 
-const mainPage = [
-		{
+	if (props.showMainPageInBreadCrumbs) {
+		mainPage.push({
 			name: 'Главная',
 			href: '/',
-		}
-];
+		});
+	}
 
 	return mainPage.concat(props.breadCrumbs);
 });
@@ -38,6 +43,4 @@ const mainPage = [
 	</div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

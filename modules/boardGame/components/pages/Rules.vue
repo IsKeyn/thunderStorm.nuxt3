@@ -26,6 +26,7 @@ const breadCrumbsArray = computed(() => {
 	<layout-PageHeader
 			title="Правила и описание"
 			:breadCrumbs="breadCrumbsArray"
+			:showMainPageInBreadCrumbs="false"
 	/>
 	<articles-ArticleDetail
 			:entityType="boardGameStore.boardGameInfo.entity_type"

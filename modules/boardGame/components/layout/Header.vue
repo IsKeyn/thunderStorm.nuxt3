@@ -31,35 +31,37 @@ const playersOnline = computed(() => {
 				{{ boardGameStore.boardGameInfo.name }}
 			</span>
 
-			<ui-IconButton
-					class="ml-[1rem]"
-					:faIcon="['fab', 'telegram']"
-					buttonText="Телеграм"
-					href="https://t.me/game_events_tr"
-					target="_blank"
-			/>
+			<div class="icon-collection-block">
+				<ui-IconButton
+						class="lg:ml-[1rem]"
+						:faIcon="['fab', 'telegram']"
+						buttonText="Телеграм"
+						href="https://t.me/game_events_tr"
+						target="_blank"
+				/>
 
-			<ui-IconButton
-					:faIcon="['fas', 'book-open-reader']"
-					buttonText="Правила и описание"
-					:routerLinkUrl="`/e/${route.params.slug}/rules/`"
-			/>
+				<ui-IconButton
+						:faIcon="['fas', 'book-open-reader']"
+						buttonText="Правила и описание"
+						:routerLinkUrl="`/e/${route.params.slug}/rules/`"
+				/>
 
-			<ui-IconButton
-					iconType="text"
-					:iconText="getStatusName(boardGameStore.boardGameInfo)"
-					:buttonText="getDateString(boardGameStore.boardGameInfo)"
-					:closeWidthClass="boardGameStore.boardGameInfo.status === 2 ? 'w-[200px]' : 'w-[140px]'"
-					openType="t480"
-			/>
+				<ui-IconButton
+						iconType="text"
+						:iconText="getStatusName(boardGameStore.boardGameInfo)"
+						:buttonText="getDateString(boardGameStore.boardGameInfo)"
+						:closeWidthClass="boardGameStore.boardGameInfo.status === 2 ? 'w-[200px]' : 'w-[140px]'"
+						openType="t480"
+				/>
 
-			<ui-IconButton
-					v-if="boardGameStore.playersOnline && Object.keys(boardGameStore.playersOnline).length > 0"
-					:faIcon="['fa-brands', 'fa-twitch']"
-					:hasFade="true"
-					buttonText="Участники онлайн"
-					:routerLinkUrl="`/e/${route.params.slug}/player/`"
-			/>
+				<ui-IconButton
+						v-if="boardGameStore.playersOnline && Object.keys(boardGameStore.playersOnline).length > 0"
+						:faIcon="['fa-brands', 'fa-twitch']"
+						:hasFade="true"
+						buttonText="Участники онлайн"
+						:routerLinkUrl="`/e/${route.params.slug}/player/`"
+				/>
+			</div>
 		</div>
 		<div class="right-block">
 			<UserInfoBlock />
@@ -101,14 +103,27 @@ const playersOnline = computed(() => {
 <style lang="scss" scoped>
 header {
 	@apply
-		pt-[1rem] pb-[1rem] pl-[var(--main-left-padding)] pr-[var(--main-right-padding)]
+		pt-[1rem] pb-[1rem]
+		pl-[var(--main-mobile-left-padding)] lg:pr-[var(--main-mobile-right-padding)]
+		lg:pl-[var(--main-left-padding)] lg:pr-[var(--main-right-padding)]
 		block lg:flex lg:items-center gap-2 text-center lg:text-left
 	;
 
 	border-bottom: 1px solid var(--second-border-color);
 
 	.left-block {
-		@apply w-2/3 flex items-center gap-2;
+		@apply
+			w-full lg:w-auto
+			lg:w-2/3 lg:flex items-center gap-2
+		;
+
+		.title {
+			@apply block lg:inline;
+		}
+
+		.icon-collection-block {
+			@apply flex gap-1 items-center justify-center;
+		}
 
 		.date-block,
 		.status {
