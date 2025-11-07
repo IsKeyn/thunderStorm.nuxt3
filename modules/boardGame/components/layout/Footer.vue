@@ -46,7 +46,8 @@ const domain = computed(() => {
 		<div class="menu-block col-span-2">
 			<nuxt-link to="https://t.me/game_events_tr" target="_blank" title="Телеграм канал">Телеграм-канала</nuxt-link>
 			<a href="/e/" target="_blank" title="Список событий">Список ивентов</a>
-			<nuxt-link to="/" target="_blank" title="Телеграм канал">Пользовательское соглашение</nuxt-link>
+			<nuxt-link to="/" target="_blank" title="Пользовательское соглашение">Пользовательское соглашение</nuxt-link>
+			<a href="/" title="На сайт">На сайт</a>
 		</div>
 		<div class="cutting" />
 		<div class="cutting" />

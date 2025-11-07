@@ -24,6 +24,7 @@ const breadCrumbsArray = computed(() => {
 	<layout-PageHeader
 			title="Обсуждение"
 			:breadCrumbs="breadCrumbsArray"
+			:showMainPageInBreadCrumbs="false"
 	/>
 	<Comments
 			entityType="App\Models\BoardGame"

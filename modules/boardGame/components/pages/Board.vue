@@ -7,7 +7,7 @@ const route = useRoute();
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
-const pageName = 'Доска';
+const pageName = 'Игровое поле';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 

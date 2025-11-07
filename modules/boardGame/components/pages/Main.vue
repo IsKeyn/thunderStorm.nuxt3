@@ -28,7 +28,7 @@ const setPageName = (name) => {
 	<layout-PageHeader
 			:title="pageName"
 			:breadCrumbs="breadCrumbsArray"
-
+			:showMainPageInBreadCrumbs="false"
 	/>
 	<MainStepsComponent @setPageName="setPageName($event)" />
 </template>

@@ -11,12 +11,12 @@ const menu = computed(() => {
 			icon: ['fas', 'house']
 		},
 		{
-			name: 'Игроки',
+			name: 'Участники',
 			path: '/e/' + route.params.slug + '/player/',
 			icon: ['fas', 'trophy']
 		},
 		{
-			name: 'Доска',
+			name: 'Игровое поле',
 			path: '/e/' + route.params.slug + '/board/',
 			icon: ['fas', 'dice']
 		},

@@ -6,7 +6,7 @@ const boardGameStore = useBoardGameStore();
 
 const route = useRoute();
 
-const pageName = 'Список игроков';
+const pageName = 'Список участников';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -27,6 +27,7 @@ const breadCrumbsArray = computed(() => {
 	<layout-PageHeader
 			:title="pageName"
 			:breadCrumbs="breadCrumbsArray"
+			:showMainPageInBreadCrumbs="false"
 	/>
 	<PlayersList
 			:boardGameId="boardGameStore.boardGameInfo.id"

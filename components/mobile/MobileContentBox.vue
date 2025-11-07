@@ -13,6 +13,10 @@ const props = defineProps({
 const openCloseBoxFunc = () => {
 	boxOpen.value = !boxOpen.value;
 };
+
+defineExpose({
+	openCloseBoxFunc,
+});
 </script>
 
 <template>

@@ -266,83 +266,83 @@ const hasUsed = (position) => {
 				/>
 			</div>
 		</div>
-		<div class="flex items-center justify-center">
+		<div class="board-wrapper">
 			<table class="theme-4">
-				<tr
-						v-for="(row, rowNumber) in JSON.parse(fetchedData.board.columns)"
-						:key="rowNumber"
+			<tr
+					v-for="(row, rowNumber) in JSON.parse(fetchedData.board.columns)"
+					:key="rowNumber"
+			>
+				<td
+						v-for="(col, colNumber) in row.cols"
+						:key="col.index"
+						:data-index="col.index"
+						:class="[getTdClasses(col)]"
 				>
-					<td
-							v-for="(col, colNumber) in row.cols"
-							:key="col.index"
-							:data-index="col.index"
-							:class="[getTdClasses(col)]"
-					>
-						<template v-if="col.useThisField">
-							<div
-									v-if="cellBackgroundImage(col.index)"
-									class="cell-image"
-									:style="[
-									`
-										background-image: url('${cellBackgroundImage(col.index)}');
-										background-size: cover;
-										background-position: center;
-										background-repeat: no-repeat;
-									`,
-									hasUsed(col.index) ? 'filter: grayscale(100%)' : '',
-							]"
-							/>
-							<div v-if="isAuth && currentPlayer && currentPlayer.position > col.index" class="veil" />
-							<nuxt-link
-									v-if="isAuth && currentPlayer"
-									target="_blank"
-									:to="`/e/${route.params.slug}/player/${currentPlayer.user.name}`"
+					<template v-if="col.useThisField">
+						<div
+								v-if="cellBackgroundImage(col.index)"
+								class="cell-image"
+								:style="[
+								`
+									background-image: url('${cellBackgroundImage(col.index)}');
+									background-size: cover;
+									background-position: center;
+									background-repeat: no-repeat;
+								`,
+								hasUsed(col.index) ? 'filter: grayscale(100%)' : '',
+						]"
+						/>
+						<div v-if="isAuth && currentPlayer && currentPlayer.position > col.index" class="veil" />
+						<nuxt-link
+								v-if="isAuth && currentPlayer"
+								target="_blank"
+								:to="`/e/${route.params.slug}/player/${currentPlayer.user.name}`"
+								:title="currentPlayer.user.name"
+						>
+							<img
+									v-if="currentPlayer && currentPlayer.position === col.index"
+									id="currentPlayer"
+									class="player-token"
+									:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
 									:title="currentPlayer.user.name"
 							>
-								<img
-										v-if="currentPlayer && currentPlayer.position === col.index"
-										id="currentPlayer"
-										class="player-token"
-										:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
-										:title="currentPlayer.user.name"
-								>
-							</nuxt-link>
-							<span class="field-number">{{ col.name }}</span>
-							<font-awesome-icon
-									v-if="getEffectsByPosition(col.index).length > 0"
-									:icon="['fas', 'circle-info']"
-									class="info-button"
-									@click="showCellInfo(col.index)"
-							/>
-							<div
-									v-if="playersOnCols[col.index]"
-									class="other-players"
+						</nuxt-link>
+						<span class="field-number">{{ col.name }}</span>
+						<font-awesome-icon
+								v-if="getEffectsByPosition(col.index).length > 0"
+								:icon="['fas', 'circle-info']"
+								class="info-button"
+								@click="showCellInfo(col.index)"
+						/>
+						<div
+								v-if="playersOnCols[col.index]"
+								class="other-players"
+						>
+							<nuxt-link
+									v-for="(player, key) in playersOnCols[col.index].filter((item) => item.user.id !== userStore.user.id)"
+									:key="key"
+									target="_blank"
+									:to="`/e/${route.params.slug}/player/${player.user.name}`"
+									:title="player.user.name"
 							>
-								<nuxt-link
-										v-for="(player, key) in playersOnCols[col.index].filter((item) => item.user.id !== userStore.user.id)"
-										:key="key"
-										target="_blank"
-										:to="`/e/${route.params.slug}/player/${player.user.name}`"
+								<img
+										class="other-player-token"
+										:src="player.user.avatar ? getResizeImg(player.user.avatar) : '/images/system/no-avatar.png'"
+										:alt="player.user.name"
 										:title="player.user.name"
 								>
-									<img
-											class="other-player-token"
-											:src="player.user.avatar ? getResizeImg(player.user.avatar) : '/images/system/no-avatar.png'"
-											:alt="player.user.name"
-											:title="player.user.name"
-									>
-								</nuxt-link>
-								<font-awesome-icon
-										v-if="playersOnCols[col.index].length > 2"
-										:icon="['fas', 'ellipsis']"
-										class="more-players"
-										@click="showCellInfo(col.index)"
-								/>
-							</div>
-						</template>
-					</td>
-				</tr>
-			</table>
+							</nuxt-link>
+							<font-awesome-icon
+									v-if="playersOnCols[col.index].length > 2"
+									:icon="['fas', 'ellipsis']"
+									class="more-players"
+									@click="showCellInfo(col.index)"
+							/>
+						</div>
+					</template>
+				</td>
+			</tr>
+		</table>
 		</div>
 	</div>
 	<ui-BigPreloader v-else-if="requestInProgress" />
@@ -650,6 +650,41 @@ td {
 		.more-players {
 			@apply w-[36px] h-[36px] cursor-pointer;
 		}
+	}
+}
+
+// Мобильная версия
+.board-wrapper {
+	@apply lg:flex lg:items-center lg:justify-center;
+
+	width: 100%;
+	overflow-x: auto;
+
+	// Чтобы не ломалось на iOS
+	-webkit-overflow-scrolling: touch;
+}
+
+table {
+	min-width: max-content; // Таблица не сжимается слишком сильно
+}
+
+@media (max-width: 900px) {
+	td {
+		width: 60px !important;
+		height: 60px !important;
+		padding: 2px !important;
+	}
+
+	.player-token {
+		width: 40px !important;
+		height: 40px !important;
+		top: 8px !important;
+		left: 8px !important;
+	}
+
+	.other-player-token {
+		width: 28px !important;
+		height: 28px !important;
 	}
 }
 </style>
