@@ -280,13 +280,13 @@ const setMessages = () => {
 			log = `${defaultLogMessage}`;
 		}
 
-		log += ` выбрал предмет "${selectedItem.value.item.item.item.name}"`;
+		log += ` выбрал предмет "${selectedItem.value.item.item.name}"`;
 
 		if (!message) {
 			message = `${defaultNotificationMessage}`;
 		}
 
-		message += ` выбрал предмет "${selectedItem.value.item.item.item.name}"`;
+		message += ` выбрал предмет "${selectedItem.value.item.item.name}"`;
 	}
 
 	/* Дополнение сообщений информацией о выбранном втором участнике */

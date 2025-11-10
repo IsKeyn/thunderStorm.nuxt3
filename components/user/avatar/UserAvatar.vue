@@ -35,7 +35,7 @@ const props = defineProps({
 	},
 	classes: {
 		type: String,
-		default: 'w-[100px] h-[100px]',
+		default: 'w-full h-full',
 	}
 });
 
@@ -162,6 +162,8 @@ const getUserData = async () => {
 <style lang="scss" scoped>
 .avatar {
 	@apply relative;
+
+	aspect-ratio: 1 / 1;
 
 	img {
 		@apply object-cover cursor-pointer mx-auto rounded-full;

@@ -231,7 +231,6 @@ onMounted(() => {
 			<div class="box avatar-and-social-box">
 				<UserAvatar
 						:userInfo="userInfo.user"
-						classes="w-[150px] h-[150px]"
 						@afterChangeAvatar="refresh"
 				/>
 				<div class="social">
@@ -364,6 +363,9 @@ onMounted(() => {
 			</template>
 		</Tabs>
 	</div>
+	<span v-else>
+		У вас нет профиля в этом ивенте
+	</span>
 	<UserNotificationModal ref="userNotificationModalRef" />
 	<UserMessagesModal ref="userMessagesModalRef" />
 </template>
@@ -378,13 +380,13 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .player-info {
-	@apply block lg:grid grid-cols-12 mb-[2rem];
+	@apply block lg:grid grid-cols-12 mb-[2rem] gap-4;
 
 	.box {
 		@apply mb-[1rem] lg:mb-0;
 
 		&.avatar-and-social-box {
-			@apply lg:col-span-1 2xl:col-span-1;
+			@apply lg:col-span-2 2xl:col-span-2;
 
 			.social {
 				@apply mt-[1rem] flex justify-center gap-1;

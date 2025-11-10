@@ -18,7 +18,7 @@ const themeList = ref(
 			{ value: 'ocean', name: 'Океан', },
 			{ value: 'street', name: 'Улица', },
 			{ value: 'street-light', name: 'Улица (светлая)', },
-			{ value: 'winter-light', name: 'Зима (светлая)', },
+			// { value: 'winter-light', name: 'Зима (светлая)', },
 		],
 );
 

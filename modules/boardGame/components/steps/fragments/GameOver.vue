@@ -82,8 +82,8 @@ const sortedPlayerList = computed(() => {
 			<PlayerShortCard
 					v-if="index <= 2"
 					:element="player"
+					bgClasses="my-0 mx-auto mb-4"
 					:place="sortDirection === 'desc' ? index : sortedPlayerList.length - index - 1"
-					:useLightBox="true"
 			/>
 		</div>
 	</div>
@@ -103,7 +103,7 @@ const sortedPlayerList = computed(() => {
 }
 
 .players-box {
-	@apply flex justify-center gap-2 mb-10;
+	@apply block sm:flex justify-center gap-2 mb-10;
 }
 </style>
 

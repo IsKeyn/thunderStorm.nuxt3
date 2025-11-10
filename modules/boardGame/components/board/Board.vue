@@ -256,7 +256,7 @@ const hasUsed = (position) => {
 						@update="refresh"
 				/>
 				<CellEffectCard
-						v-else
+						v-else-if="showEffectsBox"
 						class="mt-4"
 						name="head"
 						:hasUsed="hasUsed(currentPlayer.position)"

@@ -139,7 +139,7 @@ const goToTwitch = (twitchChanel) => {
 <style lang="scss" scoped>
 .item-box {
 	@apply
-		lg:grid grid-cols-12 relative cursor-pointer rounded-none
+		block lg:grid grid-cols-12 relative cursor-pointer rounded-none
 		p-4 pr-[3rem] mb-2
 		bg-[var(--second-bg-color)]
 	;
@@ -149,7 +149,7 @@ const goToTwitch = (twitchChanel) => {
 	}
 
 	.avatar-box {
-		@apply col-span-1 flex items-center justify-center;
+		@apply col-span-2 flex items-center justify-center;
 	}
 
 	.info {
@@ -181,7 +181,7 @@ const goToTwitch = (twitchChanel) => {
 	}
 
 	.status-effects {
-		@apply lg:col-span-7 2xl:col-span-7 flex gap-1 items-center justify-end;
+		@apply lg:col-span-6 2xl:col-span-6 flex gap-1 justify-end;
 	}
 
 	.control-panel {

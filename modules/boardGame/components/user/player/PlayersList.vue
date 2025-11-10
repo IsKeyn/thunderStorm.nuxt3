@@ -99,6 +99,9 @@ const sortedPlayerList = computed(() => {
 			/>
 		</div>
 	</template>
+	<span v-else>
+		Участников пока нет
+	</span>
 </template>
 
 <style lang="scss" scoped>
