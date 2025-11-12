@@ -66,7 +66,7 @@ const props = defineProps({
 		.description {
 			@apply text-[0.8rem];
 
-			color: var(--main-dark-text-color);
+			color: var(--main-text-color);
 		}
 	}
 

@@ -67,6 +67,7 @@ const goToTwitch = (twitchChanel) => {
 			:to="openProfile ? `/e/${route.params.slug}/player/${element.user.name}` : null"
 	>
 		<PublicAvatar
+				class="max-w-[240px] my-0 mx-auto"
 				:user="element.user"
 				:useLightBox="useLightBox"
 				classes="w-[90%] aspect-square object-cover"
@@ -181,7 +182,7 @@ const goToTwitch = (twitchChanel) => {
 	}
 
 	.status-effects {
-		@apply lg:col-span-6 2xl:col-span-6 flex gap-1 justify-end;
+		@apply lg:col-span-6 2xl:col-span-6 flex gap-1 justify-start lg:justify-end pl-3 pr-3 mt-4 lg:mt-0;
 	}
 
 	.control-panel {

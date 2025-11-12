@@ -27,6 +27,10 @@ const form = ref(
 						name: 'Эффект очков',
 						value: 1,
 					},
+					{
+						name: 'Эффект списка игр',
+						value: 2,
+					},
 				],
 			},
 			name: {

@@ -25,6 +25,10 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
+	showItemActions: {
+		type: Boolean,
+		default: false,
+	}
 });
 
 // Проверяем нужно ли грузить список игроков
@@ -192,8 +196,10 @@ const validate = () => {
 
 	if (props.item.item.item.actions) {
 		props.item.item.item.actions.forEach((item) => {
+			const regex = /^noFurther_\d+$/
+
 			if (
-					(item.target === 'other' || item.target === 'fromTo' || item.target === 'nearestPlayer')
+					(item.target === 'other' || item.target === 'fromTo' || item.target === 'nearestPlayer' || regex.test(item.target))
 					&& Object.keys(selectedPlayer.value).length === 0
 			) { // Проверка, если предмет требует выбора игрока
 				const errorMessage = 'Данный предмет требует выбора игрока';
@@ -334,19 +340,21 @@ const effectFor = (action) => {
 		/>
 
 		<div v-if="item.item.item.actions">
-			<div class="inv-title">
-				Это предмет с автоматическим применением, он выполнит следующие действия:
-			</div>
-			<div class="items-do-list">
-				<div
-						class="item-do"
-						v-for="(action, key) in item.item.item.actions"
-						:key="key"
-				>
-					<span v-if="actions.type.hasOwnProperty(action.type)">Действие: {{ actions.type[action.type].name }}</span>
-					<span v-if="action.direction && actions.direction.hasOwnProperty(action.direction)">Действие: {{ actions.direction[action.direction].name }}</span>
-					<span v-if="action.value">Значение: {{ action.value }}</span>
-					<span v-if="effectFor(action)">Распространяется: {{ effectFor(action) }}</span>
+			<div v-if="showItemActions">
+				<div class="inv-title">
+					Это предмет с автоматическим применением, он выполнит следующие действия:
+				</div>
+				<div class="items-do-list">
+					<div
+							class="item-do"
+							v-for="(action, key) in item.item.item.actions"
+							:key="key"
+					>
+						<span v-if="actions.type.hasOwnProperty(action.type)">Действие: {{ actions.type[action.type].name }}</span>
+						<span v-if="action.direction && actions.direction.hasOwnProperty(action.direction)">Действие: {{ actions.direction[action.direction].name }}</span>
+						<span v-if="action.value">Значение: {{ action.value }}</span>
+						<span v-if="effectFor(action)">Распространяется: {{ effectFor(action) }}</span>
+					</div>
 				</div>
 			</div>
 			<div

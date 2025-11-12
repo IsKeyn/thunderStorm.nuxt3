@@ -30,7 +30,8 @@ const initAutologin = async () => {
 
 					userStore.user = response;
 					alert(`Добро пожаловать ${userStore.user.name}!`);
-					router.push({ path: '/' })
+
+					window.location.href = route.query?.redirectUrl ? route.query.redirectUrl : '/';
 				}
 			} else {
 				error('Пустой ответ');

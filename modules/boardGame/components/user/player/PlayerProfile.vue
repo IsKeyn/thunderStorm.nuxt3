@@ -17,8 +17,6 @@ import UserNotificationModal from '@/components/user/notifications/UserNotificat
 
 import { computed, inject, onMounted, ref, watch } from 'vue';
 
-const route = useRoute();
-
 const boardGameInfo = inject('boardGameInfo');
 const layoutMethods = inject('layoutMethods');
 
@@ -29,11 +27,12 @@ import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
 import { api } from '@/composables/api.js'
-const { sendApiRequest, responseErrors } = api();
+const { sendApiRequest, responseErrors, publicUrl } = api();
 
 import { helper } from '@/composables/helper.js'
 const {
 	findElementById,
+	route,
 } = helper();
 
 import { userNotification } from '@/composables/userNotification.js';
@@ -220,6 +219,10 @@ onMounted(() => {
 		};
 	}
 });
+
+const pageForRedirect = computed(() => {
+	return `${window.location.protocol}//${publicUrl.value}/e/${route.params.slug}/`;
+});
 </script>
 
 <template>
@@ -231,6 +234,7 @@ onMounted(() => {
 			<div class="box avatar-and-social-box">
 				<UserAvatar
 						:userInfo="userInfo.user"
+						class="max-w-[240px] my-0 mx-auto"
 						@afterChangeAvatar="refresh"
 				/>
 				<div class="social">
@@ -356,7 +360,7 @@ onMounted(() => {
 				<PlayerLogs :userName="userName" />
 			</template>
 			<template #tab-settings>
-				<ProfileSettings />
+				<ProfileSettings :pageForRedirect="pageForRedirect" />
 			</template>
 			<template #tab-playerEvents>
 				<PlayerEvents :userName="userName" />

@@ -15,6 +15,13 @@ const { alert, error } = notifications();
 import { api } from '@/composables/api.js'
 const { sendApiRequest } = api();
 
+const props = defineProps({
+	pageForRedirect: {
+		type: String,
+		default: null,
+	},
+});
+
 const requestInProgress = ref(false);
 
 const fetchedData = ref({});
@@ -23,7 +30,9 @@ const generateQrCode = async () => {
 	requestInProgress.value = true;
 
 	try {
-		const body = {};
+		const body = {
+			redirectUrl: props.pageForRedirect,
+		};
 
 		body.userId = userStore.user.id;
 

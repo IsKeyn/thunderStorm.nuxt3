@@ -47,9 +47,9 @@ const props = defineProps({
 		type: Number,
 		default: 0,
 	},
-	rerolled_points: {
-		type: Number,
-		default: 0,
+	rerollPenalty: {
+		type: Object,
+		default: () => {},
 	},
 	streak: {
 		type: Number,
@@ -180,7 +180,11 @@ const sendRequest = async () => {
 			requestInProgress.value = false;
 
 			if (props.doType === 'update') {
-				alert(`Игра "${props.game.name}" успешно отмечена как пройденная`, 10000);
+				if (props.type === 1) {
+					alert(`Игра "${props.game.name}" успешно отмечена как рерольнутая`, 10000);
+				} else if (props.type === 2) {
+					alert(`Игра "${props.game.name}" успешно отмечена как пройденная`, 10000);
+				}
 			} else if (props.doType === 'add') {
 				alert(`Игра "${props.game.name}" успешно удалена из списка`, 10000);
 			}
@@ -223,6 +227,26 @@ const pointsForFinishGame = computed(() => {
 
 	return resultPoints;
 });
+
+const getTypeText = (type) => {
+	let message = '';
+
+	if (type === 1) {
+		if (props.rerollPenalty) {
+			if (props.rerollPenalty.penaltyDefence) {
+				message = 'Вы защищены от штрафов рерола';
+
+				if (props.rerollPenalty.data && props.rerollPenalty.data.name) {
+					message += `, вас защищает "${props.rerollPenalty.data.name}"`;
+				}
+			} else {
+				message = `При рероле игры, вы потеряете ${props.rerollPenalty.pointForReroll} очков, а также накомленный стрик x${props.streak}`;
+			}
+		}
+	}
+
+	return message;
+}
 </script>
 
 <template>
@@ -278,7 +302,7 @@ const pointsForFinishGame = computed(() => {
 			/>
 
 			<div v-if="props.doType === 'update'" class="item-box">
-				<template v-if="type === 1">При рероле игры, вы потеряете {{ rerolled_points }} очков, а также накомленный стрик x{{ streak }}</template>
+				<template v-if="type === 1">{{ getTypeText(type) }}</template>
 				<template v-if="type === 2">
 					За прохождение игры, вам будут начислены {{ pointsForFinishGame }} очков, очки подсчитаны с учетом вашего стрика, который сейчас равен x{{ streak }}
 				</template>
