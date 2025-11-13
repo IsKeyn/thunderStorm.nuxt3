@@ -2,6 +2,7 @@
 import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import SelectPlayer from '@/modules/boardGame/components/user/player/SelectPlayer.vue';
 import SelectItem from '@/modules/boardGame/components/item/SelectItem.vue';
+import SelectEffect from '@/modules/boardGame/components/statusEffect/SelectEffect.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { computed, ref, watch } from "vue";
@@ -141,6 +142,7 @@ const actions = {
 const selectedPlayer = ref({});
 const selectedSecondPlayer = ref({});
 const selectedItem = ref({});
+const selectedEffect = ref({});
 
 const useItem = () => {
 	const validateRes = validate();
@@ -161,6 +163,10 @@ const useItem = () => {
 
 		if (Object.keys(selectedItem.value).length !== 0) {
 			arg.additionalParams.item = selectedItem.value.id;
+		}
+
+		if (Object.keys(selectedEffect.value).length !== 0) {
+			arg.additionalParams.selectedEffect = selectedEffect.value.id;
 		}
 
 		if (form.value.message.value) {
@@ -245,6 +251,18 @@ const getItemByFilter = (type = null) => {
 		}
 
 		return filterItems;
+	}
+}
+
+const getEffectByFilter = (type = null) => {
+	if (Object.keys(selectedPlayer.value).length > 0) {
+		let filterEffects = selectedPlayer.value.status_effects.filter((item) => item.active);
+
+		if (type === 'removeNegativeEffect') {
+			filterEffects = filterEffects.filter((item) => item.statusEffect?.debuff === true);
+		}
+
+		return filterEffects;
 	}
 }
 
@@ -390,6 +408,17 @@ const effectFor = (action) => {
 									:player="selectedPlayer"
 									:items="getItemByFilter(action.type)"
 									v-model="selectedItem"
+							/>
+						</div>
+					</template>
+
+					<template v-if="action.type === 'removeNegativeEffect'">
+						<div v-if="Object.keys(selectedPlayer).length > 0">
+							<span class="inv-title">Данный предмет требует выбора эффекта:</span>
+							<SelectEffect
+									:player="selectedPlayer"
+									:items="getEffectByFilter(action.type)"
+									v-model="selectedEffect"
 							/>
 						</div>
 					</template>
