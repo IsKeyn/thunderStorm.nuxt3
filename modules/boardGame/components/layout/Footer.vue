@@ -103,7 +103,7 @@ footer {
 		@apply
 			col-span-1
 			flex relative
-			justify-end items-center
+			justify-center lg:justify-end items-center
 			min-w-[40px] h-[40px]
 			mr-[2px]
 			pr-[10px] pl-[10px]

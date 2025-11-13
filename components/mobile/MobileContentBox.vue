@@ -11,7 +11,11 @@ const props = defineProps({
 	buttonTitle: {
 		type: String,
 		default: 'Открыть',
-	}
+	},
+	mobileButtonClasses: {
+		type: String,
+		default: 'min-[1400px]:hidden',
+	},
 });
 
 const openCloseBoxFunc = () => {
@@ -25,7 +29,7 @@ defineExpose({
 
 <template>
 	<button
-			class="open-mobile-content-box-button"
+			:class="['open-mobile-content-box-button', mobileButtonClasses]"
 			:buttonTitle="buttonTitle"
 			@click="openCloseBoxFunc()"
 	>
@@ -49,7 +53,6 @@ defineExpose({
 		w-[3rem] h-[3rem]
 		bg-[var(--main-bg-color)]
 		text-[var(--main-text-color)] text-[1.5rem]
-		min-[1400px]:hidden
 		shadow
 	;
 

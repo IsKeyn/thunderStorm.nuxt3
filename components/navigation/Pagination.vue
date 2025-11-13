@@ -270,14 +270,14 @@ const changePageDirection = (direction) => {
 	@apply mb-[var(--main-padding)] mt-[var(--main-padding)] grid grid-cols-12;
 
 	.pagination-col {
-		@apply col-span-4;
+		@apply col-span-12 lg:col-span-4;
 
 		&.page-buttons {
-			@apply text-center;
+			@apply text-center mb-4 lg:mb-0;
 		}
 
 		&.per-page {
-			@apply text-right;
+			@apply text-center lg:text-right;
 		}
 	}
 

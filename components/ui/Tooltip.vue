@@ -28,6 +28,10 @@ const toggle = (newStatus) => {
 	}
 }
 
+const openTooltip = () => {
+	init();
+}
+
 watch(status, (value) => {
 	if (value) {
 		tooltip.value.style.opacity = 1;
@@ -71,6 +75,10 @@ onUnmounted(() => {
 		tooltip.value.parentElement.removeEventListener("mouseenter", () => { init(); });
 		tooltip.value.parentElement.removeEventListener("mouseleave", () => { toggle(false); });
 	}
+});
+
+defineExpose({
+	openTooltip,
 });
 </script>
 

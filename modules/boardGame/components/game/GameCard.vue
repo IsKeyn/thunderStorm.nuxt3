@@ -197,7 +197,7 @@ const getHours = (minutes) => {
 			</div>
 			<Timer
 					v-if="showTimer && userStore.user"
-					class="lg:w-2/3"
+					class="lg:w-2/3 text-[var(--main-text-color)]"
 					:userId="userStore.user.user_id"
 					:showName="false"
 			/>
