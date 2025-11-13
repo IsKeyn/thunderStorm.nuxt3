@@ -37,8 +37,8 @@ const { refresh } = await useAsyncData(
 		async () => {
 			let request = `${apiUrl.value}${props.entity}`;
 
-			if (route.params.slug) {
-				request += `/${route.params.slug}`;
+			if (route.params.entertainment) {
+				request += `/${route.params.entertainment}`;
 			} else {
 				throw createError({
 					statusCode: 404,

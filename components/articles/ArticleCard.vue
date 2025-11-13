@@ -103,7 +103,6 @@ const updateLikes = (params) => {
 						:image="cardData.image"
 
 						@updateLikes="updateLikes"
-						@openSendCommentForm="openSendCommentForm"
 				/>
 			</div>
 		</div>

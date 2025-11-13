@@ -2,12 +2,12 @@ import { ref } from "vue";
 
 import { notifications } from '@/composables/notifications.js';
 
-import { api } from '@/composables/api.js'
-const { sendApiRequest } = api();
+import { api } from '@/composables/api.js';
 
 import { useNotificationsStore } from '@/stores/notifications';
 
 export function userMessage() {
+    const { sendApiRequest } = api();
     const useNotifications = useNotificationsStore();
     const userMessagesModalRef = ref(null);
     const { error } = notifications();

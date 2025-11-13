@@ -26,7 +26,7 @@ defineExpose({
 <template>
 	<button
 			class="open-mobile-content-box-button"
-			:buttonTitle="iconTitle"
+			:buttonTitle="buttonTitle"
 			@click="openCloseBoxFunc()"
 	>
 		<font-awesome-icon :icon="icon" />
