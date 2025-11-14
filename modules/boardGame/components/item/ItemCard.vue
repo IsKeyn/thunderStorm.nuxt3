@@ -59,7 +59,11 @@ const props = defineProps({
 	playSound: {
 		type: Boolean,
 		default: false,
-	}
+	},
+	showDropChance: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const getTypeClass = (type) => {
@@ -124,7 +128,7 @@ watch(() => props.playSound, (newVal) => {
 					Автор: {{ element.item.authorUser ? element.item.authorUser.name : 'InSH Event Team' }}
 				</span>
 			</ui-OpeningBox>
-			<span class="additional-box">
+			<span v-if="showDropChance" class="additional-box">
 					Относительный шанс выпадения: {{ element.item.drop_chance }}%
 			</span>
 			<div v-if="showControlPanel">

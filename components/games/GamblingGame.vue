@@ -329,6 +329,7 @@ const startSpin = (randomIndex) => {
 								:showControlPanel="false"
 								:cutDescription="true"
 								:showFullDescription="false"
+								:showDropChance="false"
 								theme="gamblingGame"
 								:classes="element.id === resultId ? 'active' : ''"
 						/>
