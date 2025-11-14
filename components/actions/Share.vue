@@ -30,6 +30,10 @@ const props = defineProps({
 		type: String,
 		default: '',
 	},
+	position: {
+		type: String,
+		default: 'left',
+	},
 });
 
 const share = (serviceName) => {
@@ -81,7 +85,10 @@ const toggle = () => {
 </script>
 
 <template>
-	<Tooltip position="left" ref="tooltipComponent">
+	<Tooltip
+			:position="position"
+			ref="tooltipComponent"
+	>
 		<div class="action-panel">
 			<div
 					:class="['square-box', itemClass]"

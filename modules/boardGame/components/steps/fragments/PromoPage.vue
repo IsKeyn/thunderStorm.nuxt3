@@ -32,7 +32,7 @@ const { route } = helper();
 
 <style lang="scss">
 .event-main-page-video-block {
-	@apply max-w-[50%];
+	@apply 2xl:max-w-[50%];
 	margin: 0 auto;
 }
 </style>

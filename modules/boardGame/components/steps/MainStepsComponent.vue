@@ -21,6 +21,11 @@ const {
 	userStore,
 } = userFunctions();
 
+import { date } from '@/composables/date.js';
+const {
+	getFormattedDate,
+} = date();
+
 const route = useRoute();
 
 const setPageNameFunc = (name) => {
@@ -52,9 +57,14 @@ const setPageNameFunc = (name) => {
 			<PromoPage />
 			<div v-if="isAuth">
 				<template v-if="isEmailVerified">
-					<template v-if="Object.keys(userStore.player).length > 0">
-						Включите уведомления, чтобы получить уведомление в день начала ивента (скриншот, как это делается)
-					</template>
+					<div class="mt-4" v-if="Object.keys(userStore.player).length > 0">
+						<template v-if="boardGameStore.boardGameInfo.started_at">
+							Вы успешно зарегистрированы в ивенте, посетите эту страницу в день начала ивента - {{ getFormattedDate('d ru_mouths_name Y', boardGameStore.boardGameInfo.started_at) }}
+						</template>
+						<template v-else>
+							Вы успешно зарегистрированы в ивенте
+						</template>
+					</div>
 					<JoinTheGame v-else />
 				</template>
 				<VerifyEmailBlock v-else />

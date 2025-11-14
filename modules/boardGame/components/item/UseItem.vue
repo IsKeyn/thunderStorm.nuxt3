@@ -225,6 +225,16 @@ const validate = () => {
 				}
 				validateResult = false;
 			} else if (
+					(item.type === 'removeNegativeEffect' || item.type === 'stealEffect' || item.type === 'changeUserOwnerEffect')
+					&& Object.keys(selectedEffect.value).length === 0
+			) { // Проверка, если предмет требует выбора статус эффекта
+				const errorMessage = 'Данный предмет требует выбора статус эффекта';
+
+				if (!validateErrors.value.includes(errorMessage)) {
+					validateErrors.value.push(errorMessage);
+				}
+				validateResult = false;
+			} else if (
 					item.target === 'fromTo'
 					&& Object.keys(selectedSecondPlayer.value).length === 0
 			) {
@@ -412,7 +422,7 @@ const effectFor = (action) => {
 						</div>
 					</template>
 
-					<template v-if="action.type === 'removeNegativeEffect'">
+					<template v-if="action.type === 'removeNegativeEffect' || action.type === 'stealEffect' || action.type === 'changeUserOwnerEffect'">
 						<div v-if="Object.keys(selectedPlayer).length > 0">
 							<span class="inv-title">Данный предмет требует выбора эффекта:</span>
 							<SelectEffect

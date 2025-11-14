@@ -109,6 +109,18 @@ const twitch = computed(() => {
 
 	return false;
 });
+
+const otherStreamPlatform = computed(() => {
+	if (userInfo.value && userInfo.value.user && userInfo.value.user.additional_fields) {
+		const otherStreamPlatform = userInfo.value.user.additional_fields.filter((item) => item.slug === 'other_stream_platform');
+
+		if (otherStreamPlatform.length > 0 && otherStreamPlatform[0]) {
+			return otherStreamPlatform[0];
+		}
+	}
+
+	return false;
+});
 /* КОНЕЦ: Поля профайла */
 
 /* Табы профайла */
@@ -136,8 +148,6 @@ const setUnsetTwitchTab = () => {
 		hasStream.value = false;
 	}
 }
-
-setUnsetTwitchTab();
 
 tabsElements.value.push(
 		{
@@ -216,6 +226,7 @@ onMounted(() => {
 		document.body.appendChild(script);
 		script.onload = () => {
 			scriptTwitchIsOnline.value = true;
+			setUnsetTwitchTab();
 		};
 	}
 });
@@ -239,14 +250,14 @@ const pageForRedirect = computed(() => {
 				/>
 				<div class="social">
 					<NuxtLink class="btn btn-simple" v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
-						Twitch канал <font-awesome-icon class="ml-2" icon="fa-brands fa-twitch" />
+						Twitch канал <font-awesome-icon icon="fa-brands fa-twitch" />
 					</NuxtLink>
 <!--					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">-->
 <!--						<font-awesome-icon icon="fa-brands fa-youtube" />-->
 <!--					</NuxtLink>-->
-<!--					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">-->
-<!--						<font-awesome-icon icon="fa-regular fa-circle-play" />-->
-<!--					</NuxtLink>-->
+					<NuxtLink v-if="otherStreamPlatform.value" :to="otherStreamPlatform.value" target="_blank" title="Платформа стрима">
+						Платформа стрима <font-awesome-icon icon="fa-regular fa-circle-play" />
+					</NuxtLink>
 				</div>
 			</div>
 			<div class="box w-full main-info-box">
@@ -376,8 +387,12 @@ const pageForRedirect = computed(() => {
 
 <style lang="scss">
 .twitch {
+	position: relative;
+	width: 100%;
+
 	iframe {
-		@apply w-[50%] h-[40rem];
+		@apply w-full h-auto;
+		aspect-ratio: 16 / 9; /* Стандартное соотношение для Twitch */
 	}
 }
 </style>
@@ -393,7 +408,7 @@ const pageForRedirect = computed(() => {
 			@apply lg:col-span-2 2xl:col-span-2;
 
 			.social {
-				@apply mt-[1rem] flex justify-center gap-1;
+				@apply mt-[1rem] justify-center gap-1;
 
 				a {
 					@apply text-[var(--main-dark-text-color)] p-2 bg-[var(--second-block-color)] flex justify-center items-center;
@@ -403,7 +418,7 @@ const pageForRedirect = computed(() => {
 					}
 
 					svg {
-						@apply text-[1.3rem] cursor-pointer;
+						@apply text-[1.3rem] cursor-pointer ml-2;
 					}
 				}
 			}

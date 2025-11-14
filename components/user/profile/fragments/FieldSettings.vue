@@ -30,6 +30,14 @@ const form = ref(
 				validateRules: 'required, minLength_2, maxLength_50',
 				classes: 'w-full',
 			},
+			other_stream_platform: {
+				name: 'Отличная от twitch стрим площадка',
+				value: '',
+				type: 'text',
+				placeholder: 'Укажите ссылку',
+				validateRules: 'required, minLength_2, maxLength_50',
+				classes: 'w-full',
+			},
 		},
 );
 
@@ -93,7 +101,13 @@ const sendRequest = async () => {
 					slug: 'twitch_channel',
 					value: preparedFormData.twitch,
 					sort: 100,
-				}
+				},
+				{
+					name: 'Отличная от twitch стрим площадка',
+					slug: 'other_stream_platform',
+					value: preparedFormData.other_stream_platform,
+					sort: 200,
+				},
 			],
 		};
 

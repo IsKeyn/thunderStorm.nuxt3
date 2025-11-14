@@ -44,6 +44,7 @@ watch(() => props.actionType, () => {
 		<h3 class="modal-title">{{ actionTypeTitle }}</h3>
 		<LoginForm
 				v-if="actionType === 'login'"
+				:registerOnEventBySlug="registerOnEventBySlug"
 				@setActionType="setActionType"
 				@сlosureFunc="emit('сlosureFunc')"
 		/>
@@ -54,6 +55,7 @@ watch(() => props.actionType, () => {
 		/>
 		<RegistrationForm
 				v-if="actionType === 'registration'"
+				:registerOnEventBySlug="registerOnEventBySlug"
 				@setActionType="setActionType"
 		/>
 		<ResetPasswordForm

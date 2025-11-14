@@ -10,6 +10,13 @@ const { sendApiRequest } = api();
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
+const props = defineProps({
+	registerOnEventBySlug: {
+		type: String,
+		default: null,
+	},
+});
+
 const authWithSocial = (social) => {
 	switch (social) {
 		case 'twitch':
@@ -24,8 +31,14 @@ const requestInProgress = ref(false);
 const sendTwitchRequest = async () => {
 	requestInProgress.value = true;
 
+	const body = {};
+
+	if (props.registerOnEventBySlug) {
+		sessionStorage.setItem('registerOnEventBySlug', props.registerOnEventBySlug);
+	}
+
 	try {
-		const response = await sendApiRequest('auth/twitch/redirect', 'GET', {}, requestName);
+		const response = await sendApiRequest('auth/twitch/redirect', 'GET', body, requestName);
 
 		if (response?.url) {
 			sessionStorage.setItem('pageForRedirect', route.fullPath);

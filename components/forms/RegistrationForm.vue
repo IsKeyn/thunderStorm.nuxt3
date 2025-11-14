@@ -29,7 +29,6 @@ const props = defineProps({
 	},
 });
 
-
 const form = ref(
 		{
 			name: {
@@ -63,13 +62,13 @@ const form = ref(
 				classes: ['w-full', 'pr-[25px]', 'mt-[5px]'],
 			},
 			personal_data_processing_policy: {
-				name: 'Я согласен с правилами использования материалов сайта и политикой конфиденциальности',
+				name: 'Я согласен с правилами использования материалов сайта и политикой по обработке персональных данных',
 				showTitle: false,
-				html: 'Я согласен с <a href="" target="_blank">правилами использования материалов сайта</a> и <a href="" target="_blank">политикой конфиденциальности</a>',
+				html: 'Я согласен с <a href="/article/rule-for-use-site/" target="_blank">правилами использования материалов сайта</a> и <a href="/article/consent-of-personal-data/" target="_blank">политикой по обработке персональных данных</a>',
 				value: false,
 				type: 'checkbox',
 				validateRules: 'required',
-				validateErrorText: 'Соглашение с правилами использования материалов сайта и политикой конфиденциальности обязательно для регистрации',
+				validateErrorText: 'Соглашение с правилами использования материалов сайта и пополитикой по обработке персональных данных обязательно для регистрации',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -275,7 +274,10 @@ const getUserData = async () => {
 					</a>
 				</div>
 			</div>
-			<SocialAuthComponent class="mt-2" />
+			<SocialAuthComponent
+					:registerOnEventBySlug="registerOnEventBySlug"
+					class="mt-2"
+			/>
 		</template>
 	</div>
 </template>

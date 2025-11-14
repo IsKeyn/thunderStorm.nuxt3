@@ -26,6 +26,12 @@ const initLogin = async () => {
 				code: route.query.code,
 			};
 
+			const registerOnEventBySlug = sessionStorage.getItem('registerOnEventBySlug');
+
+			if (registerOnEventBySlug) {
+				body.registerOnEventBySlug = registerOnEventBySlug;
+			}
+
 			const response = await sendApiRequest('auth/twitch/apiCallback', 'POST', body, 'userAutoLogin', requestName);
 
 			if (response) {
@@ -39,6 +45,8 @@ const initLogin = async () => {
 
 					const redirectUrl = sessionStorage.getItem('pageForRedirect');
 
+					sessionStorage.removeItem('registerOnEventBySlug');
+					sessionStorage.removeItem('pageForRedirect');
 					// router.push({ path: redirectUrl ? redirectUrl : '/' });
 					window.location.href = redirectUrl ? redirectUrl : '/';
 				}

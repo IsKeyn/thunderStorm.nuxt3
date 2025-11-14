@@ -63,11 +63,11 @@ const goToTwitch = (twitchChanel) => {
 
 <template>
 	<Nuxt-link
-			:class="['item-box', bgClasses]"
+			:class="['item-box', bgClasses, theme]"
 			:to="openProfile ? `/e/${route.params.slug}/player/${element.user.name}` : null"
 	>
 		<PublicAvatar
-				class="max-w-[240px] my-0 mx-auto"
+				:class="[theme === 'short' ? 'max-w-[120px]' : 'max-w-[240px]', 'my-0 mx-auto']"
 				:user="element.user"
 				:useLightBox="useLightBox"
 				classes="w-[90%] aspect-square object-cover"
@@ -149,8 +149,16 @@ const goToTwitch = (twitchChanel) => {
 		@apply no-underline bg-[var(--second-active-color)];
 	}
 
+	.short {
+		@apply col-span-1;
+		}
+
+	.default {
+		@apply col-span-2 ;
+		}
+
 	.avatar-box {
-		@apply col-span-2 flex items-center justify-center;
+		@apply flex items-center justify-center;
 	}
 
 	.info {
@@ -163,12 +171,12 @@ const goToTwitch = (twitchChanel) => {
 		.field {
 			@apply block mb-1;
 
+			.twitch {
+				@apply bg-[#9147ff] text-[#ffffff] p-1 pl-4 pr-4 rounded-full;
+			}
+
 			a {
 				@apply bg-[var(--main-bg-color)] rounded-full p-1;
-
-				&.twitch {
-					@apply bg-[#9147ff] text-[#ffffff] pl-4 pr-4;
-				}
 
 				&:hover {
 					@apply no-underline;
