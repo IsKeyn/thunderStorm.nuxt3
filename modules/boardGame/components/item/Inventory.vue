@@ -53,6 +53,7 @@ const hiddenUpdate = () => {
 const showItem = (item) => {
 	droppedItem.value = item;
 	hiddenUpdate();
+	refreshNuxtData('boardGameCurrentPlayerInfoRequest');
 }
 
 const closeDroppedItemBox = () => {

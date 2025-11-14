@@ -77,7 +77,6 @@ const setSource = (repeaterKey, sourceKey) => {
 						@input="setVideosData()"
 						placeholder="Ссылка на видео (источник 3)"
 				>
-
 				<div class="video">
 					<div class="sources-list">
 						<template
@@ -102,11 +101,17 @@ const setSource = (repeaterKey, sourceKey) => {
 									title="Vimeo"
 									@click="setSource(index, key)"
 							/>
+							<font-awesome-icon
+									v-if="source?.videoData?.serviceUrl && (source.videoData.serviceUrl === 'vk.com' || source.videoData.serviceUrl === 'vk.ru'|| source.videoData.serviceUrl === 'm.vk.com'|| source.videoData.serviceUrl === 'vkvideo.ru')"
+									:icon="['fa-brands', 'fa-vk']"
+									title="VK"
+									@click="setSource(index, key)"
+							/>
 						</template>
 					</div>
 					<template v-if="repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource] && repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData">
 						<iframe
-								v-if="repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'youtube.com' || blockStructure.fields.videos[index].sources[repeaterItems[index].currentSource].videoData.serviceUrl === 'youtu.be'"
+								v-if="repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'youtube.com' || repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'youtu.be'"
 								:src="`https://www.youtube.com/embed/${repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.id}`"
 								title="YouTube video player"
 								frameborder="0"
@@ -124,11 +129,22 @@ const setSource = (repeaterKey, sourceKey) => {
 								allowFullScreen
 						></iframe>
 						<iframe
-								v-if="repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'vimeo.com' || blockStructure.fields.videos[index].sources[repeaterItems[index].currentSource].videoData.serviceUrl === 'player.vimeo.com'"
+								v-if="repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'vimeo.com' || repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'player.vimeo.com'"
 								:src="`https://player.vimeo.com/video/${repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.id}?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479`"
 								frameborder="0"
 								allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
 						></iframe>
+						<iframe
+								v-if="
+								repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'vk.com'
+								|| repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'vk.ru'
+								|| repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'm.vk.com'
+								|| repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.serviceUrl === 'vkvideo.ru'"
+								:src="`https://vkvideo.ru/video_ext.php?oid=-${repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.oid}&id=${repeaterItems[index].sources[blockStructure.fields.videos[index].currentSource].videoData.id}&autoplay=0`"
+								allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;"
+								frameborder="0"
+								asd="asd"
+								allowfullscreen></iframe>
 					</template>
 				</div>
 

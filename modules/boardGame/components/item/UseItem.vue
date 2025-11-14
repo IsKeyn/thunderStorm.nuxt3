@@ -2,6 +2,7 @@
 import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import SelectPlayer from '@/modules/boardGame/components/user/player/SelectPlayer.vue';
 import SelectItem from '@/modules/boardGame/components/item/SelectItem.vue';
+import SelectEffect from '@/modules/boardGame/components/statusEffect/SelectEffect.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { computed, ref, watch } from "vue";
@@ -25,6 +26,10 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
+	showItemActions: {
+		type: Boolean,
+		default: false,
+	}
 });
 
 // Проверяем нужно ли грузить список игроков
@@ -137,6 +142,7 @@ const actions = {
 const selectedPlayer = ref({});
 const selectedSecondPlayer = ref({});
 const selectedItem = ref({});
+const selectedEffect = ref({});
 
 const useItem = () => {
 	const validateRes = validate();
@@ -157,6 +163,10 @@ const useItem = () => {
 
 		if (Object.keys(selectedItem.value).length !== 0) {
 			arg.additionalParams.item = selectedItem.value.id;
+		}
+
+		if (Object.keys(selectedEffect.value).length !== 0) {
+			arg.additionalParams.selectedEffect = selectedEffect.value.id;
 		}
 
 		if (form.value.message.value) {
@@ -192,8 +202,10 @@ const validate = () => {
 
 	if (props.item.item.item.actions) {
 		props.item.item.item.actions.forEach((item) => {
+			const regex = /^noFurther_\d+$/
+
 			if (
-					(item.target === 'other' || item.target === 'fromTo' || item.target === 'nearestPlayer')
+					(item.target === 'other' || item.target === 'fromTo' || item.target === 'nearestPlayer' || regex.test(item.target))
 					&& Object.keys(selectedPlayer.value).length === 0
 			) { // Проверка, если предмет требует выбора игрока
 				const errorMessage = 'Данный предмет требует выбора игрока';
@@ -207,6 +219,16 @@ const validate = () => {
 					&& Object.keys(selectedItem.value).length === 0
 			) { // Проверка, если предмет требует выбора предмета
 				const errorMessage = 'Данный предмет требует выбора предмета';
+
+				if (!validateErrors.value.includes(errorMessage)) {
+					validateErrors.value.push(errorMessage);
+				}
+				validateResult = false;
+			} else if (
+					(item.type === 'removeNegativeEffect' || item.type === 'stealEffect' || item.type === 'changeUserOwnerEffect')
+					&& Object.keys(selectedEffect.value).length === 0
+			) { // Проверка, если предмет требует выбора статус эффекта
+				const errorMessage = 'Данный предмет требует выбора статус эффекта';
 
 				if (!validateErrors.value.includes(errorMessage)) {
 					validateErrors.value.push(errorMessage);
@@ -239,6 +261,18 @@ const getItemByFilter = (type = null) => {
 		}
 
 		return filterItems;
+	}
+}
+
+const getEffectByFilter = (type = null) => {
+	if (Object.keys(selectedPlayer.value).length > 0) {
+		let filterEffects = selectedPlayer.value.status_effects.filter((item) => item.active);
+
+		if (type === 'removeNegativeEffect') {
+			filterEffects = filterEffects.filter((item) => item.statusEffect?.debuff === true);
+		}
+
+		return filterEffects;
 	}
 }
 
@@ -280,13 +314,13 @@ const setMessages = () => {
 			log = `${defaultLogMessage}`;
 		}
 
-		log += ` выбрал предмет "${selectedItem.value.item.item.item.name}"`;
+		log += ` выбрал предмет "${selectedItem.value.item.item.name}"`;
 
 		if (!message) {
 			message = `${defaultNotificationMessage}`;
 		}
 
-		message += ` выбрал предмет "${selectedItem.value.item.item.item.name}"`;
+		message += ` выбрал предмет "${selectedItem.value.item.item.name}"`;
 	}
 
 	/* Дополнение сообщений информацией о выбранном втором участнике */
@@ -334,19 +368,21 @@ const effectFor = (action) => {
 		/>
 
 		<div v-if="item.item.item.actions">
-			<div class="inv-title">
-				Это предмет с автоматическим применением, он выполнит следующие действия:
-			</div>
-			<div class="items-do-list">
-				<div
-						class="item-do"
-						v-for="(action, key) in item.item.item.actions"
-						:key="key"
-				>
-					<span v-if="actions.type.hasOwnProperty(action.type)">Действие: {{ actions.type[action.type].name }}</span>
-					<span v-if="action.direction && actions.direction.hasOwnProperty(action.direction)">Действие: {{ actions.direction[action.direction].name }}</span>
-					<span v-if="action.value">Значение: {{ action.value }}</span>
-					<span v-if="effectFor(action)">Распространяется: {{ effectFor(action) }}</span>
+			<div v-if="showItemActions">
+				<div class="inv-title">
+					Это предмет с автоматическим применением, он выполнит следующие действия:
+				</div>
+				<div class="items-do-list">
+					<div
+							class="item-do"
+							v-for="(action, key) in item.item.item.actions"
+							:key="key"
+					>
+						<span v-if="actions.type.hasOwnProperty(action.type)">Действие: {{ actions.type[action.type].name }}</span>
+						<span v-if="action.direction && actions.direction.hasOwnProperty(action.direction)">Действие: {{ actions.direction[action.direction].name }}</span>
+						<span v-if="action.value">Значение: {{ action.value }}</span>
+						<span v-if="effectFor(action)">Распространяется: {{ effectFor(action) }}</span>
+					</div>
 				</div>
 			</div>
 			<div
@@ -382,6 +418,17 @@ const effectFor = (action) => {
 									:player="selectedPlayer"
 									:items="getItemByFilter(action.type)"
 									v-model="selectedItem"
+							/>
+						</div>
+					</template>
+
+					<template v-if="action.type === 'removeNegativeEffect' || action.type === 'stealEffect' || action.type === 'changeUserOwnerEffect'">
+						<div v-if="Object.keys(selectedPlayer).length > 0">
+							<span class="inv-title">Данный предмет требует выбора эффекта:</span>
+							<SelectEffect
+									:player="selectedPlayer"
+									:items="getEffectByFilter(action.type)"
+									v-model="selectedEffect"
 							/>
 						</div>
 					</template>

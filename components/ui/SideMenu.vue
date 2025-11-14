@@ -56,7 +56,7 @@ const closeModal = () => {
 
 <template>
 	<div
-			:class="['sidebar hidden lg:block', isExpanded ? ['sidebar-expanded', props.widthClass] : '']"
+			:class="['sidebar hidden xl:block', isExpanded ? ['sidebar-expanded', props.widthClass] : '']"
 	>
 		<div
 				class="sidebar-header"
@@ -81,6 +81,7 @@ const closeModal = () => {
 	<MobileContentBox
 			ref="mobileContentRef"
 			:icon="['fa-solid', 'fa-bars']"
+			mobileButtonClasses="min-[1280px]:hidden"
 	>
 		<div
 				:class="['sidebar', isExpanded ? ['sidebar-expanded', '!w-full'] : '']"

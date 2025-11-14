@@ -60,6 +60,15 @@ const toggleFormVisible = (typeValue = null) => {
 		type.value = typeValue;
 	}
 }
+const showTimer = computed(() => {
+	let showTimer = true;
+
+	if (props.currentGame.type === 0) {
+		showTimer = false;
+	}
+
+	return showTimer;
+});
 </script>
 
 <template>
@@ -74,6 +83,7 @@ const toggleFormVisible = (typeValue = null) => {
 			:element="currentGame"
 			theme="CurrentGame"
 			:showStatusBar="false"
+			:showTimer="showTimer"
 	/>
 
 	<div v-if="currentGame.type === 0" class="item-box">
@@ -109,7 +119,7 @@ const toggleFormVisible = (typeValue = null) => {
 			v-if="showForm && type !== 'coop'"
 			:game="currentGame.game.game"
 			:points="currentGame.game.computed_points ? currentGame.game.computed_points : currentGame.game.points"
-			:rerolled_points="currentGame.rerolled_points"
+			:rerollPenalty="currentGame.rerollPenalty"
 			:streak="player.streak"
 			:type="type"
 			:gameType="currentGame.type"

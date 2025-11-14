@@ -8,6 +8,14 @@ const props = defineProps({
 		type: Array,
 		default: ['fas', 'angle-left'],
 	},
+	buttonTitle: {
+		type: String,
+		default: 'Открыть',
+	},
+	mobileButtonClasses: {
+		type: String,
+		default: 'min-[1400px]:hidden',
+	},
 });
 
 const openCloseBoxFunc = () => {
@@ -20,7 +28,11 @@ defineExpose({
 </script>
 
 <template>
-	<button class="open-mobile-content-box-button" @click="openCloseBoxFunc()">
+	<button
+			:class="['open-mobile-content-box-button', mobileButtonClasses]"
+			:buttonTitle="buttonTitle"
+			@click="openCloseBoxFunc()"
+	>
 		<font-awesome-icon :icon="icon" />
 	</button>
 
@@ -41,7 +53,7 @@ defineExpose({
 		w-[3rem] h-[3rem]
 		bg-[var(--main-bg-color)]
 		text-[var(--main-text-color)] text-[1.5rem]
-		min-[1400px]:hidden
+		shadow
 	;
 
 	top: calc(20% - 1.5rem);

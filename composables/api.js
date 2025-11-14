@@ -1,25 +1,17 @@
+import { computed, ref } from 'vue';
+import { hasInjectionContext, useCookie } from '#imports';
 import { useLoadStateStore } from '@/stores/loadState';
 
 export function api() {
-    const apiUrl = computed(() => {
-        const runtimeConfig = useRuntimeConfig();
-        return runtimeConfig.public.apiUrl + '/api/';
-    });
+    const runtimeConfig = useRuntimeConfig();
 
-    const backendUrl = computed(() => {
-        const runtimeConfig = useRuntimeConfig();
-        return runtimeConfig.public.apiUrl;
-    });
+    const apiUrl = computed(() => `${runtimeConfig.public.apiUrl}/api/`);
 
-    const publicUrl = computed(() => {
-        const runtimeConfig = useRuntimeConfig();
-        return runtimeConfig.public.url;
-    });
+    const backendUrl = computed(() => runtimeConfig.public.apiUrl);
 
-    const sessionCookieName = computed(() => {
-        const runtimeConfig = useRuntimeConfig();
-        return runtimeConfig.public.sessionCookieName;
-    });
+    const publicUrl = computed(() => runtimeConfig.public.url);
+
+    const sessionCookieName = computed(() => runtimeConfig.public.sessionCookieName);
 
     const getCsrfCookie = async () => {
         if (useCookie('XSRF-TOKEN').value) {
@@ -94,7 +86,6 @@ export function api() {
 
         return returnData;
     };
-
     const responseErrors = ref({});
 
     const sendApiRequest = async (

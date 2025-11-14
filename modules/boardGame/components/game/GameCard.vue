@@ -1,5 +1,6 @@
 <script setup>
 import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
+import Timer from '@/modules/boardGame/components/timer/Timer.vue';
 
 import { inject } from "vue";
 
@@ -18,6 +19,11 @@ const {
 	getFormattedHoursFromSeconds,
 	twoDigits,
 } = date();
+
+import { userFunctions } from '@/composables/userFunctions.js';
+const {
+	userStore,
+} = userFunctions();
 
 const props = defineProps({
 	element: {
@@ -43,6 +49,10 @@ const props = defineProps({
 	showCover: {
 		type: Boolean,
 		default: true,
+	},
+	showTimer: {
+		type: Boolean,
+		default: false,
 	},
 });
 
@@ -185,6 +195,12 @@ const getHours = (minutes) => {
 					</div>
 				</div>
 			</div>
+			<Timer
+					v-if="showTimer && userStore.user"
+					class="lg:w-2/3 text-[var(--main-text-color)]"
+					:userId="userStore.user.user_id"
+					:showName="false"
+			/>
 		</div>
 		<div
 				v-if="theme === 'default' && element.comment"
@@ -235,7 +251,7 @@ const getHours = (minutes) => {
 		}
 
 		.info {
-			@apply w-full pl-3 pr-3 text-[var(--main-dark-text-color)];
+			@apply w-full pl-3 pr-3 text-[var(--main-dark-text-color)] mb-4 lg:mb-2;
 
 			.info-wrapper {
 				@apply block lg:flex gap-6;

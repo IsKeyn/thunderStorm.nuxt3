@@ -28,6 +28,10 @@ const toggle = (newStatus) => {
 	}
 }
 
+const openTooltip = () => {
+	init();
+}
+
 watch(status, (value) => {
 	if (value) {
 		tooltip.value.style.opacity = 1;
@@ -37,18 +41,27 @@ watch(status, (value) => {
 });
 
 const calcTooltipPosition = (useToggle = true) => {
-	if (tooltip.value.offsetHeight > tooltip.value.parentElement.offsetHeight) {
-		tooltip.value.style.top = -(tooltip.value.parentElement.offsetHeight + tooltip.value.offsetHeight - tooltip.value.parentElement.offsetHeight) + 'px';
+	const parent = tooltip.value.parentElement;
+	const parentHeight = parent.offsetHeight;
+	const tooltipHeight = tooltip.value.offsetHeight;
+
+	// Расчет вертикальной позиции
+	if (tooltipHeight > parentHeight) {
+		tooltip.value.style.top = -(parentHeight + tooltipHeight - parentHeight) + 'px';
 	} else {
-		tooltip.value.style.top = -(tooltip.value.parentElement.offsetHeight) + 'px';
+		tooltip.value.style.top = -parentHeight + 'px';
 	}
 
+	// Расчет горизонтальной позиции
 	switch (props.position) {
 		case 'right':
 			tooltip.value.style.left = '0px';
 			break;
 		case 'center':
-			// TODO сделать расчет для центральной позиции
+			const parentWidth = parent.offsetWidth;
+			const tooltipWidth = tooltip.value.offsetWidth;
+			const centerPosition = Math.max(0, (parentWidth - tooltipWidth) / 2);
+			tooltip.value.style.left = centerPosition + 'px';
 			break;
 		case 'left':
 			tooltip.value.style.right = '0px';
@@ -72,6 +85,10 @@ onUnmounted(() => {
 		tooltip.value.parentElement.removeEventListener("mouseleave", () => { toggle(false); });
 	}
 });
+
+defineExpose({
+	openTooltip,
+});
 </script>
 
 <template>
@@ -85,6 +102,6 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .tooltip {
-	@apply hidden md:block absolute opacity-0 z-[5];
+	@apply block absolute opacity-0 z-[5];
 }
 </style>

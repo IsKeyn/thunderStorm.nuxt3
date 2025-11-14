@@ -60,7 +60,7 @@ const props = defineProps({
 		default: '',
 	},
 	image: {
-		type: String,
+		type: [String, Object],
 		default: '',
 	},
 });

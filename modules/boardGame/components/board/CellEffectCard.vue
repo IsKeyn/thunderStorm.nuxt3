@@ -59,11 +59,12 @@ const props = defineProps({
 });
 
 const getTypeClass = (type) => {
-	if (type) {
-		return 'red';
-	} else {
-		return 'green';
-	}
+	// Отключено так как у "Эффектов клетки" нет установок бафф, дебафф
+	// if (type) {
+	// 	return 'red';
+	// } else {
+	// 	return 'green';
+	// }
 }
 
 // Проверяем нужно ли грузить список игроков

@@ -138,7 +138,10 @@ const refreshDataWithCheck = (setCheck = false) => {
 }
 
 const roll_count = computed(() => {
-	if (fetchedData.value.player.step_count === 0 && fetchedData.value.player.item_roll_count === 0) {
+	if (
+			(fetchedData.value.player.step_count === 0 || fetchedData.value.player.finishBoard)
+			&& fetchedData.value.player.item_roll_count === 0
+	) {
 		return 1;
 	} else {
 		return 0;

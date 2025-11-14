@@ -3,8 +3,6 @@ import GameListCard from '@/components/entertainment/card/GameListCard.vue';
 import BigPreloader from '@/components/ui/BigPreloader.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
-const emit = defineEmits(['loadingToggle']);
-
 import { ref, watch } from "vue";
 
 import { api } from '@/composables/api.js'
@@ -33,9 +31,6 @@ const form = ref(
 );
 
 const gameList = ref([]);
-
-const requestInProgress = ref(false);
-
 const platforms = ref({});
 
 const setPlatforms = () => {
@@ -97,7 +92,12 @@ const useFilter = () => {
 	dataByGroups.value = groups;
 }
 
-const { refresh } = await useAsyncData(
+const {
+	data: requestData,
+	pending: requestInProgress,
+	refresh
+} = await useAsyncData(
+		'boardGameGameList',
 		async () => {
 			let request = `${apiUrl.value}board-game/v2/game-list/list/`;
 
@@ -105,8 +105,6 @@ const { refresh } = await useAsyncData(
 				slug: route.params.slug,
 			};
 			const sessionCookie = useCookie(sessionCookieName.value);
-
-			requestInProgress.value = true;
 
 			try {
 				await $fetch(
@@ -127,15 +125,11 @@ const { refresh } = await useAsyncData(
 								} else {
 									error('Request error', 5000);
 								}
-								requestInProgress.value = false;
-								emit('loadingToggle');
 							}
 						},
 				);
 			} catch (e) {
 				errorHandler(e);
-				requestInProgress.value = false;
-				emit('loadingToggle');
 			}
 		}
 );
@@ -187,7 +181,6 @@ watch(form.value.searchLine, () => {
 			Игр нет
 		</div>
 	</template>
-
 </template>
 
 <style lang="scss">

@@ -256,7 +256,7 @@ const hasUsed = (position) => {
 						@update="refresh"
 				/>
 				<CellEffectCard
-						v-else
+						v-else-if="showEffectsBox"
 						class="mt-4"
 						name="head"
 						:hasUsed="hasUsed(currentPlayer.position)"
@@ -668,7 +668,27 @@ table {
 	min-width: max-content; // Таблица не сжимается слишком сильно
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1800px) {
+	td {
+		width: 80px !important;
+		height: 80px !important;
+		padding: 2px !important;
+	}
+
+	.player-token {
+		width: 60px !important;
+		height: 60px !important;
+		top: 8px !important;
+		left: 8px !important;
+	}
+
+	.other-player-token {
+		width: 28px !important;
+		height: 28px !important;
+	}
+}
+
+@media (max-width: 1400px) {
 	td {
 		width: 60px !important;
 		height: 60px !important;

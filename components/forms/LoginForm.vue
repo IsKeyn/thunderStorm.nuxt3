@@ -18,6 +18,13 @@ const { validateElement } = validate();
 
 const emit = defineEmits(['сlosureFunc']);
 
+const props = defineProps({
+	registerOnEventBySlug: {
+		type: String,
+		default: null,
+	},
+});
+
 const formError = ref(null);
 const responseErrors = ref({});
 
@@ -279,7 +286,10 @@ const getUserData = async () => {
 			</div>
 		</template>
 	</form>
-	<SocialAuthComponent class="mt-2" />
+	<SocialAuthComponent
+			class="mt-2"
+			:registerOnEventBySlug="registerOnEventBySlug"
+	/>
 </template>
 
 <style lang="scss">

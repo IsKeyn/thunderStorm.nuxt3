@@ -46,7 +46,7 @@ const domain = computed(() => {
 		<div class="menu-block col-span-2">
 			<nuxt-link to="https://t.me/game_events_tr" target="_blank" title="Телеграм канал">Телеграм-канала</nuxt-link>
 			<a href="/e/" target="_blank" title="Список событий">Список ивентов</a>
-			<nuxt-link to="/" target="_blank" title="Пользовательское соглашение">Пользовательское соглашение</nuxt-link>
+			<nuxt-link to="/article/rule-for-use-site/" target="_blank" title="Правила использования материалов сайта">Правила использования материалов сайта</nuxt-link>
 			<a href="/" title="На сайт">На сайт</a>
 		</div>
 		<div class="cutting" />
@@ -55,6 +55,7 @@ const domain = computed(() => {
 			<Share
 					:pageUrl="boardGameStore.boardGameInfo?.slug ? `${publicUrl}/e/${boardGameStore.boardGameInfo?.slug}` : null"
 					itemClass="text-[1rem]"
+					position="center"
 					:title="boardGameStore.boardGameInfo?.name"
 					:description="boardGameStore.boardGameInfo?.description"
 					:image="getResizeImg(boardGameStore.boardGameInfo?.media, 500)"
@@ -103,7 +104,7 @@ footer {
 		@apply
 			col-span-1
 			flex relative
-			justify-end items-center
+			justify-center lg:justify-end items-center
 			min-w-[40px] h-[40px]
 			mr-[2px]
 			pr-[10px] pl-[10px]

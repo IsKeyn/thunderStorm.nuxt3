@@ -30,6 +30,10 @@ const props = defineProps({
 		type: String,
 		default: '',
 	},
+	position: {
+		type: String,
+		default: 'left',
+	},
 });
 
 const share = (serviceName) => {
@@ -72,10 +76,19 @@ const share = (serviceName) => {
 		window.open(shareUrl, '', 'toolbar=0,status=0,scrollbars=1,width=626,height=436');
 	}
 }
+
+const tooltipComponent = ref(null);
+
+const toggle = () => {
+	tooltipComponent.value.openTooltip();
+}
 </script>
 
 <template>
-	<Tooltip position="left">
+	<Tooltip
+			:position="position"
+			ref="tooltipComponent"
+	>
 		<div class="action-panel">
 			<div
 					:class="['square-box', itemClass]"
@@ -103,7 +116,7 @@ const share = (serviceName) => {
 			</div>
 		</div>
 	</Tooltip>
-	<font-awesome-icon :icon="['fas', 'share']"/>
+	<font-awesome-icon @click="toggle" :icon="['fas', 'share']"/>
 </template>
 
 <style lang="scss" scoped>

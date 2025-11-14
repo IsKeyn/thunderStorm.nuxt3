@@ -26,8 +26,10 @@ const props = defineProps({
 	<div class="item-box">
 		<PublicAvatar
 				v-if="theme === 'default'"
+				class="max-w-[100px] my-0 mx-auto mb-2 lg:mb-0"
 				:user="element.user"
 				:useLightBox="useLightBox"
+				classes="w-[100%] aspect-square object-cover"
 		/>
 		<div class="info">
 			<template v-if="theme === 'default'">
@@ -49,10 +51,10 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 .item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] flex;
+	@apply p-2 mb-2 bg-[var(--second-bg-color)] block lg:flex;
 
 	.info {
-		@apply pl-3 pr-3 text-[var(--main-text-color)];
+		@apply pl-3 pr-3 text-[var(--main-text-color)] w-full;
 
 		.name {
 			@apply block mb-1;

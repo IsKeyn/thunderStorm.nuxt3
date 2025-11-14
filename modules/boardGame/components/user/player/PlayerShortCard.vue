@@ -79,7 +79,7 @@ const statusEffectForShow = computed(() => {
 	@apply block max-w-[10rem] relative;
 
 	.name-place-box {
-		@apply text-center rounded-full pl-5 pr-5 pt-2 pb-2 mb-1;
+		@apply text-center rounded-full pl-5 pr-5 pt-2 pb-2 mb-1 shadow;
 
 		&.gold {
 			@apply bg-[#FFD700] text-[#000000];
@@ -119,6 +119,7 @@ const statusEffectForShow = computed(() => {
 	&.gold {
 		.avatar-box {
 			img {
+				@apply shadow;
 				border: 4px solid #FFD700;
 			}
 		}
@@ -127,6 +128,7 @@ const statusEffectForShow = computed(() => {
 	&.silver {
 		.avatar-box {
 			img {
+				@apply shadow;
 				border: 4px solid #c3c3c3;
 			}
 		}
@@ -135,9 +137,14 @@ const statusEffectForShow = computed(() => {
 	&.bronze {
 		.avatar-box {
 			img {
+				@apply shadow;
 				border: 4px solid #CD7F32;
 			}
 		}
+	}
+
+	&:hover {
+		@apply no-underline;
 	}
 }
 </style>

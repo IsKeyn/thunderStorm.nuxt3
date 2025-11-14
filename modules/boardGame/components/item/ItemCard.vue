@@ -121,12 +121,12 @@ watch(() => props.playSound, (newVal) => {
 				{{ element.item.full_description }}
 
 				<span class="additional-box">
-					Шанс выпадения: {{ element.item.drop_chance }}%
-				</span>
-				<span class="additional-box">
 					Автор: {{ element.item.authorUser ? element.item.authorUser.name : 'InSH Event Team' }}
 				</span>
 			</ui-OpeningBox>
+			<span class="additional-box">
+					Относительный шанс выпадения: {{ element.item.drop_chance }}%
+			</span>
 			<div v-if="showControlPanel">
 				<button
 						class="btn btn-simple mr-2"

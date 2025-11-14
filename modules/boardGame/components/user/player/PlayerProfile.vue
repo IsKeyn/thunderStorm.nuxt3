@@ -17,8 +17,6 @@ import UserNotificationModal from '@/components/user/notifications/UserNotificat
 
 import { computed, inject, onMounted, ref, watch } from 'vue';
 
-const route = useRoute();
-
 const boardGameInfo = inject('boardGameInfo');
 const layoutMethods = inject('layoutMethods');
 
@@ -29,11 +27,12 @@ import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
 import { api } from '@/composables/api.js'
-const { sendApiRequest, responseErrors } = api();
+const { sendApiRequest, responseErrors, publicUrl } = api();
 
 import { helper } from '@/composables/helper.js'
 const {
 	findElementById,
+	route,
 } = helper();
 
 import { userNotification } from '@/composables/userNotification.js';
@@ -110,6 +109,18 @@ const twitch = computed(() => {
 
 	return false;
 });
+
+const otherStreamPlatform = computed(() => {
+	if (userInfo.value && userInfo.value.user && userInfo.value.user.additional_fields) {
+		const otherStreamPlatform = userInfo.value.user.additional_fields.filter((item) => item.slug === 'other_stream_platform');
+
+		if (otherStreamPlatform.length > 0 && otherStreamPlatform[0]) {
+			return otherStreamPlatform[0];
+		}
+	}
+
+	return false;
+});
 /* КОНЕЦ: Поля профайла */
 
 /* Табы профайла */
@@ -137,8 +148,6 @@ const setUnsetTwitchTab = () => {
 		hasStream.value = false;
 	}
 }
-
-setUnsetTwitchTab();
 
 tabsElements.value.push(
 		{
@@ -217,8 +226,13 @@ onMounted(() => {
 		document.body.appendChild(script);
 		script.onload = () => {
 			scriptTwitchIsOnline.value = true;
+			setUnsetTwitchTab();
 		};
 	}
+});
+
+const pageForRedirect = computed(() => {
+	return `${window.location.protocol}//${publicUrl.value}/e/${route.params.slug}/`;
 });
 </script>
 
@@ -231,19 +245,19 @@ onMounted(() => {
 			<div class="box avatar-and-social-box">
 				<UserAvatar
 						:userInfo="userInfo.user"
-						classes="w-[150px] h-[150px]"
+						class="max-w-[240px] my-0 mx-auto"
 						@afterChangeAvatar="refresh"
 				/>
 				<div class="social">
 					<NuxtLink class="btn btn-simple" v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">
-						Twitch канал <font-awesome-icon class="ml-2" icon="fa-brands fa-twitch" />
+						Twitch канал <font-awesome-icon icon="fa-brands fa-twitch" />
 					</NuxtLink>
 <!--					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">-->
 <!--						<font-awesome-icon icon="fa-brands fa-youtube" />-->
 <!--					</NuxtLink>-->
-<!--					<NuxtLink v-if="twitch.value" :to="`https://www.twitch.tv/${twitch.value}`" target="_blank" :title="`Twitch канал ${userInfo.user.name}`">-->
-<!--						<font-awesome-icon icon="fa-regular fa-circle-play" />-->
-<!--					</NuxtLink>-->
+					<NuxtLink v-if="otherStreamPlatform.value" :to="otherStreamPlatform.value" target="_blank" title="Платформа стрима">
+						Платформа стрима <font-awesome-icon icon="fa-regular fa-circle-play" />
+					</NuxtLink>
 				</div>
 			</div>
 			<div class="box w-full main-info-box">
@@ -357,37 +371,44 @@ onMounted(() => {
 				<PlayerLogs :userName="userName" />
 			</template>
 			<template #tab-settings>
-				<ProfileSettings />
+				<ProfileSettings :pageForRedirect="pageForRedirect" />
 			</template>
 			<template #tab-playerEvents>
 				<PlayerEvents :userName="userName" />
 			</template>
 		</Tabs>
 	</div>
+	<span v-else>
+		У вас нет профиля в этом ивенте
+	</span>
 	<UserNotificationModal ref="userNotificationModalRef" />
 	<UserMessagesModal ref="userMessagesModalRef" />
 </template>
 
 <style lang="scss">
 .twitch {
+	position: relative;
+	width: 100%;
+
 	iframe {
-		@apply w-[50%] h-[40rem];
+		@apply w-full h-auto;
+		aspect-ratio: 16 / 9; /* Стандартное соотношение для Twitch */
 	}
 }
 </style>
 
 <style lang="scss" scoped>
 .player-info {
-	@apply block lg:grid grid-cols-12 mb-[2rem];
+	@apply block lg:grid grid-cols-12 mb-[2rem] gap-4;
 
 	.box {
 		@apply mb-[1rem] lg:mb-0;
 
 		&.avatar-and-social-box {
-			@apply lg:col-span-1 2xl:col-span-1;
+			@apply lg:col-span-2 2xl:col-span-2;
 
 			.social {
-				@apply mt-[1rem] flex justify-center gap-1;
+				@apply mt-[1rem] justify-center gap-1;
 
 				a {
 					@apply text-[var(--main-dark-text-color)] p-2 bg-[var(--second-block-color)] flex justify-center items-center;
@@ -397,7 +418,7 @@ onMounted(() => {
 					}
 
 					svg {
-						@apply text-[1.3rem] cursor-pointer;
+						@apply text-[1.3rem] cursor-pointer ml-2;
 					}
 				}
 			}

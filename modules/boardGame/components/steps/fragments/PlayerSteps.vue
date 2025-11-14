@@ -46,13 +46,18 @@ const setStep = (stepNumber) => {
 const setCurrentStep = () => {
 	if (userStore.player) {
 		/* Шаг 3 - Профиль игры */
-		if (userStore.player.current_game || (userStore.player?.step_count === 0 && userStore.player?.item_roll_count === 0)) { setStep(3); return; }
-
-		/* Шаг 2 - Игровое поле */
-		if (userStore.player?.step_count > 0) { setStep(2); return; }
+		if (
+				userStore.player.current_game ||
+				((userStore.player?.step_count === 0 || userStore.player?.finishBoard) && userStore.player?.item_roll_count === 0)
+		) {
+			setStep(3); return;
+		}
 
 		/* Шаг 1 - Рулетка предметов */
 		if (userStore.player?.item_roll_count > 0) { setStep(1); return; }
+
+		/* Шаг 2 - Игровое поле */
+		if (userStore.player?.step_count > 0) { setStep(2); return; }
 	}
 };
 
