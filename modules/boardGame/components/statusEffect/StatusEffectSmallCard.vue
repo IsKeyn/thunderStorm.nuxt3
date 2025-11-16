@@ -169,9 +169,9 @@ const sendActivateSeRequest = async (type) => {
 				<div class="mb-2">
 					{{ element.statusEffect.name }}
 				</div>
-				<div>
-					{{ element.statusEffect.description }}
-				</div>
+<!--				<div>-->
+<!--					{{ element.statusEffect.description }}-->
+<!--				</div>-->
 			</div>
 		</Tooltip>
 		<img

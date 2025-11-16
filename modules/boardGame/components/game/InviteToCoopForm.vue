@@ -29,7 +29,7 @@ const { getPlayersForItem } = players();
 const props = defineProps({
 	board_game_game_list_id: {
 		type: Number,
-		default: 1,
+		default: null,
 	},
 	game: {
 		type: Object,
@@ -52,8 +52,8 @@ form.value.comment = {
 			classes: 'w-full mt-1 mb-1 resize-y',
 };
 
-if (props.game.name) {
-	form.value.comment.value += props.game.name;
+if (props.game.game.name) {
+	form.value.comment.value += props.game.game.name;
 }
 
 // Получение времени игры
@@ -114,7 +114,13 @@ const sendRequest = async () => {
 		const body = {};
 
 		body.slug = route.params.slug;
-		body.board_game_game_list_id = props.board_game_game_list_id;
+
+		if (body.board_game_game_list_id) {
+			body.board_game_game_list_id = props.board_game_game_list_id;
+		} else if (props.game.id) {
+			body.board_game_game_list_id = props.game.id;
+		}
+
 		body.comment = form.value.comment.value;
 
 		body.additionalParams = {

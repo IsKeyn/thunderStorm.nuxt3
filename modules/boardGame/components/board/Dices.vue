@@ -159,6 +159,16 @@ const rollDiceRequest = async (dice) => {
 		if (response) {
 			if (response.error) {
 				error(response.error);
+			} else if (response?.status && response?.status_message) {
+				error(response.status_message);
+
+				if (dice === 6) {
+					d6Result.value = dice;
+				} else if (dice === 20) {
+					d20Result.value = dice;
+				}
+
+				isRollingD6.value = false;
 			} else {
 				requestInProgress.value = false;
 

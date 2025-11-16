@@ -47,7 +47,7 @@ watch(() => props.modelValue, (newValue) => {
 			/>
 			<span v-else class="choice-player">
 				<template v-if="items.length === 0">
-					Предметов нет!
+					Эффектов нет!
 				</template>
 				<template v-else>
 					Выберите эффект

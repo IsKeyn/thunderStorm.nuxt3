@@ -255,7 +255,7 @@ const setRequest = async (type) => {
 				{{ element.boardPositionEffect.description }}
 			</span>
 			<div
-					v-if="element.boardPositionEffect && element.boardPositionEffect.actions"
+					v-if="element.boardPositionEffect && element.boardPositionEffect.actions && !hasUsed"
 					v-for="(action, key) in JSON.parse(element.boardPositionEffect.actions)"
 					:key="key"
 					class="actions"
