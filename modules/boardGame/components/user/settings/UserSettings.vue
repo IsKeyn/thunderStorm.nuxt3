@@ -93,8 +93,10 @@ if (userStore.user && Object.keys(userStore.user).length > 0) {
 
 onMounted(() => {
 	dontSendSettingRequest.value = true;
-	if (settings.value?.soundVolume) {
+
+	if (settings.value?.soundVolume != null) {
 		soundVolume.value = settings.value.soundVolume;
+
 	}
 
 	if (settings.value?.theme) {

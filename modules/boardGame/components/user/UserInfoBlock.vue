@@ -70,6 +70,16 @@ const userMenuFunc = (type) => {
 			break;
 	}
 }
+
+const pointsWithText = computed(() => {
+	if (userStore.player.full_points === 1) {
+		return userStore.player.full_points + ' очко';
+	} else if (userStore.player.full_points > 1 && userStore.player.full_points < 5) {
+		return userStore.player.full_points + ' очкa';
+	}
+
+	return userStore.player.full_points + ' очков';
+});
 </script>
 
 <template>
@@ -82,7 +92,7 @@ const userMenuFunc = (type) => {
 		<template v-if="isAuth">
 			<div class="info-block">
 				<span class="nickname">{{ userStore.user.name }}</span>
-				<span v-if="userStore.player" class="points">{{ userStore.player.full_points }} очков</span>
+				<span v-if="userStore.player && Object.keys(userStore.player).length > 0" class="points">{{ pointsWithText }}</span>
 			</div>
 			<div class="avatar">
 					<img

@@ -108,9 +108,10 @@ const showTimer = computed(() => {
 			:element="element"
 			@update="emit('updateData')"
 	/>
+
 	<InviteToCoopForm
 			v-if="showForm && type === 'coop' && coopInteraction.length === 0"
-			:game="currentGame.game.game"
+			:game="currentGame.game"
 			:points="currentGame.game.computed_points ? currentGame.game.computed_points : currentGame.game.points"
 			@toggleFormVisible="toggleFormVisible"
 			@updateData="emit('updateData')"
