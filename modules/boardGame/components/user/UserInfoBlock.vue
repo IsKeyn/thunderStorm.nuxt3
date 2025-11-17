@@ -34,6 +34,11 @@ const {
 	getResizeImg,
 } = media();
 
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const {
+	addTextToPoints
+} = boardGame();
+
 const emit = defineEmits(['updateBoardGameInfo', 'showPlayer', 'showInventory', 'showGame', 'showTimer']);
 
 import { ref } from "vue";
@@ -72,13 +77,7 @@ const userMenuFunc = (type) => {
 }
 
 const pointsWithText = computed(() => {
-	if (userStore.player.full_points === 1) {
-		return userStore.player.full_points + ' очко';
-	} else if (userStore.player.full_points > 1 && userStore.player.full_points < 5) {
-		return userStore.player.full_points + ' очкa';
-	}
-
-	return userStore.player.full_points + ' очков';
+	return addTextToPoints(userStore.player.full_points);
 });
 </script>
 

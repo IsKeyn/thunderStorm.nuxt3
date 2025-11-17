@@ -22,13 +22,39 @@ const route = useRoute();
 const playersOnline = computed(() => {
 	boardGameStore.playersOnline.length > 0
 });
+
+const isMainPage = computed(() => {
+	return route.path === `/e/${route.params.slug}/`;
+});
+
+const titleName = computed(() => {
+	if (!boardGameStore.boardGameInfo.name) {
+		return null;
+	}
+
+	return boardGameStore.boardGameInfo.name ? boardGameStore.boardGameInfo.name : 'Ивент';
+});
 </script>
 
 <template>
 	<header>
-		<div class="left-block">
-			<span v-if="boardGameStore.boardGameInfo.name" class="title">
-				{{ boardGameStore.boardGameInfo.name }}
+		<div
+				v-if="titleName"
+				class="left-block"
+		>
+			<span class="title">
+				<template
+						v-if="!isMainPage"
+				>
+					<nuxt-link
+							:to="`/e/${route.params.slug}/`"
+					>
+						{{ titleName }}
+					</nuxt-link>
+				</template>
+				<template v-else>
+					{{ titleName }}
+				</template>
 			</span>
 
 			<div class="icon-collection-block">
@@ -118,7 +144,11 @@ header {
 		;
 
 		.title {
-			@apply block lg:inline;
+			@apply block lg:inline text-[var(--main-text-color)];
+
+			a {
+				@apply text-[var(--main-text-color)];
+			}
 		}
 
 		.icon-collection-block {

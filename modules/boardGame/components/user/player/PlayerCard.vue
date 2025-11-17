@@ -197,7 +197,7 @@ const goToTwitch = (twitchChanel) => {
 		@apply absolute right-[0.5rem] top-[0.5rem];
 
 		.place {
-			@apply bg-[var(--success-color)] rounded-full block text-center mb-[0.3rem] w-[2rem] h-[2rem] flex items-center justify-center;
+			@apply bg-[var(--success-color)] text-[var(--main-dark-text-color)] rounded-full block text-center mb-[0.3rem] w-[2rem] h-[2rem] flex items-center justify-center;
 
 			&.gold {
 				@apply bg-[#FFD700] text-[#000000];

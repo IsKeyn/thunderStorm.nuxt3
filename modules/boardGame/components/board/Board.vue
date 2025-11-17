@@ -319,7 +319,7 @@ const hasUsed = (position) => {
 								class="other-players"
 						>
 							<nuxt-link
-									v-for="(player, key) in playersOnCols[col.index].filter((item) => item.user.id !== userStore.user.id)"
+									v-for="(player, key) in playersOnCols[col.index].filter((item) => item.user.id !== userStore.user.id).slice(0, 2)"
 									:key="key"
 									target="_blank"
 									:to="`/e/${route.params.slug}/player/${player.user.name}`"
@@ -648,7 +648,7 @@ td {
 		}
 
 		.more-players {
-			@apply w-[36px] h-[36px] cursor-pointer;
+			@apply w-[36px] h-[36px] cursor-pointer ml-[-15px];
 		}
 	}
 }

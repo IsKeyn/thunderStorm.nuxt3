@@ -11,7 +11,7 @@ import { api } from '@/composables/api.js'
 const { sendApiRequest, } = api();
 
 import { system } from '@/composables/system.js'
-const { funcDelay,} = system();
+const { funcDelay } = system();
 
 import { notifications } from '@/composables/notifications.js';
 const { error } = notifications();

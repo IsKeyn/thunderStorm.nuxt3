@@ -60,6 +60,7 @@ const toggleFormVisible = (typeValue = null) => {
 		type.value = typeValue;
 	}
 }
+
 const showTimer = computed(() => {
 	let showTimer = true;
 
@@ -68,6 +69,20 @@ const showTimer = computed(() => {
 	}
 
 	return showTimer;
+});
+
+const pointsForFinishGame = computed(() => {
+	let resultPoints = props.currentGame.game.computed_points ? props.currentGame.game.computed_points : props.currentGame.game.points;
+
+	if (props.currentGame.type === 0) {
+		resultPoints = resultPoints / 2;
+	}
+
+	if (props.player.streak) {
+		resultPoints = Math.round(resultPoints + (resultPoints/100 * (props.player.streak * 2)));
+	}
+
+	return resultPoints;
 });
 </script>
 
@@ -84,6 +99,8 @@ const showTimer = computed(() => {
 			theme="CurrentGame"
 			:showStatusBar="false"
 			:showTimer="showTimer"
+			:pointsForFinishGame="pointsForFinishGame"
+			:streak="player.streak"
 	/>
 
 	<div v-if="currentGame.type === 0" class="item-box">
@@ -123,6 +140,7 @@ const showTimer = computed(() => {
 			:rerollPenalty="currentGame.rerollPenalty"
 			:streak="player.streak"
 			:type="type"
+			:pointsForFinishGame="pointsForFinishGame"
 			:gameType="currentGame.type"
 			@toggleFormVisible="toggleFormVisible"
 			@updateData="emit('updateData', $event)"

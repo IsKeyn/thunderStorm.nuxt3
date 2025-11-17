@@ -94,8 +94,9 @@ const props = defineProps({
 			hidden
 			p-[1rem] cursor-pointer
 			items-center
+			text-[var(--main-dark-text-color)]
 		;
-
+		
 		background: rgba(0, 0, 0, 0.7);
 
 		a.full-block {

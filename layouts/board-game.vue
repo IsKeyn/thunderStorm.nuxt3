@@ -100,7 +100,7 @@ body {
 
 			.content-box {
 				@apply
-					w-full xl:w-[calc(100%-350px)]
+					w-full
 					pt-[1rem] pb-[1rem]
 					pl-[var(--main-mobile-left-padding)] pr-[var(--main-mobile-right-padding)]
 					lg:pl-[2rem] lg:pr-[var(--main-right-padding)]

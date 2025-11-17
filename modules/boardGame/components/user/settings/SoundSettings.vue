@@ -14,6 +14,9 @@ const {
 	userStore,
 } = userFunctions();
 
+import { system } from '@/composables/system.js'
+const { funcDelay } = system();
+
 const soundVolume = ref({
 	name: 'Громкость звука',
 	value: 50,
@@ -31,13 +34,17 @@ watch(() => props.modelValue, (newValue, oldValue) => {
 	}
 }, { deep: true });
 
-watch(() => soundVolume.value, (newValue) => {
+watch(() => soundVolume.value, () => {
+	funcDelay(updateSoundVolume, 500);
+}, { deep: true });
+
+const updateSoundVolume = () => {
 	if (isAuth) {
-		userStore.user.settings.soundVolume = Number(newValue.value);
+		userStore.user.settings.soundVolume = Number(soundVolume.value.value);
 	}
 
-	emit('update:modelValue', newValue.value);
-}, { deep: true });
+	emit('update:modelValue', soundVolume.value.value);
+}
 
 const lastVolume = ref(null);
 

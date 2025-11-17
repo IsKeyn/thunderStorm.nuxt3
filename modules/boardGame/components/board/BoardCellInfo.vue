@@ -59,7 +59,7 @@ const props = defineProps({
 
 .players {
 	.players-wrap {
-		@apply flex gap-3 justify-center;
+		@apply flex flex-wrap gap-3 justify-center;
 	}
 }
 </style>
