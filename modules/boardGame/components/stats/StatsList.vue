@@ -218,7 +218,6 @@ const activityChartOptions = {
 </script>
 
 <template>
-	<button @click="refresh">asd</button>
 	<ui-BigPreloader v-if="requestInProgress" />
 	<template v-else-if="fetchedData">
 		<div
