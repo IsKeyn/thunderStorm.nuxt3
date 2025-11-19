@@ -146,7 +146,7 @@ const pointsForFinishGame = computed(() => {
 			@updateData="emit('updateData', $event)"
 	/>
 	<template v-if="showOtherPlayersActions">
-		<span class="user-interface-title text-left">Действия других игроков с данной игрой</span>
+		<span class="user-interface-title text-left">Действия участников с данной игрой</span>
 		<GameCard
 				v-if="currentGame.other_players_actions.length > 0"
 				v-for="(element, key) in currentGame.other_players_actions"
@@ -156,7 +156,19 @@ const pointsForFinishGame = computed(() => {
 				:showCover="false"
 		/>
 		<div v-else class="item-box">
-			Другим игрокам эта игра не выпадала
+			Участникам эта игра ещё не выпадала
+		</div>
+		<span class="user-interface-title text-left">Действия с данной игрой на других ивентах</span>
+		<GameCard
+				v-if="currentGame.other_players_actions_in_other_events.length > 0"
+				v-for="(element, key) in currentGame.other_players_actions_in_other_events"
+				:key="key"
+				:element="element"
+				theme="PlayerActionWithGame"
+				:showCover="false"
+		/>
+		<div v-else class="item-box">
+			На других ивентах эта игра ещё не выпадала
 		</div>
 	</template>
 </template>

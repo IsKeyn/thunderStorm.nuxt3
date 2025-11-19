@@ -1,7 +1,7 @@
 <script setup>
 import UserNotificationCard from '@/components/user/notifications/UserNotificationCard.vue';
 
-const emit = defineEmits(['loadingToggle']);
+const emit = defineEmits(['loadingToggle', 'toggleModal']);
 
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
@@ -90,6 +90,7 @@ const setAllLikeViewed = async () => {
 				:key="key"
 				:notification="item"
 				@updateData="updateData"
+				@toggleModal="emit('toggleModal')"
 		/>
 	</div>
 	<div v-else class="item-box">

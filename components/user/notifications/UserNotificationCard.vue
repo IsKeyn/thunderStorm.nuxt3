@@ -1,4 +1,9 @@
 <script setup>
+const emit = defineEmits(['updateData', 'toggleModal']);
+
+import { helper } from '@/composables/helper.js'
+const { route, router } = helper();
+
 const props = defineProps({
 	notification: {
 		type: Object,
@@ -12,11 +17,14 @@ const { getFormattedDate } = date();
 import { api } from '@/composables/api.js'
 const { sendApiRequest } = api();
 
-const emit = defineEmits(['updateData']);
-
 const setViewed = async (id) => {
  await sendApiRequest('auth/notification/set-viewed', 'POST', { id }, 'setUserNotificationLikeViewed', 'small');
  emit('updateData');
+}
+
+const redirect = (page) => {
+	emit('toggleModal');
+	router.push({ path: page });
 }
 </script>
 
@@ -28,6 +36,9 @@ const setViewed = async (id) => {
 					{{ getFormattedDate('d.m.Y H:i', notification.created_at) }}
 					<template v-if="notification.from">
 						от {{ notification.from.name }}
+					</template>
+					<template v-if="notification.entity && notification.entity.name">
+						({{ notification.entity.name }})
 					</template>
 				</span>
 				<span class="actions">
@@ -41,14 +52,30 @@ const setViewed = async (id) => {
 				</span>
 			</span>
 			<span class="description">
-				{{ notification.message }}
+				<span class="block">{{ notification.message }}</span>
+				<div v-if="notification.actions">
+					<div
+							v-for="(action, key) in notification.actions"
+							:key="key"
+							class="pt-2 pb-2"
+					>
+						<template v-if="action?.type === 'button'">
+							<button
+									v-if="action?.button"
+									class="btn btn-simple notification-button"
+									@click="redirect(action.button.href)"
+							>
+								{{ action.button.name }}
+							</button>
+						</template>
+					</div>
+				</div>
 			</span>
 		</div>
 	</div>
 </template>
 
 <style lang="scss" scoped>
-
 .item-box {
 	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex;
 
@@ -69,21 +96,28 @@ const setViewed = async (id) => {
 
 		.header {
 			@apply
-				flex
-				block mb-1
+				block md:flex mb-2
 			;
 
 			.date {
-				@apply w-1/2;
+				@apply w-full md:w-1/2;
 			}
 
 			.actions {
-				@apply w-1/2 flex justify-end;
+				@apply w-full md:w-1/2 flex md:justify-end;
 			}
 		}
 
 		.description {
 			@apply block;
+		}
+
+		button {
+			&.notification-button {
+				&:hover {
+					@apply bg-[var(--second-hover-color)] no-underline;
+				}
+			}
 		}
 	}
 

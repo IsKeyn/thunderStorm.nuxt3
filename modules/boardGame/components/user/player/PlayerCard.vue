@@ -67,7 +67,7 @@ const goToTwitch = (twitchChanel) => {
 			:to="openProfile ? `/e/${route.params.slug}/player/${element.user.name}` : null"
 	>
 		<PublicAvatar
-				:class="[theme === 'short' ? 'max-w-[120px]' : 'max-w-[240px]', 'my-0 mx-auto']"
+				:class="[theme === 'short' ? 'max-w-[120px]' : 'max-w-[240px]', 'my-0 mx-auto mb-2']"
 				:user="element.user"
 				:useLightBox="useLightBox"
 				classes="w-[90%] aspect-square object-cover"

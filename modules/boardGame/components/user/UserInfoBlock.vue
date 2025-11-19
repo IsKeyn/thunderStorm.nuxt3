@@ -91,7 +91,10 @@ const pointsWithText = computed(() => {
 		<template v-if="isAuth">
 			<div class="info-block">
 				<span class="nickname">{{ userStore.user.name }}</span>
-				<span v-if="userStore.player && Object.keys(userStore.player).length > 0" class="points">{{ pointsWithText }}</span>
+				<span
+						v-if="userStore.player && Object.keys(userStore.player).length > 0"
+						class="points"
+				>{{ pointsWithText }} (<font-awesome-icon icon="fa-solid fa-bolt" />x{{ userStore.player.streak }})</span>
 			</div>
 			<div class="avatar">
 					<img

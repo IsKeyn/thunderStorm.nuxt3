@@ -8,6 +8,11 @@ const modalOpen = ref(false);
 const modalLoading = ref(false);
 
 const showModal = () => {
+	toggleModal();
+	modalLoading.value = true;
+}
+
+const toggleModal = () => {
 	modalOpen.value = !modalOpen.value;
 	modalLoading.value = true;
 }
@@ -35,6 +40,7 @@ defineExpose({
 				<UserNotificationList
 						v-show="!modalLoading"
 						@loadingToggle="loadingToggle"
+						@toggleModal="toggleModal"
 				/>
 			</div>
 		</div>
