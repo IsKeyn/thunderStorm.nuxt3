@@ -172,7 +172,7 @@ onMounted(() => {
 
 const setVolume = (audioElement) => {
 	if (isAuth && userStore.user?.settings?.soundVolume !== undefined) {
-		const volume = userStore.user.settings.soundVolume;
+		const volume = userStore.user.settings.soundVolume > 0 ? Math.round(userStore.user.settings.soundVolume / 2) : userStore.user.settings.soundVolume;
 		if (typeof volume === 'number' && !isNaN(volume) && isFinite(volume)) {
 			audioElement.volume = volume ? volume / 100 : 0;
 		} else {

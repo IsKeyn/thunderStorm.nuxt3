@@ -4,7 +4,7 @@ import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 const emit = defineEmits(['updateTimerList']);
 
-import { ref, computed, onBeforeUnmount, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onBeforeUnmount, onMounted, onUnmounted, watch } from 'vue'
 
 const route = useRoute();
 
@@ -121,6 +121,10 @@ onMounted(() => {
 
 onUnmounted(() => {
 	clearInterval(getStatusInterval.value);
+});
+
+watch(() => props.userId, () => {
+	getTimerStatus();
 });
 
 const getTimerStatus = async () => {

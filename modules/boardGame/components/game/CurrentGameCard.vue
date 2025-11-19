@@ -60,6 +60,7 @@ const toggleFormVisible = (typeValue = null) => {
 		type.value = typeValue;
 	}
 }
+
 const showTimer = computed(() => {
 	let showTimer = true;
 
@@ -68,6 +69,20 @@ const showTimer = computed(() => {
 	}
 
 	return showTimer;
+});
+
+const pointsForFinishGame = computed(() => {
+	let resultPoints = props.currentGame.game.computed_points ? props.currentGame.game.computed_points : props.currentGame.game.points;
+
+	if (props.currentGame.type === 0) {
+		resultPoints = resultPoints / 2;
+	}
+
+	if (props.player.streak) {
+		resultPoints = Math.round(resultPoints + (resultPoints/100 * (props.player.streak * 2)));
+	}
+
+	return resultPoints;
 });
 </script>
 
@@ -84,6 +99,8 @@ const showTimer = computed(() => {
 			theme="CurrentGame"
 			:showStatusBar="false"
 			:showTimer="showTimer"
+			:pointsForFinishGame="pointsForFinishGame"
+			:streak="player.streak"
 	/>
 
 	<div v-if="currentGame.type === 0" class="item-box">
@@ -123,12 +140,13 @@ const showTimer = computed(() => {
 			:rerollPenalty="currentGame.rerollPenalty"
 			:streak="player.streak"
 			:type="type"
+			:pointsForFinishGame="pointsForFinishGame"
 			:gameType="currentGame.type"
 			@toggleFormVisible="toggleFormVisible"
 			@updateData="emit('updateData', $event)"
 	/>
 	<template v-if="showOtherPlayersActions">
-		<span class="user-interface-title text-left">Действия других игроков с данной игрой</span>
+		<span class="user-interface-title text-left">Действия участников с данной игрой</span>
 		<GameCard
 				v-if="currentGame.other_players_actions.length > 0"
 				v-for="(element, key) in currentGame.other_players_actions"
@@ -138,7 +156,19 @@ const showTimer = computed(() => {
 				:showCover="false"
 		/>
 		<div v-else class="item-box">
-			Другим игрокам эта игра не выпадала
+			Участникам эта игра ещё не выпадала
+		</div>
+		<span class="user-interface-title text-left">Действия с данной игрой на других ивентах</span>
+		<GameCard
+				v-if="currentGame.other_players_actions_in_other_events.length > 0"
+				v-for="(element, key) in currentGame.other_players_actions_in_other_events"
+				:key="key"
+				:element="element"
+				theme="PlayerActionWithGame"
+				:showCover="false"
+		/>
+		<div v-else class="item-box">
+			На других ивентах эта игра ещё не выпадала
 		</div>
 	</template>
 </template>

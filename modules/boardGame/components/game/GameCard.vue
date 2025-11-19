@@ -25,6 +25,11 @@ const {
 	userStore,
 } = userFunctions();
 
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const {
+	addTextToPoints
+} = boardGame();
+
 const props = defineProps({
 	element: {
 		type: Object,
@@ -53,6 +58,14 @@ const props = defineProps({
 	showTimer: {
 		type: Boolean,
 		default: false,
+	},
+	streak: {
+		type: Number,
+		default: 0,
+	},
+	pointsForFinishGame: {
+		type: Number,
+		default: 0,
 	},
 });
 
@@ -162,9 +175,20 @@ const getHours = (minutes) => {
 								class="line-info"
 								v-if="element?.game?.game_completion_time && element.game.game_completion_time !== '0'"
 						>
-							время прохождения (HLTB): {{ getHours(element.game.game_completion_time) }}
+							Время прохождения (HLTB): {{ getHours(element.game.game_completion_time) }}
 						</span>
-						<span class="line-info mt-4" v-if="element.game.description">{{ element.game.description }}</span>
+						<span
+								class="line-info"
+								v-if="pointsForFinishGame"
+						>
+							С учетом вшего стрика x{{ streak }} за прохождение игры вы получите {{ addTextToPoints(pointsForFinishGame) }}
+						</span>
+						<span
+								class="line-info mt-4"
+								v-if="element.game.description"
+						>
+							Условия прохождения: {{ element.game.description }}
+						</span>
 					</div>
 					<div v-if="showInfoButtons">
 						<div class="mb-2">Ссылки:</div>

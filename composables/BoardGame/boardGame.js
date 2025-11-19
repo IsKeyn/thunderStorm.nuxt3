@@ -36,8 +36,23 @@ export function boardGame() {
         return returnData;
     }
 
+    const addTextToPoints = (points) => {
+        const cases = ['очко', 'очка', 'очков'];
+        const remainder10 = points % 10;
+        const remainder100 = points % 100;
+
+        if (remainder10 === 1 && remainder100 !== 11) {
+            return points + ' ' + cases[0];
+        } else if (remainder10 >= 2 && remainder10 <= 4 && (remainder100 < 10 || remainder100 >= 20)) {
+            return points + ' ' + cases[1];
+        } else {
+            return points + ' ' + cases[2];
+        }
+    };
+
     return {
         getStatusName,
         getDateString,
+        addTextToPoints,
     };
 }

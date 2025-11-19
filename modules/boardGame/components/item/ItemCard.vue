@@ -210,7 +210,7 @@ watch(() => props.playSound, (newVal) => {
 			@apply block;
 
 			&.cut-description {
-				@apply w-[200ch];
+				@apply w-[30ch] md:w-[55ch] lg:w-[75ch] 2xl:w-[100ch] fhd:w-[130ch];
 
 				white-space: nowrap;
 				overflow: hidden;

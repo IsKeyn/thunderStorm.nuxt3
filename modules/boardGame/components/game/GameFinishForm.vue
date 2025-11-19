@@ -55,6 +55,10 @@ const props = defineProps({
 		type: Number,
 		default: 0,
 	},
+	pointsForFinishGame: {
+		type: Number,
+		default: 0,
+	},
 });
 
 const form = ref({});
@@ -213,20 +217,6 @@ const sendRequest = async () => {
 		requestInProgress.value = false;
 	}
 }
-
-const pointsForFinishGame = computed(() => {
-	let resultPoints = props.points;
-
-	if (props.gameType === 0) {
-		resultPoints = resultPoints / 2;
-	}
-
-	if (props.streak) {
-		resultPoints = Math.round(resultPoints + (resultPoints/100 * (props.streak * 2)));
-	}
-
-	return resultPoints;
-});
 
 const getTypeText = (type) => {
 	let message = '';

@@ -115,6 +115,40 @@ const charDataForMostCompletedPlayers = (data, dataKey = 'additional_data', colo
 	return returnData;
 };
 
+const charDataForItems = (data, dataKey = 'additional_data', color = '#4700d8') => {
+	const returnData = {
+		labels: [],
+		datasets: [
+			{
+				label: data.name,
+				backgroundColor: [
+					'rgb(62,19,136)',
+					'rgb(77,10,200)',
+					'rgb(10,33,157)',
+					'rgb(18,29,88)',
+					'rgb(7,60,58)',
+					'rgb(16,74,74)',
+					'rgb(19,81,81)',
+					'rgb(16,84,54)',
+					'rgb(30,171,109)',
+					'rgb(22,200,65)',
+				],
+				borderColor: 'rgba(0, 0, 0, 0)', // Цвет обводки
+				borderWidth: 2, // Толщина обводки
+				hoverOffset: 4,
+				data: []
+			},
+		]
+	};
+
+	data.data.forEach((item) => {
+		returnData.labels.push(item.name);
+		returnData.datasets[0].data.push(item[dataKey]);
+	});
+
+	return returnData;
+};
+
 const chartOptions = ref({
 	responsive: true,
 	maintainAspectRatio: false,
@@ -215,14 +249,27 @@ const activityChartOptions = {
 							> - {{ getFormattedHoursFromSeconds(element.time) }}</template>
 						</a>
 						</template>
-						<template v-else-if="key === 'maxBananaCount' || key === 'kirovReporting'">
+						<template v-else-if="
+							key === 'maxBananaCount'
+							|| key === 'kirovReporting'
+							|| key === 'playersWhoMostCompleted'
+							|| key === 'playersWhoMostRerolled'
+							|| key === 'mostCompletedPlayers'
+							|| key === 'mostRerolledPlayers'
+						">
 							<span class="player" @click="$emit('showPlayer', element.user.id)">{{ gameKey + 1 }}. {{ element.user.name }}
 								<template
 										v-if="element.additional_data"
 								> - {{ element.additional_data }}</template>
 							</span>
 						</template>
-
+						<template v-else-if="key === 'mostUsedItem'">
+							<span class="player">{{ gameKey + 1 }}. {{ element.name }}
+								<template
+										v-if="element.additional_data"
+								> - {{ element.additional_data }}</template>
+							</span>
+						</template>
 					</div>
 				</div>
 				<div class="child-item">
@@ -237,8 +284,20 @@ const activityChartOptions = {
 							:chart-options="chartOptionsTime"
 					/>
 					<PieChart
-							v-if="key === 'maxBananaCount' || key === 'kirovReporting'"
+							v-if="
+								key === 'maxBananaCount'
+								|| key === 'kirovReporting'
+								|| key === 'playersWhoMostCompleted'
+								|| key === 'playersWhoMostRerolled'
+								|| key === 'mostCompletedPlayers'
+								|| key === 'mostRerolledPlayers'
+							"
 							:chart-data="charDataForMostCompletedPlayers(data)"
+							:chart-options="chartOptions"
+					/>
+					<PieChart
+							v-if="key === 'mostUsedItem'"
+							:chart-data="charDataForItems(data)"
 							:chart-options="chartOptions"
 					/>
 				</div>
