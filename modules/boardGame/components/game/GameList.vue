@@ -169,7 +169,7 @@ const {
 					sendApiRequest('board-game/v2/game-list/list/', 'GET', { slug: route.params.slug }, requestName, '')
 			);
 
-			return response?.data || null;
+			return response || null;
 		},
 		{
 			server: true,
