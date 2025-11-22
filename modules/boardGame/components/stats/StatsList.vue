@@ -218,73 +218,85 @@ const activityChartOptions = {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			description="Формирование статистики может потребовать времени, пожалуйста ожидайте"
+	/>
 	<template v-else-if="fetchedData">
 		<div
 				v-for="(data, key) in fetchedData"
 				:key="key"
-				class="parent-box"
 		>
-			<template v-if="key !== 'activity'">
-				<div class="child-item">
-					<span class="title">
-					{{ data.name }}
-				</span>
-					<div
-							v-for="(element, gameKey) in data.data"
-							:key="gameKey"
-					>
-						<template v-if="key === 'mostCompletedGames' || key === 'mostRerolledGames' || key === 'shortestGames' || key === 'longestGames'">
-							{{ gameKey + 1 }}. <a
-								:href="`/game/${element.game.game.slug}`"
-								target="_blank"
+			<div
+					v-if="data?.data?.length > 0"
+					class="parent-box"
+			>
+				<template v-if="key !== 'activity'">
+					<div class="child-item">
+						<span class="title">{{ data.name }}</span>
+						<div
+								v-for="(element, gameKey) in data.data"
+								:key="gameKey"
 						>
-							{{ element.game.game.name }}
 							<template
-									v-if="element.additional_data"
-							> - {{ element.additional_data }}</template>
+									v-if="key === 'mostCompletedGames'
+									|| key === 'mostRerolledGames'
+									|| key === 'shortestGames'
+									|| key === 'longestGames'
+							">
+								{{ gameKey + 1 }}. <a
+									:href="`/game/${element.game.game.slug}`"
+									target="_blank"
+							>
+								{{ element.game.game.name }}
+								<template
+										v-if="element.additional_data"
+								> - {{ element.additional_data }}</template>
+								<template
+										v-if="(key === 'shortestGames' || key === 'longestGames') && element.time"
+								> - {{ getFormattedHoursFromSeconds(element.time) }}</template>
+							</a>
+							</template>
 							<template
-									v-if="
-								(key === 'shortestGames' || key === 'longestGames') && element.time"
-							> - {{ getFormattedHoursFromSeconds(element.time) }}</template>
-						</a>
-						</template>
-						<template v-else-if="
-							key === 'maxBananaCount'
-							|| key === 'kirovReporting'
-							|| key === 'playersWhoMostCompleted'
-							|| key === 'playersWhoMostRerolled'
-							|| key === 'mostCompletedPlayers'
-							|| key === 'mostRerolledPlayers'
+									v-else-if="key === 'maxBananaCount'
+								|| key === 'kirovReporting'
+								|| key === 'playersWhoMostCompleted'
+								|| key === 'playersWhoMostRerolled'
+								|| key === 'mostCompletedPlayers'
+								|| key === 'mostRerolledPlayers'
 						">
-							<span class="player" @click="$emit('showPlayer', element.user.id)">{{ gameKey + 1 }}. {{ element.user.name }}
+								{{ gameKey + 1 }}. <a
+									:href="`/e/${route.params.slug}/player/${element.user.name}`"
+									target="_blank"
+							>
+								{{ element.user.name }}
+								<template
+										v-if="element.additional_data"
+								> - {{ element.additional_data }}</template>
+							</a>
+							</template>
+							<template v-else-if="key === 'mostUsedItem'">
+							<span class="items-list">{{ gameKey + 1 }}. {{ element.name }}
 								<template
 										v-if="element.additional_data"
 								> - {{ element.additional_data }}</template>
 							</span>
-						</template>
-						<template v-else-if="key === 'mostUsedItem'">
-							<span class="player">{{ gameKey + 1 }}. {{ element.name }}
-								<template
-										v-if="element.additional_data"
-								> - {{ element.additional_data }}</template>
-							</span>
-						</template>
+							</template>
+						</div>
 					</div>
-				</div>
-				<div class="child-item">
-					<BarChart
-							v-if="key === 'mostCompletedGames' || key === 'mostRerolledGames'"
-							:chart-data="charDataForMostCompletedGames(data)"
-							:chart-options="chartOptions"
-					/>
-					<BarChart
-							v-if="key === 'shortestGames' || key === 'longestGames'"
-							:chart-data="charDataForMostCompletedGames(data, 'time')"
-							:chart-options="chartOptionsTime"
-					/>
-					<PieChart
-							v-if="
+					<div class="child-item">
+						<BarChart
+								v-if="key === 'mostCompletedGames' || key === 'mostRerolledGames'"
+								:chart-data="charDataForMostCompletedGames(data)"
+								:chart-options="chartOptions"
+						/>
+						<BarChart
+								v-if="key === 'shortestGames' || key === 'longestGames'"
+								:chart-data="charDataForMostCompletedGames(data, 'time')"
+								:chart-options="chartOptionsTime"
+						/>
+						<PieChart
+								v-if="
 								key === 'maxBananaCount'
 								|| key === 'kirovReporting'
 								|| key === 'playersWhoMostCompleted'
@@ -292,16 +304,17 @@ const activityChartOptions = {
 								|| key === 'mostCompletedPlayers'
 								|| key === 'mostRerolledPlayers'
 							"
-							:chart-data="charDataForMostCompletedPlayers(data)"
-							:chart-options="chartOptions"
-					/>
-					<PieChart
-							v-if="key === 'mostUsedItem'"
-							:chart-data="charDataForItems(data)"
-							:chart-options="chartOptions"
-					/>
-				</div>
-			</template>
+								:chart-data="charDataForMostCompletedPlayers(data)"
+								:chart-options="chartOptions"
+						/>
+						<PieChart
+								v-if="key === 'mostUsedItem'"
+								:chart-data="charDataForItems(data)"
+								:chart-options="chartOptions"
+						/>
+					</div>
+				</template>
+			</div>
 		</div>
 		<div v-if="fetchedData?.activity">
 			<h1>Активность</h1>
@@ -335,7 +348,7 @@ a {
 	@apply text-[var(--main-text-color)];
 }
 
-span.player {
+span.items-list {
 	@apply cursor-pointer;
 }
 </style>
