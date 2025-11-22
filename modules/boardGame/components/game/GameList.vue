@@ -1,9 +1,9 @@
 <script setup>
-import GameListCard from '@/components/entertainment/card/GameListCard.vue';
-import BigPreloader from '@/components/ui/BigPreloader.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+import BigPreloader from '@/components/ui/BigPreloader.vue';
+import GameListCard from '@/components/entertainment/card/GameListCard.vue';
 
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 
 import { api } from '@/composables/api.js'
 const {
@@ -23,26 +23,62 @@ const form = ref(
 				name: 'Поиск',
 				value: '',
 				type: 'text',
-				placeholder: 'Начните вводить название игры, для фильтрации',
-				validateRules: 'required, minLength_2, maxLength_50',
+				placeholder: 'Начните вводить название игры, для поиска',
 				classes: 'w-full',
+			},
+			listType: {
+				name: 'Тип списка',
+				value: 0,
+				type: 'select',
+				options: [
+					{
+						name: 'Все списки',
+						value: 0,
+					},
+					{
+						name: 'Обычный список',
+						value: 1,
+					},
+					{
+						name: 'Золотая коллекция',
+						value: 2,
+					},
+				],
+			},
+			platforms: {
+				name: 'Игровая платформа',
+				value: null,
+				type: 'select',
+				options: [],
 			},
 		},
 );
 
 const gameList = ref([]);
 const platforms = ref({});
+const dataByGroups = ref([]);
+const filteredItems = ref(null);
 
 const setPlatforms = () => {
+	// Очищаем текущие платформы
 	platforms.value = {};
 
 	filteredItems.value.forEach((item) => {
-		platforms.value[item.platform.slug] = {
-			id: item.platform.id,
-			name: item.platform.name,
-			sort: item.platform.sort,
-			items: [],
-		};
+		if (form.value.platforms.value === null) {
+			platforms.value[item.platform.slug] = {
+				id: item.platform.id,
+				name: item.platform.name,
+				sort: item.platform.sort,
+				items: [],
+			};
+		} else if (form.value.platforms.value === item.platform.slug) {
+			platforms.value[item.platform.slug] = {
+				id: item.platform.id,
+				name: item.platform.name,
+				sort: item.platform.sort,
+				items: [],
+			};
+		}
 	});
 
 	// 1. Получаем массив пар [key, value]
@@ -53,14 +89,42 @@ const setPlatforms = () => {
 
 	// 3. Собираем обратно в объект (в современных JS порядок сохранится)
 	platforms.value = Object.fromEntries(sortedEntries);
+
+	// Записываем платформы в select
+	const options = [{
+		name: 'Все платформы',
+		value: null,
+	}];
+
+	for (let key in platforms.value) {
+		options.push({
+			name: platforms.value[key].name,
+			value: key,
+		});
+	}
+
+	if (form.value.platforms.options.length === 0) {
+		form.value.platforms.options = options;
+	}
 }
 
-const dataByGroups = ref(null);
-const filteredItems = ref(null);
-
 const useFilter = () => {
-	filteredItems.value = gameList.value.filter((item) => {
+	if (!fetchedData?.value) {
+		return false;
+	}
+
+	filteredItems.value = fetchedData.value.filter((item) => {
 		return item.game.name.toLowerCase().includes(form.value.searchLine.value ? form.value.searchLine.value.toLowerCase() : '');
+	});
+
+	filteredItems.value = fetchedData.value.filter((item) => {
+		if (form.value.listType.value === 0) {
+			return true;
+		} else if (form.value.listType.value === 1) {
+			return item.list_type === null;
+		} else if (form.value.listType.value === 2) {
+			return item.list_type === 1;
+		}
 	});
 
 	filteredItems.value = filteredItems.value.sort((a, b) => {
@@ -81,7 +145,7 @@ const useFilter = () => {
 
 	setPlatforms();
 
-	let groups = platforms.value;
+	const groups = platforms.value;
 
 	filteredItems.value.forEach((item) => {
 		if (item.platform.slug && groups[item.platform.slug]) {
@@ -92,102 +156,104 @@ const useFilter = () => {
 	dataByGroups.value = groups;
 }
 
+const requestName = 'bg_gameList';
+
 const {
 	data: requestData,
 	pending: requestInProgress,
 	refresh
 } = await useAsyncData(
-		'boardGameGameList',
+		requestName,
 		async () => {
-			let request = `${apiUrl.value}board-game/v2/game-list/list/`;
+			const response = await Promise.resolve(
+					sendApiRequest('board-game/v2/game-list/list/', 'GET', { slug: route.params.slug }, requestName, '')
+			);
 
-			const query = {
-				slug: route.params.slug,
-			};
-			const sessionCookie = useCookie(sessionCookieName.value);
-
-			try {
-				await $fetch(
-						request,
-						{
-							method: 'GET',
-							credentials: 'include',
-							query,
-							headers: {
-								Accept: 'application/json',
-								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-								Referer: publicUrl.value,
-							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									gameList.value = response._data.data;
-									useFilter();
-								} else {
-									error('Request error', 5000);
-								}
-							}
-						},
-				);
-			} catch (e) {
-				errorHandler(e);
-			}
+			return response?.data || null;
+		},
+		{
+			server: true,
+			lazy: true,
 		}
 );
 
+const fetchedData = computed(() => requestData.value || null);
+
+watch(() => fetchedData.value, () => {
+	useFilter();
+}, { deep: true, immediate: true });
+
 watch(form.value.searchLine, () => {
+	useFilter();
+}, { deep: true });
+
+watch(form.value.listType, () => {
+	useFilter();
+}, { deep: true });
+
+watch(form.value.platforms, () => {
 	useFilter();
 }, { deep: true });
 </script>
 
 <template>
-	<BigPreloader v-if="requestInProgress" />
+	<BigPreloader
+			v-if="requestInProgress"
+			description="Формирование списка игр может потребовать времени, пожалуйста ожидайте"
+	/>
 	<template v-else>
-		<FormGenerator
-				v-if="form.searchLine"
-				name="search"
-				class="w-1/2"
-				:element="form.searchLine"
-				:showTitle="false"
-				:clearButton="true"
-				validateErrorPosition="bottom"
-				labelClasses="mr-4 mt-[10px] mb-[10px]"
-				:fieldClasses="form.searchLine.classes"
-		/>
-		<div v-if="gameList.length > 0">
-			<div v-if="dataByGroups">
-				<div class="group" v-for="(group, key) in dataByGroups">
-					<span class="title">{{ group.name }}</span>
-					<div class="game-list">
-						<GameListCard
-								v-for="(item, index) in group.items"
-								:key="key"
-								:game="item.game"
-								target="_blank"
-								entity="game"
-						/>
-					</div>
+		<div class="mb-4 lg:flex">
+			<FormGenerator
+					v-if="form.searchLine"
+					name="search"
+					:element="form.searchLine"
+					class="w-full lg:w-1/2"
+					:showTitle="false"
+					:clearButton="true"
+					validateErrorPosition="bottom"
+					labelClasses="block lg:inline lg:mr-4 mt-[10px] mb-4 lg:mb-[10px]"
+					:fieldClasses="form.searchLine.classes"
+			/>
+			<FormGenerator
+					v-if="form.listType"
+					name="listType"
+					:element="form.listType"
+					:showTitle="false"
+					:clearButton="true"
+					validateErrorPosition="bottom"
+					labelClasses="lg:mr-4 mt-[10px] mb-4 lg:mb-[10px]"
+					:fieldClasses="form.listType.classes"
+			/>
+			<FormGenerator
+					v-if="form.platforms"
+					name="listType"
+					:element="form.platforms"
+					:showTitle="false"
+					:clearButton="true"
+					validateErrorPosition="bottom"
+					labelClasses="ml-4 lg:ml-0 lg:mr-4 mt-[10px] mb-4 lg:mb-[10px]"
+					:fieldClasses="form.platforms.classes"
+			/>
+		</div>
+		<div v-if="Object.keys(dataByGroups).length > 0">
+			<div class="group" v-for="(group, key) in dataByGroups">
+				<span class="title">{{ group.name }}</span>
+				<div class="game-list">
+					<GameListCard
+							v-for="(item, index) in group.items"
+							:key="key"
+							:game="item.game"
+							target="_blank"
+							entity="game"
+					/>
 				</div>
 			</div>
-			<!--		<div class="game-list">-->
-			<!--			<GameListCard-->
-			<!--					v-for="(item, index) in gameList"-->
-			<!--					:key="index"-->
-			<!--					:game="item.game"-->
-			<!--					entity="game"-->
-			<!--			/>-->
-			<!--		</div>-->
 		</div>
 		<div v-else class="item-box">
 			Игр нет
 		</div>
 	</template>
 </template>
-
-<style lang="scss">
-//input[name="search"] {
-//	@apply bg-[var(--third-bg-color)];
-//}
-</style>
 
 <style lang="scss" scoped>
 .item-box {
