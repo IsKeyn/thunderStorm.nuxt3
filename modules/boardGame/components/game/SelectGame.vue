@@ -1,5 +1,6 @@
 <script setup>
-import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
+import StatusEffectCard from '@/modules/boardGame/components/statusEffect/StatusEffectCard.vue';
+import GameGamblingCard from '@/modules/boardGame/components/game/GameGamblingCard.vue';
 
 import { ref, watch } from 'vue'
 
@@ -16,7 +17,7 @@ const props = defineProps({
 	},
 });
 
-const selectedOption = ref({});
+const selectedOption = ref(null);
 const isOpen = ref(false);
 
 const toggleOptions = () => {
@@ -41,16 +42,18 @@ watch(() => props.modelValue, (newValue) => {
 				class="selected"
 				@click="toggleOptions"
 		>
-			<ItemCard
-					v-if="selectedOption && selectedOption.item"
-					:element="selectedOption.item"
-			/>
+			<div v-if="selectedOption" :style="`height: ${90 - 5}px;`">
+				<GameGamblingCard
+						:itemHeight="90"
+						:element="selectedOption"
+				/>
+			</div>
 			<span v-else class="choice-player">
 				<template v-if="items.length === 0">
-					Предметов нет!
+					Игр нет!
 				</template>
 				<template v-else>
-					Выберите предмет
+					Выберите игру
 				</template>
 			</span>
 		</div>
@@ -63,10 +66,13 @@ watch(() => props.modelValue, (newValue) => {
 					v-for="(item, key) in items"
 					:key="key"
 			>
-				<ItemCard
-						:element="item.item"
-						@click="selectOption(item)"
-				/>
+				<div :style="`height: ${90 - 5}px;`" class="mb-1">
+					<GameGamblingCard
+							:element="item"
+							:itemHeight="90"
+							@click="selectOption(item)"
+					/>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -93,8 +99,8 @@ watch(() => props.modelValue, (newValue) => {
 
 		.option {
 			@apply
-			pr-[10px] pl-[10px]
-			cursor-pointer
+				pr-[10px] pl-[10px]
+				cursor-pointer
 			;
 
 			&:hover {}

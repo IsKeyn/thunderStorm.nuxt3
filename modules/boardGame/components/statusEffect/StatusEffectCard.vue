@@ -153,10 +153,10 @@ const sendActivateSeRequest = async (type) => {
 <template>
 	<ui-BigPreloader v-if="requestInProgress" />
 	<div
-			v-else-if="element"
+			v-else-if="element && element.statusEffect"
 			:class="[
 			'item-box',
-			getTypeClass(element.statusEffect.debuff),
+			getTypeClass(element.statusEffect?.debuff),
 			showControlPanel || element.quantity > 1 ? 'add-padding-right' : '',
 			theme,
 			classes,

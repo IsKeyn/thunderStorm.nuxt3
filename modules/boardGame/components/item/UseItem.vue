@@ -3,6 +3,7 @@ import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import SelectPlayer from '@/modules/boardGame/components/user/player/SelectPlayer.vue';
 import SelectItem from '@/modules/boardGame/components/item/SelectItem.vue';
 import SelectEffect from '@/modules/boardGame/components/statusEffect/SelectEffect.vue';
+import SelectGame from '@/modules/boardGame/components/game/SelectGame.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { computed, ref, watch } from "vue";
@@ -37,7 +38,20 @@ const needOtherPlayers = computed(() => {
 	let returnData = false;
 
 	props.item.item.item.actions.forEach((item) => {
-		if (item.target !== 'current') {
+		if (item?.target !== 'current') {
+			returnData = true;
+		}
+	});
+
+	return returnData;
+})
+
+// Проверяем нужно ли грузить список игр
+const needGames = computed(() => {
+	let returnData = false;
+
+	props.item.item.item.actions.forEach((item) => {
+		if (item?.type === 'selectGame') {
 			returnData = true;
 		}
 	});
@@ -69,6 +83,32 @@ const {
 );
 
 const fetchedPlayers = computed(() => requestData.value || null);
+
+
+const gamesRequestName = 'getBoardGamePlayersGames';
+
+const {
+	data: gamesRequestData,
+	pending: gamesRequestInProgress,
+	gamesRefresh
+} = await useAsyncData(
+		gamesRequestName,
+		async () => {
+			if (needGames.value) {
+				const response = await Promise.resolve(
+						sendApiRequest(`board-game/v2/player-game/get-player-available-list/${route.params.slug}/`, 'GET', { 'name': userStore.user.name }, gamesRequestName, '')
+				);
+
+				return response.data || null;
+			}
+		},
+		{
+			server: true,
+			lazy: true,
+		}
+);
+
+const playersGames = computed(() => gamesRequestData.value || null);
 
 const actions = {
 	type: {
@@ -143,6 +183,7 @@ const selectedPlayer = ref({});
 const selectedSecondPlayer = ref({});
 const selectedItem = ref({});
 const selectedEffect = ref({});
+const selectedGame = ref({});
 
 const useItem = () => {
 	const validateRes = validate();
@@ -167,6 +208,10 @@ const useItem = () => {
 
 		if (Object.keys(selectedEffect.value).length !== 0) {
 			arg.additionalParams.selectedEffect = selectedEffect.value.id;
+		}
+
+		if (Object.keys(selectedGame.value).length !== 0) {
+			arg.additionalParams.selectedGame = selectedGame.value.id;
 		}
 
 		if (form.value.message.value) {
@@ -235,6 +280,15 @@ const validate = () => {
 				}
 				validateResult = false;
 			} else if (
+					item.type === 'selectGame' && Object.keys(selectedGame.value).length === 0
+			) { // Проверка, если предмет требует выбора игры
+				const errorMessage = 'Данный предмет требует выбора игры';
+
+				if (!validateErrors.value.includes(errorMessage)) {
+					validateErrors.value.push(errorMessage);
+				}
+				validateResult = false;
+			} else if (
 					item.target === 'fromTo'
 					&& Object.keys(selectedSecondPlayer.value).length === 0
 			) {
@@ -269,7 +323,7 @@ const getEffectByFilter = (type = null) => {
 		let filterEffects = selectedPlayer.value.status_effects.filter((item) => item.active);
 
 		if (type === 'removeNegativeEffect') {
-			filterEffects = filterEffects.filter((item) => item.statusEffect?.debuff === true);
+			filterEffects = filterEffects.filter((item) => item?.statusEffect?.debuff === true);
 		}
 
 		return filterEffects;
@@ -279,12 +333,21 @@ const getEffectByFilter = (type = null) => {
 /* Очистка предмета, при выборе другого игрока */
 watch(() => selectedPlayer.value, () => {
 	selectedItem.value = {};
+	selectedEffect.value = {};
+	selectedGame.value = {};
 	setMessages();
 }, { deep: true });
 
-
 watch(() => selectedItem.value, () => {
 	selectedSecondPlayer.value = {};
+	setMessages();
+}, { deep: true });
+
+watch(() => selectedEffect.value, () => {
+	setMessages();
+}, { deep: true });
+
+watch(() => selectedGame.value, () => {
 	setMessages();
 }, { deep: true });
 
@@ -338,6 +401,24 @@ const setMessages = () => {
 		message += ` выбрал второго участника "${selectedSecondPlayer.value.user.name}"`;
 	}
 
+	/* Дополнение сообщений информацией о статус эффекте */
+	if (Object.keys(selectedEffect.value).length > 1) {
+		if (!message) {
+			message = `${defaultNotificationMessage}`;
+		}
+
+		message += ` выбрал эффект "${selectedEffect.value.statusEffect.name}"`;
+	}
+
+	/* Дополнение сообщений информацией о игре */
+	if (Object.keys(selectedGame.value).length > 1) {
+		if (!message) {
+			message = `${defaultNotificationMessage}`;
+		}
+
+		message += ` и выбрал игру "${selectedGame.value.game.name}"`;
+	}
+
 	logMessage.value = log;
 	notificationMessage.value = message;
 
@@ -359,7 +440,7 @@ const effectFor = (action) => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
+	<ui-BigPreloader v-if="requestInProgress || gamesRequestInProgress" />
 	<div v-else-if="Object.keys(item).length > 1">
 		<span class="inv-title">Вы собираетесь использовать предмет:</span>
 		<ItemCard
@@ -439,6 +520,16 @@ const effectFor = (action) => {
 								:players="fetchedPlayers.filter((item) => item.user_id !== userStore.user.id).filter((item) => item.user_id !== selectedPlayer.user_id)"
 								v-model="selectedSecondPlayer"
 						/>
+					</template>
+
+					<template v-if="action.type === 'selectGame'">
+						<div>
+							<span class="inv-title">Данный предмет требует выбора игры:</span>
+							<SelectGame
+									:items="playersGames"
+									v-model="selectedGame"
+							/>
+						</div>
 					</template>
 				</template>
 			</div>
