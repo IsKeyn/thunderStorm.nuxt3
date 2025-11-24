@@ -51,7 +51,7 @@ const needGames = computed(() => {
 	let returnData = false;
 
 	props.item.item.item.actions.forEach((item) => {
-		if (item?.type === 'selectGame') {
+		if (item?.type === 'selectGame' || item?.type === 'rerollGame') {
 			returnData = true;
 		}
 	});
@@ -280,7 +280,7 @@ const validate = () => {
 				}
 				validateResult = false;
 			} else if (
-					item.type === 'selectGame' && Object.keys(selectedGame.value).length === 0
+					(item.type === 'selectGame' || item.type === 'rerollGame') && Object.keys(selectedGame.value).length === 0
 			) { // Проверка, если предмет требует выбора игры
 				const errorMessage = 'Данный предмет требует выбора игры';
 
@@ -522,7 +522,10 @@ const effectFor = (action) => {
 						/>
 					</template>
 
-					<template v-if="action.type === 'selectGame'">
+					<template v-if="
+						action.type === 'selectGame'
+						|| action.type === 'rerollGame'
+					">
 						<div>
 							<span class="inv-title">Данный предмет требует выбора игры:</span>
 							<SelectGame
