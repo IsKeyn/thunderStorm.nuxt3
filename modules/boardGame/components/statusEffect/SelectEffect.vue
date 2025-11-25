@@ -16,7 +16,7 @@ const props = defineProps({
 	},
 });
 
-const selectedOption = ref(null);
+const selectedOption = ref({});
 const isOpen = ref(false);
 
 const toggleOptions = () => {
@@ -42,7 +42,7 @@ watch(() => props.modelValue, (newValue) => {
 				@click="toggleOptions"
 		>
 			<StatusEffectCard
-					v-if="selectedOption"
+					v-if="Object.keys(selectedOption).length > 0"
 					:element="selectedOption"
 			/>
 			<span v-else class="choice-player">

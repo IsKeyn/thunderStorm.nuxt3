@@ -6,6 +6,7 @@ import JoinTheGame from '@/modules/boardGame/components/user/JoinTheGame.vue';
 import PromoPage from '@/modules/boardGame/components/steps/fragments/PromoPage.vue';
 import PlayerSteps from '@/modules/boardGame/components/steps/fragments/PlayerSteps.vue';
 import GameOver from '@/modules/boardGame/components/steps/fragments/GameOver.vue';
+import RememberButton from '@/modules/boardGame/components/steps/fragments/RememberButton.vue';
 
 import { ref } from "vue";
 const emit = defineEmits(['setPageName']);
@@ -26,10 +27,48 @@ const {
 	getFormattedDate,
 } = date();
 
+import { animate } from '@/composables/animate.js';
+const {
+	scrollToElement,
+} = animate();
+
 const route = useRoute();
 
 const setPageNameFunc = (name) => {
 	emit('setPageName', name);
+}
+
+const showRememberButton = computed(() => {
+	const returnData = {
+		show: false,
+		icon: ["fa-solid", "fa-gamepad"],
+	};
+
+	if (boardGameStore.boardGameInfo.status === 2 || boardGameStore.boardGameInfo.status === 1) {
+		if (isAuth.value) {
+			if (isEmailVerified.value) {
+				if (Object.keys(userStore.player).length === 0) {
+					returnData.show = true;
+					// returnData.message = 'Вы не учавствуете в ивенте. Подтвердите участие';
+					returnData.message = 'Учавствовать в ивенте';
+				}
+			} else {
+				returnData.show = true;
+				// returnData.message = 'Вы не учавствуете в ивенте. Подтвердите email';
+				returnData.message = 'Учавствовать в ивенте';
+			}
+		} else {
+			returnData.show = true;
+			// returnData.message = 'Вы не учавствуете в ивенте. Авторизируйтесь';
+			returnData.message = 'Учавствовать в ивенте';
+		}
+	}
+
+	return returnData;
+});
+
+const scrollToJoinButton = () => {
+	scrollToElement('eventJoinBox');
 }
 </script>
 
@@ -44,14 +83,17 @@ const setPageNameFunc = (name) => {
 							v-if="Object.keys(userStore.player).length > 0"
 							@setPageName="setPageNameFunc($event)"
 					/>
-					<JoinTheGame v-else />
+					<div v-else id="eventJoinBox">
+						<JoinTheGame />
+					</div>
 				</template>
-				<VerifyEmailBlock v-else />
+				<div v-else id="eventJoinBox">
+					<VerifyEmailBlock />
+				</div>
 			</div>
-			<Auth
-					v-else
-					message="Для участия в ивенте войдите на сайт или зарегистрируйтесь"
-			/>
+			<div v-else id="eventJoinBox">
+				<Auth message="Для участия в ивенте войдите на сайт или зарегистрируйтесь" />
+			</div>
 		</template>
 		<template v-else-if="boardGameStore.boardGameInfo.status === 2">
 			<PromoPage />
@@ -65,19 +107,27 @@ const setPageNameFunc = (name) => {
 							Вы успешно зарегистрированы в ивенте
 						</template>
 					</div>
-					<JoinTheGame v-else />
+					<div v-else id="eventJoinBox">
+						<JoinTheGame />
+					</div>
 				</template>
-				<VerifyEmailBlock v-else />
+				<div v-else id="eventJoinBox">
+					<VerifyEmailBlock />
+				</div>
 			</div>
-			<Auth
-					v-else
-					message="Для участия в ивенте войдите на сайт или зарегистрируйтесь"
-			/>
+			<div v-else id="eventJoinBox">
+				<Auth message="Для участия в ивенте войдите на сайт или зарегистрируйтесь" />
+			</div>
 		</template>
 	</template>
 	<template v-else>
 		Ивент отключен
 	</template>
+	<RememberButton
+		v-if="showRememberButton.show"
+		:data="showRememberButton"
+		@clickFunc="scrollToJoinButton"
+	/>
 </template>
 
 <style lang="scss" scoped>

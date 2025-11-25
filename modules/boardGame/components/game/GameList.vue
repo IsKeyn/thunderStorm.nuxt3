@@ -218,6 +218,7 @@ watch(form.value.platforms, () => {
 					v-if="form.listType"
 					name="listType"
 					:element="form.listType"
+					class="block"
 					:showTitle="false"
 					:clearButton="true"
 					validateErrorPosition="bottom"
@@ -228,10 +229,11 @@ watch(form.value.platforms, () => {
 					v-if="form.platforms"
 					name="listType"
 					:element="form.platforms"
+					class="block"
 					:showTitle="false"
 					:clearButton="true"
 					validateErrorPosition="bottom"
-					labelClasses="ml-4 lg:ml-0 lg:mr-4 mt-[10px] mb-4 lg:mb-[10px]"
+					labelClasses="lg:mr-4 mt-[10px] mb-4 lg:mb-[10px]"
 					:fieldClasses="form.platforms.classes"
 			/>
 		</div>

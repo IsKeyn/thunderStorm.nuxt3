@@ -32,7 +32,7 @@ const domain = computed(() => {
 				<font-awesome-icon :icon="['far', 'copyright']" /> <a :href="`https://${domain}`" rel="first">{{ domain }}</a> {{ lifespan }}
       </span>
 			<span>
-        Автор и разработчик: {{ getSettingFirstValue('creator') }}
+        Разработчик: {{ getSettingFirstValue('creator') }}
       </span>
 		</div>
 		<div class="cutting" />

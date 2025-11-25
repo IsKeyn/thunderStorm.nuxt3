@@ -181,7 +181,7 @@ const getHours = (minutes) => {
 								class="line-info"
 								v-if="pointsForFinishGame"
 						>
-							С учетом вшего стрика x{{ streak }} за прохождение игры вы получите {{ addTextToPoints(pointsForFinishGame) }}
+							С учетом вашего стрика x{{ streak }} за прохождение игры вы получите {{ addTextToPoints(pointsForFinishGame) }}
 						</span>
 						<span
 								class="line-info mt-4"
