@@ -294,7 +294,7 @@ const pageForRedirect = computed(() => {
 								class="w-2/3"
 								:userId="userInfo.user_id"
 								:showName="false"
-								:showControlButtons="false"
+								:showControlButtons="isCurrentUser"
 						/>
 					</div>
 				</div>
