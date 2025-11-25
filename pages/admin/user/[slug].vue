@@ -85,6 +85,9 @@ const extensions = [
 	{
 		name: 'Autologin',
 	},
+	{
+		name: 'Logout',
+	},
 ];
 </script>
 

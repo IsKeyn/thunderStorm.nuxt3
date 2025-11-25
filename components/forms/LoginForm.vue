@@ -91,6 +91,15 @@ const sendRequest = async () => {
 
 		const XsrfToken = useCookie('XSRF-TOKEN');
 
+		const body = {
+			email: form.value.email.value,
+			password: form.value.password.value,
+		};
+
+		if (props.registerOnEventBySlug) {
+			body.registerOnEventBySlug = props.registerOnEventBySlug;
+		}
+
 		const response = await $fetch(
 				`${apiUrl.value}auth/login`,
 				{
@@ -101,10 +110,7 @@ const sendRequest = async () => {
 						'X-Requested-With': 'XMLHttpRequest',
 						'X-XSRF-TOKEN': XsrfToken.value,
 					},
-					body: {
-						email: form.value.email.value,
-						password: form.value.password.value,
-					}
+					body,
 				},
 		);
 
