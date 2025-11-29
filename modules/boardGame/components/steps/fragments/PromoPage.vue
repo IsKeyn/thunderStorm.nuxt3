@@ -24,8 +24,8 @@ const { route } = helper();
 		/>
 		<span class="user-interface-title">Дополнительная информация</span>
 		<div class="add-info-box">
-			Присоединяйтесь к нашему <nuxt-link to="https://t.me/game_events_tr" target="_blank" title="Телеграм канал">телеграм-каналу</nuxt-link>, чтобы узнавать свежие новости о новых ивентах, задать интересующие вас вопросы или обсудить ивент.<br/>
-			Вы также можете посмотреть <nuxt-link :to="'/e/' + route.params.slug + '/game?tab=game-list'" target="_blank" title="Игры ивента">игры</nuxt-link>, которые участвуют в ивенте, посмотреть <nuxt-link :to="'/e/' + route.params.slug + '/inventory?tab=item-list'" target="_blank" title="Предметы ивента">предметы</nuxt-link>, которые можно будет использовать, а также ознакомиться с полными <nuxt-link :to="'/e/' + route.params.slug + '/rules'" target="_blank" title="Правила и описание ивента">правилами и описанием</nuxt-link> ивента.
+			Присоединяйтесь к нашему <a href="https://t.me/game_events_tr" target="_blank" title="Телеграм канал">телеграм-каналу</a>, чтобы узнавать свежие новости о новых ивентах, задать интересующие вас вопросы или обсудить ивент.<br/>
+			Вы также можете посмотреть <a :href="'/e/' + route.params.slug + '/game?tab=game-list'" target="_blank" title="Игры ивента">игры</a>, которые участвуют в ивенте, изучить <a :to="'/e/' + route.params.slug + '/inventory?tab=item-list'" target="_blank" title="Предметы ивента">предметы</a>, которые можно будет использовать, а также ознакомиться с полными <a :to="'/e/' + route.params.slug + '/rules'" target="_blank" title="Правила и описание ивента">правилами и описанием</a> ивента.
 		</div>
 	</template>
 </template>

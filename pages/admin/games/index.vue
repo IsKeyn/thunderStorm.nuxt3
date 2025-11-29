@@ -67,5 +67,11 @@ const breadCrumbsArray = computed(() => {
 		:titles="titles"
 		titleKey="title"
 		fetchUrl="admin/game"
+		:additionalButtons="[
+				{
+					name: 'Загрузить по API',
+					url: '/admin/games/get-from-api/',
+				},
+		]"
 	/>
 </template>
