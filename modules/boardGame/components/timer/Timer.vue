@@ -90,6 +90,7 @@ form.value.seconds = {
 };
 
 const seconds = ref(0);
+const status = ref(null);
 
 const formattedTime = computed(() => {
 	const hours = Math.floor(seconds.value / 3600)
@@ -143,6 +144,8 @@ const getTimerStatus = async () => {
 		const response = await sendApiRequest(`board-game/timer/status`, 'POST', body);
 
 		if (response) {
+			status.value = response;
+
 			requestInProgress.value = false;
 
 			if (response.error) {
@@ -415,6 +418,16 @@ watch(() => isRunning.value, () => {
 		}, 300000);
 	}
 }, { immediate: true });
+
+const mainTimerLimitReach = computed(() => {
+	let result = false;
+
+	if (status.value && status.value.reached_the_limit) {
+		result = true;
+	}
+
+	return result;
+})
 </script>
 
 <template>
@@ -470,46 +483,51 @@ watch(() => isRunning.value, () => {
 			/>
 		</template>
 		<template v-if="showControlButtons">
-			<div class="flex gap-2" v-if="!editTimeMode">
-				<layout-buttons-ActionButton
-						v-if="canStart"
-						buttonClasses="btn btn-simple-1 w-full"
-						:buttonName="isRunning ? 'Стоп' : 'Старт'"
-						:actionInProgress="requestInProgress"
-						@startAction="toggleTimer()"
-				/>
-				<layout-buttons-ActionButton
-						buttonClasses="btn btn-simple-1 w-full"
-						buttonName="Изменить"
-						:actionInProgress="requestInProgress"
-						@startAction="toggleEditTimeMode()"
-				/>
-			</div>
-			<div v-else>
-				<div class="flex gap-2">
+			<template v-if="!mainTimerLimitReach">
+				<div class="flex gap-2" v-if="!editTimeMode">
+					<layout-buttons-ActionButton
+							v-if="canStart"
+							buttonClasses="btn btn-simple-1 w-full"
+							:buttonName="isRunning ? 'Стоп' : 'Старт'"
+							:actionInProgress="requestInProgress"
+							@startAction="toggleTimer()"
+					/>
 					<layout-buttons-ActionButton
 							buttonClasses="btn btn-simple-1 w-full"
-							buttonName="Сохранить"
+							buttonName="Изменить"
 							:actionInProgress="requestInProgress"
 							@startAction="toggleEditTimeMode()"
 					/>
-					<layout-buttons-ActionButton
-							v-if="timer.slug !== 'main'"
-							buttonClasses="btn btn-simple-1 w-full"
-							buttonName="Сбросить"
-							:actionInProgress="requestInProgress"
-							@startAction="toggleEditTimeMode(0)"
-					/>
 				</div>
-				<div>
-					<layout-buttons-ActionButton
-							buttonClasses="btn btn-simple-1 w-full"
-							buttonName="Отменить"
-							:actionInProgress="requestInProgress"
-							@startAction="cancelEditTimeMode()"
-					/>
+				<div v-else>
+					<div class="flex gap-2">
+						<layout-buttons-ActionButton
+								buttonClasses="btn btn-simple-1 w-full"
+								buttonName="Сохранить"
+								:actionInProgress="requestInProgress"
+								@startAction="toggleEditTimeMode()"
+						/>
+						<layout-buttons-ActionButton
+								v-if="timer.slug !== 'main'"
+								buttonClasses="btn btn-simple-1 w-full"
+								buttonName="Сбросить"
+								:actionInProgress="requestInProgress"
+								@startAction="toggleEditTimeMode(0)"
+						/>
+					</div>
+					<div>
+						<layout-buttons-ActionButton
+								buttonClasses="btn btn-simple-1 w-full"
+								buttonName="Отменить"
+								:actionInProgress="requestInProgress"
+								@startAction="cancelEditTimeMode()"
+						/>
+					</div>
 				</div>
-			</div>
+			</template>
+			<template v-else>
+				Вы достигли лимита времени и не можете запускать или изменять его значения
+			</template>
 			<div class="flex gap-2">
 				<button
 						@click="copyObsLink()"

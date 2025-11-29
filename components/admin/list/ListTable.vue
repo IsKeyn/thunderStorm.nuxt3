@@ -44,6 +44,10 @@ const props = defineProps({
 		type: Number,
 		default: 10,
 	},
+	additionalButtons: { // Допольнительные кнопки
+		type: Array,
+		default: [],
+	},
 });
 
 const systemTitles = ref({
@@ -340,7 +344,20 @@ const setPerPage = (count) => {
 			@setPerPage="setPerPage"
 		/>
 		<router-link :to="`${pageUrl}/create`"><button class="btn btn-primary">Добавить один элемент</button></router-link>
-		<router-link v-if="hasMultiUpload" :to="`${pageUrl}/multi-upload`"><button class="btn btn-primary">Добавить несколько элементов</button></router-link>
+		<router-link
+				v-if="hasMultiUpload"
+				:to="`${pageUrl}/multi-upload`"
+		>
+			<button class="btn btn-primary">Добавить несколько элементов</button>
+		</router-link>
+		<nuxt-link
+			v-for="(button, key) in additionalButtons"
+			:to="button.url"
+			:title="button.name"
+			:key="key"
+		>
+			<button class="btn btn-primary">{{ button.name }}</button>
+		</nuxt-link>
 	</div>
 	<LightBox
 			v-if="openedImage"
