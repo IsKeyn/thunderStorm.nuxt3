@@ -37,7 +37,4 @@ export default defineNuxtConfig({
       sessionCookieName: '', // .env NUXT_PUBLIC_SESSION_COOKIE_NAME
     }
   },
-  experimental: {
-    payloadExtraction: false
-  },
 })
