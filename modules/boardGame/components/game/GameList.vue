@@ -117,7 +117,7 @@ const useFilter = () => {
 		return item.game.name.toLowerCase().includes(form.value.searchLine.value ? form.value.searchLine.value.toLowerCase() : '');
 	});
 
-	filteredItems.value = fetchedData.value.filter((item) => {
+	filteredItems.value = filteredItems.value.filter((item) => {
 		if (form.value.listType.value === 0) {
 			return true;
 		} else if (form.value.listType.value === 1) {
