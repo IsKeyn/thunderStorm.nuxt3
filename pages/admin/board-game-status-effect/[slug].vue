@@ -31,6 +31,10 @@ const form = ref(
 						name: 'Эффект списка игр',
 						value: 2,
 					},
+					{
+						name: 'Другие',
+						value: 10,
+					},
 				],
 			},
 			name: {
