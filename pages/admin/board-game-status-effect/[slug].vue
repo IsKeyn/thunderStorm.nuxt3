@@ -16,8 +16,8 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]'],
 				options: [
 					{
-						name: 'Не выбрано',
-						value: null,
+						name: 'Другие',
+						value: 10,
 					},
 					{
 						name: 'Эффект кубика',
