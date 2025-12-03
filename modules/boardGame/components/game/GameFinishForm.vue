@@ -230,7 +230,7 @@ const getTypeText = (type) => {
 					message += `, вас защищает "${props.rerollPenalty.data.name}"`;
 				}
 			} else {
-				message = `При рероле игры, вы потеряете ${props.rerollPenalty.pointForReroll} очков, а также накомленный стрик x${props.streak}`;
+				message = `При рероле игры, вы потеряете ${props.rerollPenalty.pointForReroll} очков, а также накопленный стрик x${props.streak}`;
 			}
 		}
 	}
