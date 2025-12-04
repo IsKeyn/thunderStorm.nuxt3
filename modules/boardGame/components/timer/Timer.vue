@@ -411,7 +411,7 @@ watch(() => isRunning.value, () => {
 	if (isRunning.value) {
 		getStatusInterval.value = setInterval(() => {
 			getTimerStatus();
-		}, 15000);
+		}, 30000);
 	} else {
 		getStatusInterval.value = setInterval(() => {
 			getTimerStatus();

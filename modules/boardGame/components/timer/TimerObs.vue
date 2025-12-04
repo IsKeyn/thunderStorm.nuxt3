@@ -11,7 +11,7 @@ onMounted(() => {
 
 	getStatusInterval.value = setInterval(() => {
 		getTimerStatus();
-	}, 5000);
+	}, 7000);
 });
 
 onUnmounted(() => {

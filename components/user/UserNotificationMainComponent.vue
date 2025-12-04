@@ -20,7 +20,7 @@ onMounted(() => {
 
 		setInterval(() => {
 			getAllNotifications();
-		}, 10000);
+		}, 30000);
 	}
 })
 </script>
