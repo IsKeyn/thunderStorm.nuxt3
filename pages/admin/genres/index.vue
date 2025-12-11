@@ -17,6 +17,9 @@ const titles = ref(
 			slug: {
 				name: 'Slug',
 			},
+			spc_id: {
+				name: 'speedrun.com id',
+			},
 			description: {
 				name: 'Описание',
 			},

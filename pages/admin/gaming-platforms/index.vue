@@ -26,6 +26,9 @@ const titles = ref(
 			release_time: {
 				name: 'Дата и время выхода',
 			},
+			spc_id: {
+				name: 'speedrun.com id',
+			},
 			sort: {
 				name: 'Сортировка',
 			},

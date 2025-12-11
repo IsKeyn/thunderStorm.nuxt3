@@ -26,6 +26,13 @@ const form = ref(
 					rule: 'slug',
 				},
 			},
+			spc_id: {
+				name: 'speedrun.com id',
+				value: '',
+				type: 'text',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			description: {
 				name: 'Описание',
 				value: '',
