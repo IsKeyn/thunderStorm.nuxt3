@@ -74,8 +74,6 @@ const addGame = async (id) => {
 	query.apiName = 'speedrun.com';
 	query.id = id;
 
-	console.log(222, query);
-
 	try {
 		const response = await sendApiRequest('admin/api/games/add', 'POST', query, 'addGameFromApi', '');
 
@@ -85,7 +83,7 @@ const addGame = async (id) => {
 			} else {
 				requestInProgress.value = false;
 
-				console.log(111, response);
+				console.log('response', response);
 			}
 		} else {
 			error('Пустой ответ');
@@ -127,7 +125,7 @@ const addGame = async (id) => {
 						class="search-item"
 						v-for="(data, key) in fetchedData.list"
 				>
-					<span class="w-full">{{ data.name }}</span>
+					<span class="w-full">{{ data.name }} ({{ data.date }})</span>
 					<button
 							class="btn btn-simple flex-end"
 							@click="addGame(data.id)"

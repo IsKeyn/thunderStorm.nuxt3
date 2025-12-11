@@ -49,6 +49,13 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			spc_id: {
+				name: 'speedrun.com id',
+				value: '',
+				type: 'text',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			sort: {
 				name: 'Сортировка',
 				value: '',

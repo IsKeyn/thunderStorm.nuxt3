@@ -17,6 +17,9 @@ const titles = ref(
 			board_game_id: {
 				name: 'ID настольной игры',
 			},
+			has_use_effect: {
+				name: 'Был ли использован эффект ячейки',
+			},
 			created_by: {
 				name: 'created_by',
 			},

@@ -29,6 +29,14 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			has_use_effect: {
+				name: 'Был ли использован эффект ячейки',
+				value: false,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
 			created_by: {
 				name: 'created_by',
 				value: '',
