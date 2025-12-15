@@ -134,8 +134,15 @@ const getRandomItem = async () => {
 items.value = items.value.sort(() => Math.random() - 0.5);
 
 /* Дублируем элементы для долгого кручения */
-const repeatItemCount = Math.round(100 / Object.keys(items.value).length) * 2;
-const repeatedItems = Array(repeatItemCount).fill([...items.value]).flat();
+let repeatedItems = [];
+
+if (Object.keys(items.value).length < 200) {
+	const repeatItemCount = Math.round(100 / Object.keys(items.value).length) * 2;
+	repeatedItems = Array(repeatItemCount).fill([...items.value]).flat();
+} else {
+	repeatedItems = items.value;
+}
+
 
 /* Высота рулетки */
 const mainBlockHeight = computed(() => {
