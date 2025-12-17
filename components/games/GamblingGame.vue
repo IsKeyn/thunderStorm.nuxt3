@@ -136,13 +136,21 @@ items.value = items.value.sort(() => Math.random() - 0.5);
 /* Дублируем элементы для долгого кручения */
 let repeatedItems = [];
 
-if (Object.keys(items.value).length < 200) {
-	const repeatItemCount = Math.round(100 / Object.keys(items.value).length) * 2;
-	repeatedItems = Array(repeatItemCount).fill([...items.value]).flat();
+const itemCount = Object.keys(items.value).length;
+let repeatItemCount;
+
+// Если элементов 200 или больше, не умножаем и не создаем повторений
+if (itemCount >= 200) {
+	repeatItemCount = 1; // Берем исходный массив как есть
 } else {
-	repeatedItems = items.value;
+	repeatItemCount = Math.round(100 / itemCount) * 2;
 }
 
+// Создаем массив повторений, избегая проблемы с общими ссылками
+repeatedItems = Array.from(
+		{ length: repeatItemCount },
+		() => [...Object.values(items.value)]
+).flat();
 
 /* Высота рулетки */
 const mainBlockHeight = computed(() => {
@@ -238,7 +246,7 @@ const startSpin = (randomIndex) => {
 	const totalItems = repeatedItems.length;
 
 	// Центральный элемент массива repeatedItems (берём из середины, чтобы был запас)
-	const baseIndex = Math.floor(totalItems / 2);
+	const baseIndex = itemCount >= 200 ? 0 : Math.floor(totalItems / 2);
 	const targetIndex = baseIndex + randomIndex;
 
 	// Куда крутим рулетку
