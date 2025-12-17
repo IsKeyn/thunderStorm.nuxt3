@@ -141,7 +141,7 @@ let repeatItemCount;
 
 // Если элементов 200 или больше, не умножаем и не создаем повторений
 if (itemCount >= 200) {
-	repeatItemCount = 1; // Берем исходный массив как есть
+	repeatItemCount = 2; // Берем исходный массив как есть
 } else {
 	repeatItemCount = Math.round(100 / itemCount) * 2;
 }
