@@ -197,6 +197,12 @@ const sendActivateSeRequest = async (type) => {
 							@click="activateSe('denied')"
 					>Отказаться</button>
 				</template>
+				<template v-if="showControlPanel && action && action.type === 'onlyAccept'">
+					<button
+							class="btn btn-simple mr-2"
+							@click="activateSe('accept')"
+					>Выполнен</button>
+				</template>
 			</div>
 		</div>
 		<div
