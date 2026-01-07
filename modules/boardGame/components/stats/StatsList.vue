@@ -264,6 +264,7 @@ const activityChartOptions = {
 								|| key === 'playersWhoMostRerolled'
 								|| key === 'mostCompletedPlayers'
 								|| key === 'mostRerolledPlayers'
+								|| key === 'mostDroppedGamesPlayers'
 						">
 								{{ gameKey + 1 }}. <a
 									:href="`/e/${route.params.slug}/player/${element.user.name}`"
@@ -303,6 +304,7 @@ const activityChartOptions = {
 								|| key === 'playersWhoMostRerolled'
 								|| key === 'mostCompletedPlayers'
 								|| key === 'mostRerolledPlayers'
+								|| key === 'mostDroppedGamesPlayers'
 							"
 								:chart-data="charDataForMostCompletedPlayers(data)"
 								:chart-options="chartOptions"
