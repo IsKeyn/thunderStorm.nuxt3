@@ -126,11 +126,11 @@ const otherStreamPlatform = computed(() => {
 /* Табы профайла */
 const tabsElements = ref([]);
 
-watch(() => boardGameStore.playersOnline, () => {
-	if (userInfo.value && userInfo.value?.user?.id && boardGameStore?.playersOnline && boardGameStore?.playersOnline[userInfo.value.user.id]) {
-		setUnsetTwitchTab();
-	}
-}, { deep: true });
+// watch(() => boardGameStore.playersOnline, () => {
+// 	if (userInfo.value && userInfo.value?.user?.id && boardGameStore?.playersOnline && boardGameStore?.playersOnline[userInfo.value.user.id]) {
+// 		setUnsetTwitchTab();
+// 	}
+// }, { deep: true });
 
 const hasStream = ref(false);
 
