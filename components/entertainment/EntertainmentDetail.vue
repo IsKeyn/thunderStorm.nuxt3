@@ -101,7 +101,6 @@ const openSendCommentForm = () => {
 </script>
 
 <template>
-	<button @click="refresh">12345</button>
 	<div v-if="fetchedData">
 		<PageHeader :breadCrumbs="getBreadCrumbs" />
 		<TitleImage
