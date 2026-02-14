@@ -284,6 +284,19 @@ const copyValue = () => {
 		>
 			<span :class="['input-wrap', wrapClasses]">
 				<input
+						v-if="element.type === 'number' && (element.min || element.max)"
+						v-model="element.value"
+						:type="element.type"
+						:name="name"
+						:min="element.min"
+						:max="element.max"
+						:friendly-name="element.name"
+						:placeholder="element.placeholder"
+						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+						@input="onInput"
+				/>
+				<input
+						v-else
 						v-model="element.value"
 						:type="element.type"
 						:name="name"

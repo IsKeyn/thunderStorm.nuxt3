@@ -239,6 +239,14 @@
     }
   }
 
+  .entertainment-card {
+    .image {
+      .info-box {
+        @apply text-[var(--main-dark-text-color)];
+      }
+    }
+  }
+
   // Предметы
   .items-do-list {
     .item-do {

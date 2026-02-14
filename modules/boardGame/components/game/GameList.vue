@@ -1,7 +1,7 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import BigPreloader from '@/components/ui/BigPreloader.vue';
-import GameListCard from '@/components/entertainment/card/GameListCard.vue';
+import EntertainmentListCard from '@/components/entertainment/card/EntertainmentListCard.vue';
 
 import { computed, ref, watch } from "vue";
 
@@ -241,10 +241,10 @@ watch(form.value.platforms, () => {
 			<div class="group" v-for="(group, key) in dataByGroups">
 				<span class="title">{{ group.name }}</span>
 				<div class="game-list">
-					<GameListCard
+					<EntertainmentListCard
 							v-for="(item, index) in group.items"
 							:key="key"
-							:game="item.game"
+							:data="item.game"
 							target="_blank"
 							entity="game"
 					/>

@@ -134,6 +134,10 @@ textarea {
   font-size: var(--text-small-text);
 }
 
+.strong {
+  @apply font-bold;
+}
+
 span.flip-text-box {
   @apply
     absolute bottom-[20%] md:bottom-[30px]

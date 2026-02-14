@@ -1,8 +1,4 @@
 <script setup>
-import { inject } from "vue";
-
-const layoutMethods = inject('layoutMethods');
-
 const props = defineProps({
 	item: {
 		type: Object,
@@ -14,8 +10,8 @@ const props = defineProps({
 <template>
 	<img
 			:src="item.src"
+			:media-id="item.id"
 			:alt="item.description"
-			class="cursor-pointer"
-			@click="layoutMethods.setOpenedImage(item)"
+			class="media-obj"
 	>
 </template>

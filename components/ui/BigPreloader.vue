@@ -6,27 +6,39 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	theme: { // default, image
+		type: String,
+		default: 'default',
+	},
+	themeType: {
+		type: Number,
+		default: 1,
+	},
 });
 </script>
 
 <template>
 	<div class="preloader-container">
-		<preloader />
-		<span
+		<preloader v-if="theme === 'default'" class="default" />
+		<ui-preloaders-ImagePreloader
+				v-else-if="theme === 'image'"
+				:imageNumber="themeType"
+				animateType="animate-[spin_2s_linear_infinite]"
+		/>
+		<ui-itemBox
 				v-if="description"
-				class="item-box"
-		>
-			{{ description }}
-		</span>
+				class="max-w-[500px]"
+				:message="description"
+		/>
 	</div>
 </template>
 
 <style lang="scss" scoped>
 .preloader-container {
-	@apply flex justify-center items-center min-h-[10rem] text-[5rem] text-[var(--main-title-color)] flex-col;
+	@apply flex justify-center items-center min-h-[10rem] flex-col;
 
-	.item-box {
-		@apply text-[1rem] mt-4 max-w-[500px];
+	.default {
+		@apply text-[var(--main-title-color)] text-[5rem];
 	}
 }
 </style>

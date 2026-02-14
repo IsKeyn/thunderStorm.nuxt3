@@ -1,4 +1,12 @@
 <script setup>
+import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+import ActionButton from '@/components/layout/buttons/ActionButton.vue'
+
+const emit = defineEmits(['changePage', 'setPerPage']);
+
+import { helper } from '@/composables/helper.js'
+const { route, router } = helper();
+
 const props = defineProps({
 	pagination: {
 		type: Object,
@@ -8,7 +16,7 @@ const props = defineProps({
 		type: String,
 		default: '',
 	},
-	additionalPage: {
+	additionalPage: { // Количество страниц, чьи номера отображаются, например если значение 2, то будут отображаться 1,2,3
 		type: Number,
 		default: 2,
 	},
@@ -30,51 +38,36 @@ const props = defineProps({
 	},
 	perPageOptionsProp: {
 		type: Array,
-		default: () => [
-			{
-				count: 10,
-				active: false,
-			},
-			{
-				count: 25,
-				active: false,
-			},
-			{
-				count: 50,
-				active: false,
-			},
-		],
+		default: () => [10, 25, 50],
 	}
 });
 
 const perPageOptionsComp = computed(() => {
 	let returnData = [];
 
-	props.perPageOptionsProp.forEach((item) => {
+	props.perPageOptionsProp.forEach((count) => {
 		returnData.push({
-			count: item.count,
-			active: item.count === Number(props.pagination.per_page),
+			count: count,
+			active: count === Number(props.pagination.per_page),
 		});
 	});
 
 	return returnData;
 });
 
-const emit = defineEmits(['changePage', 'setPerPage']);
-
 const paginationObj = computed(() => {
 	let pagination = {};
 
 	switch (props.type) {
 		case 'firstAndLast':
-			for (var i = props.pagination.current_page - props.additionalPage; i <= props.pagination.current_page + props.additionalPage; i++) {
+			for (let i = props.pagination.current_page - props.additionalPage; i <= props.pagination.current_page + props.additionalPage; i++) {
 				if (i > 0 && i <= props.pagination.last_page) {
 					pagination[i] = i;
 				}
 			}
 			break;
 		case 'allPage':
-			for (var i = 1; i <= props.pagination.last_page; i++) {
+			for (let i = 1; i <= props.pagination.last_page; i++) {
 				pagination[i] = i;
 			}
 			break;
@@ -83,12 +76,8 @@ const paginationObj = computed(() => {
 	return pagination;
 });
 
-const router = useRouter();
-const route = useRoute();
-
 const changePage = (page) => {
 	if (props.pagination.current_page !== page) {
-
 		if (props.table) {
 			const getParam = `${props.table}_page`;
 
@@ -103,6 +92,7 @@ const changePage = (page) => {
 				query,
 			});
 
+			props.pagination.current_page = page;
 			emit('changePage', page, props.table);
 		} else {
 			router.push({
@@ -113,6 +103,7 @@ const changePage = (page) => {
 				},
 			});
 
+			props.pagination.current_page = page;
 			emit('changePage', page);
 		}
 	}
@@ -134,6 +125,7 @@ const changePagination = (perPage) => {
 				query,
 			});
 
+			props.pagination.per_page = perPage;
 			emit('setPerPage', perPage,  props.table);
 		} else {
 			router.push({
@@ -144,6 +136,7 @@ const changePagination = (perPage) => {
 				},
 			});
 
+			props.pagination.per_page = perPage;
 			emit('setPerPage', perPage);
 		}
 	}
@@ -162,16 +155,53 @@ const changePageDirection = (direction) => {
 		changePage(props.pagination.current_page - 1);
 	}
 }
-// TODO Записывать в get параметр текущую страницу с учётом сущности пагинации и преодер и количество элеметов на странице
+
+/* Выбор страницы */
+const showChoiceModal = ref(false);
+
+const choicePageModalToggle = () => {
+	showChoiceModal.value = !showChoiceModal.value;
+}
+
+const form = ref({});
+
+form.value.page = {
+	name: 'Номер страницы',
+	value: null,
+	type: 'number',
+	placeholder: 'Число',
+	validateRules: 'minNumber_0, maxNumber_' + props.pagination.last_page,
+	classes: 'w-[6rem]',
+	min: 1,
+	max: props.pagination.last_page,
+};
+
+const choicePageErrors = ref([]);
+
+const setPage = () => {
+	choicePageErrors.value = [];
+
+	if (form.value.page.value < 1) {
+		choicePageErrors.value.push('Минимальный номер страницы равен 1');
+		return false;
+	}
+
+	if (form.value.page.value > props.pagination.last_page) {
+		choicePageErrors.value.push('Максимальный номер страницы не может быть больше ' + props.pagination.last_page);
+		return false;
+	}
+
+	choicePageModalToggle();
+	changePage(form.value.page.value);
+}
 </script>
 
 <template>
 	<div class="pagination-block">
-		<div class="pagination-col"></div>
+		<div class="pagination-col" />
 		<div class="pagination-col page-buttons">
 			<template v-if="type === 'firstAndLast'">
-				<template v-if="pagination.current_page !== 1 && additionalPage + 1 < pagination.last_page
-				">
+				<template v-if="pagination.current_page !== 1 && additionalPage + 1 < pagination.last_page">
 					<div
 							v-if="
 								pagination.current_page > additionalPage + 1
@@ -230,6 +260,12 @@ const changePageDirection = (direction) => {
 						<font-awesome-icon v-if="navigationButtons" :icon="['fas', 'angles-right']" />
 						<span v-if="firstAndLastPage">{{ pagination.last_page }}</span>
 					</div>
+					<div
+							@click="choicePageModalToggle()"
+							class="pagination-button"
+					>
+						<font-awesome-icon icon="fa-solid fa-marker" />
+					</div>
 				</template>
 			</template>
 
@@ -249,7 +285,7 @@ const changePageDirection = (direction) => {
 			</template>
 		</div>
 		<div
-				v-if="Number(pagination.total) > Number(perPageOptionsProp[0].count)"
+				v-if="Number(pagination.total) > Number(perPageOptionsProp[0])"
 				class="pagination-col per-page"
 		>
 			На странице
@@ -263,6 +299,39 @@ const changePageDirection = (direction) => {
 			</div>
 		</div>
 	</div>
+
+	<modals-Modal
+			:showOpenModal="showChoiceModal"
+			size="small"
+			modalId="choice-page-pagination-modal"
+			@toggleModal="choicePageModalToggle"
+	>
+		<div class="modal-parent">
+			<h3 class="modal-title">Выбор страницы</h3>
+			<div>
+				Введите номер страницы от 1 до {{ pagination.last_page }} и нажмите кнопку "Перейти"
+
+				<ui-messages-Errors
+					:errors="choicePageErrors"
+				/>
+
+				<form @submit.prevent="setPage" class="flex">
+					<FormGenerator
+							name="page"
+							:element="form.page"
+							:showTitle="false"
+							validateErrorPosition="bottom"
+							labelClasses="lg:mr-4 mt-[10px] mb-[10px] block"
+							:fieldClasses="form.page.classes"
+					/>
+					<ActionButton
+							buttonName="Перейти"
+							:actionInProgress="requestInProgress"
+					/>
+				</form>
+			</div>
+		</div>
+	</modals-Modal>
 </template>
 
 <style lang="scss" scoped>
@@ -289,9 +358,9 @@ const changePageDirection = (direction) => {
 			min-w-[30px] min-h-[30px]
 			text-[20px] leading-[26px]
 			p-[0.2rem]
+			border-2
+			border-[var(--main-border-color)]
 		;
-
-		border: 2px solid var(--main-border-color);
 
 		&:not(.current) {
 			@apply cursor-pointer;

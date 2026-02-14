@@ -1,12 +1,4 @@
 <script setup>
-import LightBox from '@/components/media/LightBox.vue'
-
-import { lightBox } from '@/composables/lightBox.js';
-const {
-	openedImage,
-	setOpenedImage,
-} = lightBox();
-
 const props = defineProps({
 	image: {
 		type: Object,
@@ -32,10 +24,10 @@ const props = defineProps({
 	<div
 			v-if="Object.keys(image).length > 0"
 			:class="['image-box', parentClass, withoutBorder ? 'without-border' : '']"
-			@click="setOpenedImage(image)"
 	>
 		<img
-				class="article-image"
+				class="article-image media-obj"
+				:media-id="image.id"
 				:src="image.src"
 				:alt="image.name"
 				:name="image.name"
@@ -47,12 +39,6 @@ const props = defineProps({
 			{{ title }}
 		</span>
 	</div>
-	<LightBox
-			v-if="openedImage"
-			:image="openedImage"
-			:setViewsLog="true"
-			@setCurrentElement="setOpenedImage"
-	/>
 </template>
 
 <style lang="scss" scoped>

@@ -1,158 +1,80 @@
 <script setup>
-import ThunderSlider from '@/components/sliders/ThunderSlider.vue';
-import LightBox from '@/components/media/LightBox.vue'
-
-import { lightBox } from '@/composables/lightBox.js';
-const {
-	openedImage,
-	setOpenedImage
-} = lightBox();
-
-import { date } from '@/composables/date.js';
-const {
-	getFormattedDate
-} = date();
+import ListDataItems from '@/components/ui/listData/ListDataItems.vue';
+import Slider from '@/components/sliders/vueSlider/Slider.vue';
 
 const props = defineProps({
-	game: {
+	item: {
 		type: Object,
-		default: {},
 		required: true,
 	},
 });
-
-const genres = computed(() => { return stringTransfer(props.game.genres); });
-const platforms = computed(() => { return stringTransfer(props.game.platforms); });
-const companies = computed(() => {
-	let returnData = '';
-	const obj = props.game.companies;
-
-	for (let key in obj) {
-		if (key > 0) returnData += ', ';
-		returnData += `<span title="${obj[key].description ? obj[key].description : ''}">${obj[key].name} (${obj[key]?.company_role?.name})</span>`;
-	}
-
-	return returnData;
-});
-const anonsDates = computed(() => {
-	let returnData = '';
-	const obj = props.game.anons_dates;
-
-	for (let key in obj) {
-		if (key > 0) {
-			returnData += ', ';
-		}
-		returnData += `<span title="${obj[key].description ? obj[key].description : ''}">${getFormattedDate('d ru_mouths_name Y', obj[key].date)}</span>`;
-
-		/* Добавляем название платформы */
-		if (obj[key]?.game_platform?.name) {
-			returnData += ` (${obj[key]?.game_platform?.name})`;
-		}
-
-		if (obj[key].addInfo) {
-			returnData += ` (${obj[key].addInfo})`;
-		}
-	}
-
-	return returnData;
-});
-const releaseDates = computed(() => {
-	let returnData = '';
-	const obj = props.game.release_dates;
-
-	for (let key in obj) {
-		if (key > 0) {
-			returnData += ', ';
-		}
-		returnData += `<span title="${obj[key].description ? obj[key].description : ''}">${getFormattedDate('d ru_mouths_name Y', obj[key].date)}</span>`;
-
-		/* Добавляем название платформы */
-		if (obj[key]?.game_platform?.name) {
-			returnData += ` (${obj[key]?.game_platform?.name})`;
-		}
-
-		if (obj[key].addInfo) {
-			returnData += ` (${obj[key].addInfo})`;
-		}
-	}
-
-	return returnData;
-});
-
-const stringTransfer = (obj) => {
-	let returnData = '';
-
-	for (let key in obj) {
-		if (key > 0) returnData += ', ';
-		returnData += `<span title="${obj[key].description ? obj[key].description : ''}">${obj[key].name}</span>`;
-	}
-
-	return returnData;
-}
 </script>
 
 <template>
 	<div class="main-info">
 		<div class="left-box">
-			<span class="field" v-if="game.name"><b>Название:</b> {{ game.name }}</span>
-			<span class="field" v-if="genres"><b>Жанр:</b> <span v-html="genres" /></span>
-			<span class="field" v-if="platforms"><b>Платформа:</b> <span v-html="platforms" /></span>
-			<span class="field" v-if="companies"><b>Компании:</b> <span v-html="companies" /></span>
-			<span class="field" v-if="anonsDates"><b>Дата анонса:</b> <span v-html="anonsDates" /></span>
-			<span class="field" v-if="releaseDates"><b>Дата выхода:</b> <span v-html="releaseDates" /></span>
+			<span class="field" v-if="item.name"><span class="strong">Название:</span> {{ item.name }}</span>
+			<ListDataItems
+					v-if="props?.item?.genres"
+					:items="props.item.genres"
+					:names="{ single: 'Жанр: ', many: 'Жанры: ' }"
+					:showMoreNames="{ showMore: 'Все жанры ', showLess: 'Скрыть ' }"
+					cardType="Simple"
+					class="field"
+			/>
+			<ListDataItems
+					v-if="props?.item?.platforms"
+					:items="props.item.platforms"
+					:names="{ single: 'Платформа: ', many: 'Платформы: ' }"
+					:showMoreNames="{ showMore: 'Все платформы ', showLess: 'Скрыть ' }"
+					cardType="Simple"
+					class="field"
+			/>
+			<ListDataItems
+					v-if="props?.item?.companies"
+					:items="props.item.companies"
+					:names="{ single: 'Компания: ', many: 'Компании: ' }"
+					:showMoreNames="{ showMore: 'Все компании ', showLess: 'Скрыть ' }"
+					cardType="Company"
+					class="field"
+			/>
+			<ListDataItems
+					v-if="props?.item?.anons_dates"
+					:items="props.item.anons_dates"
+					:names="{ single: 'Дата анонса: ', many: 'Даты анонса: ' }"
+					:showMoreNames="{ showMore: 'Все даты ', showLess: 'Скрыть ' }"
+					cardType="Date"
+					class="field"
+			/>
+			<ListDataItems
+					v-if="props?.item?.release_dates"
+					:items="props.item.release_dates"
+					:names="{ single: 'Дата релиза: ', many: 'Даты релиза: ' }"
+					:showMoreNames="{ showMore: 'Все даты ', showLess: 'Скрыть ' }"
+					cardType="Date"
+					class="field"
+			/>
 			<template
-					v-for="(field, key) in props.game.additional_fields"
+					v-for="(field, key) in props.item.additional_fields"
 					:key="key"
 			>
 				<span v-if="field.value" class="field">
-					<b>{{ field.name }}:</b> {{ field.value }}
+					<span class="strong">{{ field.name }}:</span> {{ field.value }}
 				</span>
 			</template>
-			<span
-					v-if="game.links.length > 0"
-					class="field"><b>Ссылки:</b>
-				<ul>
-					<li v-for="(link, key) in game.links" :key="key"><a :href="link.url" target="_blank" rel="nofollow">{{ link.name }}</a></li>
-				</ul>
-			</span>
+			<ListDataItems
+					v-if="props?.item?.links"
+					:items="props.item.links"
+					:names="{ single: 'Ссылка: ', many: 'Ссылки: ' }"
+					:showMoreNames="{ showMore: 'Все ссылки ', showLess: 'Скрыть ' }"
+					cardType="Link"
+					class="field"
+			/>
 		</div>
 		<div class="right-box">
-			<ThunderSlider
-					:autoLoop="{
-						delay: 10000,
-						restart: 10000,
-					}"
-			>
-				<template #nav-prev>
-					<div id="nav-prev" class="nav-prev">
-						<span><font-awesome-icon :icon="['fas', 'angle-left']" /></span>
-					</div>
-				</template>
-
-				<template #nav-next>
-					<div id="nav-next" class="nav-next">
-						<span><font-awesome-icon :icon="['fas', 'angle-right']" /></span>
-					</div>
-				</template>
-
-				<div
-						class="slide w-full"
-						v-for="(cover, index) in game.covers"
-						:key="index"
-				>
-						<img
-								:src="cover.src"
-								:alt="cover.description"
-								@click="setOpenedImage(cover)"
-						>
-				</div>
-			</ThunderSlider>
-
-			<LightBox
-					v-if="openedImage"
-					:image="openedImage"
-					:setViewsLog="true"
-					@setCurrentElement="setOpenedImage"
+			<Slider
+					v-if="item?.covers"
+					:items="item.covers"
 			/>
 		</div>
 	</div>
@@ -167,65 +89,6 @@ const stringTransfer = (obj) => {
 
 		.field {
 			@apply block pb-[0.8rem];
-
-			ul {
-				@apply ml-[1rem] mt-[0.5rem];
-
-				li {
-					@apply list-[disclosure-closed]
-				}
-			}
-
-			a {
-				@apply text-[var(--main-text-color)];
-				//	Добавить стрелочку вверх к ссылке
-			}
-		}
-	}
-
-	.right-box {
-		@apply col-span-1;
-
-		.slider {
-			.slide {
-				@apply cursor-pointer;
-			}
-
-			.nav-next,
-			.nav-prev {
-				@apply
-					absolute z-[1]
-					cursor-pointer hidden
-					text-[2rem]
-				;
-
-				top: calc(50% - 2rem);
-				color: var(--main-text-color);
-
-				&:hover {
-					color: var(--third-hover-color);
-				}
-
-				span {
-					@apply
-						flex justify-center items-center
-						bg-[var(--body-bg-color)]
-						w-[3rem] h-[3rem] rounded-full;
-				}
-			}
-
-			.nav-prev {
-				@apply left-[10px];
-			}
-
-			.nav-next {
-				@apply right-[10px];
-			}
-
-			&:hover .nav-prev,
-			&:hover .nav-next {
-				@apply block;
-			}
 		}
 	}
 }

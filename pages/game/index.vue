@@ -6,7 +6,6 @@ import EntertainmentEntityList from '@/components/entertainment/EntertainmentEnt
 	<EntertainmentEntityList
 		entity="game"
 		name="Игры"
-		title="Игры серии"
-		:useGroups="true"
+		title="Игры"
 	/>
 </template>

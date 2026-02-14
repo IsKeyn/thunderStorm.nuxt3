@@ -37,7 +37,7 @@ export function api() {
         }
     };
 
-    const errorHandler = async (e) => {
+    const errorHandler = async (e, show404page = false) => {
         const notificationsModule = await import("@/composables/notifications.js");
         const { alert, error } = notificationsModule.notifications();
 
@@ -57,7 +57,11 @@ export function api() {
                     error('Для выполенния запроса необходимо авторизоваться', 3000);
                     break;
                 case 404:
-                    error('Ошибка 404', 3000);
+                    if (show404page) {
+                        show404pageFunc();
+                    } else {
+                        error('Ошибка 404', 3000);
+                    }
                     break;
                 case 405:
                     error('Ошибка 405', 3000);
@@ -75,6 +79,17 @@ export function api() {
         }
 
         return errors;
+    }
+
+    const show404pageFunc = () => {
+        if (process.client) {
+            showError({statusCode: 404, statusMessage: 'Page Not Found'});
+        } else if (process.server) {
+            throw createError({
+                statusCode: 404,
+                statusMessage: 'Page Not Found'
+            });
+        }
     }
 
     const preparedRequestBody = (form) => {
@@ -95,7 +110,8 @@ export function api() {
         requestName = null,
         preloaderType = null, // fullscreen, fullscreenTransparent, small
         loadListType = 'useAsyncData',
-        lazy = false
+        lazy = false,
+        show404page = false
     ) => {
         const loadState = useLoadStateStore();
 
@@ -164,7 +180,7 @@ export function api() {
                 loadState.loadList[requestName].status = 'error';
             }
 
-            responseErrors.value = errorHandler(e)
+            responseErrors.value = errorHandler(e, show404page)
         }
     }
 
@@ -181,6 +197,7 @@ export function api() {
         sendApiRequest,
         responseErrors,
         errorHandler,
+        show404pageFunc,
         preparedRequestBody,
         handleBackendUrl
     };

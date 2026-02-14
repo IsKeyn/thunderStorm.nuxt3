@@ -5,6 +5,6 @@ import EntertainmentDetail from '@/components/entertainment/EntertainmentDetail.
 <template>
 	<EntertainmentDetail
 			entity="game"
-			title="Игры серии"
+			title="Игры"
 	/>
 </template>

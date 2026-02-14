@@ -8,6 +8,14 @@ import Head from '@/components/seo/Head.vue';
 import MenuColumns from '@/components/menu/MenuColumns.vue';
 import BlockWrapper from '@/components/blockEditor/editor/BlockWrapper.vue';
 
+import { computed, provide, ref } from "vue";
+
+import { api } from '@/composables/api.js'
+const { sendApiRequest, show404pageFunc } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
 const props = defineProps({
 	entity: {
 		type: String,
@@ -19,76 +27,47 @@ const props = defineProps({
 	},
 });
 
-import { api } from '@/composables/api.js'
-import {provide, ref} from "vue";
+const requestName =  props.entity + 'EntertainmentDetail';
+
 const {
-	apiUrl,
-	publicUrl,
-	sessionCookieName,
-	errorHandler,
-} = api();
-
-const route = useRoute();
-
-const requestInProgress = ref(false);
-const fetchedData = ref();
-
-const { refresh } = await useAsyncData(
+	data: requestData,
+	pending: requestInProgress,
+	refresh
+} = await useAsyncData(
+		requestName,
 		async () => {
-			let request = `${apiUrl.value}${props.entity}`;
-
-			if (route.params.entertainment) {
-				request += `/${route.params.entertainment}`;
-			} else {
-				throw createError({
-					statusCode: 404,
-					statusMessage: 'Page Not Found'
-				});
+			if (!route.params.entertainment) {
+				show404pageFunc();
 			}
 
-			const query = {};
-			const sessionCookie = useCookie(sessionCookieName.value);
+			const response = await Promise.resolve(
+					sendApiRequest(
+							`${props.entity}/${route.params.entertainment}`,
+							'GET',
+							{},
+							requestName,
+							'',
+							'useAsyncData',
+							false,
+							true,
+					)
+			);
 
-			requestInProgress.value = true;
-
-			try {
-				await $fetch(
-						request,
-						{
-							method: 'GET',
-							credentials: 'include',
-							query,
-							headers: {
-								Accept: 'application/json',
-								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-								Referer: publicUrl.value,
-							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									fetchedData.value = response._data.data;
-
-									if (process.client && !sessionStorage.getItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`)) {
-										sessionStorage.setItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`, true);
-									}
-								}
-
-								requestInProgress.value = false;
-							}
-						},
-				);
-			} catch (e) {
-				errorHandler(e);
-				requestInProgress.value = false;
-
-				throw createError({
-					statusCode: 404,
-					statusMessage: 'Page Not Found'
-				});
-			}
+			return response || null;
+		},
+		{
+			server: true,
+			lazy: true,
 		}
 );
 
-const getBreadCrumbs = () => {
+const fetchedData = computed(() => requestData.value || []);
+
+if (process.client && !sessionStorage.getItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`)) {
+	sessionStorage.setItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`, true);
+}
+
+const getBreadCrumbs = computed(() => {
 	const splitedPath = route.path.split('/');
 
 	return [
@@ -97,11 +76,11 @@ const getBreadCrumbs = () => {
 			href: `/${splitedPath[1]}/`,
 		},
 		{
-			name: fetchedData.value.name,
+			name: fetchedData.value?.name,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
-}
+});
 
 // Обновление количества лайков
 const updateLikes = (params) => {
@@ -122,34 +101,24 @@ const openSendCommentForm = () => {
 </script>
 
 <template>
+	<button @click="refresh">12345</button>
 	<div v-if="fetchedData">
-		<PageHeader
-				:breadCrumbs="getBreadCrumbs()"
-		/>
+		<PageHeader :breadCrumbs="getBreadCrumbs" />
 		<TitleImage
-				v-if="fetchedData.title_image"
+				v-if="fetchedData?.title_image"
 				:image="fetchedData.title_image"
-				:title="fetchedData.name"
+				:title="fetchedData?.name"
 				:withoutBorder="true"
 				parentClass="mb-[30px]"
 		/>
-		<EntertainmentInfo
-			:game="fetchedData"
-		/>
+		<EntertainmentInfo :item="fetchedData" />
 
 		<div class="additional-info">
 			<div class="left-box">
 				<div class="line-block" v-html="fetchedData.description" />
-<!--				<ShortGallery-->
-<!--						class="line-block"-->
-<!--				/>-->
-
-<!--				<ArticleShortList-->
-<!--						class="line-block"/>-->
-				<BlockWrapper
-						v-for="(block, blockIndex) in fetchedData.blocks"
-						:name="block.name"
-						:structure="block.structure"
+				<SimpleTagsList
+						class="tags-list"
+						:tags="fetchedData.tags"
 				/>
 			</div>
 			<div class="right-block">
@@ -160,24 +129,17 @@ const openSendCommentForm = () => {
 							:group="group"
 					/>
 				</div>
-
-<!--				<OpenCloseBox-->
-<!--						:fields="menuItems"-->
-<!--				/>-->
-<!--				<OpenCloseBox-->
-<!--						title="Руководства"-->
-<!--						:fields="menuItems"-->
-<!--				/>-->
-				<SimpleTagsList
-						class="tags-list"
-						:tags="fetchedData.tags"
-				/>
 			</div>
 		</div>
 
 		<div class="article-footer">
+			<BlockWrapper
+					v-for="(block, blockIndex) in fetchedData.blocks"
+					:name="block.name"
+					:structure="block.structure"
+			/>
 			<div class="add-info">
-				<div class="column-1"></div>
+				<div class="column-1" />
 				<div class="column-2">
 					<EntityUserActionsPanel
 							:entityType="fetchedData.entity_type"
@@ -205,11 +167,13 @@ const openSendCommentForm = () => {
 					ref="commentsRef"
 					@refresh="refresh"
 			/>
-			<Head
-				:seo="fetchedData.seo"
-			/>
+			<Head :seo="fetchedData.seo" />
 		</div>
 	</div>
+	<ui-itemBox
+			v-else
+			borderColor="red"
+	/>
 </template>
 
 <style lang="scss" scoped>

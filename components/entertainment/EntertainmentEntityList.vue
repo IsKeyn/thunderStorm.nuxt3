@@ -1,15 +1,15 @@
 <script setup>
 import PageHeader from '@/components/layout/PageHeader.vue';
-import GameListCard from '@/components/entertainment/card/GameListCard.vue';
+import EntertainmentListCard from '@/components/entertainment/card/EntertainmentListCard.vue';
+import Pagination from '@/components/navigation/Pagination.vue';
+
+import { computed } from "vue";
 
 import { api } from '@/composables/api.js'
-import { ref } from "vue";
-const {
-	apiUrl,
-	publicUrl,
-	sessionCookieName,
-	errorHandler,
-} = api();
+const { sendApiRequest } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const props = defineProps({
 	entity: {
@@ -18,65 +18,62 @@ const props = defineProps({
 	},
 	name: {
 		type: String,
-		default: 'Игры',
+		default: 'Равлекательный контент',
 	},
 	title: {
 		type: String,
-		default: 'Игры серии',
+		default: 'Список развлекательного контента',
 	},
 	useGroups: {
 		type: Boolean,
 		default: false,
 	},
+	perPage: {
+		type: Number,
+		default: 24,
+	},
 });
 
-const requestInProgress = ref(false);
-const fetchedData = ref();
+import { pagination } from '@/composables/ui/pagination.js'
+const {
+	page,
+	perPage,
+	setRefresh,
+	changePage,
+	setPerPage
+} = pagination(props.perPage);
 
-const { refresh } = await useAsyncData(
+const requestName =  props.entity + 'EntertainmentList';
+
+const {
+	data: requestData,
+	pending: requestInProgress,
+	refresh
+} = await useAsyncData(
+		requestName,
 		async () => {
-			let request = `${apiUrl.value}${props.entity}/list`;
+			const query = {
+				page: page.value,
+				perPage: perPage.value,
+			};
 
-			const query = {};
-			const sessionCookie = useCookie(sessionCookieName.value);
+			const response = await Promise.resolve(
+					sendApiRequest(`${props.entity}/list`, 'GET', query, requestName, '')
+			);
 
-			requestInProgress.value = true;
-
-			try {
-				await $fetch(
-						request,
-						{
-							method: 'GET',
-							credentials: 'include',
-							query,
-							headers: {
-								Accept: 'application/json',
-								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-								Referer: publicUrl.value,
-							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									fetchedData.value = response._data.data;
-
-									if (process.client && !sessionStorage.getItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`)) {
-										sessionStorage.setItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`, true);
-									}
-								} else {
-									// Возарщаем 404
-								}
-
-								requestInProgress.value = false;
-							}
-						},
-				);
-			} catch (e) {
-				errorHandler(e);
-				requestInProgress.value = false;
-			}
+			return response || null;
+		},
+		{
+			server: true,
+			lazy: true,
 		}
 );
 
-const route = useRoute();
+// Передаем функцию refresh в композабл pagination
+setRefresh(refresh);
+
+const fetchedData = computed(() => requestData.value?.data || []);
+const paginationData = computed(() => requestData.value?.meta || null);
 
 const getBreadCrumbs = () => {
 	const splitedPath = route.path.split('/');
@@ -134,20 +131,26 @@ const dataByGroups = computed(() => {
 </script>
 
 <template>
-	<div v-if="fetchedData">
-		<PageHeader
-				:title="title"
-				:breadCrumbs="getBreadCrumbs()"
-		/>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="getBreadCrumbs()"
+	/>
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
+	<div v-else-if="fetchedData && fetchedData.length > 0">
 		<template v-if="useGroups">
 			<div v-if="dataByGroups">
 					<div class="group" v-for="(group, key) in dataByGroups">
 						<span class="title">{{ group.name }}</span>
 						<div class="game-list">
-							<GameListCard
+							<EntertainmentListCard
 									v-for="(game, index) in group.items"
 									:key="key"
-									:game="game"
+									:data="data"
 									:entity="entity"
 							/>
 						</div>
@@ -156,15 +159,27 @@ const dataByGroups = computed(() => {
 		</template>
 		<template v-else>
 			<div class="game-list">
-				<GameListCard
-						v-for="(game, index) in fetchedData"
+				<EntertainmentListCard
+						v-for="(data, index) in fetchedData"
 						:key="key"
-						:game="game"
+						:data="data"
 						:entity="entity"
 				/>
 			</div>
 		</template>
 	</div>
+	<ui-itemBox
+			v-else
+			borderColor="red"
+	/>
+	<Pagination
+			v-if="paginationData"
+			:pagination="paginationData"
+			:navigationButtons="true"
+			:perPageOptionsProp="[24, 48, 96]"
+			@changePage="changePage"
+			@setPerPage="setPerPage"
+	/>
 </template>
 
 <style scoped lang="scss">
