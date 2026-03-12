@@ -1,15 +1,25 @@
 <script setup>
 import PageHeader from '@/components/layout/PageHeader.vue';
+import SearchFilterSort from '@/components/filters/SearchFilterSort.vue';
 import EntertainmentListCard from '@/components/entertainment/card/EntertainmentListCard.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
 
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
+
+import { useFiltersStore } from '@/stores/filters';
+const filtersStore = useFiltersStore();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { api } from '@/composables/api.js'
 const { sendApiRequest } = api();
 
-import { helper } from '@/composables/helper.js'
-const { route } = helper();
+import { filters } from '@/composables/filters/filters.js';
+const {
+	setFilter,
+	setQueryFilters,
+} = filters();
 
 const props = defineProps({
 	entity: {
@@ -43,6 +53,9 @@ const {
 	setPerPage
 } = pagination(props.perPage);
 
+// Устанавливаем фильтры их get параметров
+setQueryFilters(props.entity);
+
 const requestName =  props.entity + 'EntertainmentList';
 
 const {
@@ -55,6 +68,7 @@ const {
 			const query = {
 				page: page.value,
 				perPage: perPage.value,
+				filters: filtersStore.filters[props.entity],
 			};
 
 			const response = await Promise.resolve(
@@ -69,11 +83,46 @@ const {
 		}
 );
 
+const fetchedData = computed(() => requestData.value?.data || []);
+const paginationData = computed(() => requestData.value?.meta || null);
+
 // Передаем функцию refresh в композабл pagination
 setRefresh(refresh);
 
-const fetchedData = computed(() => requestData.value?.data || []);
-const paginationData = computed(() => requestData.value?.meta || null);
+/* НАЧАЛО: Фильтры */
+let oldFilter = filtersStore.filters[props.entity] ?? {};
+
+const updateDataWithFilters = () => {
+	if (JSON.stringify(oldFilter) !== JSON.stringify(filtersStore.filters?.[props.entity])) {
+		oldFilter = filtersStore.filters?.[props.entity];
+		page.value = 1;
+		refresh();
+	}
+}
+
+// Отслеживаем нажатие кнопок назад\вперед в браузере, для обновления фильтра, в случае изменении get параметров
+const isBrowserNavigation = ref(false);
+const handlePopState = async () => { isBrowserNavigation.value = true; };
+
+onMounted(() => { window.addEventListener('popstate', handlePopState); });
+onUnmounted(() => { window.removeEventListener('popstate', handlePopState); });
+
+watch(() => route.query, async () => {
+	/* TODO на данный момент нет решения без таймаута, проблема в том, что сначала срабатывает данный watch, а потом событие popstate */
+	setTimeout(() => {
+		if (isBrowserNavigation.value) {
+			isBrowserNavigation.value = false;
+			setQueryFilters(props.entity);
+			updateDataWithFilters();
+		}
+	}, 100)}, { deep: true }
+);
+
+watch(() => filtersStore.filters?.[props.entity], () => {
+	updateDataWithFilters();
+}, { deep: true });
+
+/* КОНЕЦ: Фильтры */
 
 const getBreadCrumbs = () => {
 	const splitedPath = route.path.split('/');
@@ -134,6 +183,9 @@ const dataByGroups = computed(() => {
 	<PageHeader
 			:title="title"
 			:breadCrumbs="getBreadCrumbs()"
+	/>
+	<SearchFilterSort
+			:entity="props.entity"
 	/>
 	<ui-BigPreloader
 			v-if="requestInProgress"

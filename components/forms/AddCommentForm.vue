@@ -1,12 +1,12 @@
 <script setup>
-import { onMounted } from 'vue'
-
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 import AlertBox from '@/components/notifications/AlertBlock.vue';
 import VerifyEmailBlock from '@/components/user/VerifyEmailBlock.vue';
 import RecommendMessageForRegistration from '@/components/user/registration/RecommendMessageForRegistration.vue';
 import OpeningBox from '@/components/ui/OpeningBox.vue';
+
+import { onMounted } from 'vue'
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();

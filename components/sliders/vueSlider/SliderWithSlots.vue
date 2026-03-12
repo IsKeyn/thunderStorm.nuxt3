@@ -2,31 +2,18 @@
 import 'vue3-carousel/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 
-import Image from '@/components/sliders/vueSlider/cards/Image.vue';
-
 import { ref } from "vue";
 
 const props = defineProps({
-	items: {
-		type: Array,
-		required: true,
+	count: {
+		type: Number,
+		default: 0,
 	},
 	useDefaultNavigation: {
 		type: Boolean,
 		default: false,
 	},
-	count: {
-		type: Number,
-		default: 0,
-	}
 });
-
-const cardType = () => {
-	switch (props.cardType) {
-		case 'Image': return Image;
-		default: return Image;
-	}
-};
 
 const carouselConfig = {
 	wrapAround: true,
@@ -44,17 +31,8 @@ const prev = () => carouselRef.value.prev();
 </script>
 
 <template>
-	<div v-if="props.items.length > 0">
-		<template
-				v-if="items.length === 1"
-				v-for="(item, key) in props.items"
-				:key="key"
-		>
-			<component
-					:is="cardType()"
-					:item="item"
-			/>
-		</template>
+	<div v-if="count > 0">
+		<slot v-if="count === 1" name="slot-1" />
 		<div v-else class="slider">
 			<Carousel
 					ref="carouselRef"
@@ -62,14 +40,11 @@ const prev = () => carouselRef.value.prev();
 					class="w-full"
 			>
 				<Slide
-						v-for="(item, key) in props.items"
-						:key="key"
+						v-for="index in count"
+						:key="index"
 						class="slide w-full"
 				>
-					<component
-							:is="cardType()"
-							:item="item"
-					/>
+					<slot :name="`slot-${index}`" />
 				</Slide>
 				<template #addons>
 					<Navigation v-if="useDefaultNavigation" />
@@ -77,18 +52,18 @@ const prev = () => carouselRef.value.prev();
 				</template>
 			</Carousel>
 			<div v-if="!useDefaultNavigation">
-			<span
-					class="nav-prev"
-					@click="prev"
-			>
-				<font-awesome-icon :icon="['fas', 'angle-left']" />
-			</span>
+				<span
+						class="nav-prev"
+						@click="prev"
+				>
+					<font-awesome-icon :icon="['fas', 'angle-left']" />
+				</span>
 				<span
 						class="nav-next"
 						@click="next"
 				>
-				<font-awesome-icon :icon="['fas', 'angle-right']" />
-			</span>
+					<font-awesome-icon :icon="['fas', 'angle-right']" />
+				</span>
 			</div>
 		</div>
 	</div>

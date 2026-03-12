@@ -18,15 +18,15 @@ const props = defineProps({
 	names: {
 		type: Object,
 		default: {
-			single: 'Значение: ',
-			many: 'Значения: ',
+			single: 'Значение:',
+			many: 'Значения:',
 		},
 	},
 	showMoreNames: {
 		type: Object,
 		default: {
-			single: 'Отобразить все: ',
-			many: 'Скрыть: ',
+			single: 'Отобразить все:',
+			many: 'Скрыть:',
 		},
 	},
 	cardType: {

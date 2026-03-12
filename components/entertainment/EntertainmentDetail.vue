@@ -7,6 +7,8 @@ import SimpleTagsList from '@/components/tags/SimpleTagsList.vue';
 import Head from '@/components/seo/Head.vue';
 import MenuColumns from '@/components/menu/MenuColumns.vue';
 import BlockWrapper from '@/components/blockEditor/editor/BlockWrapper.vue';
+import SliderWithSlots from '@/components/sliders/vueSlider/SliderWithSlots.vue';
+import Card from '@/modules/boardGame/components/boardGame/Card.vue';
 
 import { computed, provide, ref } from "vue";
 
@@ -98,10 +100,18 @@ const openSendCommentForm = () => {
 	commentsRef.value.$el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth', });
 	injectToggleContent.value = true;
 }
+
+const getSlotName = (n) => `slot-${n + 1}`;
 </script>
 
 <template>
-	<div v-if="fetchedData">
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
+	<div v-else-if="fetchedData">
 		<PageHeader :breadCrumbs="getBreadCrumbs" />
 		<TitleImage
 				v-if="fetchedData?.title_image"
@@ -132,6 +142,18 @@ const openSendCommentForm = () => {
 		</div>
 
 		<div class="article-footer">
+			<template v-if="fetchedData?.boardGames && fetchedData.boardGames.length > 0">
+				<span class="field"><span class="strong">Присутствует в ивентах:</span></span>
+				<SliderWithSlots :count="fetchedData.boardGames.length">
+					<template
+							v-for="(boardGame, key) in fetchedData.boardGames"
+							:key="key"
+							v-slot:[getSlotName(key)]
+					>
+						<Card :element="boardGame" />
+					</template>
+				</SliderWithSlots>
+			</template>
 			<BlockWrapper
 					v-for="(block, blockIndex) in fetchedData.blocks"
 					:name="block.name"
@@ -160,6 +182,7 @@ const openSendCommentForm = () => {
 				</div>
 			</div>
 			<Comments
+					:key="`comments-${fetchedData.entity_type}-${fetchedData.id}`"
 					:entityType="fetchedData.entity_type"
 					:entityId="fetchedData.id"
 					class="mt-5"
@@ -177,7 +200,7 @@ const openSendCommentForm = () => {
 
 <style lang="scss" scoped>
 .additional-info {
-	@apply md:grid grid-cols-5 pt-[var(--main-padding)];
+	@apply md:grid grid-cols-5 pt-[var(--main-padding)] mb-2;
 
 	.left-box {
 		@apply col-span-4 pr-[15px];
@@ -207,6 +230,10 @@ const openSendCommentForm = () => {
 		.column-2 {
 			@apply col-span-6 text-right;
 		}
+	}
+
+	.field {
+		@apply block pb-[0.8rem] text-[1.2rem];
 	}
 }
 </style>

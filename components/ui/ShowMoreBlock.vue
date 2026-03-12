@@ -18,19 +18,17 @@ const toggleContent = () => {
 
 <template>
 	<slot />
-	<div v-show="showContent">
-		<slot name="hiddenContent" />
-	</div>
+	<slot v-if="showContent" name="hiddenContent" />
 	<span
 			v-if="$slots.hiddenContent"
 			class="block cursor-pointer mt-1"
 			@click="toggleContent()"
 	>
 		<template v-if="!showContent">
-			{{ props.names.showMore }}<font-awesome-icon icon="fa-solid fa-angle-down" />
+			{{ props.names.showMore }} <font-awesome-icon icon="fa-solid fa-angle-down" />
 		</template>
 		<template v-else>
-			{{ props.names.showLess }}<font-awesome-icon icon="fa-solid fa-angle-up" />
+			{{ props.names.showLess }} <font-awesome-icon icon="fa-solid fa-angle-up" />
 		</template>
 	</span>
 </template>

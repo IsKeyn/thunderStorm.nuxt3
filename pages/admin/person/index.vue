@@ -12,18 +12,14 @@ const titles = ref(
 				name: 'id',
 			},
 			name: {
-				name: 'Название',
+				name: 'Имя',
 			},
 			slug: {
-				name: 'Slug',
+				name: 'slug',
 			},
 			description: {
 				name: 'Описание',
 				type: 'cutText',
-			},
-			title_image: {
-				name: 'Титульное изображение',
-				type: 'media'
 			},
 			sort: {
 				name: 'Сортировка',
@@ -32,9 +28,10 @@ const titles = ref(
 				name: 'Активность',
 				type: 'boolean',
 			},
-			show_in_list: {
-				name: 'Отображать в списках',
-				type: 'boolean',
+			created_by: {
+				name: 'Кем создан',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 			},
 		}
 );
@@ -57,7 +54,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игры',
+			name: 'Персоны',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -69,12 +66,6 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/game"
-		:additionalButtons="[
-				{
-					name: 'Загрузить по API',
-					url: '/admin/games/get-from-api/',
-				},
-		]"
+		fetchUrl="admin/entity/Person/Person"
 	/>
 </template>

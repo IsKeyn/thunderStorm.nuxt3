@@ -97,7 +97,7 @@ a {
 		}
 
 		.content-box {
-			@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded flex relative w-full h-full;
+			@apply p-2 bg-[var(--second-bg-color)] rounded flex relative w-full h-full;
 
 			background-size: cover; /* Масштабирует изображение, чтобы оно заполнило блок */
 			background-repeat: no-repeat; /* Отключает повторение */

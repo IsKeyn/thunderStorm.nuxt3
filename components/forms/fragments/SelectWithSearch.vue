@@ -9,9 +9,22 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
+	valueKey: {
+		type: String,
+		default: 'value',
+	},
+	multiSelect: {
+		type: Boolean,
+		default: false,
+	},
+	emptyFieldName: {
+		type: String,
+		default: 'Выберите опцию',
+	},
 });
 
-const selectValue = ref(props.modelValue ?? null);
+const selectValue = ref(props.modelValue ?? props.multiSelect ? [] : null);
+
 const searchQuery = ref('');
 const isDropdownOpen = ref(false);
 const dropdownRef = ref(null);
@@ -25,7 +38,16 @@ const filteredOptions = computed(() => {
 });
 
 const selectOption = (option) => {
-	selectValue.value = option.value;
+	if (props.multiSelect) {
+		if (!selectValue.value.includes(option[props.valueKey])) {
+			selectValue.value.push(option[props.valueKey]);
+		} else {
+			selectValue.value = selectValue.value.filter(item => item !== option[props.valueKey]);
+		}
+	} else {
+		selectValue.value = option[props.valueKey];
+	}
+
 	isDropdownOpen.value = false;
 };
 
@@ -45,18 +67,34 @@ const handleKeydown = (event) => {
 
 const getSelectedOptionName = computed(() => {
 	if (!selectValue.value) return 'Не выбрано';
-	const selected = props.options.filter(opt => opt.value === selectValue.value);
+	const selected = props.options.filter((option) => {
+		return checkSelected(option);
+	});
 
-	return selected && selected[0] ? selected[0].name : 'Не выбрано';
+	if (props.multiSelect) {
+		return selected;
+	} else {
+		return selected && selected[0] ? selected[0].name : 'Не выбрано';
+	}
 });
+
+const checkSelected = (option) => {
+	if (!selectValue.value) return false;
+
+	if (props.multiSelect) {
+		return selectValue.value.includes(option[props.valueKey]);
+	} else {
+		return option[props.valueKey] === selectValue.value;
+	}
+}
 
 watch(() => props.modelValue, (newValue) => {
 	selectValue.value = newValue;
-});
+}, { immediate: true });
 
 watch(() => selectValue.value, (newValue) => {
 	emit("update:modelValue", newValue);
-});
+}, { deep: true });
 
 /* НАЧАЛО: Закрытие по клику вне компонента */
 const handleClickOutside = (event) => {
@@ -81,13 +119,31 @@ onBeforeUnmount(() => {
 			class="custom-select"
 	>
 		<div
-				class="select-trigger"
-				:class="{ 'open': isDropdownOpen }"
+				:class="[
+					'select-trigger',
+					{ 'open': isDropdownOpen },
+					multiSelect ? 'multiSelect' : 'singleSelect'
+				]"
 				@click="toggleDropdown"
 				@keydown="handleKeydown"
 				tabindex="0"
 		>
-			<span class="selected-value">{{ getSelectedOptionName }}</span>
+			<span class="selected-value">
+				<template v-if="multiSelect">
+					<span v-if="getSelectedOptionName.length === 0">{{ emptyFieldName }}</span>
+					<span
+							v-for="(option, key) in getSelectedOptionName"
+							:key="key"
+							class="multiselect-option-selected"
+							@click.prevent="selectOption(option)"
+					>
+						{{ option.name }} <font-awesome-icon :icon="['fas', 'xmark']" />
+					</span>
+				</template>
+				<template v-else>
+					{{ getSelectedOptionName }}
+				</template>
+			</span>
 			<font-awesome-icon v-if="isDropdownOpen" :icon="['fas', 'angle-up']" class="select-arrow" />
 			<font-awesome-icon v-else :icon="['fas', 'angle-down']" class="select-arrow" />
 		</div>
@@ -111,7 +167,7 @@ onBeforeUnmount(() => {
 						v-for="option in filteredOptions"
 						:key="option.id"
 						class="select-option"
-						:class="{ 'selected': selectValue === option.id }"
+						:class="{ 'selected': checkSelected(option) }"
 						@click="selectOption(option)"
 				>
 					{{ option.name }}
@@ -132,12 +188,29 @@ onBeforeUnmount(() => {
 	.select-trigger {
 		@apply flex items-center justify-between p-2 border border-[var(--second-border-color)] cursor-pointer transition-colors hover:border-[var(--third-hover-color)];
 
-		&.open {
-			@apply border-blue-500;
+		.selected-value {
+			@apply flex-1 overflow-hidden;
+
+			.multiselect-option-selected {
+				@apply
+					inline-block m-1 pr-2 pl-2 pt-1 pb-2
+					bg-[var(--second-active-color)]
+					rounded-full;
+			}
 		}
 
-		.selected-value {
-			@apply flex-1 overflow-hidden text-ellipsis whitespace-nowrap;
+		&.singleSelect {
+			.selected-value {
+				@apply text-ellipsis whitespace-nowrap;
+			}
+		}
+
+		&.multiSelect {
+			@apply min-h-[4.5rem];
+		}
+
+		&.open {
+			@apply border-blue-500;
 		}
 
 		.select-arrow {
@@ -163,6 +236,10 @@ onBeforeUnmount(() => {
 				@apply p-2 cursor-pointer transition-colors;
 
 				&:hover {
+					@apply bg-[var(--second-active-color)];
+				}
+
+				&.selected {
 					@apply bg-[var(--second-active-color)];
 				}
 			}

@@ -1,7 +1,4 @@
 <script setup>
-import { inject } from 'vue';
-const layoutMethods = inject('layoutMethods');
-
 import { media } from '@/composables/media.js'
 const {
 	getResizeImg,
@@ -35,7 +32,9 @@ const props = defineProps({
 					:src="getResizeImg(user.avatar)"
 					:alt="user.name"
 					:title="user.name"
-					@click.prevent="layoutMethods.setOpenedImage(user.avatar)"
+					:media-id="user.avatar.id"
+					:not-for-lb-nav="true"
+					class="media-obj"
 			>
 			<img
 					v-else

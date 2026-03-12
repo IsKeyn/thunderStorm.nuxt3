@@ -17,40 +17,40 @@ const props = defineProps({
 			<ListDataItems
 					v-if="props?.item?.genres"
 					:items="props.item.genres"
-					:names="{ single: 'Жанр: ', many: 'Жанры: ' }"
-					:showMoreNames="{ showMore: 'Все жанры ', showLess: 'Скрыть ' }"
+					:names="{ single: 'Жанр:', many: 'Жанры:' }"
+					:showMoreNames="{ showMore: 'Все жанры', showLess: 'Скрыть' }"
 					cardType="Simple"
 					class="field"
 			/>
 			<ListDataItems
 					v-if="props?.item?.platforms"
 					:items="props.item.platforms"
-					:names="{ single: 'Платформа: ', many: 'Платформы: ' }"
-					:showMoreNames="{ showMore: 'Все платформы ', showLess: 'Скрыть ' }"
+					:names="{ single: 'Платформа:', many: 'Платформы:' }"
+					:showMoreNames="{ showMore: 'Все платформы', showLess: 'Скрыть' }"
 					cardType="Simple"
 					class="field"
 			/>
 			<ListDataItems
 					v-if="props?.item?.companies"
 					:items="props.item.companies"
-					:names="{ single: 'Компания: ', many: 'Компании: ' }"
-					:showMoreNames="{ showMore: 'Все компании ', showLess: 'Скрыть ' }"
+					:names="{ single: 'Компания:', many: 'Компании:' }"
+					:showMoreNames="{ showMore: 'Все компании', showLess: 'Скрыть' }"
 					cardType="Company"
 					class="field"
 			/>
 			<ListDataItems
 					v-if="props?.item?.anons_dates"
 					:items="props.item.anons_dates"
-					:names="{ single: 'Дата анонса: ', many: 'Даты анонса: ' }"
-					:showMoreNames="{ showMore: 'Все даты ', showLess: 'Скрыть ' }"
+					:names="{ single: 'Дата анонса:', many: 'Даты анонса:' }"
+					:showMoreNames="{ showMore: 'Все даты', showLess: 'Скрыть' }"
 					cardType="Date"
 					class="field"
 			/>
 			<ListDataItems
 					v-if="props?.item?.release_dates"
 					:items="props.item.release_dates"
-					:names="{ single: 'Дата релиза: ', many: 'Даты релиза: ' }"
-					:showMoreNames="{ showMore: 'Все даты ', showLess: 'Скрыть ' }"
+					:names="{ single: 'Дата релиза:', many: 'Даты релиза:' }"
+					:showMoreNames="{ showMore: 'Все даты', showLess: 'Скрыть' }"
 					cardType="Date"
 					class="field"
 			/>
@@ -65,8 +65,8 @@ const props = defineProps({
 			<ListDataItems
 					v-if="props?.item?.links"
 					:items="props.item.links"
-					:names="{ single: 'Ссылка: ', many: 'Ссылки: ' }"
-					:showMoreNames="{ showMore: 'Все ссылки ', showLess: 'Скрыть ' }"
+					:names="{ single: 'Ссылка:', many: 'Ссылки:' }"
+					:showMoreNames="{ showMore: 'Все ссылки', showLess: 'Скрыть' }"
 					cardType="Link"
 					class="field"
 			/>

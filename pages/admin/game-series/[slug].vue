@@ -9,10 +9,9 @@ import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 const form = ref(
 		{
 			id: {
-				name: 'id',
+				name: 'ID',
 				value: '',
-				type: 'hidden',
-				validateRules: null,
+				type: 'notEditable',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			name: {
@@ -20,15 +19,6 @@ const form = ref(
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			title_image: {
-				name: 'Титульное изображение',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			slug: {
@@ -41,13 +31,6 @@ const form = ref(
 					sourceFieldKey: 'name',
 					rule: 'slug',
 				},
-			},
-			created_at: {
-				name: 'Дата создания',
-				value: '',
-				type: 'datetime-local',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]'],
 			},
 			description: {
 				name: 'Описание',
@@ -65,19 +48,30 @@ const form = ref(
 			},
 			active: {
 				name: 'Активность',
-				value: 1,
+				value: true,
 				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
-				showTitle: false,
 			},
-			show_in_list: {
-				name: 'Отображать в списках',
-				value: 1,
-				type: 'checkbox',
-				validateRules: '',
+			created_by: {
+				name: 'Кем создан',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
-				showTitle: false,
+			},
+			created_at: {
+				name: 'Дата создания',
+				value: '',
+				type: 'notEditable',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			updated_at: {
+				name: 'Дата обновления',
+				value: '',
+				type: 'notEditable',
+				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
 );
@@ -100,7 +94,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игры',
+			name: 'Игровые серии',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -109,52 +103,6 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
-
-const extensions = [
-	{
-		name: 'Groups',
-		keyForBackend: 'groups',
-		params: {
-			additionalDataKeys: ['group'],
-		},
-	},
-	{
-		name: 'Genres',
-		keyForBackend: 'genres',
-		params: {
-			additionalDataKeys: ['genre'],
-		},
-	},
-	{
-		name: 'MultiImages',
-		keyForBackend: 'covers',
-		params: null,
-	},
-	{
-		name: 'AnonsDates',
-		keyForBackend: 'anons_dates',
-		params: null,
-	},
-	{
-		name: 'ReleaseDates',
-		keyForBackend: 'release_dates',
-		params: {
-			additionalDataKeys: ['gaming_platform'],
-		},
-	},
-	{
-		name: 'Companies',
-		keyForBackend: 'companies',
-		params: {
-			additionalDataKeys: ['company', 'company_role'],
-		},
-	},
-	{
-		name: 'Links',
-		keyForBackend: 'links',
-		params: null,
-	},
-];
 </script>
 
 <template>
@@ -162,16 +110,8 @@ const extensions = [
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				fetchUrl="admin/game"
-				:additionalFieldsEnable="true"
-				:showTags="true"
-				:showSeo="true"
-				:showMenu="true"
-				:hasResource="true"
-				:useAdditionalData="true"
-				:useBlockEditor="true"
-				:showAdditionalData="true"
-				:extensions="extensions"
+				:showAdditionalData="false"
+				fetchUrl="admin/entity/Game/GameSeries"
 		/>
 	</div>
 </template>

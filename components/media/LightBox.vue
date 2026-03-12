@@ -108,16 +108,29 @@ const searchNextAndPrevElements = () => {
 	const currentMediaId = props.mediaId;
 
 	if (currentMediaId) {
-		let allMediaElements = document.querySelectorAll('.media-obj[media-id]');
+		let allMediaElements = document.querySelectorAll('[media-id]:not([media-id=""])');
 
 		if (props.elementClassToScroll) {
 			allMediaElements = Array.from(allMediaElements).filter(element => element.classList.contains(props.elementClassToScroll));
 		}
 
+		let enableNav = true;
+
 		// Фильтруем элементы, оставляя те, которые:
 		// 1. Не имеют родителя с классом carousel__slide
 		// 2. Имеют родителя с классом carousel__slide, но у родителя есть не пустой ID
 		const filteredElements = Array.from(allMediaElements).filter(element => {
+			// Проверяем атрибут not-for-lb-nav
+			if (element.getAttribute('not-for-lb-nav') === 'true') {
+				const elementMediaId = element.getAttribute('media-id');
+
+				if (Number(elementMediaId) === Number(currentMediaId)) {
+					enableNav = false;
+				}
+
+				return false;
+			}
+
 			const parent = element.parentElement;
 			const hasCarouselSlide = parent && parent.classList.contains('carousel__slide');
 
@@ -130,27 +143,29 @@ const searchNextAndPrevElements = () => {
 			return parent.id && parent.id.trim() !== '';
 		});
 
-		let foundCurrent = false;
+		if (enableNav) {
+			let foundCurrent = false;
 
-		for (let i = 0; i < filteredElements.length; i++) {
-			const element = filteredElements[i];
-			const elementMediaId = element.getAttribute('media-id');
+			for (let i = 0; i < filteredElements.length; i++) {
+				const element = filteredElements[i];
+				const elementMediaId = element.getAttribute('media-id');
 
-			if (Number(elementMediaId) === Number(currentMediaId)) {
-				foundCurrent = true;
-				continue;
-			}
-
-			if (!foundCurrent) {
-				// Это предыдущий элемент (до текущего)
-				if (elementMediaId !== currentMediaId) {
-					prevElement.value = element;
+				if (Number(elementMediaId) === Number(currentMediaId)) {
+					foundCurrent = true;
+					continue;
 				}
-			} else {
-				// Это следующий элемент (после текущего)
-				if (elementMediaId !== currentMediaId) {
-					nextElement.value = element;
-					break;
+
+				if (!foundCurrent) {
+					// Это предыдущий элемент (до текущего)
+					if (elementMediaId !== currentMediaId) {
+						prevElement.value = element;
+					}
+				} else {
+					// Это следующий элемент (после текущего)
+					if (elementMediaId !== currentMediaId) {
+						nextElement.value = element;
+						break;
+					}
 				}
 			}
 		}
