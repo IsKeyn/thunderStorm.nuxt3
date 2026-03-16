@@ -3,6 +3,7 @@ import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue'
 
 const emit = defineEmits(['changePage', 'setPerPage']);
+import { watch } from "vue";
 
 import { helper } from '@/composables/helper.js'
 const { route, router } = helper();
@@ -142,6 +143,35 @@ const changePagination = (perPage) => {
 	}
 }
 
+const setQueryPage = (page) => {
+	if (props.table) {
+		const getParam = `${props.table}_perPage`;
+
+		if (route.query[getParam] && route.query[getParam] !== page) {
+			const query = {
+				...route.query,
+			};
+
+			query[getParam] = page;
+
+			router.push({
+				name: route.name,
+				query,
+			});
+		}
+	} else {
+		if (route.query?.page && route.query.page !== page) {
+			router.push({
+				name: route.name,
+				query: {
+					...route.query,
+					page: page,
+				},
+			});
+		}
+	}
+}
+
 const getClass = (page) => {
 	if (page === props.pagination.current_page) {
 		return 'current';
@@ -194,6 +224,10 @@ const setPage = () => {
 	choicePageModalToggle();
 	changePage(form.value.page.value);
 }
+
+watch(() => props.pagination, () => {
+	setQueryPage(props.pagination.current_page);
+}, { deep: true });
 </script>
 
 <template>

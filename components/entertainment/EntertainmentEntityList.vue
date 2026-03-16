@@ -10,7 +10,7 @@ import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
 
 import { helper } from '@/composables/helper.js'
-const { route } = helper();
+const { route, router } = helper();
 
 import { api } from '@/composables/api.js'
 const { sendApiRequest } = api();
@@ -186,6 +186,7 @@ const dataByGroups = computed(() => {
 	/>
 	<SearchFilterSort
 			:entity="props.entity"
+			:pagination="paginationData"
 	/>
 	<ui-BigPreloader
 			v-if="requestInProgress"
@@ -196,12 +197,12 @@ const dataByGroups = computed(() => {
 	<div v-else-if="fetchedData && fetchedData.length > 0">
 		<template v-if="useGroups">
 			<div v-if="dataByGroups">
-					<div class="group" v-for="(group, key) in dataByGroups">
+					<div class="group" v-for="(group) in dataByGroups">
 						<span class="title">{{ group.name }}</span>
 						<div class="game-list">
 							<EntertainmentListCard
 									v-for="(game, index) in group.items"
-									:key="key"
+									:key="index"
 									:data="data"
 									:entity="entity"
 							/>
@@ -213,7 +214,7 @@ const dataByGroups = computed(() => {
 			<div class="game-list">
 				<EntertainmentListCard
 						v-for="(data, index) in fetchedData"
-						:key="key"
+						:key="index"
 						:data="data"
 						:entity="entity"
 				/>

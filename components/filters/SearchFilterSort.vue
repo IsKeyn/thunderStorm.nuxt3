@@ -12,6 +12,9 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
+	pagination: {
+		type: Object,
+	},
 });
 
 import { filters } from '@/composables/filters/filters.js';
@@ -36,6 +39,9 @@ const { setFilter, checkHasFilters } = filters();
 			/>
 		</OpeningBox>
 
-		<Sort :entity="entity" />
+		<Sort
+				:entity="entity"
+				:pagination="pagination"
+		/>
 	</div>
 </template>

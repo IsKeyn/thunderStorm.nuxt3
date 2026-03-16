@@ -6,6 +6,9 @@ import FilterList from '@/components/filters/fragments/FilterList.vue';
 
 import { computed } from "vue";
 
+import { useFiltersStore } from '@/stores/filters';
+const filtersStore = useFiltersStore();
+
 import { filters } from '@/composables/filters/filters.js';
 const { clearFilters, checkHasFilters } = filters();
 
@@ -46,7 +49,7 @@ const props = defineProps({
 			},
 		],
 	},
-	showRange: {
+	useRange: {
 		type: Boolean,
 		default: true,
 	},
@@ -58,6 +61,22 @@ const props = defineProps({
 
 const requestName =  props.entity + 'TakeFilters';
 
+const getFilterList = () => {
+	const result = [];
+
+	if (props.usedFilters && props.usedFilters.length > 0) {
+		props.usedFilters.forEach((item) => {
+			if (item.name) result.push(item.name);
+		});
+	}
+
+	if (props.useRange) {
+		result.push('minMaxData');
+	}
+
+	return JSON.stringify(result);
+}
+
 const {
 	data: requestData,
 	pending: requestInProgress,
@@ -65,7 +84,10 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			const query = {};
+			const query = {
+				filters: filtersStore.filters[props.entity],
+				filterList: getFilterList(),
+			};
 
 			const response = await Promise.resolve(
 					sendApiRequest(`${props.entity}/filters`, 'GET', query, requestName, '')
@@ -91,7 +113,7 @@ const fetchedData = computed(() => requestData.value || null);
 	/>
 	<div v-else-if="fetchedData">
 		<RangeFilter
-				v-if="showRange && fetchedData.minMaxData"
+				v-if="useRange && fetchedData.minMaxData"
 				:entity="entity"
 				:setQueryParams="setQueryParams"
 				:fetchedData="fetchedData"

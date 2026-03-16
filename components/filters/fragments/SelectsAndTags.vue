@@ -53,7 +53,12 @@ const props = defineProps({
 	},
 });
 
-const filtersModel = ref({});
+const filtersModel = ref({
+	gamePlatforms: [],
+	genres: [],
+	companies: [],
+	tags: [],
+});
 
 let disableSendData = false;
 let formForEdit = null;
@@ -65,7 +70,7 @@ const setDefaultData = (disableSend = false) => {
 
 		props.usedFilters.forEach((item) => {
 			if (filtersStore.filters[props.entity][item.name] && filtersStore.filters[props.entity][item.name].length > 0) {
-				formForEdit[item.name] = filtersStore.filters[props.entity][item.name];
+				formForEdit[item.name] = [...filtersStore.filters[props.entity][item.name]];
 			} else {
 				formForEdit[item.name] = [];
 			}
@@ -73,7 +78,7 @@ const setDefaultData = (disableSend = false) => {
 
 		if (JSON.stringify(filtersModel.value) !== JSON.stringify(formForEdit)) {
 			disableSendData = disableSend;
-			Object.assign(filtersModel.value, formForEdit);
+			filtersModel.value = structuredClone(formForEdit);
 		}
 	}
 }
@@ -138,7 +143,7 @@ const sendData = () => {
 			>
 				<SelectWithSearch
 						class="mt-2"
-						:options="fetchedData[filter.name]"
+						:options="fetchedData[filter.name].filter((item) => item.active === true)"
 						valueKey="id"
 						:multiSelect="true"
 						:emptyFieldName="filter.langName"
@@ -153,7 +158,7 @@ const sendData = () => {
 				:key="key"
 		>
 			<ui-ShowMoreBlock
-					v-if="filter.type === 'curtained' && fetchedData[filter.name]"
+					v-if="filter.type === 'curtained' && fetchedData[filter.name].filter((item) => item.active === true)"
 					:names="{
 							showMore: 'Открыть список фильтров по: ' + filter.langName,
 							showLess: 'Закрыть список фильтров по: ' + filter.langName,
@@ -167,7 +172,7 @@ const sendData = () => {
 							class="col-span-8 mt-4"
 							:canAddTags="false"
 							:fetchTags="!fetchedData[filter.name].length"
-							:tags="fetchedData[filter.name]"
+							:tags="fetchedData[filter.name].filter((item) => item.active === true)"
 							type="media"
 							:tagsCountForShow="35"
 							v-model="filtersModel[filter.name]"

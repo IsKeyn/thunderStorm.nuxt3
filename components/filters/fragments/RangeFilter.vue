@@ -59,7 +59,7 @@ const setDefaultData = (disableSend = false) => {
 
 		if (JSON.stringify(form.value) !== JSON.stringify(formForEdit)) {
 			disableSendData = disableSend;
-			Object.assign(form.value, formForEdit);
+			form.value = structuredClone(formForEdit);
 		}
 	}
 }
