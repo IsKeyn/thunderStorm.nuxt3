@@ -1,15 +1,16 @@
 <script setup>
-import Repeater from '@/components/repeaters/Repeater.vue';
-
-const repeaterComponent = ref(null);
-
 import { watch } from "vue";
+
 const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps({
 	modelValue: {
 		type: Array,
 		default: [],
+	},
+	repeaterItem: {
+		type: Object,
+		default: {},
 	},
 	/*
 	 * Дополнительные данные для построения репитора, например списку из сущности.
@@ -31,29 +32,46 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
-	repeaterItem: {
-		type: Object,
-		default: {},
+	/*
+	 * Если данные обновляются через watch в родителе, то необходимо убрать дублирующее
+	 * обновление данных в этом компоненте, пример AdditionalFields
+	 */
+	parentComponentUpdateData: {
+		type: Boolean,
+		default: false,
+	},
+	/* Записывать в модель только value значение, по умолчанию false и при отсуствии значения записывается объект */
+	onlyValue: {
+		type: Boolean,
+		default: false,
+	},
+	/* Записываем значение сортировки */
+	setSort: {
+		type: Boolean,
+		default: false,
 	},
 });
 
 const {
 	repeaterItems,
+	fillAdditionalData,
 	updateItems,
 	addRepeaterItem,
 	deleteRepeaterItem,
+	setValue,
 } = repeater();
 
 defineExpose({
 	addRepeaterItem,
 	deleteRepeaterItem,
+	updateItems,
 });
 
+fillAdditionalData();
 updateItems(props.modelValue);
 
 function repeater() {
-	const repeaterItems = ref ([]); // Массив с элементами репитора
-	const hasFirstLoad = ref(false);
+	const repeaterItems = ref([]); // Массив с элементами репитора
 
 	const hasFileFromGallery = computed(() => {
 		let returnData = false;
@@ -61,12 +79,27 @@ function repeater() {
 		for (let key in props.repeaterItem) {
 			if (props.repeaterItem[key] === 'fileFromGallery') {
 				returnData = true;
+				break;
 			}
 		}
 
 		return returnData;
 	});
 
+	const fillAdditionalData = () => {
+		if (props.additionalData && props.params?.additionalDataKeys) {
+			props.params.additionalDataKeys.forEach((additionalKeys) => {
+				if (props.additionalData[additionalKeys]) {
+					toRaw(props.additionalData[additionalKeys]).forEach((item) => {
+						props.repeaterItem[additionalKeys].options.push({
+							name: item.name,
+							value: item.id,
+						});
+					});
+				}
+			});
+		}
+	}
 
 	const updateItems = (currentValue) => {
 		const countItemForClear = repeaterItems.value.length;
@@ -86,32 +119,34 @@ function repeater() {
 		if (countItemForClear) {
 			repeaterItems.value.splice(0, countItemForClear);
 		}
-
-		// TODO не сломает репитер?
-		// hasFirstLoad.value = true;
 	}
 
 	const fillRepeaterItems = (items) => {
-		items.forEach((item) => {
+		items.forEach((item, index) => {
 			let preparedData = structuredClone(props.repeaterItem);
 
 			if (Object.keys(props.repeaterItem).length > 0) {
 				for (const key in item) {
-					if (preparedData[key]) {
-						if (preparedData[key].value) {
-							preparedData[key].value = item[key];
-						} else if (preparedData[key]) {
-							preparedData[key] = item[key];
-						}
 
-						// Заполнение objectValue необходимо только для типов fileFromGallery
-						if (hasFileFromGallery.value) {
-							preparedData[key].objectValue = item;
+					if (preparedData.hasOwnProperty(key)) {
+						if (preparedData[key].hasOwnProperty('value')) {
+							preparedData[key].value = item[key];
+						} else {
+							preparedData[key] = item[key];
 						}
 					}
 				}
+
+				// Заполнение objectValue необходимо только для типов fileFromGallery
+				if (hasFileFromGallery.value && typeof preparedData['objectValue'] !== "undefined") {
+					preparedData.objectValue = item;
+				}
 			} else {
 				preparedData = item;
+			}
+
+			if (props.setSort) {
+				preparedData.sort = index;
 			}
 
 			repeaterItems.value.push(preparedData);
@@ -121,22 +156,29 @@ function repeater() {
 	const addRepeaterItem = () => {
 		repeaterItems.value.push(structuredClone(props.repeaterItem));
 
-		// setVmodel();
+		if (props.setSort) {
+			repeaterItems.value[repeaterItems.value.length - 1].sort = repeaterItems.value.length - 1;
+		}
+
+		if (props.parentComponentUpdateData) {
+			setValue();
+		}
 	}
 
 	const deleteRepeaterItem = (index) => {
 		if (repeaterItems.value.length > 1) {
+
 			repeaterItems.value = repeaterItems.value.filter((item, inx) => {
 				if (index !== inx) {
 					return item;
 				}
 			});
 
-			setVmodel();
+			setValue();
 		}
 	}
 
-	const setVmodel = () => {
+	const setValue = () => {
 		const resultData = [];
 
 		repeaterItems.value.forEach((item) => {
@@ -145,7 +187,7 @@ function repeater() {
 			const rawItem = toRaw(item);
 
 			for (const key in rawItem) {
-				preparedObj[key] = rawItem[key];
+				preparedObj[key] = props.onlyValue ? (rawItem[key]?.value ?? rawItem[key].value) : (rawItem[key]?.value ? rawItem[key].value : rawItem[key]);
 			}
 
 			resultData.push(preparedObj);
@@ -154,77 +196,24 @@ function repeater() {
 		emit('update:modelValue', resultData);
 	}
 
-	// Наблюдатель за ручным добавлением и измением репитора, но удалением элемента репитора не перехватывается
+	/* Наблюдатель за ручным добавлением и измением репитора, TODO: но удалением элемента репитора не перехватывается */
 	watch(() => repeaterItems.value, () => {
-		// if (hasFirstLoad.value) {
-			setVmodel();
-		// }
-	}, { deep: true });
-
-	// Наблюдатель должен сработать один раз, при первом появлении данных v-model
-	watch(() => props.modelValue, (newValue) => {
-		if (!hasFirstLoad.value) {
-			updateItems(toRaw(newValue));
-			hasFirstLoad.value = true;
+		if (!props.parentComponentUpdateData) {
+			setValue();
 		}
-	}, { deep: true });
-
-	// Наблюдатель должен сработать, при появлении данных заполнения списков (select)
-	watch(() => props.additionalData, (newValue) => {
-		if (newValue && props.params?.additionalDataKeys) {
-			props.params.additionalDataKeys.forEach((additionalKeys) => {
-				if (newValue[additionalKeys]) {
-					toRaw(newValue[additionalKeys]).forEach((item) => {
-						props.repeaterItem[additionalKeys].options.push({
-							name: item.name,
-							value: item.id,
-						});
-					});
-				}
-			});
-		}
-
-		setVmodel();
-		updateItems(props.modelValue);
-	}, { deep: true });
+	}, { deep: true, immediate: true });
 
 	return {
 		repeaterItems,
+		fillAdditionalData,
 		updateItems,
 		addRepeaterItem,
 		deleteRepeaterItem,
+		setValue,
 	};
-}
+};
 </script>
 
 <template>
-	<slot
-			:repeaterItems2="repeaterItems"
-	/>
-	<Repeater
-			ref="repeaterComponent"
-			:repeaterItem="{}"
-			#default="{repeaterItems}"
-	>
-		<div
-				v-for="(item, index) in repeaterItems"
-				:key="index"
-				class="mb-1"
-		>
-			2222222
-			<button
-					v-if="repeaterItems.length > 1"
-					class="btn btn-primary"
-					@click="repeaterComponent.deleteRepeaterItem(index)"
-			>
-				<font-awesome-icon :icon="['fas', 'xmark']" />
-			</button>
-		</div>
-		<button
-				class="btn btn-primary block"
-				@click="repeaterComponent.addRepeaterItem()"
-		>
-			Добавить
-		</button>
-	</Repeater>
+	<slot :repeaterItems="repeaterItems" />
 </template>

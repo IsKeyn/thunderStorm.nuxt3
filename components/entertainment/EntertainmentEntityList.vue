@@ -3,6 +3,7 @@ import PageHeader from '@/components/layout/PageHeader.vue';
 import SearchFilterSort from '@/components/filters/SearchFilterSort.vue';
 import EntertainmentListCard from '@/components/entertainment/card/EntertainmentListCard.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
+import PublicRecommendation from '@/components/recommendation/PublicRecommendation.vue';
 
 import { computed, ref, watch } from "vue";
 
@@ -233,6 +234,7 @@ const dataByGroups = computed(() => {
 			@changePage="changePage"
 			@setPerPage="setPerPage"
 	/>
+	<PublicRecommendation />
 </template>
 
 <style scoped lang="scss">

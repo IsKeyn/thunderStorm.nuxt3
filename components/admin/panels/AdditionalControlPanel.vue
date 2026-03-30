@@ -14,6 +14,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	showPreview: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const hideButton = ref(false);
@@ -61,11 +65,24 @@ const hideButton = ref(false);
 		>
 			<font-awesome-icon :icon="['fas', 'square-plus']" />
 		</button>
+		<button
+				v-if="!hideButton && showPreview"
+				class="btn btn-simple btn-control"
+				title="Предпросмотр"
+				@click="$emit('sendForm', 'viewResult')"
+		>
+			<font-awesome-icon v-if="!requestInProgress" :icon="['fa-solid', 'fa-eye']" />
+			<font-awesome-icon v-else :icon="['fas', 'spinner']" spin-pulse />
+		</button>
 	</FixedControlPanel>
 </template>
 
 <style lang="scss" scoped>
 .btn-control {
 	@apply block text-[2rem];
+
+	svg {
+		@apply max-w-[28px];
+	}
 }
 </style>

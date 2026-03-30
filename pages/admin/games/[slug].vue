@@ -4,14 +4,14 @@ definePageMeta({
 });
 
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
 
 const form = ref(
 		{
 			id: {
 				name: 'id',
-				value: '',
-				type: 'hidden',
+				value: null,
+				type: 'notEditable',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -19,12 +19,12 @@ const form = ref(
 				name: 'Название',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'required, minLength_2, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			title_image: {
 				name: 'Титульное изображение',
-				value: '',
+				value: null,
 				keyValueFromObject: 'id',
 				objectValue: null,
 				type: 'fileFromGallery',
@@ -44,7 +44,7 @@ const form = ref(
 			},
 			created_at: {
 				name: 'Дата создания',
-				value: '',
+				value: null,
 				type: 'datetime-local',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
@@ -58,14 +58,14 @@ const form = ref(
 			},
 			sort: {
 				name: 'Сортировка',
-				value: '',
-				type: 'text',
-				validateRules: null,
+				value: null,
+				type: 'number',
+				validateRules: 'integer',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			active: {
 				name: 'Активность',
-				value: 1,
+				value: true,
 				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
@@ -73,7 +73,7 @@ const form = ref(
 			},
 			show_in_list: {
 				name: 'Отображать в списках',
-				value: 1,
+				value: true,
 				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
@@ -111,6 +111,13 @@ const breadCrumbsArray = computed(() => {
 });
 
 const extensions = [
+	{
+		name: 'Series',
+		keyForBackend: 'series',
+		params: {
+			additionalDataKeys: ['series'],
+		},
+	},
 	{
 		name: 'Groups',
 		keyForBackend: 'groups',
@@ -160,7 +167,7 @@ const extensions = [
 <template>
 	<div>
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
+		<CreateEditFormV2
 				:form="form"
 				fetchUrl="admin/game"
 				:additionalFieldsEnable="true"
@@ -172,6 +179,7 @@ const extensions = [
 				:useBlockEditor="true"
 				:showAdditionalData="true"
 				:extensions="extensions"
+				previewUrl="/game/{slug}"
 		/>
 	</div>
 </template>

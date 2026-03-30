@@ -14,8 +14,11 @@ const titles = ref(
 			name: {
 				name: 'Имя',
 			},
-			slug: {
-				name: 'slug',
+			media_id: {
+				name: 'Медиа',
+			},
+			url: {
+				name: 'url',
 			},
 			description: {
 				name: 'Описание',
@@ -54,7 +57,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Серии',
+			name: 'Рекомендации',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -66,6 +69,7 @@ const breadCrumbsArray = computed(() => {
 	<ListTable
 		:titles="titles"
 		titleKey="title"
-		fetchUrl="admin/entity/Series"
+		:hasResource="true"
+		fetchUrl="admin/recommendation"
 	/>
 </template>

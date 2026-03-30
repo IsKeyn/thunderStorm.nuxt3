@@ -112,6 +112,12 @@ const changePage = (page) => {
 
 const changePagination = (perPage) => {
 	if (props.pagination.per_page !== perPage) {
+		const lastPageWithNewPerPage = Math.round(props.pagination.total /  perPage);
+
+		if (props.pagination.current_page > lastPageWithNewPerPage) {
+			changePage(lastPageWithNewPerPage);
+		}
+
 		if (props.table) {
 			const getParam = `${props.table}_perPage`;
 
@@ -294,13 +300,13 @@ watch(() => props.pagination, () => {
 						<font-awesome-icon v-if="navigationButtons" :icon="['fas', 'angles-right']" />
 						<span v-if="firstAndLastPage">{{ pagination.last_page }}</span>
 					</div>
-					<div
-							@click="choicePageModalToggle()"
-							class="pagination-button"
-					>
-						<font-awesome-icon icon="fa-solid fa-marker" />
-					</div>
 				</template>
+				<div
+						@click="choicePageModalToggle()"
+						class="pagination-button"
+				>
+					<font-awesome-icon icon="fa-solid fa-marker" />
+				</div>
 			</template>
 
 			<!--	Первая страница	-->

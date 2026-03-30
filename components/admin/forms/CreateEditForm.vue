@@ -263,7 +263,14 @@ const buttons = [
 
 <template>
 	<div>
+		<ui-BigPreloader
+				v-if="requestInProgress"
+				class="h-full"
+				theme="image"
+				:themeType="9"
+		/>
 		<FormBlank
+				v-else
 				:form="form"
 				:buttons="buttons"
 

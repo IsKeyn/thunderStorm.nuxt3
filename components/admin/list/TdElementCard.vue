@@ -1,21 +1,17 @@
 <script setup>
+const emit = defineEmits(['deleteElement']);
+
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
 
 import { file } from '@/composables/file.js'
-const {
-	getFileType,
-} = file();
+const { getFileType } = file();
 
 import { helper } from '@/composables/helper.js'
-const {
-	cutText,
-} = helper();
+const { cutText } = helper();
 
 import { media } from '@/composables/media.js'
-const {
-	getResizeImg,
-} = media();
+const { getResizeImg } = media();
 
 const props = defineProps({
 	item: {
@@ -39,8 +35,6 @@ const props = defineProps({
 		required: true,
 	},
 });
-
-const emit = defineEmits(['deleteElement']);
 
 const fileType = computed(() => {
 	if (typeof props.item[props.keyName] === 'object') {
@@ -84,31 +78,55 @@ const entityValue = computed(() => {
 </script>
 
 <template>
-	<div :class="titleEl.type === 'image' ? 'text-center' : ''">
-		<template v-if="keyName === 'doTypes'">
+	<div
+			:class="titleEl.type === 'image' ? 'text-center' : ''"
+	>
+		<template
+				v-if="keyName === 'doTypes'"
+		>
 			<div class="text-center">
-				<router-link :to='`${pageUrl}/${item.id}`'>
+				<slot name="doTypes">
+					<router-link :to='`${pageUrl}/${item.id}`'>
+						<font-awesome-icon
+								:icon="['fas', 'pen']"
+						/>
+					</router-link>
 					<font-awesome-icon
-							:icon="['fas', 'pen']"
+							:icon="['fas', 'xmark']"
+							class="cursor-pointer text-[var(--main-href-color)]"
+							@click="$emit('deleteElement', item)"
 					/>
-				</router-link>
-				<font-awesome-icon
-						:icon="['fas', 'xmark']"
-						class="cursor-pointer text-[var(--main-href-color)]"
-						@click="$emit('deleteElement', item)"
-				/>
+				</slot>
 			</div>
 		</template>
-		<template v-else-if="keyName === 'created_at' && item[keyName]">
+		<template
+				v-else-if="
+				(
+						keyName === 'created_at'
+						|| keyName === 'updated_at'
+						|| keyName === 'deleted_at'
+				) && item[keyName]"
+		>
 			{{ getFormattedDate('d.m.Y H:i:s', item[keyName]) }}
 		</template>
-		<template v-else-if="keyName === 'updated_at' && item[keyName]">
-			{{ getFormattedDate('d.m.Y H:i:s', item[keyName]) }}
-		</template>
-		<template v-else-if="keyName === 'deleted_at' && item[keyName]">
-			{{ getFormattedDate('d.m.Y H:i:s', item[keyName]) }}
-		</template>
-		<template v-else-if="titleEl.type && titleEl.type === 'media' && item[keyName]">
+		<template
+				v-else-if="
+					titleEl.type
+					&& titleEl.type === 'media'
+					&& item[keyName]"
+		>
+			<img
+					v-if="fileType === 'image'"
+					:src="typeof item[keyName] === 'object' ? getResizeImg(item[keyName], 300) : item[keyName]"
+					:media-id="typeof item[keyName] === 'object' ? item[keyName].id : item.id"
+					class="media-obj"
+			>
+			<audio v-if="fileType === 'audio'" controls>
+				<source
+						:src="typeof item[keyName] === 'object' ? item[keyName].src : item[keyName]" type="audio/mpeg"
+				>
+				Ваш браузер не поддерживает аудио элемент.
+			</audio>
 			<a
 					v-if="fileType === 'video'"
 					:href="typeof item[keyName] === 'object' ? item[keyName].src : item[keyName]"
@@ -123,21 +141,27 @@ const entityValue = computed(() => {
 <!--			>-->
 <!--				Sorry, your browser doesn't support embedded videos-->
 <!--			</video>-->
-			<img
-					v-if="fileType === 'image'"
-					:src="typeof item[keyName] === 'object' ? getResizeImg(item[keyName], 300) : item[keyName]"
-					@click="$emit('openImage', typeof item[keyName] === 'object' ? item[keyName] : item)"
-			>
 		</template>
-		<template v-else-if="titleEl.type && titleEl.type === 'boolean'">
+		<template
+				v-else-if="titleEl.type && titleEl.type === 'boolean'"
+		>
 			<span v-if="item[keyName]" class="text-rounded-box true">Да</span>
 			<span v-else class="text-rounded-box false">Нет</span>
 		</template>
-		<template v-else-if="titleEl.type && titleEl.type === 'cutText' && item[keyName]">
+		<template
+				v-else-if="titleEl.type && titleEl.type === 'cutText' && item[keyName]"
+		>
 			{{ cutText(item[keyName], 15) }}
 		</template>
-		<template v-else-if="titleEl.type && titleEl.type === 'EntityList' && item[keyName]">
+		<template
+				v-else-if="titleEl.type && titleEl.type === 'EntityList' && item[keyName]"
+		>
 			<span :class="[titleEl.classes ?? 'entity', 'text-rounded-box']">{{ entityValue }}</span>
+		</template>
+		<template
+				v-else-if="titleEl.type && titleEl.type === 'rounded-box' && item[keyName]"
+		>
+			<span :class="[titleEl.classes ? titleEl.classes : 'simple', 'text-rounded-box']">{{ item[keyName] }}</span>
 		</template>
 		<template v-else>
 			{{ item[keyName] }}
@@ -160,6 +184,10 @@ img {
 
 .text-rounded-box {
 	@apply block w-full p-1 text-center;
+
+	&.simple {
+		@apply bg-[var(--epic-color-2)];
+	}
 
 	&.true {
 		@apply bg-[var(--success-color)];

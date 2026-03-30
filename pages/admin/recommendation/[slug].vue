@@ -21,16 +21,21 @@ const form = ref(
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			slug: {
-				name: 'Slug',
+			media_id: {
+				name: 'Медиа',
+				value: '',
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			url: {
+				name: 'Url',
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
-				autoFill: {
-					sourceFieldKey: 'name',
-					rule: 'slug',
-				},
 			},
 			description: {
 				name: 'Описание',
@@ -94,7 +99,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игровые серии',
+			name: 'Рекомендации',
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -111,7 +116,8 @@ const breadCrumbsArray = computed(() => {
 		<CreateEditForm
 				:form="form"
 				:showAdditionalData="false"
-				fetchUrl="admin/entity/Series"
+				:hasResource="true"
+				fetchUrl="admin/recommendation"
 		/>
 	</div>
 </template>

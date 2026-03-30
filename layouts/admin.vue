@@ -121,14 +121,8 @@ import SideMenuByCode from '@/components/menu/SideMenuByCode.vue';
 							:showOpenModal="activeAuthModal"
 							size="small"
 							modal-id="auth-form"
-							:re-calc-height="reCalc"
-							@setReCalcValue="reCalcHeight"
-							@toggleModal="toggleAuthModal"
 					>
-						<AuthComponent
-								@reCalcHeight="reCalcHeight"
-								@closeModal="toggleAuthModal"
-						/>
+						<AuthComponent />
 					</Modal>
 				</template>
 			</article>

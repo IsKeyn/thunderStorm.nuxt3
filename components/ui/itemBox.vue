@@ -30,5 +30,9 @@ const props = defineProps({
 		&.red {
 			@apply border-l-[0.4rem] border-[var(--error-color)];
 		}
+
+		&.green {
+			@apply border-l-[0.4rem] border-[var(--success-color)];
+		}
 	}
 </style>

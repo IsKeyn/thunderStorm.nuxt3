@@ -7,6 +7,7 @@ import Groups from '@/components/forms/formExtensions/Groups.vue';
 import AnonsDates from '@/components/forms/formExtensions/AnonsDates.vue';
 import Autologin from '@/components/forms/formExtensions/Autologin.vue';
 import Logout from '@/components/forms/formExtensions/Logout.vue';
+import Series from '@/components/forms/formExtensions/Series.vue';
 
 export function formExtensions() {
     const getFormExt = (name) => {
@@ -20,6 +21,7 @@ export function formExtensions() {
             case 'AnonsDates': return AnonsDates;
             case 'Autologin': return Autologin;
             case 'Logout': return Logout;
+            case 'Series': return Series;
         }
     };
 

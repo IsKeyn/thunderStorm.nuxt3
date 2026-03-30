@@ -13,16 +13,22 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	usePagination: {
+		type: Boolean,
+		default: true,
+	},
+	carouselConfig: {
+		type: Object,
+		default: {
+			wrapAround: true,
+			itemsToShow: 1,
+			pauseAutoplayOnHover: true,
+			autoplay: 10000,
+			mouseWheel: true,
+			transition: 750,
+		},
+	},
 });
-
-const carouselConfig = {
-	wrapAround: true,
-	itemsToShow: 1,
-	pauseAutoplayOnHover: true,
-	autoplay: 10000,
-	mouseWheel: true,
-	transition: 750,
-}
 
 const carouselRef = ref()
 
@@ -48,7 +54,7 @@ const prev = () => carouselRef.value.prev();
 				</Slide>
 				<template #addons>
 					<Navigation v-if="useDefaultNavigation" />
-					<Pagination />
+					<Pagination v-if="usePagination" />
 				</template>
 			</Carousel>
 			<div v-if="!useDefaultNavigation">

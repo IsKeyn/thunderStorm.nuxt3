@@ -2,6 +2,7 @@
 import FileFromGallery from './fragments/FileFromGallery.vue';
 import EntityList from './fragments/EntityList.vue';
 import EntityBind from './fragments/EntityBind.vue';
+import SelectWithSearch from '@/components/forms/fragments/SelectWithSearch.vue';
 
 import { watch } from 'vue'
 
@@ -462,6 +463,12 @@ const copyValue = () => {
 					{{ option.name }}
 				</option>
 			</select>
+		</template>
+		<template v-else-if="element.type === 'select-with-search'">
+			<SelectWithSearch
+					:options="element.options"
+					v-model="element.value"
+			/>
 		</template>
 		<template v-else-if="element.type === 'fileFromGallery'">
 			<FileFromGallery

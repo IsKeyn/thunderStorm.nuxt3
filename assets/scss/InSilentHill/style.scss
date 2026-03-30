@@ -202,6 +202,10 @@ span.flip-text-box {
   color: var(--third-text-color);
   text-decoration: none;
 }
+
+.sub-title {
+  @apply block text-[1.2rem] mt-4 mb-4;
+}
 /* КОНЕЦ Заголовки */
 
 /* НАЧАЛО Списки */

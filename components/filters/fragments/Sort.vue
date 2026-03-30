@@ -150,30 +150,4 @@ watch(sortDirection, () => {
 			</button>
 		</div>
 	</div>
-
-<!--	<div v-if="pagination">-->
-<!--		Всего найдено: {{ pagination.total }}-->
-<!--	</div>-->
-<!--	<div class="col-span-2 text-right">-->
-<!--		<FormGenerator-->
-<!--				name="sort"-->
-<!--				:element="sort"-->
-<!--				:showValidateError=true-->
-<!--				validateErrorPosition="bottom"-->
-<!--				:labelClasses="['inline-block', 'mb-[10px]', 'mr-2']"-->
-<!--				:fieldClasses="sort.classes"-->
-<!--		/>-->
-<!--		<button>-->
-<!--			<font-awesome-icon-->
-<!--					v-if="sortDirection === 'desc'"-->
-<!--					:icon="['fas', 'arrow-down-wide-short']"-->
-<!--					@click="sortDirection = 'asc'"-->
-<!--			/>-->
-<!--			<font-awesome-icon-->
-<!--					v-if="sortDirection === 'asc'"-->
-<!--					:icon="['fas', 'arrow-up-short-wide']"-->
-<!--					@click="sortDirection = 'desc'"-->
-<!--			/>-->
-<!--		</button>-->
-<!--	</div>-->
 </template>

@@ -9,6 +9,7 @@ import MenuColumns from '@/components/menu/MenuColumns.vue';
 import BlockWrapper from '@/components/blockEditor/editor/BlockWrapper.vue';
 import SliderWithSlots from '@/components/sliders/vueSlider/SliderWithSlots.vue';
 import Card from '@/modules/boardGame/components/boardGame/Card.vue';
+import PublicRecommendation from '@/components/recommendation/PublicRecommendation.vue';
 
 import { computed, provide, ref } from "vue";
 
@@ -42,11 +43,17 @@ const {
 				show404pageFunc();
 			}
 
+			const query = {};
+
+			if (route.query?.preview) {
+				query.preview = route.query.preview;
+			}
+
 			const response = await Promise.resolve(
 					sendApiRequest(
 							`${props.entity}/${route.params.entertainment}`,
 							'GET',
-							{},
+							query,
 							requestName,
 							'',
 							'useAsyncData',
@@ -196,6 +203,7 @@ const getSlotName = (n) => `slot-${n + 1}`;
 			v-else
 			borderColor="red"
 	/>
+	<PublicRecommendation />
 </template>
 
 <style lang="scss" scoped>

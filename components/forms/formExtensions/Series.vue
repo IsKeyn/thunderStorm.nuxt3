@@ -27,12 +27,19 @@ const props = defineProps({
 	},
 });
 
+// Один элемент репитора
 const repeaterItem = {
-	date: {
-		name: 'date',
-		type: 'date',
-		value: '',
-		placeholder: 'Дата анонса',
+	series: {
+		name: 'series',
+		type: 'select-with-search',
+		options: [
+			{
+				name: 'Не выбрано',
+				value: null,
+			},
+		],
+		value: null,
+		placeholder: 'Серия',
 	},
 };
 
@@ -46,11 +53,10 @@ watch(() => value.value, (newValue) => {
 <template>
 	<ElementWithRepeater
 			v-model="value"
-			name="Дата анонса"
+			name="Серия"
 			:repeaterItem="repeaterItem"
 			:params="params"
 			:additionalData="additionalData"
 			:defaultValues="defaultValues"
-			fieldClasses="col-span-3"
 	/>
 </template>
