@@ -44,6 +44,13 @@ export function filters() {
         },
     ];
 
+    const setFilterName = (prefix, entity = null, id = null) => {
+        if (entity) prefix += '_' + entity;
+        if (id) prefix += '_' + id;
+
+        return prefix;
+    };
+
     const setFilter = (filter, filterName = 'default') => {
         if (!filtersStore.filters[filterName]) {
             filtersStore.filters[filterName] = {};
@@ -111,6 +118,7 @@ export function filters() {
     }
 
     return {
+        setFilterName,
         setFilter,
         clearFilters,
         setQueryFilters,

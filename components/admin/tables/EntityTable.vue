@@ -1,7 +1,7 @@
 <script setup>
 import TdElementCard from '@/components/admin/list/TdElementCard.vue';
 
-import {ref, watch} from "vue";
+import { ref } from "vue";
 
 import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
@@ -10,7 +10,7 @@ import { api } from '@/composables/api.js'
 const { sendApiRequest } = api();
 
 import { filters } from '@/composables/filters/filters.js';
-const { setFilter } = filters();
+const { setFilterName, setFilter } = filters();
 
 import { helper } from '@/composables/helper.js'
 const { setQueryParam, route } = helper();
@@ -89,16 +89,14 @@ const {
 		}
 );
 
-const filterName = computed(() => {
-	return props.entityType + '_' + props.entityId;
-});
+const filterName = setFilterName('versionHistory', props.entityType, props.entityId);
 
-const sort = ref(filtersStore.filters?.[filterName.value]?.sort?.field ? filtersStore.filters?.[filterName.value].sort.field : props.defaultSortValue);
-const sortDirection = ref(filtersStore.filters?.[filterName.value]?.sort?.sort ? filtersStore.filters?.[filterName.value].sort.sort : props.defaultSortDirection);
+const sort = ref(filtersStore.filters?.[filterName]?.sort?.field ? filtersStore.filters?.[filterName].sort.field : props.defaultSortValue);
+const sortDirection = ref(filtersStore.filters?.[filterName]?.sort?.sort ? filtersStore.filters?.[filterName].sort.sort : props.defaultSortDirection);
 
 const setSort = () => {
 	if (
-			!filtersStore.filters?.[filterName.value]?.sort
+			!filtersStore.filters?.[filterName]?.sort
 			&& (sort.value === props.defaultSortValue && sortDirection.value === props.defaultSortDirection)
 	) {
 		return false;
@@ -113,7 +111,7 @@ const setSort = () => {
 		setQueryParam('sort', JSON.stringify(sortData));
 	}
 
-	setFilter({ sort: sortData }, filterName.value);
+	setFilter({ sort: sortData }, filterName);
 }
 
 const sortByField = (field) => {

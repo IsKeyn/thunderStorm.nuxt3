@@ -15,11 +15,20 @@ const { route, router } = helper();
 
 import { filters } from '@/composables/filters/filters.js';
 const {
+	setFilterName,
 	setFilter,
 	setQueryFilters,
 } = filters();
 
 const props = defineProps({
+	title: {
+		type: String,
+		default: 'Версии',
+	},
+	nullMessage: {
+		type: String,
+		default: 'Версии не найдены',
+	},
 	entityId: {
 		type: Number,
 		default: null,
@@ -28,9 +37,46 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	requestUrl: {
+		type: String,
+		default: 'admin/version/getByEntity',
+	},
 	perPage: {
 		type: Number,
 		default: 5,
+	},
+	perPageOptionsProp: {
+		type: Array,
+		default: () => [5, 15, 30],
+	},
+	titles: {
+		type: Object,
+		default: {
+			id: {
+				name: 'id',
+				sortable: true,
+				type: 'rounded-box',
+			},
+			active: {
+				name: 'Активность',
+				type: 'boolean',
+				sortable: true,
+				classes: 'max-w-[30px]',
+			},
+			created_by: {
+				name: 'Кем создан',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				sortable: true,
+			},
+			created_at: {
+				name: 'Дата создания',
+				sortable: true,
+			},
+			doTypes: {
+				name: 'Действия',
+			},
+		}
 	},
 });
 
@@ -43,14 +89,14 @@ const {
 	setPerPage
 } = pagination(props.perPage);
 
-const filterName = computed(() => {
-	return props.entityType + '_' + props.entityId;
-});
+const filterName = setFilterName('versionHistory', props.entityType, props.entityId);
 
 // Устанавливаем фильтры их get параметров
-setQueryFilters(filterName.value);
+setQueryFilters(filterName);
 
-const requestName = 'getVersionList_' + props.entityType;
+let requestName = 'getVersionList';
+if (props.entityType) requestName += '_' + props.entityType;
+if (props.entityId) requestName += '_' + props.entityId;
 
 const {
 	data: requestData,
@@ -62,17 +108,18 @@ const {
 			const query = {
 				page: page.value,
 				perPage: perPage.value,
-				entity_id: props.entityId,
-				entity_type: props.entityType,
-				filters: filtersStore.filters[filterName.value],
+				filters: filtersStore.filters[filterName],
 			};
+
+			if (props.entityId) query.entity_id = props.entityId;
+			if (props.entityType) query.entity_type = props.entityType;
 
 			const response = await Promise.resolve(
 					sendApiRequest(
-						`admin/version/getByEntity`,
-						'GET',
-						query,
-						requestName,
+							props.requestUrl,
+							'GET',
+							query,
+							requestName,
 					)
 			);
 
@@ -91,11 +138,11 @@ const paginationData = computed(() => requestData.value?.meta || null);
 setRefresh(refresh);
 
 /* НАЧАЛО: Фильтры */
-let oldFilter = filtersStore.filters[filterName.value] ?? {};
+let oldFilter = filtersStore.filters[filterName] ?? {};
 
 const updateDataWithFilters = () => {
-	if (JSON.stringify(oldFilter) !== JSON.stringify(filtersStore.filters?.[filterName.value])) {
-		oldFilter = filtersStore.filters?.[filterName.value];
+	if (JSON.stringify(oldFilter) !== JSON.stringify(filtersStore.filters?.[filterName])) {
+		oldFilter = filtersStore.filters?.[filterName];
 		page.value = 1;
 		refresh();
 	}
@@ -113,49 +160,22 @@ watch(() => route.query, async () => {
 	setTimeout(() => {
 		if (isBrowserNavigation.value) {
 			isBrowserNavigation.value = false;
-			setQueryFilters(filterName.value);
+			setQueryFilters(filterName);
 			updateDataWithFilters();
 		}
 	}, 100)}, { deep: true }
 );
 
-watch(() => filtersStore.filters?.[filterName.value], () => {
+watch(() => filtersStore.filters?.[filterName], () => {
 	updateDataWithFilters();
 }, { deep: true });
 
 /* КОНЕЦ: Фильтры */
-
-const titles = {
-	id: {
-		name: 'id',
-		sortable: true,
-		type: 'rounded-box',
-	},
-	active: {
-		name: 'Активность',
-		type: 'boolean',
-		sortable: true,
-		classes: 'max-w-[30px]',
-	},
-	created_by: {
-		name: 'Кем создан',
-		type: 'EntityList',
-		apiUrl: 'user/list',
-		sortable: true,
-	},
-	created_at: {
-		name: 'Дата создания',
-		sortable: true,
-	},
-	doTypes: {
-		name: 'Действия',
-	},
-};
 </script>
 
 <template>
 	<div v-if="fetchedData && fetchedData.length > 0">
-		<span class="sub-title">Версии</span>
+		<span class="sub-title">{{ title }}</span>
 		<div class="relative">
 			<ui-BigPreloader
 					v-if="requestInProgress"
@@ -173,7 +193,7 @@ const titles = {
 					v-if="paginationData"
 					:pagination="paginationData"
 					:navigationButtons="true"
-					:perPageOptionsProp="[5, 15, 30]"
+					:perPageOptionsProp="perPageOptionsProp"
 					@changePage="changePage"
 					@setPerPage="setPerPage"
 			/>
@@ -187,7 +207,7 @@ const titles = {
 	/>
 	<ui-itemBox
 			v-else
-			message="Версии не найдены"
+			:message="nullMessage"
 			borderColor="red"
 	/>
 </template>
