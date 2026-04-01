@@ -272,7 +272,7 @@ const copyValue = () => {
 		>
 			{{ element.validateResult }}
 		</span>
-		<span v-if="showTitle && element.name">{{ element.name }}</span>
+		<span v-if="showTitle && (element.title || element.name)">{{ element.title ? element.title : element.name }}</span>
 		<template
 				v-if="
 					element.type === 'text' ||
@@ -487,7 +487,7 @@ const copyValue = () => {
 					:type="element.type"
 			/>
 				<span class="checkbox-name" v-if="element.html" v-html="element.html" />
-				<span class="checkbox-name" v-else>{{ element.name }}</span>
+				<span class="checkbox-name" v-else>{{ element.title ? element.title : element.name }}</span>
 			</span>
 		</template>
 		<template v-else-if="element.type === 'range'">

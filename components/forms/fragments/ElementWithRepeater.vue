@@ -20,7 +20,7 @@ const props = defineProps({
 	repeaterItem: {
 		type: Object,
 		default: {
-			genre: {
+			itemName: {
 				name: 'itemName',
 				type: 'select-with-search',
 				options: [

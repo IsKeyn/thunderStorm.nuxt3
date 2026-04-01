@@ -34,6 +34,18 @@ const repeaterItem = {
 		value: '',
 		placeholder: 'Дата анонса',
 	},
+	hideDay: {
+		name: 'hideDay',
+		title: 'Скрыть день',
+		type: 'checkbox',
+		value: false,
+	},
+	hideMonth: {
+		name: 'hideMonth',
+		title: 'Скрыть месяц',
+		type: 'checkbox',
+		value: false,
+	},
 };
 
 const value = ref([ ...props.modelValue ]);

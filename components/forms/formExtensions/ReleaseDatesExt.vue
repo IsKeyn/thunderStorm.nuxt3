@@ -52,6 +52,18 @@ const repeaterItem = {
 		value: '',
 		placeholder: 'Дополнительная информация',
 	},
+	hideDay: {
+		name: 'hideDay',
+		title: 'Скрыть день',
+		type: 'checkbox',
+		value: false,
+	},
+	hideMonth: {
+		name: 'hideMonth',
+		title: 'Скрыть месяц',
+		type: 'checkbox',
+		value: false,
+	},
 };
 
 const value = ref([ ...props.modelValue ]);
@@ -69,7 +81,7 @@ watch(() => value.value, (newValue) => {
 			:params="params"
 			:additionalData="additionalData"
 			:defaultValues="defaultValues"
-			fieldClasses="col-span-3"
+			fieldClasses="col-span-2"
 	/>
 </template>
 
