@@ -63,6 +63,7 @@ watch(() => value.value, (newValue) => {
 			:params="params"
 			:additionalData="additionalData"
 			:defaultValues="defaultValues"
+			:onlyValue="true"
 			fieldClasses="col-span-3"
 	/>
 </template>

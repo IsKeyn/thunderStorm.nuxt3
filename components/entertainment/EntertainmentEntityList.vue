@@ -18,6 +18,7 @@ const { sendApiRequest } = api();
 
 import { filters } from '@/composables/filters/filters.js';
 const {
+	setFilterName,
 	setFilter,
 	setQueryFilters,
 } = filters();
@@ -54,8 +55,10 @@ const {
 	setPerPage
 } = pagination(props.perPage);
 
+const filterName = setFilterName([ 'adminList', props.fetchUrl ]);
+
 // Устанавливаем фильтры их get параметров
-setQueryFilters(props.entity);
+setQueryFilters(filterName);
 
 const requestName =  props.entity + 'EntertainmentList';
 
@@ -69,7 +72,7 @@ const {
 			const query = {
 				page: page.value,
 				perPage: perPage.value,
-				filters: filtersStore.filters[props.entity],
+				filters: filtersStore.filters[filterName],
 			};
 
 			const response = await Promise.resolve(
@@ -91,11 +94,11 @@ const paginationData = computed(() => requestData.value?.meta || null);
 setRefresh(refresh);
 
 /* НАЧАЛО: Фильтры */
-let oldFilter = filtersStore.filters[props.entity] ?? {};
+let oldFilter = filtersStore.filters[filterName] ?? {};
 
 const updateDataWithFilters = () => {
-	if (JSON.stringify(oldFilter) !== JSON.stringify(filtersStore.filters?.[props.entity])) {
-		oldFilter = filtersStore.filters?.[props.entity];
+	if (JSON.stringify(oldFilter) !== JSON.stringify(filtersStore.filters?.[filterName])) {
+		oldFilter = filtersStore.filters?.[filterName];
 		page.value = 1;
 		refresh();
 	}
@@ -113,13 +116,13 @@ watch(() => route.query, async () => {
 	setTimeout(() => {
 		if (isBrowserNavigation.value) {
 			isBrowserNavigation.value = false;
-			setQueryFilters(props.entity);
+			setQueryFilters(filterName);
 			updateDataWithFilters();
 		}
 	}, 100)}, { deep: true }
 );
 
-watch(() => filtersStore.filters?.[props.entity], () => {
+watch(() => filtersStore.filters?.[filterName], () => {
 	updateDataWithFilters();
 }, { deep: true });
 
@@ -187,7 +190,9 @@ const dataByGroups = computed(() => {
 	/>
 	<SearchFilterSort
 			:entity="props.entity"
+			:filterName="filterName"
 			:pagination="paginationData"
+			type="public"
 	/>
 	<ui-BigPreloader
 			v-if="requestInProgress"

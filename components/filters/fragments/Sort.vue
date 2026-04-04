@@ -7,7 +7,7 @@ import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
 
 import { filters } from '@/composables/filters/filters.js';
-const { setFilter } = filters();
+const { setFilterName, setFilter } = filters();
 
 import { helper } from '@/composables/helper.js'
 const { setQueryParam } = helper();
@@ -16,6 +16,10 @@ const props = defineProps({
 	entity: {
 		type: String,
 		default: 'game',
+	},
+	filterName: {
+		type: String,
+		default: null,
 	},
 	setQueryParams: {
 		type: Boolean,
@@ -63,10 +67,12 @@ const props = defineProps({
 	},
 });
 
+const filterName = props.filterName ? props.filterName : setFilterName([ props.entity ]);
+
 const sort = ref(
 	{
 		name: '',
-		value: filtersStore.filters?.[props.entity]?.sort?.field ? filtersStore.filters?.[props.entity].sort.field : props.defaultSortValue,
+		value: filtersStore.filters?.[filterName]?.sort?.field ? filtersStore.filters?.[filterName].sort.field : props.defaultSortValue,
 		type: 'select',
 		options: props.sortOptions,
 		validateRules: 'required',
@@ -74,11 +80,11 @@ const sort = ref(
 	}
 );
 
-const sortDirection = ref(filtersStore.filters?.[props.entity]?.sort?.sort ? filtersStore.filters?.[props.entity].sort.sort : props.defaultSortDirection);
+const sortDirection = ref(filtersStore.filters?.[filterName]?.sort?.sort ? filtersStore.filters?.[filterName].sort.sort : props.defaultSortDirection);
 
 const setSort = () => {
 	if (
-			!filtersStore.filters?.[props.entity]?.sort
+			!filtersStore.filters?.[filterName]?.sort
 			&& (sort.value.value === props.defaultSortValue && sortDirection.value === props.defaultSortDirection)
 	) {
 		return false;
@@ -93,18 +99,18 @@ const setSort = () => {
 		setQueryParam('sort', JSON.stringify(sortData));
 	}
 
-	setFilter({ sort: sortData }, props.entity);
+	setFilter({ sort: sortData }, filterName);
 }
 
 let oldSortValue = false;
 let oldSortDirectionValue = false;
 
-watch(() => filtersStore.filters?.[props.entity]?.sort, () => {
+watch(() => filtersStore.filters?.[filterName]?.sort, () => {
 	oldSortValue = sort.value.value;
 	oldSortDirectionValue = sortDirection.value;
 
-	sort.value.value = filtersStore.filters?.[props.entity]?.sort?.field ? filtersStore.filters?.[props.entity].sort.field : props.defaultSortValue;
-	sortDirection.value = filtersStore.filters?.[props.entity]?.sort?.sort ? filtersStore.filters?.[props.entity].sort.sort : props.defaultSortDirection;
+	sort.value.value = filtersStore.filters?.[filterName]?.sort?.field ? filtersStore.filters?.[filterName].sort.field : props.defaultSortValue;
+	sortDirection.value = filtersStore.filters?.[filterName]?.sort?.sort ? filtersStore.filters?.[filterName].sort.sort : props.defaultSortDirection;
 }, { deep: true });
 
 

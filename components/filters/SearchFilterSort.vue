@@ -12,13 +12,50 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
+	filterName: {
+		type: String,
+		default: null,
+	},
 	pagination: {
 		type: Object,
+	},
+	type: {
+		type: String,
+		default: null,
+	},
+	usedFilters: {
+		type: Array,
+		default: [
+			{
+				name: 'gamePlatforms',
+				langName: 'Игровые платформы',
+				type: 'multiselect',
+				requestData: true,
+			},
+			{
+				name: 'genres',
+				langName: 'Жанры',
+				type: 'multiselect',
+				requestData: true,
+			},
+			{
+				name: 'companies',
+				langName: 'Компании',
+				type: 'multiselect',
+				requestData: true,
+			},
+			{
+				name: 'tags',
+				langName: 'Теги',
+				type: 'curtained',
+				requestData: true,
+			},
+		],
 	},
 });
 
 import { filters } from '@/composables/filters/filters.js';
-const { setFilter, checkHasFilters } = filters();
+const { checkHasFilters } = filters();
 </script>
 
 <template>
@@ -26,21 +63,26 @@ const { setFilter, checkHasFilters } = filters();
 		<Search
 				class="mb-4 lg:flex"
 				:entity="entity"
+				:filterName="filterName"
 		/>
 
 		<OpeningBox
 				title="Фильтры"
 				:useHardDisable="true"
-				:defaultContentStatus="checkHasFilters(entity)"
+				:defaultContentStatus="checkHasFilters(filterName, usedFilters)"
 		>
 			<Filter
 					:entity="entity"
+					:filterName="filterName"
 					:showByFirstDateCheckbox="true"
+					:type="type"
+					:usedFilters="usedFilters"
 			/>
 		</OpeningBox>
 
 		<Sort
 				:entity="entity"
+				:filterName="filterName"
 				:pagination="pagination"
 		/>
 	</div>

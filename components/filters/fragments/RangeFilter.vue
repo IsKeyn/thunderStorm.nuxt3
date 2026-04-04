@@ -8,7 +8,7 @@ import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
 
 import { filters } from '@/composables/filters/filters.js';
-const { setFilter } = filters();
+const { setFilterName, setFilter } = filters();
 
 import { helper } from '@/composables/helper.js'
 const { route, router } = helper();
@@ -17,6 +17,10 @@ const props = defineProps({
 	entity: {
 		type: String,
 		default: 'game',
+	},
+	filterName: {
+		type: String,
+		default: null,
 	},
 	setQueryParams: {
 		type: Boolean,
@@ -31,6 +35,8 @@ const props = defineProps({
 		default: {},
 	}
 });
+
+const filterName = props.filterName ? props.filterName : setFilterName([ props.entity ]);
 
 const defaultRange = [0, 100];
 
@@ -49,13 +55,13 @@ let disableSendData = false;
 let formForEdit = null;
 
 const setDefaultData = (disableSend = false) => {
-	if (filtersStore.filters?.[props.entity]) {
+	if (filtersStore.filters?.[filterName]) {
 		const rawForm = toRaw(form.value);
 		formForEdit = structuredClone(rawForm);
 
-		formForEdit.byFirstDate.value = typeof filtersStore.filters[props.entity]?.by_first_date === 'boolean' ? filtersStore.filters[props.entity].by_first_date : true;
-		formForEdit.rangeData[0] = filtersStore.filters[props.entity]?.date_min ? filtersStore.filters[props.entity].date_min : (props.fetchedData?.minMaxData?.min ? props.fetchedData?.minMaxData?.min : defaultRange[0]);
-		formForEdit.rangeData[1] = filtersStore.filters[props.entity]?.date_max ? filtersStore.filters[props.entity].date_max : (props.fetchedData?.minMaxData?.max ? props.fetchedData?.minMaxData?.max : defaultRange[1]);
+		formForEdit.byFirstDate.value = typeof filtersStore.filters[filterName]?.by_first_date === 'boolean' ? filtersStore.filters[filterName].by_first_date : true;
+		formForEdit.rangeData[0] = filtersStore.filters[filterName]?.date_min ? filtersStore.filters[filterName].date_min : (props.fetchedData?.minMaxData?.min ? props.fetchedData?.minMaxData?.min : defaultRange[0]);
+		formForEdit.rangeData[1] = filtersStore.filters[filterName]?.date_max ? filtersStore.filters[filterName].date_max : (props.fetchedData?.minMaxData?.max ? props.fetchedData?.minMaxData?.max : defaultRange[1]);
 
 		if (JSON.stringify(form.value) !== JSON.stringify(formForEdit)) {
 			disableSendData = disableSend;
@@ -66,7 +72,7 @@ const setDefaultData = (disableSend = false) => {
 
 setDefaultData();
 
-watch(() => filtersStore.filters?.[props.entity], () => {
+watch(() => filtersStore.filters?.[filterName], () => {
 	setDefaultData(true);
 }, { deep: true });
 
@@ -120,7 +126,7 @@ const sendData = () => {
 		});
 	}
 
-	setFilter(filtersData, props.entity);
+	setFilter(filtersData, filterName);
 }
 </script>
 

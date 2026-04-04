@@ -1,7 +1,9 @@
 <script setup>
-import TdElementCard from '@/components/admin/list/TdElementCard.vue';
+import TdElementCard from '@/components/admin/tables/TdElementCard.vue';
 
-import { ref } from "vue";
+const emit = defineEmits(['deleteElement', 'recoveryElement', 'forceDeleteElement']);
+
+import { ref, watch } from "vue";
 
 import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
@@ -47,6 +49,17 @@ const props = defineProps({
 	pagination: {
 		type: Object,
 	},
+
+	/* Типы действий */
+	doTypes: {
+		type: Array,
+		default: ['edit'],
+	},
+
+	filterName: {
+		type: String,
+		default: null,
+	},
 });
 
 const requestName = 'tableGetEntityForList';
@@ -89,7 +102,7 @@ const {
 		}
 );
 
-const filterName = setFilterName('versionHistory', props.entityType, props.entityId);
+const filterName = props.filterName ? props.filterName : setFilterName([ props.entityType, props.entityId ]);
 
 const sort = ref(filtersStore.filters?.[filterName]?.sort?.field ? filtersStore.filters?.[filterName].sort.field : props.defaultSortValue);
 const sortDirection = ref(filtersStore.filters?.[filterName]?.sort?.sort ? filtersStore.filters?.[filterName].sort.sort : props.defaultSortDirection);
@@ -114,6 +127,30 @@ const setSort = () => {
 	setFilter({ sort: sortData }, filterName);
 }
 
+let oldSortValue = false;
+let oldSortDirectionValue = false;
+
+watch(() => filtersStore.filters?.[filterName]?.sort, () => {
+	oldSortValue = sort.value;
+	oldSortDirectionValue = sortDirection.value;
+
+	sort.value = filtersStore.filters?.[filterName]?.sort?.field ? filtersStore.filters?.[filterName].sort.field : props.defaultSortValue;
+	sortDirection.value = filtersStore.filters?.[filterName]?.sort?.sort ? filtersStore.filters?.[filterName].sort.sort : props.defaultSortDirection;
+}, { deep: true });
+
+
+watch(sort, () => {
+	if (oldSortValue !== sort.value) {
+		setSort();
+	}
+});
+
+watch(sortDirection, () => {
+	if (oldSortDirectionValue !== sortDirection.value) {
+		setSort();
+	}
+});
+
 const sortByField = (field) => {
 	if (sort.value === field) {
 		if (sortDirection.value === 'asc') {
@@ -124,14 +161,11 @@ const sortByField = (field) => {
 	} else {
 		sort.value = field;
 	}
-
-	setSort();
 }
 
 const pageUrl = computed(() => {
 	return route.matched[0].path;
 });
-
 </script>
 
 <template>
@@ -164,13 +198,14 @@ const pageUrl = computed(() => {
 						:keyName="key"
 						:pageUrl="pageUrl"
 						:entities="entities"
-						@deleteElement="deleteElement"
+						:entityId="entityId"
+						:doTypes="doTypes"
+						@deleteElement="$emit('deleteElement', $event)"
+						@recoveryElement="$emit('recoveryElement', $event)"
+						@forceDeleteElement="$emit('forceDeleteElement', $event)"
 				>
 					<template v-if="key === 'doTypes'" #doTypes>
-						<a
-								:href='`${pageUrl.replace(":slug()", entityId)}/?version_id=${item.id}`'
-								class="btn btn-simple !mt-0 !mb-0"
-						>Восстановить данные</a>
+						<slot name="doTypes"/>
 					</template>
 				</TdElementCard>
 			</td>

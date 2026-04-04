@@ -1,5 +1,6 @@
 <script setup>
 import SelectWithSearch from '@/components/forms/fragments/SelectWithSearch.vue';
+import CheckBoxFilters from '@/components/filters/fragments/CheckBoxFilters.vue';
 import TagsList from '@/components/tags/TagsList.vue';
 
 import { ref, watch } from "vue";
@@ -8,7 +9,7 @@ import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
 
 import { filters } from '@/composables/filters/filters.js';
-const { setFilter } = filters();
+const { setFilterName, setFilter } = filters();
 
 import { helper } from '@/composables/helper.js'
 const { route, router } = helper();
@@ -17,6 +18,10 @@ const props = defineProps({
 	entity: {
 		type: String,
 		default: 'game',
+	},
+	filterName: {
+		type: String,
+		default: null,
 	},
 	setQueryParams: {
 		type: Boolean,
@@ -28,30 +33,11 @@ const props = defineProps({
 	},
 	usedFilters: {
 		type: Array,
-		default: [
-			{
-				name: 'gamePlatforms',
-				langName: 'Игровые платформы',
-				type: 'multiselect',
-			},
-			{
-				name: 'genres',
-				langName: 'Жанры',
-				type: 'multiselect',
-			},
-			{
-				name: 'companies',
-				langName: 'Компании',
-				type: 'multiselect',
-			},
-			{
-				name: 'tags',
-				langName: 'Теги',
-				type: 'curtained',
-			},
-		],
+		default: [],
 	},
 });
+
+const filterName = props.filterName ? props.filterName : setFilterName([ props.entity ]);
 
 const filtersModel = ref({
 	gamePlatforms: [],
@@ -64,13 +50,13 @@ let disableSendData = false;
 let formForEdit = null;
 
 const setDefaultData = (disableSend = false) => {
-	if (filtersStore.filters?.[props.entity]) {
+	if (filtersStore.filters?.[filterName]) {
 		const rawForm = toRaw(filtersModel.value);
 		formForEdit = structuredClone(rawForm);
 
 		props.usedFilters.forEach((item) => {
-			if (filtersStore.filters[props.entity][item.name] && filtersStore.filters[props.entity][item.name].length > 0) {
-				formForEdit[item.name] = [...filtersStore.filters[props.entity][item.name]];
+			if (filtersStore.filters[filterName][item.name] && filtersStore.filters[filterName][item.name].length > 0) {
+				formForEdit[item.name] = [...filtersStore.filters[filterName][item.name]];
 			} else {
 				formForEdit[item.name] = [];
 			}
@@ -85,7 +71,7 @@ const setDefaultData = (disableSend = false) => {
 
 setDefaultData();
 
-watch(() => filtersStore.filters?.[props.entity], () => {
+watch(() => filtersStore.filters?.[filterName], () => {
 	setDefaultData(true);
 }, { deep: true });
 
@@ -127,7 +113,7 @@ const sendData = () => {
 		});
 	}
 
-	setFilter(filtersData, props.entity);
+	setFilter(filtersData, filterName);
 }
 </script>
 
@@ -151,6 +137,14 @@ const sendData = () => {
 				/>
 			</div>
 		</template>
+	</div>
+	<div>
+		<CheckBoxFilters
+				:entity="entity"
+				:filterName="filterName"
+				:usedFilters="usedFilters.filter((item) => item.type === 'checkbox' )"
+				:setQueryParams="setQueryParams"
+		/>
 	</div>
 	<div>
 		<template

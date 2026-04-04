@@ -19,6 +19,11 @@ const titles = {
 		name: 'id элемента',
 		sortable: true,
 	},
+	do_type: {
+		name: 'Тип действия',
+		sortable: true,
+		type: 'rounded-box',
+	},
 	active: {
 		name: 'Активность',
 		type: 'boolean',

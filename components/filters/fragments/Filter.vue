@@ -10,7 +10,7 @@ import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
 
 import { filters } from '@/composables/filters/filters.js';
-const { clearFilters, checkHasFilters } = filters();
+const { setFilterName, clearFilters, checkHasFilters } = filters();
 
 import { api } from '@/composables/api.js'
 const { sendApiRequest } = api();
@@ -20,34 +20,17 @@ const props = defineProps({
 		type: String,
 		default: 'game',
 	},
+	filterName: {
+		type: String,
+		default: null,
+	},
 	setQueryParams: {
 		type: Boolean,
 		default: true,
 	},
 	usedFilters: {
 		type: Array,
-		default: [
-			{
-				name: 'gamePlatforms',
-				langName: 'Игровые платформы',
-				type: 'multiselect',
-			},
-			{
-				name: 'genres',
-				langName: 'Жанры',
-				type: 'multiselect',
-			},
-			{
-				name: 'companies',
-				langName: 'Компании',
-				type: 'multiselect',
-			},
-			{
-				name: 'tags',
-				langName: 'Теги',
-				type: 'curtained',
-			},
-		],
+		default: [],
 	},
 	useRange: {
 		type: Boolean,
@@ -57,16 +40,26 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+
+	/* Тип фильтра публичный\админка */
+	type: {
+		type: String,
+		default: null,
+	},
 });
 
-const requestName =  props.entity + 'TakeFilters';
+const filterName = props.filterName ? props.filterName : setFilterName([ props.entity ]);
+
+const requestName =  filterName + 'TakeFilters';
 
 const getFilterList = () => {
 	const result = [];
 
 	if (props.usedFilters && props.usedFilters.length > 0) {
 		props.usedFilters.forEach((item) => {
-			if (item.name) result.push(item.name);
+			if (item.name && item.requestData) {
+				result.push(item.name);
+			}
 		});
 	}
 
@@ -85,9 +78,13 @@ const {
 		requestName,
 		async () => {
 			const query = {
-				filters: filtersStore.filters[props.entity],
+				filters: filtersStore.filters[filterName],
 				filterList: getFilterList(),
 			};
+
+			if (props.type === 'public') {
+				query.active = true
+			}
 
 			const response = await Promise.resolve(
 					sendApiRequest(`${props.entity}/filters`, 'GET', query, requestName, '')
@@ -115,32 +112,35 @@ const fetchedData = computed(() => requestData.value || null);
 		<RangeFilter
 				v-if="useRange && fetchedData.minMaxData"
 				:entity="entity"
+				:filterName="filterName"
 				:setQueryParams="setQueryParams"
 				:fetchedData="fetchedData"
 		/>
 
 		<SelectsAndTags
 				:entity="entity"
+				:filterName="filterName"
 				:setQueryParams="setQueryParams"
 				:fetchedData="fetchedData"
 				:usedFilters="usedFilters"
 		/>
 
 		<div
-				v-if="showClearButton && checkHasFilters(entity)"
+				v-if="showClearButton && checkHasFilters(filterName)"
 				class="flex justify-end"
 		>
 			<layout-buttons-ActionButton
 					buttonClasses="btn btn-simple-1"
 					buttonName="Сбросить фильтры"
 					:actionInProgress="requestInProgress"
-					@startAction="clearFilters(entity)"
+					@startAction="clearFilters(filterName)"
 			/>
 		</div>
 
 		<FilterList
 				class="mt-4"
 				:entity="entity"
+				:filterName="filterName"
 				:dataForFilters="fetchedData"
 		/>
 	</div>

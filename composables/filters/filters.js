@@ -44,11 +44,10 @@ export function filters() {
         },
     ];
 
-    const setFilterName = (prefix, entity = null, id = null) => {
-        if (entity) prefix += '_' + entity;
-        if (id) prefix += '_' + id;
-
-        return prefix;
+    const setFilterName = (argList = []) => {
+        let name = 'filter';
+        if (argList.length > 0) argList.forEach((item) => name += '_' + item );
+        return name;
     };
 
     const setFilter = (filter, filterName = 'default') => {
@@ -74,7 +73,18 @@ export function filters() {
         filtersStore.filters[filterName] = {};
     }
 
-    const setQueryFilters = (filterName) => {
+    const setQueryFilters = (filterName, usedFilters = []) => {
+        if (usedFilters.length > 0) {
+            usedFilters.forEach((item) => {
+                if (queryParams.filter((i) => i.name === item.name).length === 0) {
+                    queryParams.push({
+                        name: item.name,
+                        parse: item?.parse ?? false,
+                    });
+                }
+            });
+        }
+
         // При загрузке страницы проверяем get параметры по списку, который является указателем к фильтрам и устанавливаем значения
         queryParams.forEach((item) => {
             if (item.parse) {
@@ -92,7 +102,7 @@ export function filters() {
         refreshFn.value = fn;
     }
 
-    const checkHasFilters = (filterName) => {
+    const checkHasFilters = (filterName, usedFilters = []) => {
         let result = false;
 
         const checkList = [
@@ -103,6 +113,14 @@ export function filters() {
             'companies',
             'tags',
         ];
+
+        if (usedFilters.length > 0) {
+            usedFilters.forEach((item) => {
+                if (checkList.filter((i) => i === item.name).length === 0) {
+                    checkList.push(item.name);
+                }
+            });
+        }
 
         if (!filtersStore.filters[filterName]) return result;
         if (filtersStore.filters[filterName] && Object.keys(filtersStore.filters[filterName]).length === 0) return result;

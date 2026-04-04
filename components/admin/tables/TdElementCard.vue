@@ -1,5 +1,5 @@
 <script setup>
-const emit = defineEmits(['deleteElement']);
+const emit = defineEmits(['deleteElement', 'recoveryElement', 'forceDeleteElement']);
 
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
@@ -33,6 +33,14 @@ const props = defineProps({
 	entities: {
 		type: Object,
 		required: true,
+	},
+	entityId: {
+		type: Number,
+		default: null,
+	},
+	doTypes: {
+		type: Array,
+		default: ['edit'],
 	},
 });
 
@@ -86,16 +94,37 @@ const entityValue = computed(() => {
 		>
 			<div class="text-center">
 				<slot name="doTypes">
-					<router-link :to='`${pageUrl}/${item.id}`'>
-						<font-awesome-icon
-								:icon="['fas', 'pen']"
-						/>
-					</router-link>
-					<font-awesome-icon
-							:icon="['fas', 'xmark']"
-							class="cursor-pointer text-[var(--main-href-color)]"
-							@click="$emit('deleteElement', item)"
-					/>
+					<a
+							v-if="doTypes.includes('recovery') && entityId"
+							:href='`${pageUrl.replace(":slug()", entityId)}/?version_id=${item.id}`'
+							class="btn btn-simple !mt-0 !mb-0"
+					>Восстановить данные</a>
+					<template v-if="doTypes.includes('edit')">
+						<template v-if="item.deleted_at">
+							<font-awesome-icon
+									:icon="['fa-solid', 'fa-trash-arrow-up']"
+									class="cursor-pointer text-[var(--main-href-color)]"
+									@click="$emit('recoveryElement', item)"
+							/>
+							<font-awesome-icon
+									:icon="['fa-solid', 'fa-trash-can']"
+									class="cursor-pointer text-[var(--main-href-color)]"
+									@click="$emit('forceDeleteElement', item)"
+							/>
+						</template>
+						<template v-else>
+							<router-link :to='`${pageUrl}/${item.id}`'>
+								<font-awesome-icon
+										:icon="['fas', 'pen']"
+								/>
+							</router-link>
+							<font-awesome-icon
+									:icon="['fas', 'xmark']"
+									class="cursor-pointer text-[var(--main-href-color)]"
+									@click="$emit('deleteElement', item)"
+							/>
+						</template>
+					</template>
 				</slot>
 			</div>
 		</template>

@@ -3,7 +3,7 @@ import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
 
 import { filters } from '@/composables/filters/filters.js';
-const { setFilter, clearFilters, checkHasFilters } = filters();
+const { setFilterName, setFilter, clearFilters, checkHasFilters } = filters();
 
 import { helper } from '@/composables/helper.js'
 const {
@@ -16,6 +16,10 @@ const props = defineProps({
 	entity: {
 		type: String,
 		default: 'game',
+	},
+	filterName: {
+		type: String,
+		default: null,
 	},
 	dataForFilters: {
 		type: Object,
@@ -84,46 +88,48 @@ const props = defineProps({
 	}
 });
 
+const filterName = props.filterName ? props.filterName : setFilterName([ props.entity ]);
+
 const activeFiltersList = computed(() => {
 	let result = [];
 
-	if (filtersStore.filters?.[props.entity]) {
-		if (!props.exceptions.includes('search') && filtersStore.filters[props.entity].search) {
+	if (filtersStore.filters?.[filterName]) {
+		if (!props.exceptions.includes('search') && filtersStore.filters[filterName].search) {
 			result.push({
-				name: filtersStore.filters[props.entity].search,
-				value: filtersStore.filters[props.entity].search,
+				name: filtersStore.filters[filterName].search,
+				value: filtersStore.filters[filterName].search,
 				key: 'search',
 			});
 		}
 
-		if (!props.exceptions.includes('by_first_date') && filtersStore.filters[props.entity].by_first_date) {
+		if (!props.exceptions.includes('by_first_date') && filtersStore.filters[filterName].by_first_date) {
 			result.push({
 				name: 'По первой дате',
-				value: filtersStore.filters[props.entity].by_first_date,
+				value: filtersStore.filters[filterName].by_first_date,
 				key: 'by_first_date',
 			});
 		}
 
-		if (!props.exceptions.includes('date_min') && filtersStore.filters[props.entity].date_min) {
+		if (!props.exceptions.includes('date_min') && filtersStore.filters[filterName].date_min) {
 			result.push({
-				name: filtersStore.filters[props.entity].date_min,
-				value: filtersStore.filters[props.entity].date_min,
+				name: filtersStore.filters[filterName].date_min,
+				value: filtersStore.filters[filterName].date_min,
 				key: 'date_min',
 			});
 		}
 
-		if (!props.exceptions.includes('date_max') && filtersStore.filters[props.entity].date_max) {
+		if (!props.exceptions.includes('date_max') && filtersStore.filters[filterName].date_max) {
 			result.push({
-				name: filtersStore.filters[props.entity].date_max,
-				value: filtersStore.filters[props.entity].date_max,
+				name: filtersStore.filters[filterName].date_max,
+				value: filtersStore.filters[filterName].date_max,
 				key: 'date_max',
 			});
 		}
 
 		props.usedFilters.forEach((item) => {
-			if (!props.exceptions.includes(item.name) && filtersStore.filters[props.entity][item.name]) {
-				if (filtersStore.filters[props.entity][item.name].length > 0) {
-					filtersStore.filters[props.entity][item.name].forEach((value) => {
+			if (!props.exceptions.includes(item.name) && filtersStore.filters[filterName][item.name]) {
+				if (filtersStore.filters[filterName][item.name].length > 0) {
+					filtersStore.filters[filterName][item.name].forEach((value) => {
 						result.push({
 							name: item.name === 'tags' ? value : findNameByKeyAndId(item.name, value),
 							value: value,
@@ -135,14 +141,14 @@ const activeFiltersList = computed(() => {
 		});
 
 		if (!props.exceptions.includes('sort')
-				&& filtersStore.filters[props.entity].sort
-				&& filtersStore.filters[props.entity].sort.field)
+				&& filtersStore.filters[filterName].sort
+				&& filtersStore.filters[filterName].sort.field)
 		{
-			const element = filterByPairFieldValue(props.sortOptions, 'value', filtersStore.filters[props.entity].sort.field, true);
+			const element = filterByPairFieldValue(props.sortOptions, 'value', filtersStore.filters[filterName].sort.field, true);
 
 			result.push({
-				name: 'Сортировка по: ' + (element?.name ? element?.name : 'не определенное значение') + ' (' + (filtersStore.filters[props.entity].sort.sort === 'asc' ? 'возрастанию' : 'убыванию') + ')',
-				value: filtersStore.filters[props.entity].sort,
+				name: 'Сортировка по: ' + (element?.name ? element?.name : 'не определенное значение') + ' (' + (filtersStore.filters[filterName].sort.sort === 'asc' ? 'возрастанию' : 'убыванию') + ')',
+				value: filtersStore.filters[filterName].sort,
 				key: 'sort',
 			});
 		}
@@ -172,9 +178,9 @@ const deleteFilter = (key, value) => {
 
 	if (
 			filterForDelete.length > 0
-			&& filtersStore.filters[props.entity][filterForDelete[0].name])
+			&& filtersStore.filters[filterName][filterForDelete[0].name])
 	{
-		const finalValue = filtersStore.filters[props.entity][filterForDelete[0].name].filter((item) => item !== value);
+		const finalValue = filtersStore.filters[filterName][filterForDelete[0].name].filter((item) => item !== value);
 		filterResult = { [key]: finalValue };
 		queryResult = finalValue;
 	} else {
@@ -187,7 +193,7 @@ const deleteFilter = (key, value) => {
 	}
 
 	if (filterResult) {
-		setFilter(filterResult, props.entity);
+		setFilter(filterResult, filterName);
 	}
 }
 </script>
@@ -205,10 +211,10 @@ const deleteFilter = (key, value) => {
 		</div>
 		<div class="flex justify-end">
 			<layout-buttons-ActionButton
-					v-if="checkHasFilters(entity)"
+					v-if="checkHasFilters(filterName)"
 					buttonClasses="btn btn-simple-1"
 					buttonName="Сбросить фильтры"
-					@startAction="clearFilters(entity)"
+					@startAction="clearFilters(filterName)"
 			/>
 		</div>
 	</div>

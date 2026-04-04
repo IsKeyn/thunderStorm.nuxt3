@@ -3,53 +3,56 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import ListTable from '@/components/admin/list/ListTable.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import ListTableV2 from '@/components/admin/list/ListTableV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const titles = ref(
 		{
 			id: {
 				name: 'id',
+				sortable: true,
+				type: 'rounded-box',
 			},
 			name: {
 				name: 'Название',
+				sortable: true,
 			},
 			slug: {
 				name: 'Slug',
+				sortable: true,
 			},
 			description: {
 				name: 'Описание',
 				type: 'cutText',
+				sortable: true,
 			},
 			title_image: {
 				name: 'Титульное изображение',
-				type: 'media'
+				type: 'media',
 			},
 			sort: {
 				name: 'Сортировка',
+				sortable: true,
 			},
 			active: {
 				name: 'Активность',
 				type: 'boolean',
+				sortable: true,
 			},
 			show_in_list: {
 				name: 'Отображать в списках',
 				type: 'boolean',
+				sortable: true,
 			},
 		}
 );
 
-const pageType = ref('');
-const route = useRoute();
-
+const title = 'Игры';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
-
-	if (Number.isInteger(Number(route.params.slug))) {
-		pageType.value = 'update';
-	} else if (route.params.slug === 'create') {
-		pageType.value = 'create';
-	}
 
 	return [
 		{
@@ -62,19 +65,56 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
+
+const usedFilters = [
+	{
+		name: 'gamePlatforms',
+		langName: 'Игровые платформы',
+		type: 'multiselect',
+		requestData: true,
+	},
+	{
+		name: 'genres',
+		langName: 'Жанры',
+		type: 'multiselect',
+		requestData: true,
+	},
+	{
+		name: 'companies',
+		langName: 'Компании',
+		type: 'multiselect',
+		requestData: true,
+	},
+	{
+		name: 'onlyTrashed',
+		langName: 'Только удаленные',
+		type: 'checkbox',
+	},
+	{
+		name: 'tags',
+		langName: 'Теги',
+		type: 'curtained',
+		requestData: true,
+	},
+];
 </script>
 
 <template>
-	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-	<ListTable
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<ListTableV2
 		:titles="titles"
-		titleKey="title"
 		fetchUrl="admin/game"
+		:hasResource="true"
+		:usePagination="true"
 		:additionalButtons="[
 				{
 					name: 'Загрузить по API',
 					url: '/admin/games/get-from-api/',
 				},
 		]"
+		:usedFilters="usedFilters"
 	/>
 </template>

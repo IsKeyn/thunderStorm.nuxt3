@@ -7,7 +7,7 @@ import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
 
 import { filters } from '@/composables/filters/filters.js';
-const { setFilter } = filters();
+const { setFilterName, setFilter } = filters();
 
 import { helper } from '@/composables/helper.js';
 const { setQueryParam } = helper();
@@ -20,6 +20,10 @@ const props = defineProps({
 	entity: {
 		type: String,
 		default: 'game',
+	},
+	filterName: {
+		type: String,
+		default: null,
 	},
 	setQueryParams: {
 		type: Boolean,
@@ -39,9 +43,11 @@ const searchLine = ref({
 		classes: 'w-full',
 });
 
-watch(() => filtersStore.filters?.[props.entity]?.[props.keyForFilter], () => {
-	if (searchLine.value.value !== filtersStore.filters?.[props.entity]?.[props.keyForFilter]) {
-		searchLine.value.value = filtersStore.filters?.[props.entity]?.[props.keyForFilter]
+const filterName = props.filterName ? props.filterName : setFilterName([ props.entity ]);
+
+watch(() => filtersStore.filters?.[filterName]?.[props.keyForFilter], () => {
+	if (searchLine.value.value !== filtersStore.filters?.[filterName]?.[props.keyForFilter]) {
+		searchLine.value.value = filtersStore.filters?.[filterName]?.[props.keyForFilter]
 	}
 }, { deep: true, immediate: true });
 
@@ -50,7 +56,7 @@ const search = () => {
 		setQueryParam([props.keyForFilter], searchLine.value.value);
 	}
 
-	setFilter({ [props.keyForFilter]: searchLine.value.value }, props.entity);
+	setFilter({ [props.keyForFilter]: searchLine.value.value }, filterName);
 }
 
 if (!props.useSearchButton) {

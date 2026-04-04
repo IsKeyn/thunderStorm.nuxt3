@@ -57,6 +57,11 @@ const props = defineProps({
 				sortable: true,
 				type: 'rounded-box',
 			},
+			do_type: {
+				name: 'Тип действия',
+				sortable: true,
+				type: 'rounded-box',
+			},
 			active: {
 				name: 'Активность',
 				type: 'boolean',
@@ -89,7 +94,7 @@ const {
 	setPerPage
 } = pagination(props.perPage);
 
-const filterName = setFilterName('versionHistory', props.entityType, props.entityId);
+const filterName = setFilterName([ 'versionHistory', props.entityType, props.entityId ]);
 
 // Устанавливаем фильтры их get параметров
 setQueryFilters(filterName);
@@ -188,6 +193,8 @@ watch(() => filtersStore.filters?.[filterName], () => {
 					:data="fetchedData"
 					:entityId="entityId"
 					:entityType="entityType"
+					:doTypes="['recovery']"
+					:filterName="filterName"
 			/>
 			<Pagination
 					v-if="paginationData"

@@ -302,8 +302,9 @@ watch(() => props.pagination, () => {
 					</div>
 				</template>
 				<div
-						@click="choicePageModalToggle()"
+						v-if="pagination.last_page > 3"
 						class="pagination-button"
+						@click="choicePageModalToggle()"
 				>
 					<font-awesome-icon icon="fa-solid fa-marker" />
 				</div>
