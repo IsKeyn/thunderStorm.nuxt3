@@ -60,6 +60,28 @@ export function helper() {
         router.push({ name: route.name, query });
     }
 
+    const setQueryParams = (data) => {
+        const query = { ...route.query };
+
+        if (data && data.length) {
+            data.forEach((item) => {
+                if (
+                    item.value
+                    && item.value !== ''
+                    && item.value !== null
+                    && item.value !== undefined
+                ) {
+                    query[item.key] = item.value;
+                } else if (query[item.key]) {
+                    delete query[item.key];
+                }
+            });
+
+            router.push({ name: route.name, query });
+
+        }
+    }
+
     return {
         route,
         router,
@@ -68,5 +90,6 @@ export function helper() {
         findElementById,
         unionObjWithoutEmptyElements,
         setQueryParam,
+        setQueryParams,
     };
 }

@@ -21,6 +21,10 @@ const props = defineProps({
 		type: String,
 		default: 'Выберите опцию',
 	},
+	classes: {
+		type: String,
+		default: 'max-w-[30rem]',
+	}
 });
 
 const selectValue = ref(props.modelValue ?? props.multiSelect ? [] : null);
@@ -116,7 +120,7 @@ onBeforeUnmount(() => {
 <template>
 	<div
 			ref="dropdownRef"
-			class="custom-select"
+			:class="['custom-select', classes]"
 	>
 		<div
 				:class="[
@@ -183,7 +187,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .custom-select {
-	@apply relative w-full max-w-[30rem];
+	@apply relative w-full;
 
 	.select-trigger {
 		@apply flex items-center justify-between p-2 border border-[var(--second-border-color)] cursor-pointer transition-colors hover:border-[var(--third-hover-color)];

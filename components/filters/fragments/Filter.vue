@@ -126,7 +126,7 @@ const fetchedData = computed(() => requestData.value || null);
 		/>
 
 		<div
-				v-if="showClearButton && checkHasFilters(filterName)"
+				v-if="showClearButton && checkHasFilters(filterName, usedFilters)"
 				class="flex justify-end"
 		>
 			<layout-buttons-ActionButton
@@ -142,6 +142,7 @@ const fetchedData = computed(() => requestData.value || null);
 				:entity="entity"
 				:filterName="filterName"
 				:dataForFilters="fetchedData"
+				:usedFilters="usedFilters"
 		/>
 	</div>
 </template>

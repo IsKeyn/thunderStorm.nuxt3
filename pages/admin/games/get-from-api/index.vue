@@ -3,10 +3,14 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
 import AddGameFromApiForm from '@/components/forms/AddGameFromApiForm.vue';
+import Head from '@/components/seo/Head.vue';
 
 const route = useRoute();
+
+const title = 'Игры';
+const pageTitle = 'Добавление игры из API';
 
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
@@ -17,11 +21,11 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игры',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
-			name: 'Добавление игры из API',
+			name: pageTitle,
 			href: `/${splitedPath[1]}/${splitedPath[2]}/${splitedPath[3]}`,
 		},
 	];
@@ -30,8 +34,12 @@ const breadCrumbsArray = computed(() => {
 
 <template>
 	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
+		<PageHeader
+				:title="title"
+				:breadCrumbs="breadCrumbsArray"
+		/>
 		<AddGameFromApiForm />
+		<Head :seo="{ title: pageTitle  }" />
 	</div>
 </template>
 

@@ -86,6 +86,20 @@ const usedFilters = [
 		requestData: true,
 	},
 	{
+		name: 'series',
+		langName: 'Серия',
+		type: 'multiselect',
+		requestData: true,
+		parse: true,
+	},
+	{
+		name: 'events',
+		langName: 'Ивенты',
+		type: 'multiselect',
+		requestData: true,
+		parse: true,
+	},
+	{
 		name: 'onlyTrashed',
 		langName: 'Только удаленные',
 		type: 'checkbox',
@@ -97,6 +111,13 @@ const usedFilters = [
 		requestData: true,
 	},
 ];
+
+const defaultFilters = {
+	sort: {
+		field: "id",
+		sort: "desc",
+	},
+}
 </script>
 
 <template>
@@ -116,5 +137,7 @@ const usedFilters = [
 				},
 		]"
 		:usedFilters="usedFilters"
+		:defaultFilters="defaultFilters"
+		previewUrl="/game/{slug}"
 	/>
 </template>

@@ -73,7 +73,7 @@ export function filters() {
         filtersStore.filters[filterName] = {};
     }
 
-    const setQueryFilters = (filterName, usedFilters = []) => {
+    const setQueryFilters = (filterName, usedFilters = [], defaultFilters = {}) => {
         if (usedFilters.length > 0) {
             usedFilters.forEach((item) => {
                 if (queryParams.filter((i) => i.name === item.name).length === 0) {
@@ -87,11 +87,16 @@ export function filters() {
 
         // При загрузке страницы проверяем get параметры по списку, который является указателем к фильтрам и устанавливаем значения
         queryParams.forEach((item) => {
-            if (item.parse) {
-                setFilter({ [item.name]: route.query[item.name] ? JSON.parse(route.query[item.name]) : null }, filterName);
-            } else {
-                setFilter({ [item.name]: route.query[item.name] ?? null }, filterName);
+            let filter = {};
+            filter[item.name] = null;
+
+            if (route.query[item.name]) {
+                filter[item.name] = item.parse ? JSON.parse(route.query[item.name]) : route.query[item.name];
+            } else if (defaultFilters.hasOwnProperty(item.name)) {
+                filter[item.name] = defaultFilters[item.name];
             }
+
+            setFilter(filter, filterName);
         });
     }
 

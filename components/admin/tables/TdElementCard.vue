@@ -42,6 +42,11 @@ const props = defineProps({
 		type: Array,
 		default: ['edit'],
 	},
+	/* url страницы в публичной части сайта */
+	previewUrl: {
+		type: String,
+		default: null,
+	},
 });
 
 const fileType = computed(() => {
@@ -83,6 +88,28 @@ const entityValue = computed(() => {
 		return props.item[props.keyName];
 	}
 });
+
+const viewResult = () => {
+		if (!props.previewUrl) {
+			return false;
+		}
+
+		let newTabUrl = '';
+
+		if (props.previewUrl.includes('{id}') && props.item.id) {
+			newTabUrl = props.previewUrl.replace('{id}', props.item.id);
+		}
+
+		if (props.previewUrl.includes('{slug}')) {
+			newTabUrl = props.previewUrl.replace('{slug}', props.item.slug);
+		}
+
+		if (newTabUrl) {
+			window.open(newTabUrl + '?preview=true', '_blank', 'noopener,noreferrer');
+		}
+
+		return true;
+}
 </script>
 
 <template>
@@ -104,11 +131,13 @@ const entityValue = computed(() => {
 							<font-awesome-icon
 									:icon="['fa-solid', 'fa-trash-arrow-up']"
 									class="cursor-pointer text-[var(--main-href-color)]"
+									title="Восстановить"
 									@click="$emit('recoveryElement', item)"
 							/>
 							<font-awesome-icon
 									:icon="['fa-solid', 'fa-trash-can']"
 									class="cursor-pointer text-[var(--main-href-color)]"
+									title="Удалить окончательно"
 									@click="$emit('forceDeleteElement', item)"
 							/>
 						</template>
@@ -122,6 +151,12 @@ const entityValue = computed(() => {
 									:icon="['fas', 'xmark']"
 									class="cursor-pointer text-[var(--main-href-color)]"
 									@click="$emit('deleteElement', item)"
+							/>
+							<font-awesome-icon
+									v-if="previewUrl"
+									:icon="['fa-solid', 'fa-eye']"
+									class="cursor-pointer text-[var(--main-href-color)]"
+									@click="viewResult"
 							/>
 						</template>
 					</template>

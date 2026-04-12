@@ -57,6 +57,10 @@ const props = defineProps({
 				sortable: true,
 				type: 'rounded-box',
 			},
+			name: {
+				name: 'Название',
+				sortable: true,
+			},
 			do_type: {
 				name: 'Тип действия',
 				sortable: true,

@@ -211,7 +211,7 @@ const deleteFilter = (key, value) => {
 		</div>
 		<div class="flex justify-end">
 			<layout-buttons-ActionButton
-					v-if="checkHasFilters(filterName)"
+					v-if="checkHasFilters(filterName, usedFilters)"
 					buttonClasses="btn btn-simple-1"
 					buttonName="Сбросить фильтры"
 					@startAction="clearFilters(filterName)"

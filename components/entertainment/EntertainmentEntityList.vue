@@ -44,6 +44,14 @@ const props = defineProps({
 		type: Number,
 		default: 24,
 	},
+	usedFilters: {
+		type: Array,
+		default: [],
+	},
+	defaultFilters: {
+		type: Array,
+		default: [],
+	},
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
@@ -58,7 +66,7 @@ const {
 const filterName = setFilterName([ 'adminList', props.fetchUrl ]);
 
 // Устанавливаем фильтры их get параметров
-setQueryFilters(filterName);
+setQueryFilters(filterName, props.usedFilters, props.defaultFilters);
 
 const requestName =  props.entity + 'EntertainmentList';
 
@@ -193,6 +201,7 @@ const dataByGroups = computed(() => {
 			:filterName="filterName"
 			:pagination="paginationData"
 			type="public"
+			:usedFilters="usedFilters"
 	/>
 	<ui-BigPreloader
 			v-if="requestInProgress"

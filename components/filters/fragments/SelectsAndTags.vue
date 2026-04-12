@@ -128,12 +128,12 @@ const sendData = () => {
 					class="element"
 			>
 				<SelectWithSearch
-						class="mt-2"
 						:options="fetchedData[filter.name].filter((item) => item.active === true)"
 						valueKey="id"
 						:multiSelect="true"
 						:emptyFieldName="filter.langName"
 						v-model="filtersModel[filter.name]"
+						classes="max-w-[50rem]"
 				/>
 			</div>
 		</template>
@@ -179,10 +179,12 @@ const sendData = () => {
 
 <style lang="scss" scoped>
 .field {
-	@apply flex gap-2;
+	@apply grid gap-3 pt-2;
+	@apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
 
 	.element {
-		@apply w-full md:w-1/3 pt-2 pb-2;
+		@apply w-full; /* Ширина управляется сеткой */
+		@apply py-1.5 min-w-0; /* min-w-0 предотвращает переполнение grid-ячейки */
 	}
 }
 </style>

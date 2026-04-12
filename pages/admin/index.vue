@@ -11,6 +11,10 @@ const titles = {
 		sortable: true,
 		type: 'rounded-box',
 	},
+	name: {
+		name: 'Название',
+		sortable: true,
+	},
 	entity_type: {
 		name: 'Модель',
 		sortable: true,

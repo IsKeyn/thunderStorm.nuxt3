@@ -3,7 +3,7 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
 import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
 
 const form = ref(
@@ -71,6 +71,13 @@ const form = ref(
 				validateRules: 'integer',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			spc_id: {
+				name: 'speedrun.com api',
+				value: null,
+				type: 'text',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			active: {
 				name: 'Активность',
 				value: true,
@@ -93,6 +100,7 @@ const form = ref(
 const pageType = ref('');
 const route = useRoute();
 
+const title = 'Игры';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -108,7 +116,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игры',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -174,7 +182,10 @@ const extensions = [
 
 <template>
 	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
+		<PageHeader
+				:title="title"
+				:breadCrumbs="breadCrumbsArray"
+		/>
 		<CreateEditFormV2
 				:form="form"
 				fetchUrl="admin/game"

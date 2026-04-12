@@ -60,6 +60,11 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	/* url страницы в публичной части сайта */
+	previewUrl: {
+		type: String,
+		default: null,
+	},
 });
 
 const requestName = 'tableGetEntityForList';
@@ -200,6 +205,7 @@ const pageUrl = computed(() => {
 						:entities="entities"
 						:entityId="entityId"
 						:doTypes="doTypes"
+						:previewUrl="previewUrl"
 						@deleteElement="$emit('deleteElement', $event)"
 						@recoveryElement="$emit('recoveryElement', $event)"
 						@forceDeleteElement="$emit('forceDeleteElement', $event)"

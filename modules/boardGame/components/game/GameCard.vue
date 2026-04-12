@@ -241,7 +241,7 @@ const getHours = (minutes) => {
 .item-box {
 	@apply
 		block p-0
-		bg-[var(--second-bg-color)] rounded w-full mb-2
+		bg-[var(--second-bg-color)] w-full mb-2
 	;
 
 	&.violet {

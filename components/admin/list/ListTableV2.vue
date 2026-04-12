@@ -13,7 +13,7 @@ import { notifications } from '@/composables/notifications.js';
 const { alert, choiceAlert } = notifications();
 
 import { api } from '@/composables/api.js'
-const { sendApiRequest } = api();
+const { sendApiRequest, errorHandler } = api();
 
 import { helper } from '@/composables/helper.js'
 const { route, router } = helper();
@@ -105,7 +105,16 @@ const props = defineProps({
 	usedFilters: {
 		type: Array,
 		default: [],
-	}
+	},
+	defaultFilters: {
+		type: Array,
+		default: [],
+	},
+	/* url страницы в публичной части сайта */
+	previewUrl: {
+		type: String,
+		default: null,
+	},
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
@@ -119,8 +128,8 @@ const {
 
 const filterName = setFilterName([ 'adminList', props.fetchUrl ]);
 
-// Устанавливаем фильтры их get параметров
-setQueryFilters(filterName, props.usedFilters);
+// Устанавливаем фильтры из get параметров
+setQueryFilters(filterName, props.usedFilters, props.defaultFilters);
 
 let requestName = 'adminEntityList';
 if (props.fetchUrl) requestName += '_' + props.fetchUrl;
@@ -389,6 +398,7 @@ const sendRequestForForceDeleteElement = async (id) => {
 						:titles="{ ...titles, ...systemTitles }"
 						:data="fetchedData"
 						:filterName="filterName"
+						:previewUrl="previewUrl"
 						@deleteElement="deleteElement"
 						@recoveryElement="recoveryElement"
 						@forceDeleteElement="forceDeleteElement"
