@@ -58,7 +58,7 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
-	showAdditionalData: { // Таб, включающий в себя расширения
+	showAdditionalFieldsTab: { // Таб, включающий в себя расширения
 		type: Boolean,
 		default: false,
 	},
@@ -289,7 +289,7 @@ const buttons = [
 				:menuForProp="menuForProp"
 				:dataForAdditionalFields="dataForAdditionalFields"
 				:showAdditionControlPanel="showAdditionControlPanel"
-				:showAdditionalData="showAdditionalData"
+				:showAdditionalFieldsTab="showAdditionalFieldsTab"
 				:additionalData="additionalData"
 
 				:extensions="extensions"

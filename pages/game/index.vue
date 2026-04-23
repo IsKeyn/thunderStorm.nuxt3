@@ -1,5 +1,5 @@
 <script setup>
-import EntertainmentEntityList from '@/components/entertainment/EntertainmentEntityList.vue';
+import List from '@/components/entity/List.vue';
 
 const usedFilters = [
 	{
@@ -44,7 +44,7 @@ const usedFilters = [
 </script>
 
 <template>
-	<EntertainmentEntityList
+	<List
 		entity="game"
 		name="Игры"
 		title="Игры"

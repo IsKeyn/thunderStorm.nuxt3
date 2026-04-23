@@ -23,7 +23,7 @@ const props = defineProps({
 <template>
 	<div class="entertainment-card">
 		<div class="image">
-			<img :src="data?.covers[0]?.src ? data?.covers[0]?.src : '/images/silent-hill/sh_no_image_cover.webp'">
+			<img :src="data?.covers?.[0]?.src ? data.covers[0].src : '/images/silent-hill/sh_no_image_cover.webp'">
 			<div class="info-box">
 				<router-link
 						v-if="data.slug"

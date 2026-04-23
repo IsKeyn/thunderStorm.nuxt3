@@ -1,11 +1,10 @@
 <script setup>
-import List from '@/components/entity/List.vue';
+import Detail from '@/components/entity/Detail.vue';
 </script>
 
 <template>
-	<List
+	<Detail
 			entity="movie"
-			name="Фильмы"
 			title="Фильмы"
 	/>
 </template>

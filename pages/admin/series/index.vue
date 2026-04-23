@@ -32,9 +32,17 @@ const titles = ref(
 				name: 'Сортировка',
 				sortable: true,
 			},
+			type: {
+				name: 'Тип',
+				sortable: true,
+			},
 			active: {
 				name: 'Активность',
 				type: 'boolean',
+				sortable: true,
+			},
+			spc_id: {
+				name: 'spc ID',
 				sortable: true,
 			},
 			created_by: {
@@ -45,9 +53,7 @@ const titles = ref(
 		}
 );
 
-const pageType = ref('');
-
-const title = 'Персоны';
+const title = 'Серии';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -78,11 +84,11 @@ const defaultFilters = {
 	/>
 	<ListTableV2
 			:titles="titles"
-			fetchUrl="admin/person"
-			entity="person"
+			fetchUrl="admin/series"
+			entity="series"
 			:hasResource="true"
 			:usePagination="true"
-			previewUrl="/person/{slug}"
+			previewUrl="/series/{slug}"
 			:defaultFilters="defaultFilters"
 	/>
 </template>

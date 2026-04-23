@@ -124,7 +124,7 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
-	showAdditionalData: {
+	showAdditionalFieldsTab: {
 		type: Boolean,
 		default: true,
 	},
@@ -132,6 +132,12 @@ const props = defineProps({
 	previewUrl: {
 		type: String,
 		default: null,
+	},
+
+	/* Использовать список версий */
+	useVersionList: {
+		type: Boolean,
+		default: false,
 	},
 });
 
@@ -226,10 +232,10 @@ function sendData() {
 			}
 
 			if (response) {
-				requestInProgress.value = false;
-
 				emit('afterRequest', { response, doType });
 			}
+
+			requestInProgress.value = false;
 		} catch (e) {
 			const errorsPromise = errorHandler(e);
 
@@ -393,7 +399,7 @@ const tabsElements = [
 	},
 ];
 
-if (props.showAdditionalData) {
+if (props.showAdditionalFieldsTab) {
 	tabsElements.push({
 		id:	'additionalData',
 		title: 'Дополнительные поля',
@@ -522,7 +528,7 @@ const openBlockList = () => {
 				:themeType="9"
 		/>
 		<VersionList
-				v-else
+				v-else-if="useVersionList && entityId && entityType"
 				:entityId="entityId"
 				:entityType="entityType"
 		/>

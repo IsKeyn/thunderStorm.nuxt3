@@ -77,7 +77,7 @@ const carouselConfig = {
 </script>
 
 <template>
-	<div v-if="!requestInProgress && fetchedData">
+	<div v-if="!requestInProgress && fetchedData && fetchedData.length">
 		<span class="block title mt-4 mb-4">Рекомендации</span>
 		<SliderWithSlots
 				:count="fetchedData.length"

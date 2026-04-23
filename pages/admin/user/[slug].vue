@@ -98,7 +98,7 @@ const extensions = [
 				:form="form"
 				fetchUrl="admin/entity/user"
 				:extensions="extensions"
-				:showAdditionalData="true"
+				:showAdditionalFieldsTab="true"
 		/>
 	</div>
 </template>

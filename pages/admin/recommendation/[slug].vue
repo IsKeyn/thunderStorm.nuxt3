@@ -115,7 +115,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				:showAdditionalData="false"
+				:showAdditionalFieldsTab="false"
 				:hasResource="true"
 				fetchUrl="admin/recommendation"
 		/>

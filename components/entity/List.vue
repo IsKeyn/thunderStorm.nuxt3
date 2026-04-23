@@ -1,7 +1,7 @@
 <script setup>
 import PageHeader from '@/components/layout/PageHeader.vue';
 import SearchFilterSort from '@/components/filters/SearchFilterSort.vue';
-import EntertainmentListCard from '@/components/entertainment/card/EntertainmentListCard.vue';
+import ListCard from '@/components/entity/card/ListCard.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
 import PublicRecommendation from '@/components/recommendation/PublicRecommendation.vue';
 
@@ -68,7 +68,7 @@ const filterName = setFilterName([ 'adminList', props.fetchUrl ]);
 // Устанавливаем фильтры их get параметров
 setQueryFilters(filterName, props.usedFilters, props.defaultFilters);
 
-const requestName =  props.entity + 'EntertainmentList';
+const requestName =  props.entity + 'EntityList';
 
 const {
 	data: requestData,
@@ -215,8 +215,8 @@ const dataByGroups = computed(() => {
 					<div class="group" v-for="(group) in dataByGroups">
 						<span class="title">{{ group.name }}</span>
 						<div class="game-list">
-							<EntertainmentListCard
-									v-for="(game, index) in group.items"
+							<ListCard
+									v-for="(data, index) in group.items"
 									:key="index"
 									:data="data"
 									:entity="entity"
@@ -227,7 +227,7 @@ const dataByGroups = computed(() => {
 		</template>
 		<template v-else>
 			<div class="game-list">
-				<EntertainmentListCard
+				<ListCard
 						v-for="(data, index) in fetchedData"
 						:key="index"
 						:data="data"

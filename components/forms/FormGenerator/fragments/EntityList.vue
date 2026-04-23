@@ -5,6 +5,12 @@ import { computed, ref, watch } from "vue";
 
 const emit = defineEmits(['update:modelValue']);
 
+import { api } from '@/composables/api.js';
+const { sendApiRequest, preparedRequestBody } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
 const props = defineProps({
 	modelValue: null,
 	apiUrl: {
@@ -15,10 +21,6 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
-	hasResource: {
-		type: Boolean,
-		default: true,
-	},
 });
 
 const items = ref({
@@ -26,10 +28,6 @@ const items = ref({
 	value: null,
 });
 
-import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody } = api();
-
-const route = useRoute();
 const requestName = 'getItemList_' + props.apiUrl;
 
 const {
@@ -39,11 +37,13 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			const response = await Promise.resolve(
-					sendApiRequest(props.apiUrl, 'GET', props.body, requestName, '')
-			);
+			if (props.apiUrl) {
+				const response = await Promise.resolve(
+						sendApiRequest(props.apiUrl, 'GET', props.body, requestName, '')
+				);
 
-			return response || null;
+				return response || null;
+			}
 		},
 		{
 			server: true,
@@ -56,7 +56,6 @@ watch(requestData, (newData) => {
 
 	if (newData) {
 		const data = newData.data ? newData.data : newData;
-		// const data = props.hasResource ? newData.data : newData;
 
 		if (typeof data === 'object') {
 			items.value.options.push({
@@ -76,7 +75,6 @@ watch(requestData, (newData) => {
 	}
 }, { immediate: true });
 
-const fetchedData = computed(() => requestData.value || null);
 items.value.value = props.modelValue;
 
 watch(() => props.modelValue, (newValue) => {
@@ -87,8 +85,13 @@ watch(() => items.value.value, (newValue) => {
 	emit('update:modelValue', newValue);
 }, { deep: true });
 
+let oldBody = props.body;
+
 watch(() => props.body, () => {
-	refresh();
+	if (Object.keys(props.body).length && JSON.stringify(oldBody) !== JSON.stringify(props.body)) {
+		oldBody = props.body;
+		refresh();
+	}
 }, { deep: true });
 </script>
 

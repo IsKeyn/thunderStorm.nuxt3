@@ -127,7 +127,7 @@ const breadCrumbsArray = computed(() => {
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
 				:form="form"
-				:showAdditionalData="false"
+				:showAdditionalFieldsTab="false"
 				fetchUrl="admin/entity/BoardGame/StatusEffect"
 				:hasResource="true"
 		/>

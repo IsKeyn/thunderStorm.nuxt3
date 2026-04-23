@@ -27,15 +27,10 @@ const props = defineProps({
 	},
 });
 
+// Один элемент репитора
 const repeaterItem = {
-	date: {
-		name: 'date',
-		type: 'date',
-		value: '',
-		placeholder: 'Дата выхода',
-	},
-	gaming_platform: {
-		name: 'gaming_platform',
+	game: {
+		name: 'game',
 		type: 'select-with-search',
 		options: [
 			{
@@ -44,25 +39,7 @@ const repeaterItem = {
 			},
 		],
 		value: null,
-		placeholder: 'Платформа',
-	},
-	addInfo: {
-		name: 'addInfo',
-		type: 'text',
-		value: '',
-		placeholder: 'Дополнительная информация',
-	},
-	hideDay: {
-		name: 'hideDay',
-		title: 'Скрыть день',
-		type: 'checkbox',
-		value: false,
-	},
-	hideMonth: {
-		name: 'hideMonth',
-		title: 'Скрыть месяц',
-		type: 'checkbox',
-		value: false,
+		placeholder: 'Игра',
 	},
 };
 
@@ -76,13 +53,10 @@ watch(() => value.value, (newValue) => {
 <template>
 	<ElementWithRepeater
 			v-model="value"
-			name="Дата выхода в связке с платформой"
+			name="Игра"
 			:repeaterItem="repeaterItem"
 			:params="params"
 			:additionalData="additionalData"
 			:defaultValues="defaultValues"
-			fieldClasses="col-span-2"
-			:onlyValue="true"
 	/>
 </template>
-

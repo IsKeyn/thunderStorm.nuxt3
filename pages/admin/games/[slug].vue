@@ -6,6 +6,9 @@ definePageMeta({
 import PageHeader from '@/components/layout/PageHeader.vue';
 import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
 
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
 const form = ref(
 		{
 			id: {
@@ -98,7 +101,6 @@ const form = ref(
 );
 
 const pageType = ref('');
-const route = useRoute();
 
 const title = 'Игры';
 const breadCrumbsArray = computed(() => {
@@ -173,6 +175,13 @@ const extensions = [
 		},
 	},
 	{
+		name: 'People',
+		keyForBackend: 'people',
+		params: {
+			additionalDataKeys: ['people', 'person_role'],
+		},
+	},
+	{
 		name: 'Links',
 		keyForBackend: 'links',
 		params: null,
@@ -196,7 +205,8 @@ const extensions = [
 				:hasResource="true"
 				:useAdditionalData="true"
 				:useBlockEditor="true"
-				:showAdditionalData="true"
+				:showAdditionalFieldsTab="true"
+				:useVersionList="true"
 				:extensions="extensions"
 				previewUrl="/game/{slug}"
 		/>

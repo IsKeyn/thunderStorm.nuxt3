@@ -151,7 +151,7 @@ const breadCrumbsArray = computed(() => {
 		<CreateEditForm
 				:form="form"
 				:hasResource="true"
-				:showAdditionalData="false"
+				:showAdditionalFieldsTab="false"
 				fetchUrl="admin/BoardGame/Item"
 		/>
 	</div>

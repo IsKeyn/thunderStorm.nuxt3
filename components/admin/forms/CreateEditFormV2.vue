@@ -76,7 +76,7 @@ const props = defineProps({
 		default: false,
 	},
 	/* Показать\скрыть таб с дополнительными данными */
-	showAdditionalData: {
+	showAdditionalFieldsTab: {
 		type: Boolean,
 		default: false,
 	},
@@ -110,6 +110,12 @@ const props = defineProps({
 	previewUrl: {
 		type: String,
 		default: null,
+	},
+
+	/* Использовать список версий */
+	useVersionList: {
+		type: Boolean,
+		default: false,
 	},
 });
 
@@ -344,8 +350,8 @@ if (props.previewUrl) {
 			<FormBlankV2
 					:form="form"
 
-					:entityId="fetchedData.id"
-					:entityType="fetchedData.model"
+					:entityId="fetchedData?.id"
+					:entityType="fetchedData?.model"
 
 					:showAdditionControlPanel="showAdditionControlPanel"
 					:buttons="buttonsForForm"
@@ -367,11 +373,13 @@ if (props.previewUrl) {
 					:menuForProp="menuForProp"
 					:dataForAdditionalFields="dataForAdditionalFields"
 
-					:showAdditionalData="showAdditionalData"
+					:showAdditionalFieldsTab="showAdditionalFieldsTab"
 					:additionalData="additionalData"
 
 					:extensions="extensions"
 					:dataForExt="dataForExt"
+
+					:useVersionList="useVersionList"
 
 					@afterRequest="afterRequest"
 			/>

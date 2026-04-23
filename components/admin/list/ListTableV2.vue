@@ -102,6 +102,18 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
+
+	/* url страницы в публичной части сайта */
+	previewUrl: {
+		type: String,
+		default: null,
+	},
+
+	/* Свойства для фильтра */
+	entity: {
+		type: String,
+		default: null,
+	},
 	usedFilters: {
 		type: Array,
 		default: [],
@@ -109,11 +121,6 @@ const props = defineProps({
 	defaultFilters: {
 		type: Array,
 		default: [],
-	},
-	/* url страницы в публичной части сайта */
-	previewUrl: {
-		type: String,
-		default: null,
 	},
 });
 

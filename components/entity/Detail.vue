@@ -1,7 +1,7 @@
 <script setup>
 import PageHeader from '@/components/layout/PageHeader.vue';
 import TitleImage from '@/components/media/TitleImage.vue';
-import EntertainmentInfo from '@/components/entertainment/EntertainmentInfo.vue';
+import Info from '@/components/entity/Info.vue';
 import EntityUserActionsPanel from '@/components/actions/EntityUserActionsPanel.vue';
 import SimpleTagsList from '@/components/tags/SimpleTagsList.vue';
 import Head from '@/components/seo/Head.vue';
@@ -30,7 +30,7 @@ const props = defineProps({
 	},
 });
 
-const requestName =  props.entity + 'EntertainmentDetail';
+const requestName =  props.entity + 'EntityDetail';
 
 const {
 	data: requestData,
@@ -39,7 +39,7 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			if (!route.params.entertainment) {
+			if (!route.params.entity) {
 				show404pageFunc();
 			}
 
@@ -51,7 +51,7 @@ const {
 
 			const response = await Promise.resolve(
 					sendApiRequest(
-							`${props.entity}/${route.params.entertainment}`,
+							`${props.entity}/${route.params.entity}`,
 							'GET',
 							query,
 							requestName,
@@ -127,7 +127,7 @@ const getSlotName = (n) => `slot-${n + 1}`;
 				:withoutBorder="true"
 				parentClass="mb-[30px]"
 		/>
-		<EntertainmentInfo :item="fetchedData" />
+		<Info :item="fetchedData" />
 
 		<div class="additional-info">
 			<div class="left-box">

@@ -71,8 +71,18 @@ export function api() {
                     break;
             }
 
-            if (e.response._data?.message) {
-                error(e.response._data?.message, 5000);
+            if (e.response._data?.errors && Object.keys(e.response._data?.errors).length) {
+                for (const [key, err] of Object.entries(e.response._data?.errors)) {
+                    if (err !== null && typeof err === 'object') {
+                        err.forEach((message) => {
+                            error(message);
+                        });
+                    } else {
+                        error(err);
+                    }
+                }
+            } else if (e.response._data?.message) {
+                error(e.response._data?.message);
             }
         } else {
             console.log(e);

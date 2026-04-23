@@ -3,15 +3,19 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const form = ref(
 		{
 			id: {
-				name: 'ID',
-				value: '',
+				name: 'id',
+				value: null,
 				type: 'notEditable',
+				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			name: {
@@ -41,9 +45,9 @@ const form = ref(
 			},
 			sort: {
 				name: 'Сортировка',
-				value: '',
-				type: 'text',
-				validateRules: null,
+				value: null,
+				type: 'number',
+				validateRules: 'integer',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			active: {
@@ -52,6 +56,7 @@ const form = ref(
 				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
 			},
 			created_by: {
 				name: 'Кем создан',
@@ -63,13 +68,13 @@ const form = ref(
 			},
 			created_at: {
 				name: 'Дата создания',
-				value: '',
+				value: null,
 				type: 'notEditable',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			updated_at: {
 				name: 'Дата обновления',
-				value: '',
+				value: null,
 				type: 'notEditable',
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -77,8 +82,8 @@ const form = ref(
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Персоны';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -94,7 +99,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Персоны',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -107,11 +112,20 @@ const breadCrumbsArray = computed(() => {
 
 <template>
 	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
+		<PageHeader
+				:title="title"
+				:breadCrumbs="breadCrumbsArray"
+		/>
+		<CreateEditFormV2
 				:form="form"
-				:showAdditionalData="false"
-				fetchUrl="admin/entity/Person/Person"
+				fetchUrl="admin/person"
+				:additionalFieldsEnable="true"
+				:showTags="true"
+				:showSeo="true"
+				:hasResource="true"
+				:showAdditionalFieldsTab="true"
+				previewUrl="/series/{slug}"
+				:useVersionList="true"
 		/>
 	</div>
 </template>

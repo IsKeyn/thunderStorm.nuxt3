@@ -27,7 +27,6 @@ const titles = ref(
 			description: {
 				name: 'Описание',
 				type: 'cutText',
-				sortable: true,
 			},
 			title_image: {
 				name: 'Титульное изображение',
@@ -60,7 +59,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игры',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
@@ -128,6 +127,7 @@ const defaultFilters = {
 	<ListTableV2
 		:titles="titles"
 		fetchUrl="admin/game"
+		entity="game"
 		:hasResource="true"
 		:usePagination="true"
 		:additionalButtons="[

@@ -25,32 +25,7 @@ const props = defineProps({
 	},
 	usedFilters: {
 		type: Array,
-		default: [
-			{
-				name: 'gamePlatforms',
-				langName: 'Игровые платформы',
-				type: 'multiselect',
-				requestData: true,
-			},
-			{
-				name: 'genres',
-				langName: 'Жанры',
-				type: 'multiselect',
-				requestData: true,
-			},
-			{
-				name: 'companies',
-				langName: 'Компании',
-				type: 'multiselect',
-				requestData: true,
-			},
-			{
-				name: 'tags',
-				langName: 'Теги',
-				type: 'curtained',
-				requestData: true,
-			},
-		],
+		default: [],
 	},
 });
 
@@ -67,6 +42,7 @@ const { checkHasFilters } = filters();
 		/>
 
 		<OpeningBox
+				v-if="usedFilters.length"
 				title="Фильтры"
 				:useHardDisable="true"
 				:defaultContentStatus="checkHasFilters(filterName, usedFilters)"
