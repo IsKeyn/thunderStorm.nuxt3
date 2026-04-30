@@ -36,6 +36,15 @@ const form = ref(
 					rule: 'slug',
 				},
 			},
+			title_image: {
+				name: 'Титульное изображение',
+				value: null,
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			description: {
 				name: 'Описание',
 				value: '',
@@ -108,6 +117,14 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
+
+const extensions = [
+	{
+		name: 'MultiImages',
+		keyForBackend: 'covers',
+		params: null,
+	},
+];
 </script>
 
 <template>
@@ -126,6 +143,9 @@ const breadCrumbsArray = computed(() => {
 				:showAdditionalFieldsTab="true"
 				previewUrl="/series/{slug}"
 				:useVersionList="true"
+
+				:useAdditionalData="true"
+				:extensions="extensions"
 		/>
 	</div>
 </template>

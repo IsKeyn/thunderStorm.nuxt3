@@ -10,6 +10,9 @@ import BlockWrapper from '@/components/blockEditor/editor/BlockWrapper.vue';
 import SliderWithSlots from '@/components/sliders/vueSlider/SliderWithSlots.vue';
 import Card from '@/modules/boardGame/components/boardGame/Card.vue';
 import PublicRecommendation from '@/components/recommendation/PublicRecommendation.vue';
+import PeopleList from '@/components/entity/fragments/PeopleList.vue';
+import SeriesList from '@/components/entity/fragments/SeriesList.vue';
+import GamesList from '@/components/entity/fragments/GamesList.vue';
 
 import { computed, provide, ref } from "vue";
 
@@ -132,6 +135,26 @@ const getSlotName = (n) => `slot-${n + 1}`;
 		<div class="additional-info">
 			<div class="left-box">
 				<div class="line-block" v-html="fetchedData.description" />
+
+				<GamesList
+						v-if="fetchedData.games && fetchedData.games.length"
+						:data="fetchedData.games"
+						:entity="entity"
+				/>
+
+				<PeopleList
+						v-if="fetchedData.people && fetchedData.people.length"
+						:data="fetchedData.people"
+						:entity="entity"
+				/>
+
+				<SeriesList
+					v-if="fetchedData.series && fetchedData.series.length"
+					:data="fetchedData.series"
+					:entity="entity"
+					:excludedIds="[fetchedData.id]"
+				/>
+
 				<SimpleTagsList
 						class="tags-list"
 						:tags="fetchedData.tags"
@@ -216,14 +239,14 @@ const getSlotName = (n) => `slot-${n + 1}`;
 		div.line-block {
 			@apply mb-[var(--main-padding)];
 		}
-	}
-
-	.right-block {
-		@apply col-span-1;
 
 		.tags-list {
 			@apply mt-4 mb-4;
 		}
+	}
+
+	.right-block {
+		@apply col-span-1;
 	}
 }
 

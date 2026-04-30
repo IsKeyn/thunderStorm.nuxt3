@@ -32,6 +32,41 @@ const props = defineProps({
 
 const carouselRef = ref()
 
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0);
+
+// Обновляем ширину окна при ресайзе
+const handleResize = () => {
+	windowWidth.value = window.innerWidth;
+};
+
+onMounted(() => {
+	window.addEventListener('resize', handleResize);
+});
+onUnmounted(() => {
+	window.removeEventListener('resize', handleResize);
+});
+
+// Вычисляем актуальное itemsToShow на основе брейкпоинтов
+const effectiveItemsToShow = computed(() => {
+	const { breakpoints = {}, itemsToShow: defaultItems = 1 } = props.carouselConfig;
+
+	// Сортируем брейкпоинты по возрастанию и находим подходящий
+	const sortedBreakpoints = Object.keys(breakpoints)
+			.map(Number)
+			.sort((a, b) => a - b);
+
+	let result = defaultItems;
+	for (const breakpoint of sortedBreakpoints) {
+		if (windowWidth.value >= breakpoint) {
+			result = breakpoints[breakpoint].itemsToShow ?? result;
+		}
+	}
+	return result;
+});
+
+// Показывать навигацию только если слайдов больше, чем помещается на экран
+const showNavigation = computed(() => props.count > effectiveItemsToShow.value);
+
 const next = () => carouselRef.value.next();
 const prev = () => carouselRef.value.prev();
 </script>
@@ -53,11 +88,11 @@ const prev = () => carouselRef.value.prev();
 					<slot :name="`slot-${index}`" />
 				</Slide>
 				<template #addons>
-					<Navigation v-if="useDefaultNavigation" />
-					<Pagination v-if="usePagination" />
+					<Navigation v-if="useDefaultNavigation && showNavigation" />
+					<Pagination v-if="usePagination && showNavigation" />
 				</template>
 			</Carousel>
-			<div v-if="!useDefaultNavigation">
+			<div v-if="!useDefaultNavigation && showNavigation">
 				<span
 						class="nav-prev"
 						@click="prev"

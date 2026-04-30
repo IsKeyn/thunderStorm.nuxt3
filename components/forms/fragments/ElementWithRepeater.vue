@@ -56,7 +56,7 @@ const props = defineProps({
 	},
 	onlyValue: {
 		type: Boolean,
-		default: false,
+		default: true,
 	}
 });
 

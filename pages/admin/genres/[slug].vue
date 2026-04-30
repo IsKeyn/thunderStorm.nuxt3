@@ -3,34 +3,46 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const form = ref(
 		{
+			id: {
+				name: 'id',
+				value: null,
+				type: 'notEditable',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			name: {
-				name: 'Наименование',
+				name: 'Название',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			slug: {
 				name: 'Slug',
 				value: '',
 				type: 'text',
-				validateRules: null,
+				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 				autoFill: {
 					sourceFieldKey: 'name',
 					rule: 'slug',
 				},
 			},
-			spc_id: {
-				name: 'speedrun.com id',
-				value: '',
-				type: 'text',
-				validateRules: null,
+			title_image: {
+				name: 'Титульное изображение',
+				value: null,
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			description: {
@@ -40,12 +52,55 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
+			sort: {
+				name: 'Сортировка',
+				value: null,
+				type: 'number',
+				validateRules: 'integer',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			active: {
+				name: 'Активность',
+				value: true,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
+			spc_id: {
+				name: 'speedrun.com api',
+				value: null,
+				type: 'text',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			created_by: {
+				name: 'Кем создан',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			created_at: {
+				name: 'Дата создания',
+				value: null,
+				type: 'notEditable',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			updated_at: {
+				name: 'Дата обновления',
+				value: null,
+				type: 'notEditable',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 
-const pageType = ref('');
-const route = useRoute();
 
+const pageType = ref('');
+
+const title = 'Жанры';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -61,7 +116,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Жанры',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -70,14 +125,32 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
+
+const extensions = [
+	{
+		name: 'MultiImages',
+		keyForBackend: 'covers',
+		params: null,
+	},
+];
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				:form="form"
-				fetchUrl="admin/entity/Genre"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			:form="form"
+			fetchUrl="admin/genre"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:showSeo="true"
+			:hasResource="true"
+			:showAdditionalFieldsTab="true"
+			previewUrl="/genre/{slug}"
+			:useVersionList="true"
+
+			:extensions="extensions"
+	/>
 </template>

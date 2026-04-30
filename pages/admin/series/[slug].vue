@@ -36,6 +36,15 @@ const form = ref(
 					rule: 'slug',
 				},
 			},
+			title_image: {
+				name: 'Титульное изображение',
+				value: null,
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			description: {
 				name: 'Описание',
 				value: '',
@@ -145,28 +154,31 @@ const extensions = [
 			additionalDataKeys: ['game'],
 		},
 	},
+	{
+		name: 'MultiImages',
+		keyForBackend: 'covers',
+		params: null,
+	},
 ];
 </script>
 
 <template>
-	<div>
-		<PageHeader
-				:title="title"
-				:breadCrumbs="breadCrumbsArray"
-		/>
-		<CreateEditFormV2
-				:form="form"
-				fetchUrl="admin/series"
-				:additionalFieldsEnable="true"
-				:showTags="true"
-				:showSeo="true"
-				:hasResource="true"
-				:showAdditionalFieldsTab="true"
-				previewUrl="/series/{slug}"
-				:useVersionList="true"
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			:form="form"
+			fetchUrl="admin/series"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:showSeo="true"
+			:hasResource="true"
+			:showAdditionalFieldsTab="true"
+			previewUrl="/series/{slug}"
+			:useVersionList="true"
 
-				:useAdditionalData="true"
-				:extensions="extensions"
-		/>
-	</div>
+			:useAdditionalData="true"
+			:extensions="extensions"
+	/>
 </template>

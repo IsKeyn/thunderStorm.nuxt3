@@ -25,8 +25,8 @@ const props = defineProps({
 	showMoreNames: {
 		type: Object,
 		default: {
-			single: 'Отобразить все:',
-			many: 'Скрыть:',
+			showMore: 'Отобразить все:',
+			showLess: 'Скрыть:',
 		},
 	},
 	cardType: {
