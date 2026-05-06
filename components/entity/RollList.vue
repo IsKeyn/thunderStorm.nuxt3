@@ -4,6 +4,7 @@ import SearchFilterSort from '@/components/filters/SearchFilterSort.vue';
 import ListCard from '@/components/entity/card/ListCard.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
 import PublicRecommendation from '@/components/recommendation/PublicRecommendation.vue';
+import GamblingGameV2_1 from '@/components/games/gamblingGame/GamblingGameV2_1.vue'
 
 import { computed, ref, watch } from "vue";
 
@@ -30,19 +31,15 @@ const props = defineProps({
 	},
 	name: {
 		type: String,
+		default: 'Рулетка',
+	},
+	subName: {
+		type: String,
 		default: 'Равлекательный контент',
 	},
 	title: {
 		type: String,
 		default: 'Список развлекательного контента',
-	},
-	useGroups: {
-		type: Boolean,
-		default: false,
-	},
-	perPage: {
-		type: Number,
-		default: 24,
 	},
 	usedFilters: {
 		type: Array,
@@ -79,15 +76,6 @@ const props = defineProps({
 	}
 });
 
-import { pagination } from '@/composables/ui/pagination.js'
-const {
-	page,
-	perPage,
-	setRefresh,
-	changePage,
-	setPerPage
-} = pagination(props.perPage);
-
 const filterName = setFilterName([ 'list', props.fetchUrl ]);
 
 // Устанавливаем фильтры их get параметров
@@ -102,14 +90,10 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			const query = {
-				page: page.value,
-				perPage: perPage.value,
-				filters: filtersStore.filters[filterName],
-			};
+			const query = { filters: filtersStore.filters[filterName] };
 
 			const response = await Promise.resolve(
-					sendApiRequest(`${props.entity}/list`, 'GET', query, requestName, '')
+					sendApiRequest(`${props.entity}/roll/list`, 'GET', query, requestName, '')
 			);
 
 			return response || null;
@@ -123,16 +107,12 @@ const {
 const fetchedData = computed(() => requestData.value?.data || []);
 const paginationData = computed(() => requestData.value?.meta || null);
 
-// Передаем функцию refresh в композабл pagination
-setRefresh(refresh);
-
 /* НАЧАЛО: Фильтры */
 let oldFilter = filtersStore.filters[filterName] ?? {};
 
 const updateDataWithFilters = () => {
 	if (JSON.stringify(oldFilter) !== JSON.stringify(filtersStore.filters?.[filterName])) {
 		oldFilter = filtersStore.filters?.[filterName];
-		page.value = 1;
 		refresh();
 	}
 }
@@ -166,8 +146,12 @@ const getBreadCrumbs = () => {
 
 	return [
 		{
-			name: props.name,
+			name: props.subName,
 			href: `/${splitedPath[1]}/`,
+		},
+		{
+			name: props.name,
+			href: `/${splitedPath[2]}/`,
 		},
 	];
 }
@@ -214,6 +198,20 @@ const dataByGroups = computed(() => {
 
 	return returnData;
 });
+
+const spinning = ref(false);
+
+const setStatus = (status) => {
+	if (status === 'start') {
+		spinning.value = true;
+		return;
+	}
+
+	if (status === 'finish') {
+		spinning.value = false;
+		return;
+	}
+}
 </script>
 
 <template>
@@ -224,10 +222,11 @@ const dataByGroups = computed(() => {
 	<SearchFilterSort
 			:entity="props.entity"
 			:filterName="filterName"
-			:total="paginationData?.total"
+			:total="fetchedData.length"
 			type="public"
 			:usedFilters="usedFilters"
-			:sortOptions="sortOptions"
+			:showSort="false"
+			:disable="spinning"
 	/>
 	<ui-BigPreloader
 			v-if="requestInProgress"
@@ -236,43 +235,20 @@ const dataByGroups = computed(() => {
 			:themeType="9"
 	/>
 	<div v-else-if="fetchedData && fetchedData.length > 0">
-		<template v-if="useGroups">
-			<div v-if="dataByGroups">
-					<div class="group" v-for="(group) in dataByGroups">
-						<span class="title">{{ group.name }}</span>
-						<div class="game-list">
-							<ListCard
-									v-for="(data, index) in group.items"
-									:key="index"
-									:data="data"
-									:entity="entity"
-							/>
-						</div>
-					</div>
-			</div>
-		</template>
-		<template v-else>
-			<div class="game-list">
-				<ListCard
-						v-for="(data, index) in fetchedData"
-						:key="index"
-						:data="data"
-						:entity="entity"
-				/>
-			</div>
-		</template>
+		<GamblingGameV2_1
+				v-if="fetchedData"
+				:items="fetchedData"
+				:roll_count="1"
+				:requestParentData="requestInProgress"
+				cardType="Game"
+				:itemHeight="130"
+				:showItemCount="true"
+				@setStatus="setStatus"
+		/>
 	</div>
 	<ui-itemBox
 			v-else
 			classes="red"
-	/>
-	<Pagination
-			v-if="paginationData"
-			:pagination="paginationData"
-			:navigationButtons="true"
-			:perPageOptionsProp="[24, 48, 96]"
-			@changePage="changePage"
-			@setPerPage="setPerPage"
 	/>
 	<PublicRecommendation />
 </template>

@@ -224,7 +224,7 @@ const getSlotName = (n) => `slot-${n + 1}`;
 	</div>
 	<ui-itemBox
 			v-else
-			borderColor="red"
+			classes="red"
 	/>
 	<PublicRecommendation />
 </template>

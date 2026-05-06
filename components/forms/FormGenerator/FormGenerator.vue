@@ -272,7 +272,12 @@ const copyValue = () => {
 		>
 			{{ element.validateResult }}
 		</span>
-		<span v-if="showTitle && (element.title || element.name)">{{ element.title ? element.title : element.name }}</span>
+		<span
+				v-if="showTitle && (element.title || element.name)"
+				class="block"
+		>
+			{{ element.title ? element.title : element.name }}
+		</span>
 		<template
 				v-if="
 					element.type === 'text' ||
@@ -468,6 +473,13 @@ const copyValue = () => {
 			<SelectWithSearch
 					:options="element.options"
 					v-model="element.value"
+			/>
+		</template>
+		<template v-else-if="element.type === 'select-with-search-multiselect'">
+			<SelectWithSearch
+					:options="element.options"
+					v-model="element.value"
+					:multiSelect="true"
 			/>
 		</template>
 		<template v-else-if="element.type === 'fileFromGallery'">

@@ -85,7 +85,7 @@ const carouselConfig = {
 			>
 				<ListCard
 						:data="item"
-						:entity="entity"
+						entity="game"
 						listPage="person"
 				/>
 			</template>

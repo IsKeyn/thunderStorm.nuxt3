@@ -67,6 +67,11 @@ const breadCrumbsArray = computed(() => {
 
 const usedFilters = [
 	{
+		name: 'minMaxData',
+		langName: 'Дата выхода',
+		requestData: true,
+	},
+	{
 		name: 'gamePlatforms',
 		langName: 'Игровые платформы',
 		type: 'multiselect',
@@ -117,6 +122,37 @@ const defaultFilters = {
 		sort: "desc",
 	},
 }
+
+const sortOptions = [
+	{
+		name: 'id',
+		value: 'id',
+	},
+	{
+		name: 'Сортировка',
+		value: 'sort',
+	},
+	{
+		name: 'Название',
+		value: 'name',
+	},
+	{
+		name: 'Лайки',
+		value: 'likes',
+	},
+	{
+		name: 'Просмотры',
+		value: 'views',
+	},
+	{
+		name: 'Дата релиза',
+		value: 'date',
+	},
+	{
+		name: 'Дата публикации',
+		value: 'created_at',
+	},
+];
 </script>
 
 <template>
@@ -138,6 +174,7 @@ const defaultFilters = {
 		]"
 		:usedFilters="usedFilters"
 		:defaultFilters="defaultFilters"
+		:sortOptions="sortOptions"
 		previewUrl="/game/{slug}"
 	/>
 </template>

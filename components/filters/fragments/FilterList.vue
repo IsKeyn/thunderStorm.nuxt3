@@ -55,32 +55,7 @@ const props = defineProps({
 	},
 	sortOptions: {
 		type: Array,
-		default: [
-			{
-				name: 'Сортировка',
-				value: 'sort',
-			},
-			{
-				name: 'Название',
-				value: 'name',
-			},
-			{
-				name: 'Лайки',
-				value: 'likes',
-			},
-			{
-				name: 'Просмотры',
-				value: 'views',
-			},
-			{
-				name: 'Дата релиза',
-				value: 'date',
-			},
-			{
-				name: 'Дата публикации',
-				value: 'created_at',
-			},
-		],
+		default: [],
 	},
 	exceptions: {
 		type: Array,
@@ -127,8 +102,27 @@ const activeFiltersList = computed(() => {
 		}
 
 		props.usedFilters.forEach((item) => {
-			if (!props.exceptions.includes(item.name) && filtersStore.filters[filterName][item.name]) {
-				if (filtersStore.filters[filterName][item.name].length > 0) {
+			if (
+					!props.exceptions.includes(item.name)
+					&& filtersStore.filters[filterName][item.name]
+			) {
+				if (item.type === 'checkbox') {
+					if (
+							(typeof filtersStore.filters[filterName][item.name] === 'string' || typeof filtersStore.filters[filterName][item.name] === 'boolean')
+							&& (filtersStore.filters[filterName][item.name] === 'true' || filtersStore.filters[filterName][item.name] === true)
+					) {
+						result.push({
+							name: item.langName,
+							value: true,
+							key: item.name,
+						});
+					}
+				}
+
+				if (
+						typeof filtersStore.filters[filterName][item.name] === 'object'
+						&& filtersStore.filters[filterName][item.name].length > 0
+				) {
 					filtersStore.filters[filterName][item.name].forEach((value) => {
 						result.push({
 							name: item.name === 'tags' ? value : findNameByKeyAndId(item.name, value),
@@ -178,6 +172,7 @@ const deleteFilter = (key, value) => {
 
 	if (
 			filterForDelete.length > 0
+			&& typeof filtersStore.filters[filterName][filterForDelete[0].name] === 'object'
 			&& filtersStore.filters[filterName][filterForDelete[0].name])
 	{
 		const finalValue = filtersStore.filters[filterName][filterForDelete[0].name].filter((item) => item !== value);
@@ -214,7 +209,7 @@ const deleteFilter = (key, value) => {
 					v-if="checkHasFilters(filterName, usedFilters)"
 					buttonClasses="btn btn-simple-1"
 					buttonName="Сбросить фильтры"
-					@startAction="clearFilters(filterName)"
+					@startAction="clearFilters(filterName, usedFilters)"
 			/>
 		</div>
 	</div>

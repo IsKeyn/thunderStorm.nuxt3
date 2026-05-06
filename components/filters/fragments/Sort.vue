@@ -27,32 +27,7 @@ const props = defineProps({
 	},
 	sortOptions: {
 		type: Array,
-		default: [
-			{
-				name: 'Сортировка',
-				value: 'sort',
-			},
-			{
-				name: 'Название',
-				value: 'name',
-			},
-			{
-				name: 'Лайки',
-				value: 'likes',
-			},
-			{
-				name: 'Просмотры',
-				value: 'views',
-			},
-			{
-				name: 'Дата релиза',
-				value: 'date',
-			},
-			{
-				name: 'Дата публикации',
-				value: 'created_at',
-			},
-		],
+		default: [],
 	},
 	defaultSortValue: {
 		type: String,
@@ -62,8 +37,9 @@ const props = defineProps({
 		type: String,
 		default: 'asc',
 	},
-	pagination: {
-		type: Object,
+	total: {
+		type: Number,
+		default: null,
 	},
 });
 
@@ -129,8 +105,8 @@ watch(sortDirection, () => {
 
 <template>
 	<div class="flex items-center justify-between w-full">
-		<div v-if="pagination">
-			Всего найдено: {{ pagination.total }}
+		<div v-if="total">
+			Всего найдено: {{ total }}
 		</div>
 
 		<div class="flex items-center gap-2">

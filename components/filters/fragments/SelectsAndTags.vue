@@ -152,7 +152,7 @@ const sendData = () => {
 				:key="key"
 		>
 			<ui-ShowMoreBlock
-					v-if="filter.type === 'curtained' && fetchedData[filter.name].filter((item) => item.active === true)"
+					v-if="filter.type === 'curtained' && fetchedData?.[filter.name]?.filter((item) => item.active === true)"
 					:names="{
 							showMore: 'Открыть список фильтров по: ' + filter.langName,
 							showLess: 'Закрыть список фильтров по: ' + filter.langName,

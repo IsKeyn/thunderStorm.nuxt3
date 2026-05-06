@@ -32,9 +32,9 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
-	useRange: {
-		type: Boolean,
-		default: true,
+	sortOptions: {
+		type: Array,
+		default: [],
 	},
 	showClearButton: {
 		type: Boolean,
@@ -61,10 +61,6 @@ const getFilterList = () => {
 				result.push(item.name);
 			}
 		});
-	}
-
-	if (props.useRange) {
-		result.push('minMaxData');
 	}
 
 	return JSON.stringify(result);
@@ -110,7 +106,7 @@ const fetchedData = computed(() => requestData.value || null);
 	/>
 	<div v-else-if="fetchedData">
 		<RangeFilter
-				v-if="useRange && fetchedData.minMaxData"
+				v-if="fetchedData.minMaxData"
 				:entity="entity"
 				:filterName="filterName"
 				:setQueryParams="setQueryParams"
@@ -133,7 +129,7 @@ const fetchedData = computed(() => requestData.value || null);
 					buttonClasses="btn btn-simple-1"
 					buttonName="Сбросить фильтры"
 					:actionInProgress="requestInProgress"
-					@startAction="clearFilters(filterName)"
+					@startAction="clearFilters(filterName, usedFilters)"
 			/>
 		</div>
 
@@ -143,6 +139,7 @@ const fetchedData = computed(() => requestData.value || null);
 				:filterName="filterName"
 				:dataForFilters="fetchedData"
 				:usedFilters="usedFilters"
+				:sortOptions="sortOptions"
 		/>
 	</div>
 </template>

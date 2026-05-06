@@ -16,8 +16,9 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
-	pagination: {
-		type: Object,
+	total: {
+		type: Number,
+		default: null,
 	},
 	type: {
 		type: String,
@@ -27,6 +28,39 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
+	sortOptions: {
+		type: Array,
+		default: [
+			{
+				name: 'Сортировка',
+				value: 'sort',
+			},
+			{
+				name: 'Название',
+				value: 'name',
+			},
+			{
+				name: 'Лайки',
+				value: 'likes',
+			},
+			{
+				name: 'Просмотры',
+				value: 'views',
+			},
+			{
+				name: 'Дата публикации',
+				value: 'created_at',
+			},
+		],
+	},
+	showSort: {
+		type: Boolean,
+		default: true,
+	},
+	disable: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 import { filters } from '@/composables/filters/filters.js';
@@ -34,7 +68,11 @@ const { checkHasFilters } = filters();
 </script>
 
 <template>
-	<div>
+	<div class="relative">
+		<ui-fragments-DisableBox
+				v-if="disable"
+				:showIcon="false"
+		/>
 		<Search
 				class="mb-4 lg:flex"
 				:entity="entity"
@@ -53,13 +91,16 @@ const { checkHasFilters } = filters();
 					:showByFirstDateCheckbox="true"
 					:type="type"
 					:usedFilters="usedFilters"
+					:sortOptions="sortOptions"
 			/>
 		</OpeningBox>
 
 		<Sort
+				v-if="showSort"
 				:entity="entity"
 				:filterName="filterName"
-				:pagination="pagination"
+				:sortOptions="sortOptions"
+				:total="total"
 		/>
 	</div>
 </template>

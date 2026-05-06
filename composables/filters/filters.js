@@ -58,7 +58,22 @@ export function filters() {
         filtersStore.filters[filterName] = unionObjWithoutEmptyElements(filtersStore.filters[filterName], filter);
     }
 
-    const clearFilters = (filterName = 'default', setQueryParams = true) => {
+    const unionQueryParamsAndUsedFilter = (usedFilters) => {
+        if (usedFilters.length > 0) {
+            usedFilters.forEach((item) => {
+                if (queryParams.filter((i) => i.name === item.name).length === 0) {
+                    queryParams.push({
+                        name: item.name,
+                        parse: item?.parse ?? false,
+                    });
+                }
+            });
+        }
+    }
+
+    const clearFilters = (filterName = 'default', usedFilters = [], setQueryParams = true) => {
+        unionQueryParamsAndUsedFilter(usedFilters);
+
         if (setQueryParams) {
             const query = { ...route.query };
 
@@ -74,16 +89,7 @@ export function filters() {
     }
 
     const setQueryFilters = (filterName, usedFilters = [], defaultFilters = {}) => {
-        if (usedFilters.length > 0) {
-            usedFilters.forEach((item) => {
-                if (queryParams.filter((i) => i.name === item.name).length === 0) {
-                    queryParams.push({
-                        name: item.name,
-                        parse: item?.parse ?? false,
-                    });
-                }
-            });
-        }
+        unionQueryParamsAndUsedFilter(usedFilters);
 
         // При загрузке страницы проверяем get параметры по списку, который является указателем к фильтрам и устанавливаем значения
         queryParams.forEach((item) => {

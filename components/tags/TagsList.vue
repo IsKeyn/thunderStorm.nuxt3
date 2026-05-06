@@ -266,7 +266,7 @@ const addTag = () => {
 			</ui-ShowMoreBlock>
 			<ui-itemBox
 					v-else
-					borderColor="red"
+					classes="red"
 			/>
 		</div>
 		<div v-if="canAddTags">

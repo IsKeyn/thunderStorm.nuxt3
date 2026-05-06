@@ -1,5 +1,5 @@
 <script setup>
-import List from '@/components/entity/List.vue';
+import RollList from '@/components/entity/RollList.vue';
 
 const usedFilters = [
 	{
@@ -71,10 +71,12 @@ const sortOptions = [
 </script>
 
 <template>
-	<List
+	<RollList
 		entity="game"
-		name="Игры"
-		title="Игры"
+		subName="Игры"
+		name="Рулетка"
+		title="Рулетка игр"
 		:usedFilters="usedFilters"
+		:sortOptions="sortOptions"
 	/>
 </template>

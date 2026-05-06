@@ -73,8 +73,7 @@ const prev = () => carouselRef.value.prev();
 
 <template>
 	<div v-if="count > 0">
-		<slot v-if="count === 1" name="slot-1" />
-		<div v-else class="slider">
+		<div class="slider">
 			<Carousel
 					ref="carouselRef"
 					v-bind="carouselConfig"

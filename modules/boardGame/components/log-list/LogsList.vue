@@ -100,7 +100,7 @@ onUnmounted(() => {
 	</div>
 	<ui-itemBox
 			v-else
-			borderColor="red"
+			classes="red"
 			message="Логи отсутствуют"
 	/>
 	<Pagination

@@ -86,7 +86,7 @@ setRefresh(refresh);
 	</div>
 	<ui-itemBox
 			v-else
-			borderColor="red"
+			classes="red"
 	/>
 </template>
 ```

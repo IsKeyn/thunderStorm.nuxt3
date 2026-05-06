@@ -4,7 +4,7 @@ const props = defineProps({
 		type: String,
 		default: 'По данному запросу не ничего не найдено',
 	},
-	borderColor: {
+	classes: {
 		type: String,
 		default: null,
 	},
@@ -14,7 +14,7 @@ const props = defineProps({
 <template>
 	<div
 			v-if="message"
-			:class="['item-box', borderColor]"
+			:class="['item-box', classes]"
 			v-html="message"
 	/>
 </template>

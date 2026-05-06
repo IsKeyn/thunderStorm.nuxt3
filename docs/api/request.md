@@ -53,7 +53,7 @@ const fetchedData = computed(() => requestData.value || null);
 	</div>
 	<ui-itemBox
 			v-else
-			borderColor="red"
+			classes="red"
 	/>
 </template>
 ```

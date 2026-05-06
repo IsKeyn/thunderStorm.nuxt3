@@ -219,6 +219,6 @@ watch(() => filtersStore.filters?.[filterName], () => {
 	<ui-itemBox
 			v-else
 			:message="nullMessage"
-			borderColor="red"
+			classes="red"
 	/>
 </template>

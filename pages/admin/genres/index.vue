@@ -71,6 +71,51 @@ const defaultFilters = {
 		sort: "desc",
 	},
 }
+
+const sortOptions = [
+	{
+		name: 'id',
+		value: 'id',
+	},
+	{
+		name: 'Сортировка',
+		value: 'sort',
+	},
+	{
+		name: 'Название',
+		value: 'name',
+	},
+	{
+		name: 'Лайки',
+		value: 'likes',
+	},
+	{
+		name: 'Просмотры',
+		value: 'views',
+	},
+	{
+		name: 'Дата релиза',
+		value: 'date',
+	},
+	{
+		name: 'Дата публикации',
+		value: 'created_at',
+	},
+];
+
+const usedFilters = [
+	{
+		name: 'onlyTrashed',
+		langName: 'Только удаленные',
+		type: 'checkbox',
+	},
+	{
+		name: 'tags',
+		langName: 'Теги',
+		type: 'curtained',
+		requestData: true,
+	},
+];
 </script>
 
 <template>
@@ -85,6 +130,8 @@ const defaultFilters = {
 			:hasResource="true"
 			:usePagination="true"
 			previewUrl="/genre/{slug}"
+			:usedFilters="usedFilters"
 			:defaultFilters="defaultFilters"
+			:sortOptions="sortOptions"
 	/>
 </template>

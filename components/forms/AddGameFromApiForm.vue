@@ -180,7 +180,7 @@ const checkGame  = async (id) => {
 		</form>
 		<ui-itemBox
 				message="Помните, что Speedrun.com ограничевает количество запросов в минут 100 запросами"
-				borderColor="green"
+				classes="green"
 		/>
 		<div class="relative">
 			<ui-BigPreloader
@@ -221,7 +221,7 @@ const checkGame  = async (id) => {
 			</div>
 			<ui-itemBox
 					v-else-if="!requestInProgress"
-					borderColor="red"
+					classes="red"
 			/>
 		</div>
 	</div>

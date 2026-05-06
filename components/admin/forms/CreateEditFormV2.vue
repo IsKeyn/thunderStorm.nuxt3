@@ -345,7 +345,7 @@ if (props.previewUrl) {
 			<ui-itemBox
 					v-if="route.query?.version_id && fetchedData"
 					:message="`Загруженны данные из версии с ID: ${route.query.version_id} от ${getFormattedDate('d.m.Y H:i:s', fetchedData.created_at)}`"
-					borderColor="green"
+					classes="green"
 			/>
 			<FormBlankV2
 					:form="form"

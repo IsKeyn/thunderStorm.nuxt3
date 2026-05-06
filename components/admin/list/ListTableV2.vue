@@ -122,6 +122,10 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
+	sortOptions: {
+		type: Array,
+		default: [],
+	}
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
@@ -389,9 +393,10 @@ const sendRequestForForceDeleteElement = async (id) => {
 		<ResponseErrorsComponent :responseErrors="responseErrors" />
 		<SearchFilterSort
 				:entity="props.entity"
-				:pagination="paginationData"
+				:total="fetchedData ? fetchedData.length : null"
 				:filterName="filterName"
 				:usedFilters="usedFilters"
+				:sortOptions="sortOptions"
 		/>
 		<div v-if="fetchedData && fetchedData.length > 0">
 			<div class="relative">
@@ -429,7 +434,7 @@ const sendRequestForForceDeleteElement = async (id) => {
 		<ui-itemBox
 				v-else
 				:message="nullMessage"
-				borderColor="red"
+				classes="red"
 		/>
 		<router-link :to="`${pageUrl}/create`">
 			<button class="btn btn-simple mr-2">Добавить один элемент</button>
