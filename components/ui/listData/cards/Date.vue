@@ -12,7 +12,7 @@ const props = defineProps({
 });
 
 const dateFormat = computed(() => {
-	let format = ' ';
+	let format = '';
 
 	if (!props.item?.hideDay) format += 'd ';
 	if (!props.item?.hideMonth) format += 'ru_mouths_name ';

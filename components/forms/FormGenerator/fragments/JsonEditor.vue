@@ -1,9 +1,11 @@
-<script setup lang="ts">
-import { ref, defineAsyncComponent, watch } from 'vue'
-
+<script setup>
 const emit = defineEmits(["update:modelValue"]);
 
-// Динамический импорт + CSS (оптимально для Nuxt)
+import { ref, defineAsyncComponent, watch } from 'vue';
+
+import { notifications } from '@/composables/notifications.js';
+const { error } = notifications();
+
 const JsonEditorVue = defineAsyncComponent(() => import('json-editor-vue'))
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
 
@@ -24,12 +26,29 @@ const editorOptions = {
 	}
 }
 
+// Функция нормализации: всегда возвращает объект
+const normalizeValue = (value) => {
+	if (typeof value === 'string') {
+		try {
+			// Пустую строку превращаем в пустой объект
+			return value.trim() ? JSON.parse(value) : {};
+		} catch (e) {
+			error('Ошибка парсинга JSON:', e);
+			// При ошибке парсинга возвращаем последнее валидное значение или пустой объект
+			return { ...jsonData.value };
+		}
+	}
+	// Если уже объект — возвращаем как есть
+	return value ?? {};
+};
+
 watch(() => props.modelValue, (newValue) => {
-	jsonData.value = newValue;
+	jsonData.value = normalizeValue(newValue);
 }, { immediate: true });
 
 watch(() => jsonData.value, (newValue) => {
-	emit("update:modelValue", JSON.stringify(newValue));
+	const normalized = normalizeValue(newValue);
+	emit("update:modelValue", normalized);
 }, { deep: true });
 </script>
 

@@ -99,6 +99,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	wrapperTagName: {
+		type: String,
+		default: 'label',
+	},
 	// Дополнительные классы для тега <label>
 	labelClasses: {
 		type: [String, Array],
@@ -260,11 +264,22 @@ const copyValue = () => {
 				alert('Ошибка копирования:', err);
 			});
 }
+
+const wrapperTag = computed(() => {
+	let name = props.wrapperTagName;
+
+	if (props.element.type === 'json') {
+		name = 'div';
+	}
+
+	return name;
+});
 </script>
 
 <template>
-	<label
+	<component
 			v-if="element.type !== 'disable'"
+			:is="wrapperTag"
 			ref="label"
 			:class="[element.type === 'hidden' ? 'hidden' : getLabelClasses]"
 	>
@@ -548,7 +563,7 @@ const copyValue = () => {
 		>
 			{{ element.validateResult }}
 		</span>
-	</label>
+	</component>
 </template>
 
 <style lang="scss" scoped>

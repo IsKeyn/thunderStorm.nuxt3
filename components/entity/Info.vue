@@ -20,6 +20,7 @@ const props = defineProps({
 					:names="{ single: 'Жанр:', many: 'Жанры:' }"
 					:showMoreNames="{ showMore: 'Все жанры', showLess: 'Скрыть' }"
 					cardType="Simple"
+					urlListName="genre"
 					class="field"
 			/>
 			<ListDataItems
@@ -28,6 +29,7 @@ const props = defineProps({
 					:names="{ single: 'Платформа:', many: 'Платформы:' }"
 					:showMoreNames="{ showMore: 'Все платформы', showLess: 'Скрыть' }"
 					cardType="Simple"
+					urlListName="gaming-platform"
 					class="field"
 			/>
 			<ListDataItems

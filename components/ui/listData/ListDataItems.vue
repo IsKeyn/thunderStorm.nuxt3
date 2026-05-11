@@ -32,7 +32,11 @@ const props = defineProps({
 	cardType: {
 		type: String,
 		default: null,
-	}
+	},
+	urlListName: {
+		type: String,
+		default: null,
+	},
 });
 
 const cardType = () => {
@@ -53,10 +57,12 @@ const cardType = () => {
 			<span
 					v-for="item in props.items"
 					:title="item.description ? item.description : ''"
+					class="ml-1"
 			>
 				<component
 						:is="cardType()"
 						:item="item"
+						:urlListName="urlListName"
 				/>
 			</span>
 		</div>
@@ -73,6 +79,7 @@ const cardType = () => {
 								<component
 										:is="cardType()"
 										:item="item"
+										:urlListName="urlListName"
 								/>
 							</li>
 						</template>
@@ -88,6 +95,7 @@ const cardType = () => {
 								<component
 										:is="cardType()"
 										:item="item"
+										:urlListName="urlListName"
 								/>
 							</li>
 						</template>

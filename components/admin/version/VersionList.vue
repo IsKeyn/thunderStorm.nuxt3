@@ -70,7 +70,7 @@ const props = defineProps({
 				name: 'Активность',
 				type: 'boolean',
 				sortable: true,
-				classes: 'max-w-[30px]',
+				classes: 'max-w-[80px]',
 			},
 			created_by: {
 				name: 'Кем создан',

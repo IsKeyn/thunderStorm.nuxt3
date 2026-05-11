@@ -1,4 +1,6 @@
 <script setup>
+import Share from '@/components/actions/Share.vue';
+
 import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
 
@@ -191,6 +193,8 @@ const deleteFilter = (key, value) => {
 		setFilter(filterResult, filterName);
 	}
 }
+
+const fullUrl = useRequestURL().href
 </script>
 
 <template>
@@ -204,7 +208,17 @@ const deleteFilter = (key, value) => {
 				{{ option.name }} <font-awesome-icon @click="deleteFilter(option.key, option.value)" :icon="['fas', 'xmark']" class="cursor-pointer" />
 			</span>
 		</div>
-		<div class="flex justify-end">
+		<div class="flex justify-end relative">
+<!--			<button class="btn btn-simple-1 mr-2">-->
+<!--				<Share-->
+<!--						:pageUrl="fullUrl"-->
+<!--						itemClass="text-[1rem]"-->
+<!--						position="center"-->
+<!--						title="boardGameStore.boardGameInfo?.name"-->
+<!--						description="boardGameStore.boardGameInfo?.description"-->
+<!--						image="/images/silent-hill/sh_no_image_cover.webp"-->
+<!--				/>-->
+<!--			</button>-->
 			<layout-buttons-ActionButton
 					v-if="checkHasFilters(filterName, usedFilters)"
 					buttonClasses="btn btn-simple-1"

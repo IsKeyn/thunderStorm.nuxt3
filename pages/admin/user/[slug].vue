@@ -45,6 +45,15 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			avatar: {
+				name: 'Аватар',
+				value: null,
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			password: {
 				name: 'Пароль',
 				value: '',
