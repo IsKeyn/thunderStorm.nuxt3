@@ -105,8 +105,8 @@ watch(sortDirection, () => {
 
 <template>
 	<div class="flex items-center justify-between w-full">
-		<div v-if="total">
-			Всего найдено: {{ total }}
+		<div>
+			<span v-if="total">Всего найдено: {{ total }}</span>
 		</div>
 
 		<div class="flex items-center gap-2">

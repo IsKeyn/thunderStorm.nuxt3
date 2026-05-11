@@ -83,8 +83,8 @@ const {
 
 				if (config.type === 'EntityList' && config.apiUrl) {
 					requestsQueue.push(
-							sendApiRequest(config.apiUrl, 'GET', {}, `${requestName}_${key}`, '')
-									.then(data => ({ key: config.apiUrl, data, error: null }))
+							sendApiRequest(config.apiUrl, 'GET', config.body, `${requestName}_${key}`, '')
+									.then(data => ({ key: config.apiUrl, data, error: null, hasResource: config?.hasResource }))
 									.catch(err => ({ key: config.apiUrl, data: null, error: err }))
 					);
 				}
@@ -95,7 +95,12 @@ const {
 
 			listResults.forEach(result => {
 				if (result) {
-					listsData[result.key] = result?.data?.data;
+					listsData[result.key] = result.hasResource ? result?.data?.data : result?.data;
+
+					// Это подстраховка от ошибок, когда result.hasResource явно не указан
+					if (listsData[result.key].hasOwnProperty('data')) {
+						listsData[result.key] = listsData[result.key].data;
+					}
 				}
 			});
 

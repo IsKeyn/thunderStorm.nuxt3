@@ -23,20 +23,16 @@ const titles = ref(
 				name: 'Название',
 				sortable: true,
 			},
-			slug: {
-				name: 'Slug',
+			system_name: {
+				name: 'Системное наименование',
 				sortable: true,
 			},
-			description: {
-				name: 'Описание',
-				type: 'cutText',
+			entity_type: {
+				name: 'Тип сущности',
+				sortable: true,
 			},
 			sort: {
 				name: 'Сортировка',
-				sortable: true,
-			},
-			type: {
-				name: 'Тип',
 				sortable: true,
 			},
 			active: {
@@ -44,19 +40,10 @@ const titles = ref(
 				type: 'boolean',
 				sortable: true,
 			},
-			spc_id: {
-				name: 'spc ID',
-				sortable: true,
-			},
-			created_by: {
-				name: 'Кем создан',
-				type: 'EntityList',
-				apiUrl: 'user/list',
-			},
 		}
 );
 
-const title = 'Серии';
+const title = 'Разрешения';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -78,6 +65,55 @@ const defaultFilters = {
 		sort: "desc",
 	},
 }
+
+const sortOptions = [
+	{
+		name: 'id',
+		value: 'id',
+	},
+	{
+		name: 'Сортировка',
+		value: 'sort',
+	},
+	{
+		name: 'Название',
+		value: 'name',
+	},
+	{
+		name: 'Системное наименование',
+		value: 'system_name',
+	},
+	{
+		name: 'Лайки',
+		value: 'likes',
+	},
+	{
+		name: 'Просмотры',
+		value: 'views',
+	},
+	{
+		name: 'Дата релиза',
+		value: 'date',
+	},
+	{
+		name: 'Дата публикации',
+		value: 'created_at',
+	},
+];
+
+const usedFilters = [
+	{
+		name: 'onlyTrashed',
+		langName: 'Только удаленные',
+		type: 'checkbox',
+	},
+	{
+		name: 'tags',
+		langName: 'Теги',
+		type: 'curtained',
+		requestData: true,
+	},
+];
 </script>
 
 <template>
@@ -86,14 +122,16 @@ const defaultFilters = {
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<ListTableV2
-			v-if="checkPermission('series.edit')"
+			v-if="checkPermission('user.permission.edit')"
 			:titles="titles"
-			fetchUrl="admin/series"
-			entity="series"
+			fetchUrl="admin/permission"
+			entity="permission"
 			:hasResource="true"
 			:usePagination="true"
-			previewUrl="/series/{slug}"
+			:usedFilters="usedFilters"
 			:defaultFilters="defaultFilters"
+			:sortOptions="sortOptions"
+			filterRequestUrl="admin/permission/filters"
 	/>
 	<ui-itemBox
 			v-else

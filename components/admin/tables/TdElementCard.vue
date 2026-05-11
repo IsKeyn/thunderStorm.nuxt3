@@ -169,6 +169,7 @@ const viewResult = () => {
 						keyName === 'created_at'
 						|| keyName === 'updated_at'
 						|| keyName === 'deleted_at'
+						|| titleEl.type === 'date'
 				) && item[keyName]"
 		>
 			{{ getFormattedDate('d.m.Y H:i:s', item[keyName]) }}

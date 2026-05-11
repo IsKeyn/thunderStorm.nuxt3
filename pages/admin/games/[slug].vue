@@ -9,6 +9,9 @@ import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const form = ref(
 		{
 			id: {
@@ -190,25 +193,29 @@ const extensions = [
 </script>
 
 <template>
-	<div>
-		<PageHeader
-				:title="title"
-				:breadCrumbs="breadCrumbsArray"
-		/>
-		<CreateEditFormV2
-				:form="form"
-				fetchUrl="admin/game"
-				:additionalFieldsEnable="true"
-				:showTags="true"
-				:showSeo="true"
-				:showMenu="true"
-				:hasResource="true"
-				:useAdditionalData="true"
-				:useBlockEditor="true"
-				:showAdditionalFieldsTab="true"
-				:useVersionList="true"
-				:extensions="extensions"
-				previewUrl="/game/{slug}"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('game.edit')"
+			:form="form"
+			fetchUrl="admin/game"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:showSeo="true"
+			:showMenu="true"
+			:hasResource="true"
+			:useAdditionalData="true"
+			:useBlockEditor="true"
+			:showAdditionalFieldsTab="true"
+			:useVersionList="true"
+			:extensions="extensions"
+			previewUrl="/game/{slug}"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>

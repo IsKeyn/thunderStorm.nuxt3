@@ -23,20 +23,12 @@ const titles = ref(
 				name: 'Название',
 				sortable: true,
 			},
-			slug: {
-				name: 'Slug',
+			system_name: {
+				name: 'Системное наименование',
 				sortable: true,
-			},
-			description: {
-				name: 'Описание',
-				type: 'cutText',
 			},
 			sort: {
 				name: 'Сортировка',
-				sortable: true,
-			},
-			type: {
-				name: 'Тип',
 				sortable: true,
 			},
 			active: {
@@ -44,19 +36,10 @@ const titles = ref(
 				type: 'boolean',
 				sortable: true,
 			},
-			spc_id: {
-				name: 'spc ID',
-				sortable: true,
-			},
-			created_by: {
-				name: 'Кем создан',
-				type: 'EntityList',
-				apiUrl: 'user/list',
-			},
 		}
 );
 
-const title = 'Серии';
+const title = 'Роли';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -78,6 +61,51 @@ const defaultFilters = {
 		sort: "desc",
 	},
 }
+
+const sortOptions = [
+	{
+		name: 'id',
+		value: 'id',
+	},
+	{
+		name: 'Сортировка',
+		value: 'sort',
+	},
+	{
+		name: 'Название',
+		value: 'name',
+	},
+	{
+		name: 'Лайки',
+		value: 'likes',
+	},
+	{
+		name: 'Просмотры',
+		value: 'views',
+	},
+	{
+		name: 'Дата релиза',
+		value: 'date',
+	},
+	{
+		name: 'Дата публикации',
+		value: 'created_at',
+	},
+];
+
+const usedFilters = [
+	{
+		name: 'onlyTrashed',
+		langName: 'Только удаленные',
+		type: 'checkbox',
+	},
+	{
+		name: 'tags',
+		langName: 'Теги',
+		type: 'curtained',
+		requestData: true,
+	},
+];
 </script>
 
 <template>
@@ -86,14 +114,16 @@ const defaultFilters = {
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<ListTableV2
-			v-if="checkPermission('series.edit')"
+			v-if="checkPermission('user.roles.edit')"
 			:titles="titles"
-			fetchUrl="admin/series"
-			entity="series"
+			fetchUrl="admin/role"
+			entity="role"
 			:hasResource="true"
 			:usePagination="true"
-			previewUrl="/series/{slug}"
+			:usedFilters="usedFilters"
 			:defaultFilters="defaultFilters"
+			:sortOptions="sortOptions"
+			filterRequestUrl="admin/role/filters"
 	/>
 	<ui-itemBox
 			v-else

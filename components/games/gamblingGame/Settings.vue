@@ -103,7 +103,7 @@ const updateSettings = () => {
 		dataForUpdate[key] = form.value[key].value;
 	}
 
-	setSettings(dataForUpdate);
+	if (!dontUpdate) setSettings(dataForUpdate);
 	emit("update:modelValue", dataForUpdate);
 }
 

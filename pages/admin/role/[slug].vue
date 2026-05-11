@@ -14,13 +14,6 @@ const { checkPermission } = roles();
 
 const form = ref(
 		{
-			id: {
-				name: 'id',
-				value: null,
-				type: 'notEditable',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]'],
-			},
 			name: {
 				name: 'Название',
 				value: '',
@@ -28,32 +21,16 @@ const form = ref(
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			slug: {
-				name: 'Slug',
+			system_name: {
+				name: 'Системное наименование',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 				autoFill: {
 					sourceFieldKey: 'name',
 					rule: 'slug',
 				},
-			},
-			title_image: {
-				name: 'Титульное изображение',
-				value: null,
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			description: {
-				name: 'Описание',
-				value: '',
-				type: 'textarea',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			sort: {
 				name: 'Сортировка',
@@ -70,40 +47,12 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]'],
 				showTitle: false,
 			},
-			spc_id: {
-				name: 'speedrun.com api',
-				value: null,
-				type: 'text',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			created_by: {
-				name: 'Кем создан',
-				value: '',
-				type: 'EntityList',
-				apiUrl: 'user/list',
-				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			created_at: {
-				name: 'Дата создания',
-				value: null,
-				type: 'notEditable',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			updated_at: {
-				name: 'Дата обновления',
-				value: null,
-				type: 'notEditable',
-				classes: ['w-full', 'mt-[5px]'],
-			},
 		}
 );
 
-
 const pageType = ref('');
 
-const title = 'Жанры';
+const title = 'Роли';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -131,9 +80,11 @@ const breadCrumbsArray = computed(() => {
 
 const extensions = [
 	{
-		name: 'MultiImages',
-		keyForBackend: 'covers',
-		params: null,
+		name: 'Permissions',
+		keyForBackend: 'permissions',
+		params: {
+			additionalDataKeys: ['permissions'],
+		},
 	},
 ];
 </script>
@@ -144,15 +95,14 @@ const extensions = [
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<CreateEditFormV2
-			v-if="checkPermission('genre.edit')"
+			v-if="checkPermission('user.roles.edit')"
 			:form="form"
-			fetchUrl="admin/genre"
+			fetchUrl="admin/role"
 			:additionalFieldsEnable="true"
 			:showTags="true"
-			:showSeo="true"
 			:hasResource="true"
+			:useAdditionalData="true"
 			:showAdditionalFieldsTab="true"
-			previewUrl="/genre/{slug}"
 			:useVersionList="true"
 
 			:extensions="extensions"

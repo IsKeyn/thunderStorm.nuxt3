@@ -3,8 +3,11 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { roles } from '@/composables/roles.js';
 const { checkPermission } = roles();
@@ -12,55 +15,47 @@ const { checkPermission } = roles();
 const form = ref(
 		{
 			name: {
-				name: 'Заголовок',
+				name: 'Название',
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			media_id: {
-				name: 'Медиа',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			url: {
-				name: 'Ссылка',
+			system_name: {
+				name: 'Системное наименование',
 				value: '',
 				type: 'text',
-				validateRules: 'maxLength_255',
+				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			type: {
-				name: 'Тип слайда',
+			entity_type: {
+				name: 'Тип сущности',
 				value: '',
 				type: 'text',
-				validateRules: '',
+				validateRules: 'minLength_3, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			sort: {
+				name: 'Сортировка',
+				value: null,
+				type: 'number',
+				validateRules: 'integer',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			active: {
 				name: 'Активность',
-				value: '',
-				type: 'text',
+				value: true,
+				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
-			},
-			created_by: {
-				name: 'ID автора',
-				value: '',
-				type: 'text',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
 			},
 		}
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Разрешения';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -76,7 +71,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Слайды',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -88,19 +83,23 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				v-if="checkPermission('slide.edit')"
-				:form="form"
-				fetchUrl="admin/slides"
-				:showTags="true"
-				:hasResource="true"
-		/>
-		<ui-itemBox
-				v-else
-				classes="red"
-				message="У вас нет доступа"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('user.permission.edit')"
+			:form="form"
+			fetchUrl="admin/permission"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:hasResource="true"
+			:showAdditionalFieldsTab="true"
+			:useVersionList="true"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>

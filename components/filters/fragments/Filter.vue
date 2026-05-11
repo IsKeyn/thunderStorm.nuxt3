@@ -46,6 +46,11 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	/* Кастомный URL для получения данных фильтра */
+	filterRequestUrl: {
+		type: String,
+		default: null,
+	},
 });
 
 const filterName = props.filterName ? props.filterName : setFilterName([ props.entity ]);
@@ -82,8 +87,10 @@ const {
 				query.active = true
 			}
 
+			const requestUrl = props.filterRequestUrl ? props.filterRequestUrl : `${props.entity}/filters`;
+
 			const response = await Promise.resolve(
-					sendApiRequest(`${props.entity}/filters`, 'GET', query, requestName, '')
+					sendApiRequest(requestUrl, 'GET', query, requestName, '')
 			);
 
 			return response || null;

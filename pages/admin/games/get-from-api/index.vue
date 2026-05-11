@@ -7,6 +7,9 @@ import PageHeader from '@/components/layout/PageHeader.vue';
 import AddGameFromApiForm from '@/components/forms/AddGameFromApiForm.vue';
 import Head from '@/components/seo/Head.vue';
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const route = useRoute();
 
 const title = 'Игры';
@@ -38,7 +41,14 @@ const breadCrumbsArray = computed(() => {
 				:title="title"
 				:breadCrumbs="breadCrumbsArray"
 		/>
-		<AddGameFromApiForm />
+		<AddGameFromApiForm
+				v-if="checkPermission('game.edit')"
+		/>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="У вас нет доступа"
+		/>
 		<Head :seo="{ title: pageTitle  }" />
 	</div>
 </template>

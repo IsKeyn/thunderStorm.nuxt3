@@ -9,6 +9,9 @@ import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const form = ref(
 		{
 			id: {
@@ -168,6 +171,7 @@ const extensions = [
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<CreateEditFormV2
+			v-if="checkPermission('series.edit')"
 			:form="form"
 			fetchUrl="admin/series"
 			:additionalFieldsEnable="true"
@@ -180,5 +184,10 @@ const extensions = [
 
 			:useAdditionalData="true"
 			:extensions="extensions"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
 	/>
 </template>

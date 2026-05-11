@@ -6,6 +6,9 @@ definePageMeta({
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
 import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const form = ref(
 		{
 			id: {
@@ -114,10 +117,16 @@ const breadCrumbsArray = computed(() => {
 	<div>
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
+				v-if="checkPermission('recommend.edit')"
 				:form="form"
 				:showAdditionalFieldsTab="false"
 				:hasResource="true"
 				fetchUrl="admin/recommendation"
+		/>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="У вас нет доступа"
 		/>
 	</div>
 </template>

@@ -59,7 +59,12 @@ const props = defineProps({
 	},
 	disable: {
 		type: Boolean,
-		default: true,
+		default: false,
+	},
+	/* Кастомный URL для получения данных фильтра */
+	filterRequestUrl: {
+		type: String,
+		default: null,
 	},
 });
 
@@ -92,6 +97,7 @@ const { checkHasFilters } = filters();
 					:type="type"
 					:usedFilters="usedFilters"
 					:sortOptions="sortOptions"
+					:filterRequestUrl="filterRequestUrl"
 			/>
 		</OpeningBox>
 

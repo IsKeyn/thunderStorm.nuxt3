@@ -6,6 +6,9 @@ definePageMeta({
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
 import ListTable from '@/components/admin/list/ListTable.vue';
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const titles = ref(
 		{
 			timer_id: {
@@ -51,8 +54,14 @@ const breadCrumbsArray = computed(() => {
 <template>
 	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 	<ListTable
+			v-if="checkPermission('bg.player-timer.edit')"
 		:titles="titles"
 		titleKey="title"
 		fetchUrl="admin/entity/BoardGame/BoardGamePlayerTimer"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
 	/>
 </template>

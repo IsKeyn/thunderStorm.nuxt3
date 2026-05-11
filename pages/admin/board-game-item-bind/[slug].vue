@@ -6,6 +6,9 @@ definePageMeta({
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
 import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const form = ref(
 		{
 			active: {
@@ -76,9 +79,15 @@ const breadCrumbsArray = computed(() => {
 	<div>
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
+				v-if="checkPermission('bg.item-bind.edit')"
 				:form="form"
 				:hasResource="true"
 				fetchUrl="admin/BoardGame/ItemBind"
+		/>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="У вас нет доступа"
 		/>
 	</div>
 </template>

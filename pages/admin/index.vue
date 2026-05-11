@@ -5,6 +5,9 @@ definePageMeta({
 
 import VersionList from '@/components/admin/version/VersionList.vue';
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const titles = {
 	id: {
 		name: 'id',
@@ -51,12 +54,18 @@ const titles = {
 	<div>
 		Главная страница админки
 		<VersionList
+				v-if="checkPermission('admin.index')"
 				title="Список изменений"
 				nullMessage="Изменения не найдены"
 				requestUrl="admin/version"
 				:titles="titles"
 				:perPage="15"
 				:perPageOptionsProp="[15, 30, 45]"
+		/>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="У вас нет доступа"
 		/>
 	</div>
 </template>

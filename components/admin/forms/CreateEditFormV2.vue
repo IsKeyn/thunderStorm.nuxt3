@@ -362,7 +362,7 @@ if (props.previewUrl) {
 
 					:showTags="showTags"
 					:showSeo="showSeo"
-					:showMenu="showSeo"
+					:showMenu="showMenu"
 					:useBlockEditor="useBlockEditor"
 
 					:additionalFieldsEnable="additionalFieldsEnable"

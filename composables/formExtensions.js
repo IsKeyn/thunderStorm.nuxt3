@@ -10,6 +10,8 @@ import Logout from '@/components/forms/formExtensions/Logout.vue';
 import Series from '@/components/forms/formExtensions/Series.vue';
 import Games from '@/components/forms/formExtensions/Games.vue';
 import People from '@/components/forms/formExtensions/People.vue';
+import Roles from '@/components/forms/formExtensions/Roles.vue';
+import Permissions from '@/components/forms/formExtensions/Permissions.vue';
 
 export function formExtensions() {
     const getFormExt = (name) => {
@@ -26,6 +28,8 @@ export function formExtensions() {
             case 'Series': return Series;
             case 'Games': return Games;
             case 'People': return People;
+            case 'Roles': return Roles;
+            case 'Permissions': return Permissions;
         }
     };
 

@@ -2,6 +2,7 @@
 import FileFromGallery from './fragments/FileFromGallery.vue';
 import EntityList from './fragments/EntityList.vue';
 import EntityBind from './fragments/EntityBind.vue';
+import JsonEditor from './fragments/JsonEditor.vue';
 import SelectWithSearch from '@/components/forms/fragments/SelectWithSearch.vue';
 
 import { watch } from 'vue'
@@ -467,6 +468,9 @@ const copyValue = () => {
 				>
 					{{ option.name }}
 				</option>
+				<option v-if="!element.options.some(item => item.value === element.value)">
+					{{ element.value }}
+				</option>
 			</select>
 		</template>
 		<template v-else-if="element.type === 'select-with-search'">
@@ -480,6 +484,11 @@ const copyValue = () => {
 					:options="element.options"
 					v-model="element.value"
 					:multiSelect="true"
+			/>
+		</template>
+		<template v-else-if="element.type === 'json'">
+			<JsonEditor
+					v-model="element.value"
 			/>
 		</template>
 		<template v-else-if="element.type === 'fileFromGallery'">

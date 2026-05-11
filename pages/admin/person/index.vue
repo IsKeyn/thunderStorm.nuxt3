@@ -9,6 +9,9 @@ import ListTableV2 from '@/components/admin/list/ListTableV2.vue';
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const titles = ref(
 		{
 			id: {
@@ -77,6 +80,7 @@ const defaultFilters = {
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<ListTableV2
+			v-if="checkPermission('person.edit')"
 			:titles="titles"
 			fetchUrl="admin/person"
 			entity="person"
@@ -84,5 +88,10 @@ const defaultFilters = {
 			:usePagination="true"
 			previewUrl="/person/{slug}"
 			:defaultFilters="defaultFilters"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
 	/>
 </template>

@@ -9,6 +9,9 @@ import ListTableV2 from '@/components/admin/list/ListTableV2.vue';
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const titles = ref(
 		{
 			id: {
@@ -161,6 +164,7 @@ const sortOptions = [
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<ListTableV2
+		v-if="checkPermission('game.edit')"
 		:titles="titles"
 		fetchUrl="admin/game"
 		entity="game"
@@ -176,5 +180,10 @@ const sortOptions = [
 		:defaultFilters="defaultFilters"
 		:sortOptions="sortOptions"
 		previewUrl="/game/{slug}"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
 	/>
 </template>

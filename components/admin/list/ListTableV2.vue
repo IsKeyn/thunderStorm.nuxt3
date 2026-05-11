@@ -125,7 +125,11 @@ const props = defineProps({
 	sortOptions: {
 		type: Array,
 		default: [],
-	}
+	},
+	filterRequestUrl: { // Кастомный URL для получения данных фильтра
+		type: String,
+		default: null,
+	},
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
@@ -397,6 +401,7 @@ const sendRequestForForceDeleteElement = async (id) => {
 				:filterName="filterName"
 				:usedFilters="usedFilters"
 				:sortOptions="sortOptions"
+				:filterRequestUrl="filterRequestUrl"
 		/>
 		<div v-if="fetchedData && fetchedData.length > 0">
 			<div class="relative">

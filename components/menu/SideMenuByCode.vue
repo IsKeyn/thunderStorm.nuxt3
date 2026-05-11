@@ -1,10 +1,11 @@
 <script setup>
-
-
 import { computed } from "vue";
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
+
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
 
 const props = defineProps({
 	code: {
@@ -45,14 +46,18 @@ const sideMenuObj = computed(() => {
 
 	if (fetchedData.value) {
 		fetchedData.value.forEach((item) => {
-			if (item.group) {
-				returnData.push({
-					name: item.name,
-					icon: item.group_icon,
-					group: setMenuElementsArray(item.elements),
-				});
-			} else {
-				returnData = returnData.concat(setMenuElementsArray(item.elements));
+			const menuElementsArray = setMenuElementsArray(item.elements);
+
+			if (menuElementsArray.length) {
+				if (item.group) {
+					returnData.push({
+						name: item.name,
+						icon: item.group_icon,
+						group: menuElementsArray,
+					});
+				} else {
+					returnData = returnData.concat(menuElementsArray);
+				}
 			}
 		});
 	}
@@ -64,11 +69,27 @@ const setMenuElementsArray = (elements) => {
 	let returnData = [];
 
 	elements.forEach((element) => {
-		returnData.push({
-			name: element.name,
-			path: element.url,
-			icon: element.icon,
-		});
+		let addElement = true;
+
+		if (element?.permissions?.length) {
+			const permissionList = [];
+
+			element.permissions.forEach((item) => {
+				permissionList.push(item.system_name);
+			});
+
+			if (!checkPermission(permissionList)) {
+				addElement = false;
+			}
+		}
+
+		if (addElement) {
+			returnData.push({
+				name: element.name,
+				path: element.url,
+				icon: element.icon,
+			});
+		}
 	});
 
 	return returnData;
