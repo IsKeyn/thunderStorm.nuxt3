@@ -397,7 +397,7 @@ const sendRequestForForceDeleteElement = async (id) => {
 		<ResponseErrorsComponent :responseErrors="responseErrors" />
 		<SearchFilterSort
 				:entity="props.entity"
-				:total="paginationData.total"
+				:total="paginationData?.total"
 				:filterName="filterName"
 				:usedFilters="usedFilters"
 				:sortOptions="sortOptions"
