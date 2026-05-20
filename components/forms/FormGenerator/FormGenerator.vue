@@ -122,6 +122,7 @@ const props = defineProps({
 const label = ref(null);
 
 const previewImage = ref('');
+const bindValues = ref({});
 
 watch(() => props.element.value, (newValue) => {
 	if (newValue && props.name === 'phone') {
@@ -139,7 +140,7 @@ watch(() => props.element.value, (newValue) => {
 			bindValues.value.id = props.form[props.element.bindField].value;
 		}
 	}
-}, { deep: true });
+}, { deep: true, immediate: true });
 
 watch(() => props.element.validateResult, (newValue) => {
 	if (newValue && newValue.length > 0) {
@@ -241,8 +242,6 @@ const currentLength = computed(() => {
 });
 
 /* НАЧАЛО: Laravel привязка сущности тип EntityBind */
-const bindValues = ref({});
-
 watch(() => bindValues.value, () => {
 	if (props.element.type === 'EntityBind') {
 		props.element.value = bindValues.value.entity;
