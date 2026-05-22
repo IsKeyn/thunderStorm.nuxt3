@@ -17,9 +17,13 @@ const { getFormattedDate } = date();
 import { api } from '@/composables/api.js'
 const { sendApiRequest } = api();
 
+const requestInProgress = ref(false);
+
 const setViewed = async (id) => {
- await sendApiRequest('auth/notification/set-viewed', 'POST', { id }, 'setUserNotificationLikeViewed', 'small');
- emit('updateData');
+	requestInProgress.value = true;
+	await sendApiRequest('auth/notification/set-viewed', 'POST', { id }, 'setUserNotificationLikeViewed', 'small');
+	requestInProgress.value = false;
+	emit('updateData');
 }
 
 const redirect = (page) => {
@@ -29,8 +33,14 @@ const redirect = (page) => {
 </script>
 
 <template>
-	<div :class="['item-box', notification.viewed ? '' : 'not-viewed']">
-		<div class="info">
+	<div	class="relative">
+		<ui-fragments-DisableBox
+				v-if="requestInProgress"
+				:showIcon="false"
+				message="Отмечаю как прочитанное..."
+		/>
+		<div :class="['item-box', notification.viewed ? '' : 'not-viewed']">
+			<div class="info">
 			<span class="header">
 				<span class="date">
 					{{ getFormattedDate('d.m.Y H:i', notification.created_at) }}
@@ -51,7 +61,7 @@ const redirect = (page) => {
 					</span>
 				</span>
 			</span>
-			<span class="description">
+				<span class="description">
 				<span class="block">{{ notification.message }}</span>
 				<div v-if="notification.actions">
 					<div
@@ -71,6 +81,7 @@ const redirect = (page) => {
 					</div>
 				</div>
 			</span>
+			</div>
 		</div>
 	</div>
 </template>

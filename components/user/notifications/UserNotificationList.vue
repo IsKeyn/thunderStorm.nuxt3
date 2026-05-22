@@ -1,86 +1,142 @@
 <script setup>
 import UserNotificationCard from '@/components/user/notifications/UserNotificationCard.vue';
+import Pagination from '@/components/navigation/Pagination.vue';
 
 const emit = defineEmits(['loadingToggle', 'toggleModal']);
 
-import { notifications } from '@/composables/notifications.js';
-const { alert, error } = notifications();
+import { computed, onMounted, onUnmounted, ref } from "vue";
+
+const runtimeConfig = useRuntimeConfig();
+
+const { subscribe, unsubscribe } = useWebSocket();
 
 import { api } from '@/composables/api.js'
-const {
-	apiUrl,
-	publicUrl,
-	sessionCookieName,
-	errorHandler,
-	sendApiRequest,
-} = api();
+const { sendApiRequest } = api();
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
-import { userNotification } from '@/composables/userNotification.js';
+const props = defineProps({
+	perPage: {
+		type: Number,
+		default: 10,
+	},
+});
+
+import { pagination } from '@/composables/ui/pagination.js'
 const {
-	setUserNotification
-} = userNotification();
+	page,
+	perPage,
+	setRefresh,
+	changePage,
+	setPerPage
+} = pagination(props.perPage);
 
-const fetchedData = ref([]);
-const requestInProgress = ref(false);
+const requestName = 'user_notification_list';
+const hiddenRefresh = ref(false);
 
-const { refresh } = await useAsyncData(
+const {
+	data: requestData,
+	pending: requestInProgress,
+	refresh
+} = await useAsyncData(
+		requestName,
 		async () => {
-			let request = `${apiUrl.value}auth/notification/get`;
+			const query = {
+				page: page.value,
+				perPage: perPage.value,
+			};
 
-			const query = {};
+			const response = await Promise.resolve(
+					sendApiRequest('auth/notification/get', 'GET', query, requestName, '')
+			);
 
-			const sessionCookie = useCookie(sessionCookieName.value);
+			emit('loadingToggle');
 
-			requestInProgress.value = true;
+			if (hiddenRefresh.value) hiddenRefresh.value = false;
 
-			try {
-				await $fetch(
-						request,
-						{
-							method: 'GET',
-							credentials: 'include',
-							query,
-							headers: {
-								Accept: 'application/json',
-								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-								Referer: publicUrl.value,
-							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									fetchedData.value = response._data.data;
-									setUserNotification(fetchedData.value.filter((item) => !item.viewed).length);
-								} else {
-									error('request error', 5000);
-								}
-
-								requestInProgress.value = false;
-								emit('loadingToggle');
-							}
-						},
-				);
-			} catch (e) {
-				errorHandler(e);
-				requestInProgress.value = false;
-				emit('loadingToggle');
-			}
+			return response || null;
+		},
+		{
+			server: true,
+			lazy: true,
 		}
 );
 
+const notifications = ref([]);
+
+watch(() => requestData.value?.data, (newData) => {
+	if (newData) {
+		notifications.value = newData
+	}
+}, { immediate: true })
+
+const fetchedData = computed(() => notifications.value);
+const paginationData = computed(() => requestData.value?.meta || null);
+
+// Передаем функцию refresh в композабл pagination
+setRefresh(refresh);
+
 const updateData = () => {
+	hiddenRefresh.value = true;
 	refresh();
 }
 
 const setAllLikeViewed = async () => {
+	requestInProgress.value = true;
 	await sendApiRequest('auth/notification/set-viewed-all', 'POST', {}, 'setAllNotificationLikeViewed');
 	updateData();
 }
+
+onMounted(async () => {
+	if (runtimeConfig.public.hasWebSockedServer) {
+		const userId = userStore.user?.id;
+		const MAX_ITEMS = perPage.value;
+
+		const { unsubscribe: stop, subscriptionId } = subscribe(
+				`App.Models.User.${userId}`,
+				'NotificationCreated',
+				(e) => {
+			const newNotification = e?.notification || e?.data || e;
+
+			if (newNotification?.id) {
+				// Проверка на дубликаты
+				const exists = notifications.value.some(n => n.id === newNotification.id);
+
+				if (!exists) {
+					// Создаём новый массив: новый элемент + старые
+					const updatedList = [newNotification, ...notifications.value];
+
+					// Если превысили лимит — обрезаем последний элемент
+					if (updatedList.length > MAX_ITEMS) {
+						updatedList.pop(); // удаляем последний элемент (самый старый на странице)
+					}
+
+					notifications.value = updatedList;
+
+					// Опционально: обновить пагинацию, если нужно
+					if (paginationData.value && page.value === 1) {
+						// Можно увеличить total, если сервер не шлёт актуальное значение
+						paginationData.value.total = Math.min(
+						  (paginationData.value.total || 0) + 1,
+						  MAX_ITEMS * totalPages
+						);
+					}
+				}
+			}
+		});
+	}
+});
 </script>
 
 <template>
-	<div v-if="fetchedData.length > 0">
+	<ui-BigPreloader
+			v-if="requestInProgress && !hiddenRefresh"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
+	<div v-else-if="fetchedData?.length">
 		<button
 				class="btn btn-simple"
 				@click="setAllLikeViewed"
@@ -91,6 +147,15 @@ const setAllLikeViewed = async () => {
 				:notification="item"
 				@updateData="updateData"
 				@toggleModal="emit('toggleModal')"
+		/>
+		<Pagination
+				v-if="paginationData"
+				:pagination="paginationData"
+				:navigationButtons="true"
+				:perPageOptionsProp="[10, 20, 30]"
+				:setQueryParams="false"
+				@changePage="changePage"
+				@setPerPage="setPerPage"
 		/>
 	</div>
 	<div v-else class="item-box">

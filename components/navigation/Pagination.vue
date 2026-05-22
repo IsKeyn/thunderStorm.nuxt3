@@ -40,6 +40,10 @@ const props = defineProps({
 	perPageOptionsProp: {
 		type: Array,
 		default: () => [10, 25, 50],
+	},
+	setQueryParams: {
+		type: Boolean,
+		default: true,
 	}
 });
 
@@ -80,29 +84,33 @@ const paginationObj = computed(() => {
 const changePage = (page) => {
 	if (props.pagination.current_page !== page) {
 		if (props.table) {
-			const getParam = `${props.table}_page`;
+			if (props.setQueryParams) {
+				const getParam = `${props.table}_page`;
 
-			const query = {
-				...route.query,
-			};
+				const query = {
+					...route.query,
+				};
 
-			query[getParam] = page;
+				query[getParam] = page;
 
-			router.push({
-				name: route.name,
-				query,
-			});
+				router.push({
+					name: route.name,
+					query,
+				});
+			}
 
 			props.pagination.current_page = page;
 			emit('changePage', page, props.table);
 		} else {
-			router.push({
-				name: route.name,
-				query: {
-					...route.query,
-					page: page,
-				},
-			});
+			if (props.setQueryParams) {
+				router.push({
+					name: route.name,
+					query: {
+						...route.query,
+						page: page,
+					},
+				});
+			}
 
 			props.pagination.current_page = page;
 			emit('changePage', page);
@@ -119,29 +127,33 @@ const changePagination = (perPage) => {
 		}
 
 		if (props.table) {
-			const getParam = `${props.table}_perPage`;
+			if (props.setQueryParams) {
+				const getParam = `${props.table}_perPage`;
 
-			const query = {
-				...route.query,
-			};
+				const query = {
+					...route.query,
+				};
 
-			query[getParam] = perPage;
+				query[getParam] = perPage;
 
-			router.push({
-				name: route.name,
-				query,
-			});
+				router.push({
+					name: route.name,
+					query,
+				});
+			}
 
 			props.pagination.per_page = perPage;
 			emit('setPerPage', perPage,  props.table);
 		} else {
-			router.push({
-				name: route.name,
-				query: {
-					...route.query,
-					perPage: perPage,
-				},
-			});
+			if (props.setQueryParams) {
+				router.push({
+					name: route.name,
+					query: {
+						...route.query,
+						perPage: perPage,
+					},
+				});
+			}
 
 			props.pagination.per_page = perPage;
 			emit('setPerPage', perPage);
@@ -232,7 +244,9 @@ const setPage = () => {
 }
 
 watch(() => props.pagination, () => {
-	setQueryPage(props.pagination.current_page);
+	if (props.setQueryParams) {
+		setQueryPage(props.pagination.current_page);
+	}
 }, { deep: true });
 </script>
 

@@ -36,7 +36,12 @@ defineExpose({
 		<div class="modal-parent">
 			<h3 class="modal-title">Уведомления</h3>
 			<div class="link-parent-box">
-				<ui-BigPreloader v-if="modalLoading" />
+				<ui-BigPreloader
+						v-if="modalLoading"
+						class="h-full"
+						theme="image"
+						:themeType="9"
+				/>
 				<UserNotificationList
 						v-show="!modalLoading"
 						@loadingToggle="loadingToggle"

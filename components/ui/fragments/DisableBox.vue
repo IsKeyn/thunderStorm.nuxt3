@@ -14,6 +14,7 @@ const props = defineProps({
 <template>
 	<div class="disable-box">
 		<span v-if="showIcon" class="icon"><font-awesome-icon :icon="['fas', 'xmark']" /></span>
+		<Preloader v-if="showPreloader" />
 		<div class="message" v-if="message">{{ message }}</div>
 	</div>
 </template>

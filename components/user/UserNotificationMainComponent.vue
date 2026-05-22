@@ -2,6 +2,12 @@
 import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
 import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
 
+import { onMounted, onUnmounted } from 'vue'
+
+const runtimeConfig = useRuntimeConfig();
+
+const { subscribe, unsubscribe } = useWebSocket();
+
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
@@ -10,22 +16,35 @@ const {
 	userNotificationModalRef,
 	userMessagesModalRef,
 	getAllNotifications,
+	setUserNotification,
 } = userNotificationMain();
 
-import { onMounted } from 'vue'
-
-onMounted(() => {
-	if (Object.keys(userStore.user).length > 0) {
+onMounted(async () => {
+	if (Object.keys(userStore.user).length) {
 		getAllNotifications();
 
-		setInterval(() => {
-			getAllNotifications();
-		}, 30000);
+		if (runtimeConfig.public.hasWebSockedServer) {
+			const userId = userStore.user?.id;
+
+			const { unsubscribe: stop, subscriptionId } = subscribe(
+					`App.Models.User.${userId}`,
+					'NotificationCount',
+					(data) => {
+						setUserNotification(data);
+					}
+			);
+		} else {
+			setInterval(() => {
+				getAllNotifications();
+			}, 10000);
+		}
 	}
-})
+});
 </script>
 
 <template>
-	<UserNotificationModal ref="userNotificationModalRef" />
-	<UserMessagesModal ref="userMessagesModalRef" />
+	<div>
+		<UserNotificationModal ref="userNotificationModalRef" />
+		<UserMessagesModal ref="userMessagesModalRef" />
+	</div>
 </template>

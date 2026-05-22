@@ -3,8 +3,11 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import ListTable from '@/components/admin/list/ListTable.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import ListTableV2 from '@/components/admin/list/ListTableV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { roles } from '@/composables/roles.js';
 const { checkPermission } = roles();
@@ -13,33 +16,53 @@ const titles = ref(
 		{
 			id: {
 				name: 'id',
+				sortable: true,
+				type: 'rounded-box',
 			},
 			user_id: {
 				name: 'UserId',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				sortable: true,
 			},
 			message: {
 				name: 'Сообщение',
+				sortable: true,
 			},
 			viewed: {
 				name: 'Просмотрено',
+				type: 'boolean',
+				sortable: true,
+			},
+			entity_type: {
+				name: 'entity_type',
+				sortable: true,
+			},
+			entity_id: {
+				name: 'entity_id',
+				type: 'rounded-box',
+				sortable: true,
+			},
+			sort: {
+				name: 'Сортировка',
+				sortable: true,
 			},
 			created_by: {
 				name: 'Создан',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				sortable: true,
+			},
+			created_at: {
+				name: 'Дата создания',
+				sortable: true,
 			},
 		}
 );
 
-const pageType = ref('');
-const route = useRoute();
-
+const title = 'Оповещения';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
-
-	if (Number.isInteger(Number(route.params.slug))) {
-		pageType.value = 'update';
-	} else if (route.params.slug === 'create') {
-		pageType.value = 'create';
-	}
 
 	return [
 		{
@@ -47,20 +70,82 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Оповещения',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
 });
+
+
+const defaultFilters = {
+	sort: {
+		field: "id",
+		sort: "desc",
+	},
+}
+
+const sortOptions = [
+	{
+		name: 'id',
+		value: 'id',
+	},
+	{
+		name: 'Сортировка',
+		value: 'sort',
+	},
+	{
+		name: 'Название',
+		value: 'name',
+	},
+	{
+		name: 'Лайки',
+		value: 'likes',
+	},
+	{
+		name: 'Просмотры',
+		value: 'views',
+	},
+	{
+		name: 'Дата релиза',
+		value: 'date',
+	},
+	{
+		name: 'Дата публикации',
+		value: 'created_at',
+	},
+];
+
+const usedFilters = [
+	{
+		name: 'onlyTrashed',
+		langName: 'Только удаленные',
+		type: 'checkbox',
+	},
+	{
+		name: 'tags',
+		langName: 'Теги',
+		type: 'curtained',
+		requestData: true,
+	},
+];
 </script>
 
 <template>
-	<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-	<ListTable
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<ListTableV2
 			v-if="checkPermission('user.notification.edit')"
-		:titles="titles"
-		titleKey="title"
-		fetchUrl="admin/entity/User/Notification"
+			:titles="titles"
+			fetchUrl="admin/notification"
+			entity="notification"
+			:hasResource="true"
+			:usePagination="true"
+			:usedFilters="usedFilters"
+			:defaultFilters="defaultFilters"
+			:sortOptions="sortOptions"
+			filterRequestUrl="admin/notification/filters"
 	/>
 	<ui-itemBox
 			v-else

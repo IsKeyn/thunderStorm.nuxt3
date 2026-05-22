@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import { hasInjectionContext, useCookie } from '#imports';
+import { useCookie } from '#imports';
 import { useLoadStateStore } from '@/stores/loadState';
 
 export function api() {
@@ -13,8 +13,8 @@ export function api() {
 
     const sessionCookieName = computed(() => runtimeConfig.public.sessionCookieName);
 
-    const getCsrfCookie = async () => {
-        if (useCookie('XSRF-TOKEN').value) {
+    const getCsrfCookie = async (updateToken = false) => {
+        if (!updateToken && useCookie('XSRF-TOKEN').value) {
             return useCookie('XSRF-TOKEN');
         } else {
             try {
@@ -37,7 +37,7 @@ export function api() {
         }
     };
 
-    const errorHandler = async (e, show404page = false) => {
+    const errorHandler = async (e, show404page = false, showError = true) => {
         const notificationsModule = await import("@/composables/notifications.js");
         const { alert, error } = notificationsModule.notifications();
 
@@ -51,7 +51,7 @@ export function api() {
                     }
                     break;
                 case 500:
-                    error('Серверная ошибка', 3000);
+                    if (showError) error('Серверная ошибка', 3000);
                     break;
                 case 401:
                     error('Для выполенния запроса необходимо авторизоваться', 3000);
@@ -60,29 +60,31 @@ export function api() {
                     if (show404page) {
                         show404pageFunc();
                     } else {
-                        error('Ошибка 404', 3000);
+                        if (showError) error('Ошибка 404', 3000);
                     }
                     break;
                 case 405:
-                    error('Ошибка 405', 3000);
+                    if (showError)  error('Ошибка 405', 3000);
                     break;
                 default:
-                    error('Повтори попытку', 3000);
+                    if (showError) error('Повтори попытку', 3000);
                     break;
             }
 
-            if (e.response._data?.errors && Object.keys(e.response._data?.errors).length) {
-                for (const [key, err] of Object.entries(e.response._data?.errors)) {
-                    if (err !== null && typeof err === 'object') {
-                        err.forEach((message) => {
-                            error(message);
-                        });
-                    } else {
-                        error(err);
+            if (showError) {
+                if (e.response._data?.errors && Object.keys(e.response._data?.errors).length) {
+                    for (const [key, err] of Object.entries(e.response._data?.errors)) {
+                        if (err !== null && typeof err === 'object') {
+                            err.forEach((message) => {
+                                error(message);
+                            });
+                        } else {
+                            error(err);
+                        }
                     }
+                } else if (e.response._data?.message) {
+                    error(e.response._data?.message);
                 }
-            } else if (e.response._data?.message) {
-                error(e.response._data?.message);
             }
         } else {
             console.log(e);
@@ -121,7 +123,9 @@ export function api() {
         preloaderType = null, // fullscreen, fullscreenTransparent, small
         loadListType = 'useAsyncData',
         lazy = false,
-        show404page = false
+        show404page = false,
+        customRequestUrl = null,
+        showError = true,
     ) => {
         const loadState = useLoadStateStore();
 
@@ -138,7 +142,7 @@ export function api() {
                 };
             }
 
-            const request = `${apiUrl.value}${url}`;
+            const request = customRequestUrl ? customRequestUrl : `${apiUrl.value}${url}`;
             const headers = {
                 Accept: 'application/json',
                 Referer: publicUrl.value,
@@ -190,7 +194,7 @@ export function api() {
                 loadState.loadList[requestName].status = 'error';
             }
 
-            responseErrors.value = errorHandler(e, show404page)
+            responseErrors.value = errorHandler(e, show404page, showError)
         }
     }
 
