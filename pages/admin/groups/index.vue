@@ -3,8 +3,11 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import ListTable from '@/components/admin/list/ListTable.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import ListTableV2 from '@/components/admin/list/ListTableV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { roles } from '@/composables/roles.js';
 const { checkPermission } = roles();
@@ -13,33 +16,43 @@ const titles = ref(
 		{
 			id: {
 				name: 'id',
+				sortable: true,
+				type: 'rounded-box',
 			},
 			name: {
 				name: 'Наименование',
+				sortable: true,
 			},
 			slug: {
 				name: 'Slug',
+				sortable: true,
 			},
 			entity_type: {
 				name: 'Сущность',
+				sortable: true,
 			},
 			description: {
 				name: 'Описание',
+				type: 'cutText',
+				sortable: true,
+			},
+			sort: {
+				name: 'Сортировка',
+				sortable: true,
+			},
+			active: {
+				name: 'Активность',
+				type: 'boolean',
+				sortable: true,
 			},
 		}
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Группы';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
-
-	if (Number.isInteger(Number(route.params.slug))) {
-		pageType.value = 'update';
-	} else if (route.params.slug === 'create') {
-		pageType.value = 'create';
-	}
 
 	return [
 		{
@@ -47,25 +60,85 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Роль компании',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 	];
 });
+
+const defaultFilters = {
+	sort: {
+		field: "id",
+		sort: "desc",
+	},
+}
+
+const sortOptions = [
+	{
+		name: 'id',
+		value: 'id',
+	},
+	{
+		name: 'Сортировка',
+		value: 'sort',
+	},
+	{
+		name: 'Название',
+		value: 'name',
+	},
+	{
+		name: 'Лайки',
+		value: 'likes',
+	},
+	{
+		name: 'Просмотры',
+		value: 'views',
+	},
+	{
+		name: 'Дата релиза',
+		value: 'date',
+	},
+	{
+		name: 'Дата публикации',
+		value: 'created_at',
+	},
+];
+
+const usedFilters = [
+	{
+		name: 'onlyTrashed',
+		langName: 'Только удаленные',
+		type: 'checkbox',
+	},
+	{
+		name: 'tags',
+		langName: 'Теги',
+		type: 'curtained',
+		requestData: true,
+	},
+];
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<ListTable
-				v-if="checkPermission('group.edit')"
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<ListTableV2
+			v-if="checkPermission('group.edit')"
 			:titles="titles"
-			fetchUrl="admin/entity/Group"
-		/>
-		<ui-itemBox
-				v-else
-				classes="red"
-				message="У вас нет доступа"
-		/>
-	</div>
+			fetchUrl="admin/group"
+			entity="group"
+			:hasResource="true"
+			:usePagination="true"
+			:usedFilters="usedFilters"
+			:defaultFilters="defaultFilters"
+			:sortOptions="sortOptions"
+			filterRequestUrl="admin/group/filters"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>
