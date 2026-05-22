@@ -235,7 +235,7 @@ const dataByGroups = computed(() => {
 			theme="image"
 			:themeType="9"
 	/>
-	<div v-else-if="fetchedData && fetchedData.length > 0">
+	<div v-else-if="fetchedData && fetchedData.length">
 		<template v-if="useGroups">
 			<div v-if="dataByGroups">
 					<div class="group" v-for="(group) in dataByGroups">

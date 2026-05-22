@@ -13,6 +13,7 @@ import PublicRecommendation from '@/components/recommendation/PublicRecommendati
 import PeopleList from '@/components/entity/fragments/PeopleList.vue';
 import SeriesList from '@/components/entity/fragments/SeriesList.vue';
 import GamesList from '@/components/entity/fragments/GamesList.vue';
+import GamesListByGroup from '@/components/entity/fragments/GamesListByGroup.vue';
 
 import { computed, provide, ref } from "vue";
 
@@ -30,6 +31,10 @@ const props = defineProps({
 	title: {
 		type: String,
 		default: 'Игры',
+	},
+	gameListTheme: {
+		type: String,
+		default: 'slider',
 	},
 });
 
@@ -137,7 +142,7 @@ const getSlotName = (n) => `slot-${n + 1}`;
 				<div class="line-block" v-html="fetchedData.description" />
 
 				<GamesList
-						v-if="fetchedData.games && fetchedData.games.length"
+						v-if="gameListTheme === 'slider' && fetchedData.games && fetchedData.games.length"
 						:data="fetchedData.games"
 						:entity="entity"
 				/>
@@ -172,6 +177,11 @@ const getSlotName = (n) => `slot-${n + 1}`;
 		</div>
 
 		<div class="article-footer">
+			<GamesListByGroup
+					v-if="gameListTheme === 'byGroup' && fetchedData.games && fetchedData.games.length"
+					:data="fetchedData.games"
+					:entity="entity"
+			/>
 			<template v-if="fetchedData?.boardGames && fetchedData.boardGames.length > 0">
 				<span class="field"><span class="strong">Присутствует в ивентах:</span></span>
 				<SliderWithSlots :count="fetchedData.boardGames.length">

@@ -6,6 +6,7 @@ import Detail from '@/components/entity/Detail.vue';
 	<Detail
 			entity="series"
 			title="Серия"
+			gameListTheme="byGroup"
 	/>
 </template>
 

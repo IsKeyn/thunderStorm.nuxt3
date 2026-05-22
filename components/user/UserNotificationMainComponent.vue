@@ -2,7 +2,7 @@
 import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
 import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
 
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted } from 'vue'
 
 const runtimeConfig = useRuntimeConfig();
 
