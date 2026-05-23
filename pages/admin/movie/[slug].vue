@@ -28,15 +28,6 @@ const form = ref(
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			title_image: {
-				name: 'Титульное изображение',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
 			slug: {
 				name: 'Slug',
 				value: '',
@@ -47,6 +38,15 @@ const form = ref(
 					sourceFieldKey: 'name',
 					rule: 'slug',
 				},
+			},
+			title_image: {
+				name: 'Титульное изображение',
+				value: '',
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
 			},
 			created_at: {
 				name: 'Дата создания',

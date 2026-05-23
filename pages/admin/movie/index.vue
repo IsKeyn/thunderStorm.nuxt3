@@ -30,11 +30,6 @@ const titles = ref(
 			description: {
 				name: 'Описание',
 				type: 'cutText',
-				sortable: true,
-			},
-			description: {
-				name: 'Описание',
-				type: 'cutText',
 			},
 			title_image: {
 				name: 'Титульное изображение',
@@ -51,7 +46,6 @@ const titles = ref(
 			},
 		}
 );
-
 
 const pageType = ref('');
 

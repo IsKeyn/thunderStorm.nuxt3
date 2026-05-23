@@ -222,11 +222,11 @@ const routeTo = (url) => {
 
 .image-box {
 	@apply
-	relative
-	flex justify-center items-center
-	h-[350px]
-	truncate
-	cursor-pointer
+		relative
+		flex justify-center items-center
+		h-[350px]
+		truncate
+		cursor-pointer
 	;
 
 	.article-image {
