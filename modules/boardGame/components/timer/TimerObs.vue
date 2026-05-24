@@ -1,21 +1,45 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
 
+const { subscribe, unsubscribe } = useWebSocket();
+
+const runtimeConfig = useRuntimeConfig();
+
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const getStatusInterval = ref(null);
 
 onMounted(() => {
 	getTimerStatus();
 
-	getStatusInterval.value = setInterval(() => {
-		getTimerStatus();
-	}, 7000);
+	if (runtimeConfig.public.hasWebSockedServer) {
+		let channelName = 'timer';
+
+		channelName += `.${route.query.bg_slug}.${route.query.user_id}.${route.query.slug}`;
+
+		const { unsubscribe: stop, subscriptionId } = subscribe(
+				channelName,
+				'TimerStatusToggle',
+				(data) => {
+					statusHandler(data);
+				},
+				'public'
+		);
+	} else {
+		getStatusInterval.value = setInterval(() => {
+			getTimerStatus();
+		}, 7000);
+	}
 });
 
 onUnmounted(() => {
-	clearInterval(getStatusInterval.value);
+	if (!runtimeConfig.public.hasWebSockedServer) {
+		clearInterval(getStatusInterval.value);
+	}
 });
 
 const showMessage = ref('');
@@ -26,8 +50,6 @@ const timerName = ref('');
 const isRunning = ref(null);
 
 const timerInterval = ref(null);
-
-const route = useRoute();
 
 const getTimerStatus = async () => {
 	try {
@@ -40,34 +62,7 @@ const getTimerStatus = async () => {
 		const response = await sendApiRequest(`board-game/timer/status`, 'POST', body);
 
 		if (response) {
-			if (response.error) {
-				showMessage.value = response.error;
-			} else {
-				if (!route.query.hideTitle) {
-					timerName.value = response.name;
-				}
-
-				if (response.active !== isRunning.value) {
-					if (typeof response.time === 'number') {
-						seconds.value = response.time;
-					}
-
-					if (response.active) {
-						isRunning.value = true;
-						if (!timerInterval.value) {
-							timerInterval.value = setInterval(() => {
-								seconds.value++
-							}, 1000);
-						}
-					} else {
-						isRunning.value = false;
-						clearInterval(timerInterval.value);
-						timerInterval.value = null;
-					}
-				} else if (typeof response.time === 'number' && (isRunning.value === false || isRunning.value === null)) {
-					seconds.value = response.time;
-				}
-			}
+			statusHandler(response);
 		} else {
 			showMessage.value = 'Произошла ошибка';
 		}
@@ -76,10 +71,41 @@ const getTimerStatus = async () => {
 	}
 }
 
+const statusHandler = (data) => {
+	if (data.error) {
+		showMessage.value = data.error;
+	} else {
+		if (!route.query.hideTitle) {
+			timerName.value = data.name;
+		}
+
+		if (data.active !== isRunning.value) {
+			if (typeof data.time === 'number') {
+				seconds.value = data.time;
+			}
+
+			if (data.active) {
+				isRunning.value = true;
+				if (!timerInterval.value) {
+					timerInterval.value = setInterval(() => {
+						seconds.value++
+					}, 1000);
+				}
+			} else {
+				isRunning.value = false;
+				clearInterval(timerInterval.value);
+				timerInterval.value = null;
+			}
+		} else if (typeof data.time === 'number' && (isRunning.value === false || isRunning.value === null)) {
+			seconds.value = data.time;
+		}
+	}
+}
+
 const formattedTime = computed(() => {
 	const hours = Math.floor(seconds.value / 3600)
 	const minutes = Math.floor((seconds.value % 3600) / 60)
-	const secs = seconds.value % 60
+	const secs = Math.floor(seconds.value % 60);
 
 	return [
 		hours.toString().padStart(2, '0'),

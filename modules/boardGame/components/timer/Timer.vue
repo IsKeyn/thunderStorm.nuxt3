@@ -6,19 +6,24 @@ const emit = defineEmits(['updateTimerList']);
 
 import { ref, computed, onBeforeUnmount, onMounted, onUnmounted, watch } from 'vue'
 
-const route = useRoute();
+const { subscribe, unsubscribe } = useWebSocket();
+
+const runtimeConfig = useRuntimeConfig();
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
 import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody, publicUrl } = api();
+const { sendApiRequest, publicUrl } = api();
 
 import { notifications } from '@/composables/notifications.js';
 const { alert, error, choiceAlert } = notifications();
 
 import { boardGameLog } from '@/composables/BoardGame/boardGameLog.js'
 const { setLog } = boardGameLog();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const props = defineProps({
 	userId: {
@@ -95,7 +100,7 @@ const status = ref(null);
 const formattedTime = computed(() => {
 	const hours = Math.floor(seconds.value / 3600)
 	const minutes = Math.floor((seconds.value % 3600) / 60)
-	const secs = seconds.value % 60
+	const secs = Math.floor(seconds.value % 60);
 
 	return [
 		hours.toString().padStart(2, '0'),
@@ -115,9 +120,21 @@ const getStatusInterval = ref(null);
 onMounted(() => {
 	getTimerStatus();
 
-	// getStatusInterval.value = setInterval(() => {
-	// 	getTimerStatus();
-	// }, 15000);
+	/* Если подключен WebSocked */
+	if (runtimeConfig.public.hasWebSockedServer) {
+		let channelName = 'timer';
+
+		channelName += `.${route.query.slug}.${props.userId}.${slug.value}`;
+
+		const { unsubscribe: stop, subscriptionId } = subscribe(
+				channelName,
+				'TimerStatusToggle',
+				(data) => {
+					statusHandler(data);
+				},
+				'public'
+		);
+	}
 });
 
 onUnmounted(() => {
@@ -144,35 +161,7 @@ const getTimerStatus = async () => {
 		const response = await sendApiRequest(`board-game/timer/status`, 'POST', body);
 
 		if (response) {
-			status.value = response;
-
-			requestInProgress.value = false;
-
-			if (response.error) {
-				error(response.error);
-			} else {
-				if (response.time) {
-					seconds.value = response.time;
-				}
-
-				if (response.limit) {
-					limit.value = response.limit;
-				}
-
-				if (response.active) {
-					isRunning.value = true;
-
-					if (!timerInterval.value) {
-						timerInterval.value = setInterval(() => {
-							seconds.value++
-						}, 1000);
-					}
-				} else {
-					isRunning.value = false;
-					clearInterval(timerInterval.value);
-					timerInterval.value = null;
-				}
-			}
+			statusHandler(response);
 		} else {
 			error('Произошла ошибка');
 			requestInProgress.value = false;
@@ -180,6 +169,38 @@ const getTimerStatus = async () => {
 	} catch (e) {
 		error(e);
 		requestInProgress.value = false;
+	}
+}
+
+const statusHandler = (data) => {
+	status.value = data;
+
+	requestInProgress.value = false;
+
+	if (data.error) {
+		error(data.error);
+	} else {
+		if (data.time) {
+			seconds.value = data.time;
+		}
+
+		if (data.limit) {
+			limit.value = data.limit;
+		}
+
+		if (data.active) {
+			isRunning.value = true;
+
+			if (!timerInterval.value) {
+				timerInterval.value = setInterval(() => {
+					seconds.value++
+				}, 1000);
+			}
+		} else {
+			isRunning.value = false;
+			clearInterval(timerInterval.value);
+			timerInterval.value = null;
+		}
 	}
 }
 
@@ -408,14 +429,17 @@ watch(() => isRunning.value, () => {
 		clearInterval(getStatusInterval.value);
 	}
 
-	if (isRunning.value) {
-		getStatusInterval.value = setInterval(() => {
-			getTimerStatus();
-		}, 30000);
-	} else {
-		getStatusInterval.value = setInterval(() => {
-			getTimerStatus();
-		}, 300000);
+	/* Если не подключен WebSocked */
+	if (runtimeConfig.public.hasWebSockedServer) {
+		if (isRunning.value) {
+			getStatusInterval.value = setInterval(() => {
+				getTimerStatus();
+			}, 30000);
+		} else {
+			getStatusInterval.value = setInterval(() => {
+				getTimerStatus();
+			}, 300000);
+		}
 	}
 }, { immediate: true });
 

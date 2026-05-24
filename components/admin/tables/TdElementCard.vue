@@ -79,10 +79,16 @@ const entityValue = computed(() => {
 	) {
 		const item = props.entities[props.titleEl.apiUrl].find(item => item.id === props.item[props.keyName]);
 
-		if (item.name) {
+		if (item?.name) {
 			return item.name;
-		} else {
+		} else if (item?.title) {
+			return item?.title;
+		} else if (item?.id) {
+			return item.id;
+		} else if (item) {
 			return item;
+		} else {
+			return props.item[props.keyName];
 		}
 	} else {
 		return props.item[props.keyName];
