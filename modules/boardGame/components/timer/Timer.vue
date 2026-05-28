@@ -1,6 +1,7 @@
 <script setup>
 import LoadingBar from '@/components/ui/LoadingBar.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+import Settings from '@/modules/boardGame/components/timer/Settings.vue';
 
 const emit = defineEmits(['updateTimerList']);
 
@@ -46,6 +47,18 @@ const props = defineProps({
 
 const slug = ref('main');
 const limit = ref(null);
+
+const computedUserId = () => {
+	return props.userId ?? userStore.user.id;
+}
+
+const computedBgSlug = () => {
+	return route.params.slug;
+}
+
+const computedTimerSlug = () => {
+	return slug.value;
+}
 
 if (Object.keys(props.timer)) {
 	if (props.timer.slug) slug.value = props.timer.slug;
@@ -124,7 +137,7 @@ onMounted(() => {
 	if (runtimeConfig.public.hasWebSockedServer) {
 		let channelName = 'timer';
 
-		channelName += `.${route.query.slug}.${props.userId}.${slug.value}`;
+		channelName += `.${route.params.slug}.${props.userId}.${slug.value}`;
 
 		const { unsubscribe: stop, subscriptionId } = subscribe(
 				channelName,
@@ -412,6 +425,12 @@ const deleteTimer = async () => {
 	}
 }
 
+const settingPanelStatus = ref(false);
+
+const openSettings = () => {
+	settingPanelStatus.value = !settingPanelStatus.value;
+};
+
 const formattedLimitTime = computed(() => {
 	const hours = limit.value ? Math.floor(limit.value / 3600) : '00';
 	const minutes = limit.value ? Math.floor((limit.value % 3600) / 60) : '00';
@@ -566,6 +585,24 @@ const mainTimerLimitReach = computed(() => {
 				>
 					Удалить
 				</button>
+				<button
+						@click="openSettings()"
+						class="btn btn-simple-1"
+						title="Открыть настройки"
+				>
+					<font-awesome-icon icon="fa-solid fa-gear" />
+				</button>
+			</div>
+			<div
+					v-if="settingPanelStatus"
+					class="w-full relative"
+			>
+				<ui-fragments-DisableBox v-if="spinning" />
+				<Settings
+					:bg_slug="computedBgSlug()"
+					:user_id="computedUserId()"
+					:slug="computedTimerSlug()"
+				/>
 			</div>
 		</template>
 	</div>

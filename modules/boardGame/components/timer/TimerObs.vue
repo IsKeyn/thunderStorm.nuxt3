@@ -13,13 +13,28 @@ const { route } = helper();
 
 const getStatusInterval = ref(null);
 
+const props = defineProps({
+	bg_slug: {
+		type: String,
+		default: '',
+	},
+	user_id: {
+		type: Number,
+		default: null,
+	},
+	slug: {
+		type: String,
+		default: '',
+	},
+});
+
 onMounted(() => {
 	getTimerStatus();
 
 	if (runtimeConfig.public.hasWebSockedServer) {
 		let channelName = 'timer';
 
-		channelName += `.${route.query.bg_slug}.${route.query.user_id}.${route.query.slug}`;
+		channelName += `.${route.query.bg_slug ?? props.bg_slug}.${route.query.user_id ?? props.user_id}.${route.query.slug ?? props.slug}`;
 
 		const { unsubscribe: stop, subscriptionId } = subscribe(
 				channelName,
@@ -55,9 +70,9 @@ const getTimerStatus = async () => {
 	try {
 		const body = {};
 
-		body.boardGameSlug = route.query.bg_slug;
-		body.user_id = route.query.user_id;
-		body.slug = route.query.slug;
+		body.boardGameSlug = route.query.bg_slug ?? props.bg_slug;
+		body.user_id = route.query.user_id ?? props.user_id;
+		body.slug = route.query.slug ?? props.slug;
 
 		const response = await sendApiRequest(`board-game/timer/status`, 'POST', body);
 
@@ -121,7 +136,11 @@ const formattedTime = computed(() => {
 				class="timer-name"
 		>{{ timerName }}</span>
 		<span
-				:class="['timer', isRunning ? 'active' : '']"
+				:class="[
+						'timer',
+						isRunning ? 'active' : '',
+						route.query.font ?? 'Digital-7'
+				]"
 		>
 			<template v-if="formattedTime">
 				{{ formattedTime }}
@@ -156,8 +175,36 @@ const formattedTime = computed(() => {
 	}
 
 	.timer {
-		@apply text-[4rem] font-['Digital-7'] block mt-[-1rem];
+		@apply text-[4rem] block mt-[-1rem];
 		text-shadow: 0 0 5px #000; /* Свечение */
+
+		&.Digital-7 {
+			@apply font-['Digital-7'];
+		}
+
+		&.PFCentroSansPro-Light {
+			@apply font-['PFCentroSansPro-Light'];
+		}
+
+		&.PFCentroSansPro-Medium {
+			@apply font-['PFCentroSansPro-Medium'];
+		}
+
+		&.Verdana {
+			@apply font-['Verdana'];
+		}
+
+		&.Verdana-Bold {
+			@apply font-['Verdana-Bold'];
+		}
+
+		&.Verdana-BoldItalic {
+			@apply font-['Verdana-BoldItalic'];
+		}
+
+		&.Verdana-Italic {
+			@apply font-['Verdana-Italic'];
+		}
 
 		&.active {
 			animation: flicker 0.5s infinite alternate;

@@ -3,8 +3,11 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { roles } from '@/composables/roles.js';
 const { checkPermission } = roles();
@@ -58,6 +61,13 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			sort: {
+				name: 'Сортировка',
+				value: '',
+				type: 'text',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			is_close: {
 				name: 'Закрыто',
 				value: false,
@@ -103,8 +113,8 @@ const form = ref(
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Настольная игра';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -120,7 +130,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Настольная игра',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -132,21 +142,27 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				v-if="checkPermission('bg.edit')"
-				:form="form"
-				:hasResource="true"
-				fetchUrl="admin/BoardGame/BoardGame"
-				:useBlockEditor="true"
-				:showTags="true"
-				:showSeo="true"
-		/>
-		<ui-itemBox
-				v-else
-				classes="red"
-				message="У вас нет доступа"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('bg.edit')"
+			:form="form"
+			fetchUrl="admin/BoardGame/BoardGame"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:showSeo="true"
+			:showMenu="true"
+			:hasResource="true"
+			:useBlockEditor="true"
+			:showAdditionalFieldsTab="true"
+			:useVersionList="true"
+			previewUrl="/e/{slug}"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>
