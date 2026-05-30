@@ -202,6 +202,37 @@ export function api() {
         return reverse ? src.replace(backendUrl.value, '{backend-url}') : src.replace('http://localhost:8000', backendUrl.value).replace('{backend-url}', backendUrl.value);
     }
 
+    const responseHandler = async (response) => {
+        const notificationsModule = await import("@/composables/notifications.js");
+        const { alert, error } = notificationsModule.notifications();
+
+        if (response.error) {
+            error(
+                response.error,
+                null,
+                null,
+                false,
+                'Сохранение настроек таймера',
+                null,
+                false,
+                null
+            );
+        }
+
+        if (response.status) {
+            error(
+                response.status,
+                2000,
+                '#004d42',
+                false,
+                'Сохранение настроек таймера',
+                null,
+                false,
+                null
+            );
+        }
+    }
+
     return {
         apiUrl,
         backendUrl,
@@ -213,6 +244,7 @@ export function api() {
         errorHandler,
         show404pageFunc,
         preparedRequestBody,
-        handleBackendUrl
+        handleBackendUrl,
+        responseHandler,
     };
 }

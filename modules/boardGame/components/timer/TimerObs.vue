@@ -61,6 +61,11 @@ const showMessage = ref('');
 
 const seconds = ref(0);
 const timerName = ref('');
+const settings = ref({
+	font: 'Digital-7',
+	animation: true,
+	showTitle: false,
+});
 
 const isRunning = ref(null);
 
@@ -92,6 +97,10 @@ const statusHandler = (data) => {
 	} else {
 		if (!route.query.hideTitle) {
 			timerName.value = data.name;
+		}
+
+		if (data.settings) {
+			settings.value = data.settings;
 		}
 
 		if (data.active !== isRunning.value) {
@@ -133,13 +142,14 @@ const formattedTime = computed(() => {
 <template>
 	<div class="timer-body">
 		<span
+				v-if="settings.showTitle === true"
 				class="timer-name"
 		>{{ timerName }}</span>
 		<span
 				:class="[
 						'timer',
-						isRunning ? 'active' : '',
-						route.query.font ?? 'Digital-7'
+						isRunning ? (settings.animation === true ? 'active' : '') : '',
+						route.query.font ?? settings.font
 				]"
 		>
 			<template v-if="formattedTime">

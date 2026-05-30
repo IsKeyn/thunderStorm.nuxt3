@@ -18,14 +18,14 @@ const form = ref(
 				name: 'Название',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'required, minLength_2, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			slug: {
 				name: 'Slug',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'required, minLength_2, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 				autoFill: {
 					sourceFieldKey: 'name',
@@ -37,32 +37,40 @@ const form = ref(
 				value: '',
 				type: 'textarea',
 				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[200px]'],
 			},
 			limit: {
-				name: 'Лимит',
-				value: '',
-				type: 'textarea',
+				name: 'Лимит (в секундах)',
+				value: null,
+				type: 'number',
 				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			settings: {
+				name: 'Настройки',
+				value: '',
+				type: 'json',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
 			},
 			active: {
 				name: 'Активность',
-				value: '',
-				type: 'text',
+				value: true,
+				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			user_id: {
-				name: 'user_id',
-				value: '',
-				type: 'text',
-				validateRules: '',
+				name: 'Пользователь',
+				value: null,
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			board_game_id: {
 				name: 'ID настолькой игры',
-				value: '',
+				value: null,
 				type: 'EntityList',
 				apiUrl: 'board-game/get-list',
 				validateRules: 'required, maxLength_255',
@@ -70,7 +78,7 @@ const form = ref(
 			},
 			created_by: {
 				name: 'Создан кем',
-				value: '',
+				value: null,
 				type: 'EntityList',
 				apiUrl: 'user/list',
 				validateRules: 'maxLength_255',
@@ -83,7 +91,7 @@ const pageType = ref('');
 
 const title = 'Таймеры';
 const breadCrumbsArray = computed(() => {
-	const splitedPath = route.path.split('/');
+	const dividedPath = route.path.split('/');
 
 	if (Number.isInteger(Number(route.params.slug))) {
 		pageType.value = 'update';
@@ -94,15 +102,15 @@ const breadCrumbsArray = computed(() => {
 	return [
 		{
 			name: 'Админ панель',
-			href: `/${splitedPath[1]}`,
+			href: `/${dividedPath[1]}`,
 		},
 		{
 			name: title,
-			href: `/${splitedPath[1]}/${splitedPath[2]}`,
+			href: `/${dividedPath[1]}/${dividedPath[2]}`,
 		},
 		{
 			name: pageType.value === 'create' ? 'Создание' : 'Редактирование',
-			href: `/${splitedPath[1]}/${splitedPath[2]}/${splitedPath[3]}`,
+			href: `/${dividedPath[1]}/${dividedPath[2]}/${dividedPath[3]}`,
 		},
 	];
 });
@@ -117,13 +125,7 @@ const breadCrumbsArray = computed(() => {
 			v-if="checkPermission('bg.timer.edit')"
 			:form="form"
 			fetchUrl="admin/BoardGame/timer"
-			:additionalFieldsEnable="true"
-			:showTags="true"
-			:showSeo="true"
-			:showMenu="true"
 			:hasResource="true"
-			:useBlockEditor="true"
-			:showAdditionalFieldsTab="true"
 			:useVersionList="true"
 	/>
 	<ui-itemBox

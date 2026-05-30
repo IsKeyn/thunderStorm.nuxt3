@@ -47,6 +47,7 @@ const props = defineProps({
 
 const slug = ref('main');
 const limit = ref(null);
+const settings = ref(null);
 
 const computedUserId = () => {
 	return props.userId ?? userStore.user.id;
@@ -63,6 +64,7 @@ const computedTimerSlug = () => {
 if (Object.keys(props.timer)) {
 	if (props.timer.slug) slug.value = props.timer.slug;
 	if (props.timer.limit) limit.value = props.timer.limit;
+	if (props.timer.settings) settings.value = props.timer.settings;
 }
 
 const canDelete = ref(true);
@@ -171,7 +173,7 @@ const getTimerStatus = async () => {
 			body.user_id = props.userId;
 		}
 
-		const response = await sendApiRequest(`board-game/timer/status`, 'POST', body);
+		const response = await sendApiRequest(`board-game/v2/timer/status`, 'POST', body);
 
 		if (response) {
 			statusHandler(response);
@@ -449,7 +451,7 @@ watch(() => isRunning.value, () => {
 	}
 
 	/* Если не подключен WebSocked */
-	if (runtimeConfig.public.hasWebSockedServer) {
+	if (!runtimeConfig.public.hasWebSockedServer) {
 		if (isRunning.value) {
 			getStatusInterval.value = setInterval(() => {
 				getTimerStatus();
@@ -599,9 +601,10 @@ const mainTimerLimitReach = computed(() => {
 			>
 				<ui-fragments-DisableBox v-if="spinning" />
 				<Settings
-					:bg_slug="computedBgSlug()"
-					:user_id="computedUserId()"
-					:slug="computedTimerSlug()"
+						v-model="settings"
+						:bg_slug="computedBgSlug()"
+						:user_id="computedUserId()"
+						:slug="computedTimerSlug()"
 				/>
 			</div>
 		</template>

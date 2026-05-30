@@ -94,11 +94,16 @@ const sortOptions = [
 
 const usedFilters = [
 	{
-		name: 'tags',
-		langName: 'Теги',
-		type: 'curtained',
-		requestData: true,
+		name: 'onlyTrashed',
+		langName: 'Только удаленные',
+		type: 'checkbox',
 	},
+	// {
+	// 	name: 'boardGame',
+	// 	langName: 'Ивент',
+	// 	type: 'multiselect',
+	// 	requestData: true,
+	// },
 ];
 </script>
 
