@@ -98,12 +98,17 @@ const usedFilters = [
 		langName: 'Только удаленные',
 		type: 'checkbox',
 	},
-	// {
-	// 	name: 'boardGame',
-	// 	langName: 'Ивент',
-	// 	type: 'multiselect',
-	// 	requestData: true,
-	// },
+	{
+		name: 'active',
+		langName: 'Только активные',
+		type: 'checkbox',
+	},
+	{
+		name: 'boardGame',
+		langName: 'Ивент',
+		type: 'multiselect',
+		requestData: true,
+	},
 ];
 </script>
 
@@ -122,7 +127,7 @@ const usedFilters = [
 			:usedFilters="usedFilters"
 			:defaultFilters="defaultFilters"
 			:sortOptions="sortOptions"
-			filterRequestUrl="admin/BoardGame/timer"
+			filterRequestUrl="admin/BoardGame/timer/filters"
 	/>
 	<ui-itemBox
 			v-else
