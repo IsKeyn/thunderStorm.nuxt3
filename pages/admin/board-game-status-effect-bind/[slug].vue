@@ -14,20 +14,11 @@ const { checkPermission } = roles();
 
 const form = ref(
 		{
-			active: {
-				name: 'Активность',
-				value: 1,
-				type: 'checkbox',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-				showTitle: false,
-			},
-			item_id: {
-				name: 'Предмет',
-				value: '',
-				type: 'EntityList',
-				apiUrl: 'board-game/v2/item/list',
-				validateRules: 'required, minLength_3, maxLength_255',
+			status_effect_id: {
+				name: 'ID статус эффекта',
+				value: null,
+				type: 'number',
+				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			board_game_id: {
@@ -38,8 +29,16 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			active: {
+				name: 'Активность',
+				value: 1,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
 			created_by: {
-				name: 'Кем создан',
+				name: 'Создан кем',
 				value: '',
 				type: 'EntityList',
 				apiUrl: 'user/list',
@@ -51,7 +50,7 @@ const form = ref(
 
 const pageType = ref('');
 
-const title = 'Привязка предметов к настолке';
+const title = 'Привязка статус эффектов';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -84,9 +83,9 @@ const breadCrumbsArray = computed(() => {
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<CreateEditFormV2
-			v-if="checkPermission('bg.item-bind.edit')"
+			v-if="checkPermission('bg.status-effect-on-player.edit')"
 			:form="form"
-			fetchUrl="admin/BoardGame/itemBind"
+			fetchUrl="admin/BoardGame/StatusEffectBind"
 			:hasResource="true"
 			:useVersionList="true"
 	/>

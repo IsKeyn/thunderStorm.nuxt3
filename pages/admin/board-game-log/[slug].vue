@@ -3,8 +3,11 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { roles } from '@/composables/roles.js';
 const { checkPermission } = roles();
@@ -19,25 +22,42 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			board_game_id: {
-				name: 'ID настолки',
+				name: 'Настольная игра',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			created_by: {
-				name: 'Создал',
+			sort: {
+				name: 'Сортировка',
 				value: '',
 				type: 'text',
-				validateRules: 'required, maxLength_255',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			active: {
+				name: 'Активность',
+				value: 1,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
+			created_by: {
+				name: 'Создан кем',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Логи ивентов';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -53,7 +73,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Логи настолки',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -65,18 +85,20 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				v-if="checkPermission('bg.log.edit')"
-				:form="form"
-				:showAdditionalFieldsTab="false"
-				fetchUrl="admin/entity/BoardGame/BoardGameLog"
-		/>
-		<ui-itemBox
-				v-else
-				classes="red"
-				message="У вас нет доступа"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('bg.item.edit')"
+			:form="form"
+			fetchUrl="admin/BoardGame/Log"
+			:hasResource="true"
+			:useVersionList="true"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>

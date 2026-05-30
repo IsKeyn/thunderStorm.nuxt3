@@ -230,7 +230,7 @@ const viewResult = () => {
 			<span :class="[titleEl.classes ?? 'entity', 'text-rounded-box']">{{ entityValue }}</span>
 		</template>
 		<template
-				v-else-if="titleEl.type && titleEl.type === 'rounded-box' && item[keyName]"
+				v-else-if="titleEl.type && titleEl.type === 'rounded-box' && (item[keyName] || item[keyName] === 0)"
 		>
 			<span :class="[titleEl.classes ? titleEl.classes : 'simple', 'text-rounded-box']">{{ item[keyName] }}</span>
 		</template>

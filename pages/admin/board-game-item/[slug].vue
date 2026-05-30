@@ -3,14 +3,24 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { roles } from '@/composables/roles.js';
 const { checkPermission } = roles();
 
 const form = ref(
 		{
+			id: {
+				name: 'id',
+				value: null,
+				type: 'notEditable',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			name: {
 				name: 'Название',
 				value: '',
@@ -46,7 +56,7 @@ const form = ref(
 			actions: {
 				name: 'Действия JSON',
 				value: '',
-				type: 'textarea',
+				type: 'json',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
@@ -85,6 +95,13 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			sort: {
+				name: 'Сортировка',
+				value: '',
+				type: 'text',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			active: {
 				name: 'Активность',
 				value: 1,
@@ -120,8 +137,8 @@ const form = ref(
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Предметы в настолке';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -137,7 +154,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Предметы в настолке',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -149,19 +166,26 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				v-if="checkPermission('bg.item.edit')"
-				:form="form"
-				:hasResource="true"
-				:showAdditionalFieldsTab="false"
-				fetchUrl="admin/BoardGame/Item"
-		/>
-		<ui-itemBox
-				v-else
-				classes="red"
-				message="У вас нет доступа"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('bg.item.edit')"
+			:form="form"
+			fetchUrl="admin/BoardGame/item"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:showSeo="true"
+			:showMenu="true"
+			:hasResource="true"
+			:useBlockEditor="true"
+			:showAdditionalFieldsTab="true"
+			:useVersionList="true"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>
