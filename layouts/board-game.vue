@@ -1,12 +1,8 @@
 <script setup>
 import SystemComponents from '@/components/system/SystemComponents.vue';
-
-import SystemBoardGameComponents from '@/modules/boardGame/components/boardGame/SystemBoardGameComponents.vue';
 import ReceiveMainData from '@/modules/boardGame/components/boardGame/ReceiveMainData.vue';
 
 
-import SystemPlayerComponents from '@/modules/boardGame/components/user/player/SystemPlayerComponents.vue';
-import UpdatedData from '@/modules/boardGame/components/layout/UpdatedData.vue';
 
 import Seo from '@/modules/boardGame/components/boardGame/Seo.vue';
 
@@ -44,12 +40,6 @@ provide('layoutMethods', {
 <template>
 	<SystemComponents />
 	<ReceiveMainData />
-
-
-	<SystemBoardGameComponents />
-	<SystemPlayerComponents />
-
-	<UpdatedData />
 
 	<Seo />
 

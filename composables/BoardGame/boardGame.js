@@ -1,7 +1,10 @@
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
+import { helper } from '@/composables/helper.js'
 
 export function boardGame() {
+    const { route } = helper();
+
     const getStatusName = (boardGameData) => {
         switch (boardGameData.status) {
             case 0: return 'Окончено';
@@ -48,11 +51,17 @@ export function boardGame() {
         } else {
             return points + ' ' + cases[2];
         }
-    };
+    }
+
+    const refreshLayoutData = () => {
+        const requestName = 'get_bg_layout_data_' + route.params.slug;
+        refreshNuxtData(requestName);
+    }
 
     return {
         getStatusName,
         getDateString,
         addTextToPoints,
+        refreshLayoutData,
     };
 }

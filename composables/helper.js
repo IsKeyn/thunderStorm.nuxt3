@@ -82,6 +82,12 @@ export function helper() {
         }
     }
 
+    const hasWebSocked = () => {
+        const runtimeConfig = useRuntimeConfig();
+
+        return !!runtimeConfig.public?.hasWebSockedServer;
+    }
+
     return {
         route,
         router,
@@ -91,5 +97,6 @@ export function helper() {
         unionObjWithoutEmptyElements,
         setQueryParam,
         setQueryParams,
+        hasWebSocked,
     };
 }

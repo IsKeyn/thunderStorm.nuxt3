@@ -1,4 +1,5 @@
 <script setup>
+// TODO устаревший компонент, удалить, когда нигде не будет использоваться
 import { onMounted } from "vue";
 
 import { useBoardGameStore } from '@/stores/boardGame';

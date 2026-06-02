@@ -3,13 +3,17 @@ import Tooltip from '@/components/ui/Tooltip.vue';
 
 import { inject, watch } from "vue";
 
-const route = useRoute();
-
 const emit = defineEmits(['updateList']);
 const layoutMethods = inject('layoutMethods')
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route, hasWebSocked } = helper();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
 
 import { media } from '@/composables/media.js'
 const { getResizeImg } = media();
@@ -141,7 +145,7 @@ const sendActivateSeRequest = async (type) => {
 
 				requestInProgress.value = false;
 
-				await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+				if (!hasWebSocked()) refreshLayoutData();
 				emit('updateList');
 			}
 		}

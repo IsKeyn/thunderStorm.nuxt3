@@ -4,10 +4,15 @@ import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.vue';
 
 import { computed, ref } from "vue";
-const route = useRoute();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route, hasWebSocked } = helper();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
 
 const props = defineProps({});
 
@@ -53,7 +58,8 @@ const hiddenUpdate = () => {
 const showItem = (item) => {
 	droppedItem.value = item;
 	hiddenUpdate();
-	refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+
+	if (!hasWebSocked()) refreshLayoutData();
 }
 
 const closeDroppedItemBox = () => {
