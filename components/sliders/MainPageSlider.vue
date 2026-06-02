@@ -42,7 +42,8 @@ const carouselRef = ref()
 
 const carouselConfig = {
 	itemsToShow: 1,
-	wrapAround: true
+	wrapAround: true,
+	autoHeight: false
 }
 
 const next = () => carouselRef.value.next();
@@ -60,7 +61,6 @@ const routeTo = (url) => {
 		<Carousel
 				ref="carouselRef"
 				v-bind="carouselConfig"
-				:height="406"
 				:autoplay="3000"
 				:pauseAutoplayOnHover="true"
 				:transition="750"
@@ -82,48 +82,52 @@ const routeTo = (url) => {
 					:key="index"
 					class="slide w-full"
 			>
-				<template v-if="slide.image">
-					<template v-if="slide.image.mime_type === 'mp4'">
-						<video
-								:src="slide.image.src"
-								autoplay loop muted
-						></video>
-						<span
-								v-if="slide.title"
-								class="flip-text-box left"
-						>
-							{{ slide.title }}
-						</span>
-					</template>
-					<template v-else>
-						<img
-								v-if="slide.url"
-								:src="slide.image.src"
-								:alt="slide.title"
-								@click="routeTo(slide.url)"
-						>
-						<img
-								v-else
-								class="media-obj"
-								:media-id="slide.image.id"
-								:src="slide.image.src"
-								:alt="slide.name"
-						>
-						<span
-								v-if="slide.title"
-								class="flip-text-box left"
-						>
-								{{ slide.name }}
+				<div class="slide-content">
+					<template v-if="slide.image">
+						<template v-if="slide.image.mime_type === 'mp4'">
+							<video
+									:src="slide.image.src"
+									autoplay loop muted
+									class="media-object"
+							></video>
+							<span
+									v-if="slide.title"
+									class="flip-text-box left"
+							>
+								{{ slide.title }}
 							</span>
+						</template>
+						<template v-else>
+							<img
+									v-if="slide.url"
+									:src="slide.image.src"
+									:alt="slide.title"
+									@click="routeTo(slide.url)"
+									class="media-object clickable"
+							>
+							<img
+									v-else
+									class="media-object"
+									:media-id="slide.image.id"
+									:src="slide.image.src"
+									:alt="slide.name"
+							>
+							<span
+									v-if="slide.title"
+									class="flip-text-box left"
+							>
+									{{ slide.name }}
+								</span>
+						</template>
 					</template>
-				</template>
+				</div>
 			</Slide>
 		</Carousel>
 
 		<div>
 			<span
-				class="nav-prev"
-				@click="prev"
+					class="nav-prev"
+					@click="prev"
 			>
 				<font-awesome-icon :icon="['fas', 'angle-left']" />
 			</span>
@@ -141,16 +145,54 @@ const routeTo = (url) => {
 .slider {
 	@apply relative overflow-hidden;
 
-	a, img, video {
-		@apply w-full;
+	:deep(.carousel),
+	:deep(.carousel__viewport),
+	:deep(.carousel__track) {
+		height: 406px;
+
+		@media (max-width: 768px) {
+			height: auto;
+		}
+	}
+
+	:deep(.carousel__slide) {
+		height: 406px;
+
+		@media (max-width: 768px) {
+			height: auto;
+		}
+	}
+
+	.slide-content {
+		position: relative;
+		width: 100%;
+		height: 406px;
+		overflow: hidden;
+
+		@media (max-width: 768px) {
+			height: auto;
+			aspect-ratio: 4 / 3;
+		}
+
+		@media (max-width: 480px) {
+			aspect-ratio: 3 / 4;
+		}
+	}
+
+	.media-object {
+		@apply w-full h-full object-cover;
+
+		&.clickable {
+			@apply cursor-pointer;
+		}
 	}
 
 	.nav-next,
 	.nav-prev {
 		@apply
-			absolute z-[1]
-			cursor-pointer hidden
-			text-[65px]
+		absolute z-[1]
+		cursor-pointer hidden
+		text-[65px]
 		;
 
 		top: calc(50% - 32px);
@@ -158,6 +200,10 @@ const routeTo = (url) => {
 
 		&:hover {
 			color: var(--second-hover-color);
+		}
+
+		@media (max-width: 768px) {
+			font-size: 40px;
 		}
 	}
 
@@ -175,17 +221,12 @@ const routeTo = (url) => {
 	}
 }
 
-.image-box {
-	@apply
-		relative
-		flex justify-center items-center
-		h-[350px]
-		truncate
-		cursor-pointer
-	;
+.flip-text-box {
+	@apply absolute bottom-[20px] left-[20px] z-[2];
 
-	.article-image {
-		@apply w-full h-full object-cover;
+	@media (max-width: 768px) {
+		@apply bottom-[15px] left-[15px];
+		font-size: 1.2rem;
 	}
 }
 </style>
