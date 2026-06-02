@@ -13,8 +13,8 @@ export function file() {
     ];
 
     const audioExt = [
-        'mp4',
-        'm4v',
+        'mp3',
+        'wav',
     ];
 
     const getFileType = (fileName) => {
@@ -26,6 +26,8 @@ export function file() {
                     return 'image';
                 } else if (videoExt.includes(fileExt.toLowerCase())) {
                     return 'video';
+                } else if (audioExt.includes(fileExt.toLowerCase())) {
+                    return 'audio';
                 }
             }
         } else {

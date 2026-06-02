@@ -129,7 +129,7 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
-	showAdditionalData: {
+	showAdditionalFieldsTab: {
 		type: Boolean,
 		default: true,
 	},
@@ -374,7 +374,7 @@ const tabsElements = [
 	},
 ];
 
-if (props.showAdditionalData) {
+if (props.showAdditionalFieldsTab) {
 	tabsElements.push({
 		id:	'additionalData',
 		title: 'Дополнительные поля',

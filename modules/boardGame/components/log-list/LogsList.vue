@@ -2,10 +2,13 @@
 import LogCard from '@/modules/boardGame/components/log-list/LogCard.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
 
-import { computed, onMounted, onUnmounted } from 'vue'
+import {computed, onMounted, onUnmounted, ref} from 'vue'
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const props = defineProps({
 	perPage: {
@@ -14,11 +17,16 @@ const props = defineProps({
 	},
 });
 
-const route = useRoute();
+import { pagination } from '@/composables/ui/pagination.js'
+const {
+	page,
+	perPage,
+	setRefresh,
+	changePage,
+	setPerPage
+} = pagination(props.perPage);
 
-const page = ref(route.query.page ? Number(route.query.page) : 1);
-const perPageCount = ref(route.query.perPage ? Number(route.query.perPage) : props.perPage);
-
+const hiddenRefresh = ref(false);
 const requestName = 'getBoardGameLogList';
 
 const {
@@ -30,12 +38,14 @@ const {
 		async () => {
 			const query = {
 				page: page.value,
-				perPage: perPageCount.value,
+				perPage: perPage.value,
 			};
 
 			const response = await Promise.resolve(
 					sendApiRequest(`board-game/v2/log/list/${route.params.slug}`, 'GET', query, requestName, '')
 			);
+
+			hiddenRefresh.value = false;
 
 			return response || null;
 		},
@@ -45,10 +55,14 @@ const {
 		}
 );
 
+// Передаем функцию refresh в композабл pagination
+setRefresh(refresh);
+
 const fetchedData = computed(() => requestData.value?.data || null);
 const paginationData = computed(() => requestData.value?.meta || null);
 
 const updateLogs = async () => {
+	hiddenRefresh.value = true;
 	await refresh();
 }
 
@@ -67,27 +81,14 @@ onUnmounted(() => {
 		clearInterval(interval.value);
 	}
 });
-
-const changePage = async (p) => {
-	page.value = p;
-	refresh();
-}
-
-const setPerPage = (count) => {
-	const maxPage = Math.ceil(paginationData.value.total / count);
-
-	if (page.value > maxPage) {
-		page.value = maxPage;
-	}
-
-	perPageCount.value = count;
-	refresh();
-}
 </script>
 
 <template>
+	<ui-BigPreloader
+			v-if="requestInProgress && !hiddenRefresh"
+	/>
 	<div
-			v-if="fetchedData && fetchedData.length > 0"
+			v-else-if="fetchedData && fetchedData.length > 0"
 			class="log-box"
 	>
 		<LogCard
@@ -96,17 +97,19 @@ const setPerPage = (count) => {
 				:element="log"
 				:useLightBox="true"
 		/>
-		<Pagination
-				v-if="paginationData"
-				:pagination="paginationData"
-				:navigationButtons="true"
-				@changePage="changePage"
-				@setPerPage="setPerPage"
-		/>
 	</div>
-	<template v-else>
-		Логи отсутствуют
-	</template>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Логи отсутствуют"
+	/>
+	<Pagination
+			v-if="paginationData"
+			:pagination="paginationData"
+			:navigationButtons="true"
+			@changePage="changePage"
+			@setPerPage="setPerPage"
+	/>
 </template>
 
 <style lang="scss" scoped></style>

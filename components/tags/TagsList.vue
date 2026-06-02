@@ -1,9 +1,15 @@
 <script setup>
-import { watch } from 'vue'
-
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
-// const modelValue = defineModel();
+const emit = defineEmits(['update:modelValue']);
+
+import { computed, watch } from 'vue'
+
+import { api } from '@/composables/api.js'
+const { sendApiRequest } = api();
+
+import { validate } from '@/composables/validate.js';
+const { validateElement } = validate();
 
 const props = defineProps({
 	canAddTags: {
@@ -30,82 +36,92 @@ const props = defineProps({
  		type: Number,
 		default: 15,
 	},
+	tagsCountForShow: { // Количество тегов, которое отображается до строки "Показать ещё"
+		type: Number,
+		default: 40,
+	},
 });
 
-
-watch(() => props.modelValue, (newValue) => {
-	tagsList.value.forEach((item) => {
-		item.selected = newValue.includes(item.name);
-	});
-}, { deep: true });
-
-const tagsList = ref([]);
-
 const form = ref({
+	search: {
+		name: 'Поиск',
+		value: '',
+		type: 'text',
+		placeholder: 'Начните вводите название тега',
+		classes: ['w-full', 'mt-[5px]'],
+	},
 	tag: {
 		name: 'Новый тег',
 		value: '',
 		type: 'text',
+		placeholder: 'Название тега',
 		validateRules: 'required, minLength_2, maxLength_40',
 		classes: ['w-full', 'mt-[5px]'],
 	},
 });
+
+const requestName = 'getTags';
+
+const {
+	data: requestData,
+	pending: requestInProgress,
+	refresh
+} = await useAsyncData(
+		requestName,
+		async () => {
+			if (props.fetchTags) {
+				const query = {};
+
+				let requestUrl = 'tag/get';
+
+				if (props.type) {
+					requestUrl += `/${props.type}`;
+				}
+
+				const response = await Promise.resolve(
+						sendApiRequest(requestUrl, 'GET', query, requestName, '')
+				);
+
+				return response || null;
+			}
+		},
+		{
+			server: true,
+			lazy: true,
+		}
+);
+
+const fetchedData = computed(() => requestData.value?.data || null);
+
+const tagsList = ref([]);
 
 const setTags = (tags, handlerType = 'new-list') => {
 	if (handlerType === 'new-list') {
 		tagsList.value = [];
 	}
 
+	const rawSelectedTags = toRaw(props.modelValue);
+
 	tags.forEach((item) => {
-		const selected = toRaw(props.modelValue).includes(item.name);
+		const selected = rawSelectedTags.includes(item.name);
 
 		tagsList.value.push({
+			id: item.id,
 			name: item.name,
 			selected,
 		});
 	});
 }
 
-// Получаем с бека теги
-import { api } from '@/composables/api.js'
-const { apiUrl } = api();
+watch(() => props.modelValue, (newValue) => {
+	tagsList.value.forEach((item) => {
+		item.selected = newValue.includes(item.name);
+	});
+}, { deep: true, immediate: true });
 
-const Authorization = useCookie('Authorization');
-
-const fetchedData = ref('');
-
-await useAsyncData(
-		'tags',
-		async () => {
-			if (props.fetchTags) {
-				let request = `${apiUrl.value}tag/get`;
-
-				if (props.type) {
-					request += `/${props.type}`;
-				}
-
-				await $fetch(
-						request,
-						{
-							method: 'GET',
-							headers: {
-								Authorization: Authorization.value,
-								Accept: 'application/json',
-								'X-Requested-With': 'XMLHttpRequest',
-							},
-							onResponse({response}) {
-								if (response.status === 200) {
-									fetchedData.value = response._data.data;
-
-									// Данный select не отрабатывает (в большинстве случаев), так как данные props.modelValue ещё не получены от бека на данном этапе
-									setTags(fetchedData.value);
-								}
-							}
-						},
-				)
-			}
-		}
-)
+watch(() => fetchedData.value, () => {
+	setTags(fetchedData.value);
+}, { deep: true });
 
 if (!props.fetchTags) {
 	setTags(props.tags);
@@ -115,92 +131,63 @@ if (!props.fetchTags) {
 	}, { deep: true });
 }
 
-//
-// const fetchedData = ref();
-//
-// let request = `${apiUrl.value}tag/get`;
-//
-// if (props.type) {
-// 	request += `/${props.type}`;
-// }
-//
-// await useFetch(
-// 		request,
-// 		{
-// 			method: 'GET',
-// 			headers: {
-// 				Authorization: Authorization.value,
-// 				Accept: 'application/json',
-// 				'X-Requested-With': 'XMLHttpRequest',
-// 			},
-// 		},
-// ).then((response) => {
-// 	if (response.status.value === 'success') {
-// 		fetchedData.value = toRaw(response.data.value).data;
-//
-// 		if (fetchedData.value) {
-// 			fetchedData.value.forEach((item) => {
-// 				// Данный select не отрабатывает (в большинстве случаев), так как данные props.modelValue ещё не получены от бека на данном этапе
-// 				const selected = toRaw(props.modelValue).includes(item.name);
-//
-// 				tagsList.value.push({
-// 					name: item.name,
-// 					selected,
-// 				});
-// 			});
-// 		}
-// 	}
-// });
+const filteredTagsList = computed(() => {
+	const arTags = [];
+
+	tagsList.value.forEach((tag) => {
+		arTags.push(tag.name.toLowerCase());
+	});
+
+	if (form.value.search.value) {
+		return arTags.filter((tag) => tag.includes(form.value.search.value.toLowerCase()));
+	} else {
+		return arTags;
+	}
+});
+
+const tagsForDisplay = computed(() => {
+	return tagsList.value.filter((item) => filteredTagsList.value.includes(item.name.toLowerCase()));
+});
+
 
 const getTagClasses = (key) => {
 	let classes = 'tag';
 
-	if (!filteredTagsList.value.includes(tagsList.value[key].name.toLowerCase())) {
-		classes += ' !hidden';
-	}
-
-	if (tagsList.value[key].selected) {
+	if (tagsForDisplay.value[key].selected) {
 		classes += ' selected';
 	}
 
 	return classes;
 }
 
-const emit = defineEmits(['update:modelValue']);
-
 const toggleTag = (key) => {
-	if (tagsList.value[key].new) {
-		tagsList.value.splice(key, 1);
+	if (tagsForDisplay.value[key].new) {
+		tagsForDisplay.value.splice(key, 1);
 	} else {
-		tagsList.value[key].selected = !tagsList.value[key].selected;
+		tagsForDisplay.value[key].selected = !tagsForDisplay.value[key].selected;
 	}
 
-	setVmodel();
+	setSelectedTags();
 }
 
-const setVmodel = () => {
-	const vmodel = [];
+const setSelectedTags = () => {
+	const selectedTags = [];
 
-	tagsList.value.forEach((item) => {
+	tagsForDisplay.value.forEach((item) => {
 		if (item.selected) {
-			vmodel.push(item.name);
+			selectedTags.push(item.name);
 		}
 	});
 
-	emit('update:modelValue', vmodel);
+	emit('update:modelValue', selectedTags);
 }
 
-import { validate } from '@/composables/validate.js';
-const { validateElement, validateForm  } = validate();
-
 const addTag = () => {
-	for (const formKey in form.value) {
-		form.value[formKey].validateResult = '';
-	}
+	form.value.tag.validateResult = '';
 
-	const { status, key, validateResult } = validateForm(form.value);
+	form.value.tag.validateResult = validateElement(form.value.tag.value, form.value.tag.validateRules);
 
-	if (status) {
+	if (!form.value.tag.validateResult) {
 		let hasTag = null;
 
 		for (let i = 0; i < tagsList.value.length; i++) {
@@ -222,68 +209,75 @@ const addTag = () => {
 			tagsList.value[hasTag].selected = true;
 		}
 
-		setVmodel();
-	} else {
-		form.value[key].validateResult = validateResult;
+		setSelectedTags();
 	}
 }
-
-const search = ref({
-	name: 'Поиск',
-	value: '',
-	type: 'text',
-	placeholder: 'Вводите название тега',
-	classes: ['w-full', 'mt-[5px]'],
-});
-
-const filteredTagsList = computed(() => {
-	const arTags = [];
-
-	tagsList.value.forEach((tag) => {
-		arTags.push(tag.name.toLowerCase());
-	});
-
-	if (search.value.value) {
-		return arTags.filter((tag) => {
-			return tag.includes(search.value.value.toLowerCase());
-		});
-	} else {
-		return arTags;
-	}
-});
 </script>
 
 <template>
 	<div>
 		<FormGenerator
-				v-if="search && tagsCountForShowSearchLine <= tagsList.length"
+				v-if="form.search && tagsCountForShowSearchLine <= tagsList.length"
 				name="search"
-				:element="search"
-				:showTitle="true"
-				:clearButtom = "true"
+				:element="form.search"
+				:showTitle="false"
+				:clearButton="true"
 				wrapClasses="w-full md:w-3/12"
 				labelClasses="mr-4"
-				:fieldClasses="search.classes"
+				fieldClasses="w-full"
+				:fieldClasses="form.searchclasses"
 		/>
-		<div>
-			<span
-					v-for="(tag, key) in tagsList"
-					:class="[getTagClasses(key)]"
-					@click="toggleTag(key)"
+		<ui-BigPreloader
+				v-if="requestInProgress"
+				class="h-full"
+				theme="image"
+				:themeType="9"
+		/>
+		<div v-else>
+			<ui-ShowMoreBlock
+					v-if="tagsForDisplay.length"
+					:names="{
+							showMore: 'Показать больше',
+							showLess: 'Показать меньше',
+						}"
 			>
-				{{ tag.name }}
-			</span>
+				<template #default>
+					<template v-for="(tag, key) in tagsForDisplay">
+						<span
+								v-if="key < tagsCountForShow"
+								:class="[getTagClasses(key)]"
+								@click="toggleTag(key)"
+						>
+							{{ tag.name }}
+						</span>
+					</template>
+				</template>
+				<template v-if="tagsForDisplay.length > tagsCountForShow" #hiddenContent>
+					<template v-for="(tag, key) in tagsForDisplay">
+						<span
+								v-if="key >= tagsCountForShow"
+								:class="[getTagClasses(key)]"
+								@click="toggleTag(key)"
+						>
+							{{ tag.name }}
+						</span>
+					</template>
+				</template>
+			</ui-ShowMoreBlock>
+			<ui-itemBox
+					v-else
+					classes="red"
+			/>
 		</div>
 		<div v-if="canAddTags">
 			<FormGenerator
-					v-for="(field, index) in form"
-					:key="index"
-					:name="index"
-					:element="field"
+					class="mt-4"
+					name="tag"
+					:element="form.tag"
 					:showValidateError=true
 					validateErrorPosition="bottom"
 					:labelClasses="['inline-block', 'mb-[10px]', 'mr-2']"
-					:fieldClasses="field.classes"
+					:fieldClasses="form.tag.classes"
 			/>
 			<button class="btn btn-primary" @click="addTag">Добавить</button>
 		</div>

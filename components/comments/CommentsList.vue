@@ -59,8 +59,10 @@ defineExpose({
 	fetchComments,
 });
 
+const requestName =  'commentGetList_' + props.entityType + '_' + props.entityId;
+
 const { data: requestData, pending: requestInProgress, refresh } = await useAsyncData(
-		'commentGetList',
+		requestName,
 		async () => {
 			let request = `${apiUrl.value}comment/getList`;
 

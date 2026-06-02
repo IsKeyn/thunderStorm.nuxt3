@@ -3,23 +3,21 @@ import Overlay from '@/components/layout/Overlay.vue';
 import SimpleTagsList from '@/components/tags/SimpleTagsList.vue';
 import Likes from '@/components/voting/Likes.vue';
 
+import { onMounted, onUnmounted, watch } from 'vue'
+
 const emit = defineEmits(['setCurrentElement', 'updateLikes', 'selectThisElement']);
 
-import { api } from '@/composables/api.js'
-const {
-	apiUrl,
-	publicUrl,
-	getCsrfCookie,
-	sessionCookieName,
-	errorHandler,
-	handleBackendUrl,
-} = api();
+import { api } from '@/composables/api.js';
+const { sendApiRequest, preparedRequestBody, publicUrl, handleBackendUrl } = api();
+
+import { notifications } from '@/composables/notifications.js';
+const { alert, error, choiceAlert } = notifications();
 
 import { mobile } from '@/composables/mobile.js'
-const {
-	isMobile,
-	onWindowResize,
-} = mobile();
+const { isMobile, onWindowResize } = mobile();
+
+import { date } from '@/composables/date.js';
+const { getFormattedDate } = date();
 
 const props = defineProps({
 	image: {
@@ -34,10 +32,10 @@ const props = defineProps({
 		type: Number,
 		default: null,
 	},
-	hidenFields: {
+	hiddenFields: {
 		type: Array,
 		default: [
-				'user_info.name',
+				// 'user_info.name',
 				'created_at',
 		],
 	},
@@ -59,7 +57,6 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
-
 	mediaId: {
 		type: Number,
 		default: null,
@@ -67,83 +64,176 @@ const props = defineProps({
 	selected: {
 		type: Boolean,
 		default: false,
-	}
+	},
+	elementClassToScroll: { // Класс, у элементов, которые участвуют в навигации
+		type: String,
+		default: null,
+	},
 });
 
 const media = ref({});
-const isLoading = ref(false);
+const requestInProgress = ref(false);
 
 const getMedia = async () => {
-	isLoading.value = true;
+	requestInProgress.value = true;
 
 	try {
-		const sessionCookie = useCookie(sessionCookieName.value);
+		const response = await sendApiRequest(`media/get/${props.mediaId}`, 'GET', {}, `getMedia_${props.mediaId}`, 'fullscreenTransparent');
 
-		const response = await $fetch(
-				`${apiUrl.value}media/get/${props.mediaId}`,
-				{
-					method: 'GET',
-					credentials: 'include',
-					headers: {
-						Accept: 'application/json',
-						Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-						Referer: publicUrl.value,
-					},
-					onResponse({response}) {
-						isLoading.value = false;
+		if (response) {
+			requestInProgress.value = false;
 
-						if (response.status === 200) {
-							media.value = response._data.data;
+			media.value = response;
 
-							if (process.client && !sessionStorage.getItem(`view_${media.value.entity_type}_${media.value.id}`)) {
-								sessionStorage.setItem(`view_${media.value.entity_type}_${media.value.id}`, true);
-							}
-						} else {
-							// Возарщаем ошибку
-						}
-					}
-				},
-		);
+			if (process.client && media.value && !sessionStorage.getItem(`view_${media.value.entity_type}_${media.value.id}`)) {
+				sessionStorage.setItem(`view_${media.value.entity_type}_${media.value.id}`, true);
+			}
+		} else {
+			error('Произошла ошибка');
+			requestInProgress.value = false;
+		}
 	} catch (e) {
-		const errorsPromise = errorHandler(e);
+		error(e);
+		requestInProgress.value = false;
+	}
+}
 
-		errorsPromise.then((element) => {
-			responseErrors.value = element;
+const prevElement = ref(null);
+const nextElement = ref(null);
+
+const searchNextAndPrevElements = () => {
+	prevElement.value = null;
+	nextElement.value = null;
+
+	const currentMediaId = props.mediaId;
+
+	if (currentMediaId) {
+		let allMediaElements = document.querySelectorAll('[media-id]:not([media-id=""])');
+
+		if (props.elementClassToScroll) {
+			allMediaElements = Array.from(allMediaElements).filter(element => element.classList.contains(props.elementClassToScroll));
+		}
+
+		let enableNav = true;
+
+		// Фильтруем элементы, оставляя те, которые:
+		// 1. Не имеют родителя с классом carousel__slide
+		// 2. Имеют родителя с классом carousel__slide, но у родителя есть не пустой ID
+		const filteredElements = Array.from(allMediaElements).filter(element => {
+			// Проверяем атрибут not-for-lb-nav
+			if (element.getAttribute('not-for-lb-nav') === 'true') {
+				const elementMediaId = element.getAttribute('media-id');
+
+				if (Number(elementMediaId) === Number(currentMediaId)) {
+					enableNav = false;
+				}
+
+				return false;
+			}
+
+			const parent = element.parentElement;
+			const hasCarouselSlide = parent && parent.classList.contains('carousel__slide');
+
+			// Если нет родителя carousel__slide - оставляем
+			if (!hasCarouselSlide) {
+				return true;
+			}
+
+			// Если есть родитель carousel__slide, проверяем наличие ID
+			return parent.id && parent.id.trim() !== '';
 		});
 
-		isLoading.value = false;
+		if (enableNav) {
+			let foundCurrent = false;
+
+			for (let i = 0; i < filteredElements.length; i++) {
+				const element = filteredElements[i];
+				const elementMediaId = element.getAttribute('media-id');
+
+				if (Number(elementMediaId) === Number(currentMediaId)) {
+					foundCurrent = true;
+					continue;
+				}
+
+				if (!foundCurrent) {
+					// Это предыдущий элемент (до текущего)
+					if (elementMediaId !== currentMediaId) {
+						prevElement.value = element;
+					}
+				} else {
+					// Это следующий элемент (после текущего)
+					if (elementMediaId !== currentMediaId) {
+						nextElement.value = element;
+						break;
+					}
+				}
+			}
+		}
 	}
+}
+
+const checkHasElementForNavigate = (direction) => {
+	if (direction === 'prev') {
+		if (props.prevElementKey) {
+			return Number.isInteger(props.prevElementKey);
+		} else if (prevElement.value) {
+			return prevElement.value.getAttribute('media-id');
+		}
+	}
+
+	if (direction === 'next') {
+		if (props.nextElementKey) {
+			return Number.isInteger(props.nextElementKey);
+		} else if (nextElement.value) {
+			return nextElement.value.getAttribute('media-id');
+		}
+	}
+}
+
+const setElementForNavigate = (direction) => {
+	let id = null;
+
+	if (direction === 'prev') {
+		if (props.prevElementKey) {
+			id = props.prevElementKey;
+		} else if (prevElement.value) {
+			id = prevElement.value.getAttribute('media-id');
+		}
+	}
+
+	if (direction === 'next') {
+		if (props.nextElementKey) {
+			id = Number.isInteger(props.nextElementKey);
+		} else if (nextElement.value) {
+			id = nextElement.value.getAttribute('media-id');
+		}
+	}
+
+	emit('setCurrentElement', Number(id));
 }
 
 if (Object.keys(props.image).length > 0) {
 	media.value = props.image;
 } else if (props.mediaId) {
 	getMedia();
+	searchNextAndPrevElements()
 }
 
 const setView = async () => {
 	if (props.setViewsLog && !sessionStorage.getItem(`view_${media.value.entity_type}_${media.value.id}`)) {
 		try {
-			const csrfCookie = await getCsrfCookie();
+			const body = {
+				entityType: media.value.entity_type,
+				entityId: media.value.id,
+			};
+			const response = await sendApiRequest(`views/set`, 'POST', body, `setView_${media.value.entity_type}_${media.value.id}`);
 
-			await $fetch(
-					`${apiUrl.value}views/set`,
-					{
-						method: 'POST',
-						credentials: 'include',
-						headers: {
-							Accept: 'application/json',
-							'X-XSRF-TOKEN': csrfCookie.value,
-						},
-						body: {
-							entityType: media.value.entity_type,
-							entityId: media.value.id,
-						},
-					},
-			).then(() => {
+			if (response) {
 				sessionStorage.setItem(`view_${media.value.entity_type}_${media.value.id}`, true);
-			});
-		} catch (e) {}
+			}
+		} catch (e) {
+			error(e);
+		}
 	}
 }
 setView();
@@ -156,13 +246,13 @@ watch(() => props.image, () => {
 	media.value = props.image;
 });
 
+watch(() => props.mediaId, () => {
+	getMedia();
+	searchNextAndPrevElements()
+});
 
 const activeInfoBlock = ref(false);
 
-import { date } from '@/composables/date.js';
-const { getFormattedDate } = date();
-
-import {onMounted, onUnmounted, watch} from 'vue'
 onMounted(() => {
 	if (props.hideBodyScrollLine) {
 		const body = document.querySelector('body');
@@ -220,16 +310,19 @@ const setActiveInfoBlock = (value, useTimeout = false) => {
 const keydownHandler = (event) => {
 	switch (event.key) {
 		case 'Escape': emit('setCurrentElement'); break;
-		case 'ArrowDown': props.nextElementKey ? emit('setCurrentElement', props.nextElementKey) : ''; break;
-		case 'ArrowRight': props.nextElementKey ? emit('setCurrentElement', props.nextElementKey) : ''; break;
-		case 'ArrowUp': props.prevElementKey ? emit('setCurrentElement', props.prevElementKey) : ''; break;
-		case 'ArrowLeft': props.prevElementKey ? emit('setCurrentElement', props.prevElementKey): ''; break;
+		case 'ArrowDown': checkHasElementForNavigate('next') ? setElementForNavigate('next') : ''; break;
+		case 'ArrowRight': checkHasElementForNavigate('next') ? setElementForNavigate('next') : ''; break;
+		case 'ArrowUp': checkHasElementForNavigate('prev') ? setElementForNavigate('prev') : ''; break;
+		case 'ArrowLeft': checkHasElementForNavigate('prev') ? setElementForNavigate('prev'): ''; break;
 	}
 }
 </script>
 
 <template>
-	<div class="light-box" style="">
+	<div
+			v-if="Object.keys(media).length > 0"
+			class="light-box"
+	>
 		<img
 				class="background-img"
 				:src="handleBackendUrl(media.webp ? media.webp : media.src)"
@@ -261,9 +354,9 @@ const keydownHandler = (event) => {
 				<font-awesome-icon :icon="['fas', 'check']"/>
 			</span>
 			<span
-					v-if="Number.isInteger(prevElementKey)"
+					v-if="checkHasElementForNavigate('prev')"
 					class="btn-icon btn-nav button-prev"
-					@click="$emit('setCurrentElement', prevElementKey)"
+					@click="setElementForNavigate('prev')"
 			>
 				<font-awesome-icon :icon="['fas', 'angle-left']" />
 			</span>
@@ -273,9 +366,9 @@ const keydownHandler = (event) => {
 					:title="media.name"
 			>
 			<span
-					v-if="Number.isInteger(nextElementKey)"
+					v-if="checkHasElementForNavigate('next')"
 					class="btn-icon btn-nav button-next"
-					@click="$emit('setCurrentElement', nextElementKey)"
+					@click="setElementForNavigate('next')"
 			>
 				<font-awesome-icon :icon="['fas', 'angle-right']" />
 			</span>
@@ -328,13 +421,13 @@ const keydownHandler = (event) => {
 								{{ media.name }}
 							</span>
 							<span
-									v-if="!hidenFields.includes('user_info.name') && media.user_info?.name"
+									v-if="!hiddenFields.includes('user_info.name') && media.user_info?.name"
 									class="info-line"
 							>
 								<router-link :to="`/profile/${media.user_info.name}/`">{{ media.user_info.name }}</router-link>
 							</span>
 							<span
-									v-if="!hidenFields.includes('user_info.name') && media.created_at"
+									v-if="!hiddenFields.includes('user_info.name') && media.created_at"
 									class="info-line"
 							>
 								{{ getFormattedDate('d.m.Y H:i:s', media.created_at) }}

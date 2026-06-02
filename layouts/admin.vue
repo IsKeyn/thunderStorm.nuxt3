@@ -58,7 +58,10 @@ import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
 import { roles } from '@/composables/roles.js';
-const { hasRole } = roles();
+const { hasRole, hasPermission } = roles();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 // Окно авторизации
 import VerifyEmailBlock from "@/components/user/VerifyEmailBlock.vue";
@@ -96,7 +99,7 @@ import SideMenuByCode from '@/components/menu/SideMenuByCode.vue';
 			<article>
 				<NuxtLoadingIndicator />
 				<template v-if="userStore.user && Object.keys(userStore.user).length > 0">
-					<template v-if="hasRole('admin', userStore.user) === true">
+					<template v-if="hasPermission('admin.dashboard', userStore.user) === true || hasPermission('admin.super', userStore.user) === true">
 						<template v-if="userStore.user.email_verified_at">
 							<Header />
 							<div class="wrap">
@@ -112,7 +115,7 @@ import SideMenuByCode from '@/components/menu/SideMenuByCode.vue';
 						</template>
 					</template>
 					<template v-else>
-						// Вы должны быть администратором, чтобы получить доступ в этот раздел
+						Вы должны быть администратором, чтобы получить доступ в этот раздел
 					</template>
 				</template>
 				<template v-else>
@@ -121,14 +124,8 @@ import SideMenuByCode from '@/components/menu/SideMenuByCode.vue';
 							:showOpenModal="activeAuthModal"
 							size="small"
 							modal-id="auth-form"
-							:re-calc-height="reCalc"
-							@setReCalcValue="reCalcHeight"
-							@toggleModal="toggleAuthModal"
 					>
-						<AuthComponent
-								@reCalcHeight="reCalcHeight"
-								@closeModal="toggleAuthModal"
-						/>
+						<AuthComponent />
 					</Modal>
 				</template>
 			</article>

@@ -1,4 +1,5 @@
 <script setup>
+// TODO устаревший компонент, удалить, когда нигде не будет использоваться
 const route = useRoute();
 
 import { useUserStore } from '@/stores/user';

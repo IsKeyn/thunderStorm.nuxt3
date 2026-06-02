@@ -1,10 +1,14 @@
 <script setup>
 import { inject, watch } from "vue";
 
-const route = useRoute();
-
 const emit = defineEmits(['updateList']);
 const layoutMethods = inject('layoutMethods')
+
+import { helper } from '@/composables/helper.js'
+const { route, hasWebSocked } = helper();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
@@ -139,7 +143,7 @@ const sendActivateSeRequest = async (type) => {
 
 				requestInProgress.value = false;
 
-				await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+				if (!hasWebSocked()) refreshLayoutData();
 				emit('updateList');
 			}
 		}

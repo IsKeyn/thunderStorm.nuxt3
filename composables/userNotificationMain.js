@@ -27,17 +27,11 @@ export function userNotificationMain() {
     }
 
     const setUserNotification = (data) => {
-        if (data?.notification_count) {
+        if (data?.notification_count || data?.notification_count === 0) {
             const notificationsCount = sessionStorage.getItem('notificationsCount');
             useNotifications.currentUserNotificationCount = data.notification_count;
 
-            if (notificationsCount === null) {
-                sessionStorage.setItem('notificationsCount', data.notification_count);
-            }
-
             if (data.notification_count > 0 && notificationsCount < data.notification_count) {
-                sessionStorage.setItem('notificationsCount', data.notification_count);
-
                 let text = '';
 
                 if (data.notification_count === 1) {
@@ -50,21 +44,17 @@ export function userNotificationMain() {
 
                 error(text, 60000, '#004d42', false, null, null, true, func);
             }
+
+            sessionStorage.setItem('notificationsCount', data.notification_count);
         }
 
-        if (data?.message_count) {
+        if (data?.message_count || data?.message_count === 0) {
             const sessionStorageName = 'messagesCount';
 
             const messagesCount = sessionStorage.getItem(sessionStorageName);
             useNotifications.currentUserMessagesCount = data.message_count;
 
-            if (messagesCount === null) {
-                sessionStorage.setItem(sessionStorageName, data.message_count);
-            }
-
             if (data.message_count > 0 && messagesCount < data.message_count) {
-                sessionStorage.setItem(sessionStorageName, data.message_count);
-
                 let text = '';
 
                 if (data.message_count === 1) {
@@ -77,6 +67,8 @@ export function userNotificationMain() {
 
                 error(text, 60000, '#004d42', false, null, null, true, func);
             }
+
+            sessionStorage.setItem(sessionStorageName, data.message_count);
         }
     }
 

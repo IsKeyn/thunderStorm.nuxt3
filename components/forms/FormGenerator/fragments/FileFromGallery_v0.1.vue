@@ -89,7 +89,11 @@ const setNewSort = () => {
 			</div>
 		</div>
 		<div v-if="formValue && formValue.src" class="col-span-2 text-center">
-			<img :src="formValue.src" class="inline-block max-w-[500px] max-h-[500px]">
+			<img
+					:src="formValue.src"
+					:media-id="formValue.id"
+					class="inline-block max-w-[500px] max-h-[500px] media-obj"
+			>
 		</div>
 	</div>
 

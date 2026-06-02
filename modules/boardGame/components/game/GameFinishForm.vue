@@ -11,7 +11,10 @@ import { userFunctions } from '@/composables/userFunctions.js';
 const { isAuth, userStore } = userFunctions();
 
 import { helper } from '@/composables/helper.js'
-const { route } = helper();
+const { route, hasWebSocked } = helper();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
 
 import { validate } from '@/composables/validate.js';
 const { validateForm } = validate();
@@ -202,7 +205,7 @@ const sendRequest = async () => {
 			form.value.comment.value = null;
 
 			// Обновляем данные игрока, в данном случае, чтобы обновить очки
-			await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+			if (!hasWebSocked()) refreshLayoutData();
 
 			if (props.type === 2) { // Если игра пройдена переводим игрока на шаг 1
 				emit('updateData', 1);
@@ -299,16 +302,16 @@ const getTypeText = (type) => {
 				<template v-if="type === 3">Используйте данную кнопку, если передаете игру другому игроку</template>
 			</div>
 			<div class="flex">
-				<button
-						class="btn btn-simple-1 w-1/2 mr-[2rem]"
-						@click="emit('toggleFormVisible')"
-				>Отмена</button>
 				<ActionButton
-						buttonClasses="btn btn-simple-1 w-1/2"
-						buttonName="Отправить"
+						buttonClasses="btn btn-simple-1 w-1/2 mr-[2rem] denied"
+						:actionInProgress="requestInProgress"
+						@startAction="emit('toggleFormVisible')"
+				>Отмена</ActionButton>
+				<ActionButton
+						buttonClasses="btn btn-simple-1 w-1/2 accept"
 						:actionInProgress="requestInProgress"
 						@startAction="sendForm()"
-				/>
+				>Отправить</ActionButton>
 			</div>
 		</div>
 		<div v-else>

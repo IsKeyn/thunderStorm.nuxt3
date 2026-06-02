@@ -58,7 +58,7 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
-	showAdditionalData: { // Таб, включающий в себя расширения
+	showAdditionalFieldsTab: { // Таб, включающий в себя расширения
 		type: Boolean,
 		default: false,
 	},
@@ -263,7 +263,14 @@ const buttons = [
 
 <template>
 	<div>
+		<ui-BigPreloader
+				v-if="requestInProgress"
+				class="h-full"
+				theme="image"
+				:themeType="9"
+		/>
 		<FormBlank
+				v-else
 				:form="form"
 				:buttons="buttons"
 
@@ -282,7 +289,7 @@ const buttons = [
 				:menuForProp="menuForProp"
 				:dataForAdditionalFields="dataForAdditionalFields"
 				:showAdditionControlPanel="showAdditionControlPanel"
-				:showAdditionalData="showAdditionalData"
+				:showAdditionalFieldsTab="showAdditionalFieldsTab"
 				:additionalData="additionalData"
 
 				:extensions="extensions"

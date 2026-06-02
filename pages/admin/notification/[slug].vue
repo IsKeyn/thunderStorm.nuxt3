@@ -3,15 +3,22 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
 
 const form = ref(
 		{
 			user_id: {
 				name: 'UserId',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -22,18 +29,48 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
+			actions: {
+				name: 'Действия',
+				value: '',
+				type: 'json',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+			},
 			viewed: {
 				name: 'Просмотрено',
-				value: 1,
+				value: false,
 				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 				showTitle: false,
 			},
+			entity_type: {
+				name: 'Привязка сущности',
+				value: '',
+				type: 'EntityBind',
+				bindField: 'entity_id',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			entity_id: {
+				name: 'ID привязанной сущности',
+				value: '',
+				type: 'disable',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			sort: {
+				name: 'Сортировка',
+				value: null,
+				type: 'number',
+				validateRules: 'integer',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			created_by: {
 				name: 'ID автора',
 				value: '',
-				type: 'text',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -41,8 +78,8 @@ const form = ref(
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Оповещения';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -58,7 +95,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Оповещения',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -70,12 +107,23 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				:form="form"
-				:showAdditionalData="false"
-				fetchUrl="admin/entity/User/Notification"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('user.notification.edit')"
+			:form="form"
+			fetchUrl="admin/notification"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:hasResource="true"
+			:showAdditionalFieldsTab="true"
+			:useVersionList="true"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>

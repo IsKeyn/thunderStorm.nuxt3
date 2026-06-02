@@ -2,7 +2,10 @@
 import { ref } from "vue";
 
 import { helper } from '@/composables/helper.js'
-const { route } = helper();
+const { route, hasWebSocked } = helper();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
 
 import { api } from '@/composables/api.js'
 const { sendApiRequest } = api();
@@ -28,7 +31,7 @@ const goIn = async () => {
 			if (response.status === 'error') {
 				error(response.status_message);
 			} else if (response.status === 'success') {
-				await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+				if (!hasWebSocked()) refreshLayoutData();
 
 				alert(response.status_message);
 			}

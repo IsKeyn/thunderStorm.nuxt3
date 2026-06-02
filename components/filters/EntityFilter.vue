@@ -114,6 +114,20 @@ const sort = ref([
 						field: 'pivot.sort',
 						sort: 'desc',
 					},
+				},
+				{
+					name: 'Дата ↑',
+					value: {
+						field: 'date',
+						sort: 'asc',
+					},
+				},
+				{
+					name: 'Дата ↓',
+					value: {
+						field: 'date',
+						sort: 'desc',
+					},
 				}
 			],
 			validateRules: 'required',

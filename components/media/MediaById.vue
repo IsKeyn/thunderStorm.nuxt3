@@ -11,8 +11,9 @@ const {
 
 onMounted(() => {
 	document.addEventListener("click", event => {
-		if (event.target.matches(".media-obj")) {
-			setMediaObj(event)
+		const target = event.target.closest('[media-id]:not([media-id=""])');
+		if (target) {
+			setMediaObj(event);
 		}
 	}, false);
 })

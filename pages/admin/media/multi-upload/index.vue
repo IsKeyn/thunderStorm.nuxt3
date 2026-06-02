@@ -6,6 +6,9 @@ definePageMeta({
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
 import MultiUpload from '@/components/forms/MultiUpload.vue';
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const route = useRoute();
 
 const breadCrumbsArray = computed(() => {
@@ -31,6 +34,13 @@ const breadCrumbsArray = computed(() => {
 <template>
 	<div>
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<MultiUpload />
+		<MultiUpload
+				v-if="checkPermission('media.edit')"
+		/>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="У вас нет доступа"
+		/>
 	</div>
 </template>

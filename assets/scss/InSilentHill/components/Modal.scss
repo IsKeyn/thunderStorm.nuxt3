@@ -135,4 +135,8 @@ h3.modal-title {
   ;
 
   width: calc(100% + 35px + 35px);
+
+  &.simple {
+    @apply bg-none bg-[var(--main-href-color)];
+  }
 }

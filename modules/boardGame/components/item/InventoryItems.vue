@@ -6,7 +6,12 @@ import UseItem from '@/modules/boardGame/components/item/UseItem.vue';
 import StatusEffectCard from '@/modules/boardGame/components/statusEffect/StatusEffectCard.vue';
 
 import { computed, ref } from "vue";
-const route = useRoute();
+
+import { helper } from '@/composables/helper.js'
+const { route, hasWebSocked } = helper();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
 
 const emit = defineEmits(['updateInventory']);
 
@@ -135,7 +140,7 @@ const useItemRequest = async (inventory_id, name, additionalParams = {}) => {
 					alert(`Предмет "${name}" был использован`);
 				}
 
-				await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+				if (!hasWebSocked()) refreshLayoutData();
 				emit('updateInventory');
 			}
 		}

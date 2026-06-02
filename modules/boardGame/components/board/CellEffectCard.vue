@@ -6,7 +6,10 @@ import { computed, inject, ref } from "vue";
 const layoutMethods = inject('layoutMethods')
 
 import { helper } from '@/composables/helper.js'
-const { route } = helper();
+const { route, hasWebSocked } = helper();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
@@ -157,7 +160,7 @@ const sendInvitation = async () => {
 				}
 
 				await refreshNuxtData('getBoardGameBoard');
-				await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+				if (!hasWebSocked()) refreshLayoutData();
 			}
 		}
 	} catch (e) {
@@ -212,7 +215,7 @@ const setRequest = async (type) => {
 				}
 
 				await refreshNuxtData('getBoardGameBoard');
-				await refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+				if (!hasWebSocked()) refreshLayoutData();
 			}
 		}
 	} catch (e) {

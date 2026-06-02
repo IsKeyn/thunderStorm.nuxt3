@@ -1,5 +1,5 @@
 <script setup>
-import TdElementCard from '@/components/admin/list/TdElementCard.vue';
+import TdElementCard from '@/components/admin/tables/TdElementCard.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
 import LightBox from '@/components/media/LightBox.vue';
 

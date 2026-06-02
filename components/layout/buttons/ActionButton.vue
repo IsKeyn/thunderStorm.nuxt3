@@ -8,7 +8,7 @@ const props = defineProps({
 	},
 	buttonClasses: {
 		type: String,
-		default: 'btn btn-primary min-w-24',
+		default: 'btn btn-simple min-w-24',
 	},
 	actionInProgress: {
 		type: Boolean,
@@ -24,6 +24,7 @@ const props = defineProps({
 			:class="[buttonClasses]"
 	>
 		<template v-if="!actionInProgress">
+			<slot />
 			{{ buttonName }}
 		</template>
 		<font-awesome-icon
@@ -33,3 +34,13 @@ const props = defineProps({
 		/>
 	</button>
 </template>
+
+<style lang="scss" scoped>
+.accept {
+	@apply border-l-4 border-[var(--accept-color)];
+}
+
+.denied {
+	@apply border-l-4 border-[var(--denied-color)];
+}
+</style>

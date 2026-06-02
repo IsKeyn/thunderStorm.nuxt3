@@ -3,15 +3,21 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
 
 const form = ref(
 		{
 			id: {
 				name: 'id',
-				value: '',
-				type: 'hidden',
+				value: null,
+				type: 'notEditable',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -19,12 +25,12 @@ const form = ref(
 				name: 'Название',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'required, minLength_2, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			title_image: {
 				name: 'Титульное изображение',
-				value: '',
+				value: null,
 				keyValueFromObject: 'id',
 				objectValue: null,
 				type: 'fileFromGallery',
@@ -44,7 +50,7 @@ const form = ref(
 			},
 			created_at: {
 				name: 'Дата создания',
-				value: '',
+				value: null,
 				type: 'datetime-local',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
@@ -56,9 +62,31 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
+			mod: {
+				name: 'Модификация\\сборка\\хак',
+				value: false,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
+			sort: {
+				name: 'Сортировка',
+				value: null,
+				type: 'number',
+				validateRules: 'integer',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			spc_id: {
+				name: 'speedrun.com api',
+				value: null,
+				type: 'text',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			active: {
 				name: 'Активность',
-				value: 1,
+				value: true,
 				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
@@ -66,7 +94,7 @@ const form = ref(
 			},
 			show_in_list: {
 				name: 'Отображать в списках',
-				value: 1,
+				value: true,
 				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
@@ -76,8 +104,8 @@ const form = ref(
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Игры';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -93,7 +121,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игры',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -104,6 +132,13 @@ const breadCrumbsArray = computed(() => {
 });
 
 const extensions = [
+	{
+		name: 'Series',
+		keyForBackend: 'series',
+		params: {
+			additionalDataKeys: ['series'],
+		},
+	},
 	{
 		name: 'Groups',
 		keyForBackend: 'groups',
@@ -143,6 +178,13 @@ const extensions = [
 		},
 	},
 	{
+		name: 'People',
+		keyForBackend: 'people',
+		params: {
+			additionalDataKeys: ['people', 'person_role'],
+		},
+	},
+	{
 		name: 'Links',
 		keyForBackend: 'links',
 		params: null,
@@ -151,20 +193,29 @@ const extensions = [
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				:form="form"
-				fetchUrl="admin/game"
-				:additionalFieldsEnable="true"
-				:showTags="true"
-				:showSeo="true"
-				:showMenu="true"
-				:hasResource="true"
-				:useAdditionalData="true"
-				:useBlockEditor="true"
-				:showAdditionalData="true"
-				:extensions="extensions"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('game.edit')"
+			:form="form"
+			fetchUrl="admin/game"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:showSeo="true"
+			:showMenu="true"
+			:hasResource="true"
+			:useAdditionalData="true"
+			:useBlockEditor="true"
+			:showAdditionalFieldsTab="true"
+			:useVersionList="true"
+			:extensions="extensions"
+			previewUrl="/game/{slug}"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>
