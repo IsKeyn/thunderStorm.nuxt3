@@ -1,6 +1,7 @@
 <script setup>
 import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import GameGamblingCard from '@/modules/boardGame/components/game/GameGamblingCard.vue';
+import Game from '@/components/games/gamblingGame/card/Game.vue';
 
 import { ref } from 'vue'
 
@@ -350,6 +351,12 @@ const startSpin = (randomIndex) => {
 						/>
 						<GameGamblingCard
 								v-if="cardType === 'GameGamblingCard'"
+								:element="element"
+								:itemHeight="itemHeight"
+								:classes="element.id === resultId ? 'active' : ''"
+						/>
+						<Game
+								v-if="cardType === 'Game'"
 								:element="element"
 								:itemHeight="itemHeight"
 								:classes="element.id === resultId ? 'active' : ''"

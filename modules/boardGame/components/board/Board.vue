@@ -8,7 +8,10 @@ import PlayerInteractionCard from '@/modules/boardGame/components/player-interac
 import { computed, ref } from "vue";
 
 import { helper } from '@/composables/helper.js'
-const { route } = helper();
+const { route, hasWebSocked } = helper();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
 
 import { media } from '@/composables/media.js'
 const { getResizeImg } = media();
@@ -134,7 +137,7 @@ const changePosition = (positionData, oldPositionNumber = null) => {
 										changePosition({ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition}, positionData.firstPosition.position);
 									} else {
 										showEffectsBox.value = true;
-										refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+										if (!hasWebSocked()) refreshLayoutData();
 										refresh();
 									}
 								}
@@ -150,7 +153,7 @@ const changePosition = (positionData, oldPositionNumber = null) => {
 										changePosition({ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition}, positionData.firstPosition.position);
 									} else {
 										showEffectsBox.value = true;
-										refreshNuxtData('boardGameCurrentPlayerInfoRequest');
+										if (!hasWebSocked()) refreshLayoutData();
 										refresh();
 									}
 								}

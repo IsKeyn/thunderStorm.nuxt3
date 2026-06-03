@@ -1,13 +1,13 @@
 <script setup>
 import draggable from "vuedraggable";
 
-import Repeater from '@/components/repeaters/Repeater.vue';
 import OpeningBox from '@/components/ui/OpeningBox.vue';
+import RepeaterV2 from '@/components/repeaters/RepeaterV2.vue';
 import Modal from '@/components/modals/Modal.vue';
 import MultiSelectFromGallery from "@/components/multiSelects/MultiSelectFromGallery.vue";
 import FileFromGallery from "@/components/forms/FormGenerator/fragments/FileFromGallery_v0.1.vue";
 
-import { watch } from "vue";
+import { ref, watch } from "vue";
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -44,27 +44,10 @@ const repeaterItem = {
 	classes: ['w-full', 'mt-[5px]'],
 };
 
-const selectedData = ref([]);
-selectedData.value = props.modelValue;
+const value = ref([ ...props.modelValue ]);
 
-watch(() => props.modelValue, (newValue, oldValue) => {
-	if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
-		selectedData.value = newValue;
-	}
-}, { deep: true });
-
-watch(() => selectedData.value, (newValue, oldValue) => {
-	/*
-	 * TODO
-	 * фигня какая-то
-	 * Пример console.log(1, newValue, oldValue) имеет отличные от данные console.log(2, JSON.stringify(newValue), JSON.stringify(oldValue));
-	 * Пример 2 structuredClone(toRaw(newValue)) и structuredClone(toRaw(oldValue)) также отличаются от newValue, oldValue
-	 * console.log(111, !isEqual(newValue, oldValue), JSON.stringify(newValue) !== JSON.stringify(oldValue), JSON.stringify(rawNew) !== JSON.stringify(rawOld)); результат одинаковый
-	 */
-
-	if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
-		emit('update:modelValue', newValue);
-	}
+watch(() => value.value, (newValue) => {
+	emit('update:modelValue', newValue);
 }, { deep: true });
 
 const activeGalleryModal = ref(false);
@@ -74,31 +57,29 @@ const toggleGalleryModal = () => {
 }
 
 const setRepeatorItems = (event) => {
-	selectedData.value = event;
+	value.value = event;
+	repeaterComponent.value.updateItems(value.value);
 }
 
-const calcSort = (event) => {
-	selectedData.value.forEach((item, key) => {
+const calcSort = (event, repeaterItems) => {
+	repeaterItems.forEach((item, key) => {
 		item.sort = key;
 	});
-
-	emit('update:modelValue', selectedData);
 }
 </script>
 
 <template>
-	<OpeningBox
-			:title="params?.title"
-	>
+	<OpeningBox :title="params?.title">
 		<button @click="toggleGalleryModal" class="btn btn-primary">Добавить несколько элементов</button>
 
 		<div class="media-box">
 			<span class="form-title">Медиа в данной галерии</span>
 
-			<Repeater
+			<RepeaterV2
 					ref="repeaterComponent"
 					:repeaterItem="{}"
-					v-model="selectedData"
+					v-model="value"
+					:setSort="true"
 					#default="{ repeaterItems, reload }"
 			>
 				<draggable
@@ -106,7 +87,7 @@ const calcSort = (event) => {
 						:list="repeaterItems"
 						handle=".handle"
 						item-key="name"
-						@end="calcSort"
+						@end="(event) => calcSort(event, repeaterItems)"
 				>
 					<template #item="{ element, index }">
 						<div :class="['form']">
@@ -131,28 +112,6 @@ const calcSort = (event) => {
 					</template>
 				</draggable>
 
-					<!--	Старое решение		-->
-<!--					<div-->
-<!--							v-for="(item, index) in repeaterItems"-->
-<!--							:key="index"-->
-<!--							:class="['form']"-->
-<!--					>-->
-<!--						<div class="input-box">-->
-<!--							<FileFromGallery-->
-<!--									v-model="repeaterItems[index]"-->
-<!--							/>-->
-<!--						</div>-->
-<!--						<div class="buttons-box">-->
-<!--							<button-->
-<!--									v-if="repeaterItems.length > 1"-->
-<!--									class="btn btn-primary"-->
-<!--									@click="repeaterComponent.deleteRepeaterItem(index)"-->
-<!--							>-->
-<!--								<font-awesome-icon :icon="['fas', 'xmark']" />-->
-<!--							</button>-->
-<!--						</div>-->
-<!--					</div>-->
-
 				<button
 						class="btn btn-primary block"
 						@click="repeaterComponent.addRepeaterItem()"
@@ -172,10 +131,9 @@ const calcSort = (event) => {
 							@update:modelValue="setRepeatorItems"
 					/>
 				</Modal>
-			</Repeater>
+			</RepeaterV2>
 		</div>
 	</OpeningBox>
-
 </template>
 
 <style lang="scss" scoped>

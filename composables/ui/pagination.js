@@ -1,22 +1,32 @@
+import { helper } from '@/composables/helper.js'
+
 export function pagination(perPageProps) {
-    const route = useRoute();
+    const { route } = helper();
 
     const page = ref(route.query.page ? Number(route.query.page) : 1);
-    const perPageCount = ref(route.query.perPage ? Number(route.query.perPage) : (perPageProps ? perPageProps : 10));
+    const perPage = ref(route.query.perPage ? Number(route.query.perPage) : (perPageProps ? perPageProps : 10));
 
-    const changePage = async (p) => {
+    // Создаем ref для хранения функции refresh
+    const refreshFn = ref(null);
+
+    const setRefresh = (fn) => {
+        refreshFn.value = fn;
+    }
+
+    const changePage = (p) => {
         page.value = p;
-        refresh();
+        refreshFn.value();
     }
 
     const setPerPage = (count) => {
-        perPageCount.value = count;
-        refresh();
+        perPage.value = count;
+        refreshFn.value();
     }
 
     return {
         page,
-        perPageCount,
+        perPage,
+        setRefresh,
         changePage,
         setPerPage,
     };

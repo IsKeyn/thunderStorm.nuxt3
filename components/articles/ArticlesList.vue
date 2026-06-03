@@ -1,9 +1,15 @@
 <script setup>
+import PageHeader from '@/components/layout/PageHeader.vue';
+import ArticleCard from '@/components/articles/ArticleCard.vue';
+import ActionButton from '@/components/layout/buttons/ActionButton.vue';
+
 import { onMounted, onUnmounted, ref } from "vue";
 
-import ArticleCard from '@/components/articles/ArticleCard.vue';
-import PageHeader from '@/components/layout/PageHeader.vue';
-import ActionButton from '@/components/layout/buttons/ActionButton.vue';
+import { api } from '@/composables/api.js'
+const { sendApiRequest } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const props = defineProps({
 	id: {
@@ -16,7 +22,7 @@ const props = defineProps({
 	},
 	type: {
 		type: Number,
-		default: '',
+		default: null,
 	},
 	title: {
 		type: String,
@@ -28,30 +34,22 @@ const props = defineProps({
 	},
 });
 
-import { api } from '@/composables/api.js'
-const {
-	apiUrl,
-	publicUrl,
-	sessionCookieName,
-	getCsrfCookie,
-	errorHandler,
-} = api();
-
-const fetchedData = ref([]);
-const meta = ref({});
 const perPage = ref(4);
 const page = ref(1);
 const filters = ref({
 	type: props.type,
 });
 
-const requestInProgress = ref(false);
+const requestName = props.id;
 
-const { refresh } = await useAsyncData(
+const {
+	data: requestData,
+	pending: requestInProgress,
+	refresh
+} = await useAsyncData(
+		requestName,
 		async () => {
-			let request = `${apiUrl.value}article/get`;
-
-			const body = {
+			const query = {
 				perPage: perPage.value,
 				page: page.value,
 				filter: {},
@@ -62,50 +60,36 @@ const { refresh } = await useAsyncData(
 			for (let key in rawFilters) {
 				if (key === 'tags') {
 					if (rawFilters[key].length > 0) {
-						body.filter[key] = rawFilters[key];
+						query.filter[key] = rawFilters[key];
 					}
 				} else {
-					body.filter[key] = rawFilters[key];
+					query.filter[key] = rawFilters[key];
 				}
 			}
 
-			const sessionCookie = useCookie(sessionCookieName.value);
-			requestInProgress.value = true;
+			const requestUrl = 'article/get';
 
-			try {
-				const csrfCookie = await getCsrfCookie();
+			const response = await Promise.resolve(
+					sendApiRequest(requestUrl, 'POST', query, requestName, '')
+			);
 
-				await $fetch(
-						request,
-						{
-							method: 'POST',
-							credentials: 'include',
-							headers: {
-								Accept: 'application/json',
-								'X-XSRF-TOKEN': csrfCookie.value,
-								Cookie: `${sessionCookieName.value}=${sessionCookie.value};`,
-								Referer: publicUrl.value,
-							},
-							body,
-							onResponse({response}) {
-								if (response.status === 200) {
-									fetchedData.value = fetchedData.value.concat(response._data.data);
-
-									meta.value = response._data.meta;
-								} else {
-									// Возарщаем 404
-								}
-
-								requestInProgress.value = false;
-							}
-						},
-				);
-			} catch (e) {
-				errorHandler(e);
-				requestInProgress.value = false;
-			}
+			return response || null;
+		},
+		{
+			server: true,
+			lazy: true,
 		}
 );
+
+const articles = ref([]);
+const meta = ref({});
+
+watch(() => requestData.value, (newData) => {
+	if (newData?.data) {
+		articles.value = articles.value.concat(newData.data);
+		meta.value = newData.meta;
+	}
+}, { immediate: true })
 
 const getNextPage = async () => {
 	if (meta.value.current_page < meta.value.last_page) {
@@ -127,18 +111,16 @@ onUnmounted(() => {
 });
 
 const scrollHandler = () => {
-	const gallery = document.getElementById(props.id);
+	const block = document.getElementById(props.id);
 
-	if (gallery) {
-		let bottomOfBlock = (gallery.offsetHeight + gallery.offsetTop) - (window.pageYOffset + window.innerHeight);
+	if (block) {
+		let bottomOfBlock = (block.offsetHeight + block.offsetTop) - (window.pageYOffset + window.innerHeight);
 
 		if (bottomOfBlock <= 100 && !requestInProgress.value) {
 			getNextPage();
 		}
 	}
 }
-
-const route = useRoute();
 
 const getBreadCrumbs = () => {
 	const splitedPath = route.path.split('/');
@@ -160,7 +142,7 @@ const getBreadCrumbs = () => {
 	/>
 	<div :id="id">
 		<ArticleCard
-				v-for="cardData in fetchedData"
+				v-for="cardData in articles"
 				:cardData="cardData"
 		/>
 	</div>

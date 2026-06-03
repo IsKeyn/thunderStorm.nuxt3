@@ -1,7 +1,8 @@
 <script setup>
-import { onMounted } from 'vue'
-
 import AddCommentForm from '@/components/forms/AddCommentForm.vue';
+import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
+
+import { onMounted } from 'vue'
 
 const emit = defineEmits(['fetchComments']);
 
@@ -88,6 +89,10 @@ const returnToFirstPosition = () => {
 		returnToFirstPositionIndicatorRef.value.style.marginLeft = `-${props.deepLvl * 20 - 3}px`;
 	}
 }
+
+const userName = computed(() => {
+	return props.comment?.user?.name ? props.comment?.user?.name : props.comment.name;
+});
 </script>
 
 <template>
@@ -103,13 +108,21 @@ const returnToFirstPosition = () => {
 		>
 			<div class="comment-box">
 				<div class="flex">
-					<div>
-						<div class="comment-box-head">Комментарий {{ comment.name }} от {{ getFormattedDate('d ru_mouths_name Y', comment.created_at) }}</div>
+					<PublicAvatar
+							class="avatar"
+							:user="comment.user"
+							:useLightBox="true"
+							classes="w-[100px] h-[100px] mr-4"
+					/>
+					<div class="comment">
+						<div class="comment-box-head">
+							Комментарий {{ userName }} от {{ getFormattedDate('d ru_mouths_name Y', comment.created_at) }}
+							<template v-if="comment.board_game">
+								из ивента <nuxt-link :to="`/e/${comment.board_game.slug}`" target="_blank" class="event">"{{ comment.board_game.name }}"</nuxt-link>
+							</template>
+						</div>
 						<div class="message-box">{{ comment.message }}</div>
 					</div>
-<!--					<div>-->
-<!--						Это место под аватар пользователя-->
-<!--					</div>-->
 				</div>
 				<div class="action-box">
 					<a @click="sendAnswer = !sendAnswer">{{ sendAnswer ? 'Отменить' : 'Ответить' }}</a>
@@ -178,10 +191,14 @@ const returnToFirstPosition = () => {
 
 		.comment-box-head {
 			@apply pb-[10px];
+
+			a {
+				@apply text-[var(--main-text-color)];
+			}
 		}
 
 		.message-box {
-			@apply pb-[10px] pt-[10px] whitespace-pre-wrap break-words;
+			@apply pb-[10px] pt-[10px] whitespace-pre-wrap break-all;
 
 			border-top: 1px solid var(--second-border-color);
 		}
@@ -200,6 +217,14 @@ const returnToFirstPosition = () => {
 
 				font-size: var(--text-small-text);
 			}
+		}
+
+		.avatar-box {
+			flex: 0 0 calc(100px + 1rem);
+		}
+
+		.comment {
+			flex: 1;
 		}
 	}
 }

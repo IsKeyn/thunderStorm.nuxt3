@@ -1,24 +1,30 @@
 <script setup>
 import LoadingBar from '@/components/ui/LoadingBar.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
+import Settings from '@/modules/boardGame/components/timer/Settings.vue';
 
 const emit = defineEmits(['updateTimerList']);
 
 import { ref, computed, onBeforeUnmount, onMounted, onUnmounted, watch } from 'vue'
 
-const route = useRoute();
+const { subscribe, unsubscribe } = useWebSocket();
+
+const runtimeConfig = useRuntimeConfig();
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
 import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody, publicUrl } = api();
+const { sendApiRequest, publicUrl } = api();
 
 import { notifications } from '@/composables/notifications.js';
 const { alert, error, choiceAlert } = notifications();
 
 import { boardGameLog } from '@/composables/BoardGame/boardGameLog.js'
 const { setLog } = boardGameLog();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const props = defineProps({
 	userId: {
@@ -41,10 +47,24 @@ const props = defineProps({
 
 const slug = ref('main');
 const limit = ref(null);
+const settings = ref(null);
+
+const computedUserId = () => {
+	return props.userId ?? userStore.user.id;
+}
+
+const computedBgSlug = () => {
+	return route.params.slug;
+}
+
+const computedTimerSlug = () => {
+	return slug.value;
+}
 
 if (Object.keys(props.timer)) {
 	if (props.timer.slug) slug.value = props.timer.slug;
 	if (props.timer.limit) limit.value = props.timer.limit;
+	if (props.timer.settings) settings.value = props.timer.settings;
 }
 
 const canDelete = ref(true);
@@ -95,7 +115,7 @@ const status = ref(null);
 const formattedTime = computed(() => {
 	const hours = Math.floor(seconds.value / 3600)
 	const minutes = Math.floor((seconds.value % 3600) / 60)
-	const secs = seconds.value % 60
+	const secs = Math.floor(seconds.value % 60);
 
 	return [
 		hours.toString().padStart(2, '0'),
@@ -115,9 +135,21 @@ const getStatusInterval = ref(null);
 onMounted(() => {
 	getTimerStatus();
 
-	// getStatusInterval.value = setInterval(() => {
-	// 	getTimerStatus();
-	// }, 15000);
+	/* Если подключен WebSocked */
+	if (runtimeConfig.public.hasWebSockedServer) {
+		let channelName = 'timer';
+
+		channelName += `.${route.params.slug}.${props.userId}.${slug.value}`;
+
+		const { unsubscribe: stop, subscriptionId } = subscribe(
+				channelName,
+				'TimerStatusToggle',
+				(data) => {
+					statusHandler(data);
+				},
+				'public'
+		);
+	}
 });
 
 onUnmounted(() => {
@@ -141,38 +173,10 @@ const getTimerStatus = async () => {
 			body.user_id = props.userId;
 		}
 
-		const response = await sendApiRequest(`board-game/timer/status`, 'POST', body);
+		const response = await sendApiRequest(`board-game/v2/timer/status`, 'POST', body);
 
 		if (response) {
-			status.value = response;
-
-			requestInProgress.value = false;
-
-			if (response.error) {
-				error(response.error);
-			} else {
-				if (response.time) {
-					seconds.value = response.time;
-				}
-
-				if (response.limit) {
-					limit.value = response.limit;
-				}
-
-				if (response.active) {
-					isRunning.value = true;
-
-					if (!timerInterval.value) {
-						timerInterval.value = setInterval(() => {
-							seconds.value++
-						}, 1000);
-					}
-				} else {
-					isRunning.value = false;
-					clearInterval(timerInterval.value);
-					timerInterval.value = null;
-				}
-			}
+			statusHandler(response);
 		} else {
 			error('Произошла ошибка');
 			requestInProgress.value = false;
@@ -180,6 +184,38 @@ const getTimerStatus = async () => {
 	} catch (e) {
 		error(e);
 		requestInProgress.value = false;
+	}
+}
+
+const statusHandler = (data) => {
+	status.value = data;
+
+	requestInProgress.value = false;
+
+	if (data.error) {
+		error(data.error);
+	} else {
+		if (data.time) {
+			seconds.value = data.time;
+		}
+
+		if (data.limit) {
+			limit.value = data.limit;
+		}
+
+		if (data.active) {
+			isRunning.value = true;
+
+			if (!timerInterval.value) {
+				timerInterval.value = setInterval(() => {
+					seconds.value++
+				}, 1000);
+			}
+		} else {
+			isRunning.value = false;
+			clearInterval(timerInterval.value);
+			timerInterval.value = null;
+		}
 	}
 }
 
@@ -391,6 +427,12 @@ const deleteTimer = async () => {
 	}
 }
 
+const settingPanelStatus = ref(false);
+
+const openSettings = () => {
+	settingPanelStatus.value = !settingPanelStatus.value;
+};
+
 const formattedLimitTime = computed(() => {
 	const hours = limit.value ? Math.floor(limit.value / 3600) : '00';
 	const minutes = limit.value ? Math.floor((limit.value % 3600) / 60) : '00';
@@ -408,14 +450,17 @@ watch(() => isRunning.value, () => {
 		clearInterval(getStatusInterval.value);
 	}
 
-	if (isRunning.value) {
-		getStatusInterval.value = setInterval(() => {
-			getTimerStatus();
-		}, 30000);
-	} else {
-		getStatusInterval.value = setInterval(() => {
-			getTimerStatus();
-		}, 300000);
+	/* Если не подключен WebSocked */
+	if (!runtimeConfig.public.hasWebSockedServer) {
+		if (isRunning.value) {
+			getStatusInterval.value = setInterval(() => {
+				getTimerStatus();
+			}, 30000);
+		} else {
+			getStatusInterval.value = setInterval(() => {
+				getTimerStatus();
+			}, 300000);
+		}
 	}
 }, { immediate: true });
 
@@ -542,6 +587,25 @@ const mainTimerLimitReach = computed(() => {
 				>
 					Удалить
 				</button>
+				<button
+						@click="openSettings()"
+						class="btn btn-simple-1"
+						title="Открыть настройки"
+				>
+					<font-awesome-icon icon="fa-solid fa-gear" />
+				</button>
+			</div>
+			<div
+					v-if="settingPanelStatus"
+					class="w-full relative"
+			>
+				<ui-fragments-DisableBox v-if="spinning" />
+				<Settings
+						v-model="settings"
+						:bg_slug="computedBgSlug()"
+						:user_id="computedUserId()"
+						:slug="computedTimerSlug()"
+				/>
 			</div>
 		</template>
 	</div>

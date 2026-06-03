@@ -3,8 +3,14 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
 
 const form = ref(
 		{
@@ -12,14 +18,14 @@ const form = ref(
 				name: 'Название',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'required, minLength_2, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			slug: {
 				name: 'Slug',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_3, maxLength_255',
+				validateRules: 'required, minLength_2, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 				autoFill: {
 					sourceFieldKey: 'name',
@@ -31,40 +37,50 @@ const form = ref(
 				value: '',
 				type: 'textarea',
 				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[200px]'],
 			},
 			limit: {
-				name: 'Лимит',
-				value: '',
-				type: 'textarea',
+				name: 'Лимит (в секундах)',
+				value: null,
+				type: 'number',
 				validateRules: null,
-				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			settings: {
+				name: 'Настройки',
+				value: '',
+				type: 'json',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
 			},
 			active: {
 				name: 'Активность',
-				value: '',
-				type: 'text',
+				value: true,
+				type: 'checkbox',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			user_id: {
-				name: 'user_id',
-				value: '',
-				type: 'text',
-				validateRules: '',
+				name: 'Пользователь',
+				value: null,
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			board_game_id: {
 				name: 'ID настолькой игры',
-				value: '',
-				type: 'text',
+				value: null,
+				type: 'EntityList',
+				apiUrl: 'board-game/get-list',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			created_by: {
 				name: 'Создан кем',
-				value: '',
-				type: 'text',
+				value: null,
+				type: 'EntityList',
+				apiUrl: 'user/list',
 				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -72,10 +88,10 @@ const form = ref(
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Таймеры';
 const breadCrumbsArray = computed(() => {
-	const splitedPath = route.path.split('/');
+	const dividedPath = route.path.split('/');
 
 	if (Number.isInteger(Number(route.params.slug))) {
 		pageType.value = 'update';
@@ -86,27 +102,35 @@ const breadCrumbsArray = computed(() => {
 	return [
 		{
 			name: 'Админ панель',
-			href: `/${splitedPath[1]}`,
+			href: `/${dividedPath[1]}`,
 		},
 		{
-			name: 'Таймеры',
-			href: `/${splitedPath[1]}/${splitedPath[2]}`,
+			name: title,
+			href: `/${dividedPath[1]}/${dividedPath[2]}`,
 		},
 		{
 			name: pageType.value === 'create' ? 'Создание' : 'Редактирование',
-			href: `/${splitedPath[1]}/${splitedPath[2]}/${splitedPath[3]}`,
+			href: `/${dividedPath[1]}/${dividedPath[2]}/${dividedPath[3]}`,
 		},
 	];
 });
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				:form="form"
-				:showAdditionalData="false"
-				fetchUrl="admin/entity/BoardGame/Timer"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('bg.timer.edit')"
+			:form="form"
+			fetchUrl="admin/BoardGame/timer"
+			:hasResource="true"
+			:useVersionList="true"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>

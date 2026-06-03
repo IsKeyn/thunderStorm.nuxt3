@@ -9,7 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "serve": "(export $(cat .env | egrep -v '#|^$' | xargs) && node .output/server/index.mjs)",
-    "inshprod": "NUXT_PUBLIC_THEME=InSilentHill NUXT_PUBLIC_URL=insilenthill.ru NUXT_PUBLIC_API_URL=https://backend.insilenthill.ru NUXT_PUBLIC_SESSION_COOKIE_NAME=insilenthill_session node .output/server/index.mjs"
+    "inshprod": "NUXT_PUBLIC_THEME=InSilentHill NUXT_PUBLIC_URL=insilenthill.ru NUXT_PUBLIC_API_URL=https://backend.insilenthill.ru NUXT_PUBLIC_SESSION_COOKIE_NAME=insilenthill_session NUXT_HAS_WEB_SOCKED_SERVER=true NUXT_PUBLIC_REVERB_KEY=jsgmx2bq1web3rckobkl NUXT_PUBLIC_REVERB_HOST=backend.insilenthill.ru NUXT_PUBLIC_REVERB_PORT=8080 NUXT_PUBLIC_REVERB_SCHEME=https NUXT_CRYPTO_PASS=ddDD-fT23 node .output/server/index.mjs"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.10.4",
@@ -24,9 +24,13 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.5",
     "@pinia/nuxt": "^0.5.1",
+    "@vueform/slider": "^2.1.10",
     "chart.js": "^4.5.0",
+    "json-editor-vue": "^0.18.1",
+    "laravel-echo": "^2.3.4",
     "nuxt-yandex-metrika": "^1.2.9",
     "pinia": "^2.1.7",
+    "pusher-js": "^8.5.0",
     "sass": "^1.69.7",
     "vue-chartjs": "^5.3.2",
     "vue-flex-waterfall": "^2.3.0",

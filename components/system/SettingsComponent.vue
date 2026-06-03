@@ -1,4 +1,6 @@
 <script setup>
+// TODO легаси код, удалить компонент, когда он не будет нигде использоваться
+
 import { useSettingsStore } from '@/stores/settings';
 const settingStore = useSettingsStore();
 

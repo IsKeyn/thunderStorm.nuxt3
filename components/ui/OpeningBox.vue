@@ -43,6 +43,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	useHardDisable: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const contentStatus = ref(props.defaultContentStatus);
@@ -80,7 +84,7 @@ if (injectToggleContent !== null) {
 				v-show="contentStatus"
 				:class="['content', contentClasses]"
 		>
-			<slot />
+			<slot v-if="useHardDisable ? contentStatus : true" />
 		</div>
 	</div>
 </template>

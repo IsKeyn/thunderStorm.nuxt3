@@ -173,25 +173,6 @@ const setPerPage = (count, table) => {
 	entityList.value[table].perPage = count;
 	getSearchData(table);
 }
-
-const perPageOptionsProp = ref([
-	{
-		count: 5,
-		active: false,
-	},
-	{
-		count: 10,
-		active: false,
-	},
-	{
-		count: 25,
-		active: false,
-	},
-	{
-		count: 50,
-		active: false,
-	},
-],);
 </script>
 
 <template>
@@ -224,7 +205,7 @@ const perPageOptionsProp = ref([
 								:pagination="searchResult[entity.entity_type].pagination"
 								:table="key"
 								:navigationButtons="true"
-								:perPageOptionsProp="perPageOptionsProp"
+								:perPageOptionsProp="[5, 10, 25, 50]"
 								@changePage="changePage"
 								@setPerPage="setPerPage"
 						/>

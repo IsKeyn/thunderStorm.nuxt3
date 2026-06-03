@@ -57,6 +57,17 @@ import(`~/assets/scss/${runtimeConfig.public.theme}/imports.scss`);
 const theme = computed(() => {
 	return `${runtimeConfig.public.theme}_theme`;
 });
+
+import { lightBox } from '@/composables/lightBox.js';
+const {
+	openedImage,
+	setOpenedImage
+} = lightBox();
+
+/* Предоставляем данные через provide */
+provide('layoutMethods', {
+	setOpenedImage,
+})
 </script>
 
 <template>
@@ -80,6 +91,13 @@ const theme = computed(() => {
 			<Footer />
 		</div>
 	</div>
+
+	<media-LightBox
+			v-if="openedImage"
+			:image="openedImage"
+			:setViewsLog="true"
+			@setCurrentElement="setOpenedImage"
+	/>
 </template>
 
 <style lang="scss">

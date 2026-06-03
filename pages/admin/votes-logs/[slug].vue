@@ -6,6 +6,9 @@ definePageMeta({
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
 import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const form = ref(
 		{
 			vote_type: {
@@ -72,8 +75,14 @@ const breadCrumbsArray = computed(() => {
 	<div>
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<CreateEditForm
+				v-if="checkPermission('votes-logs.edit')"
 				:form="form"
 				fetchUrl="admin/entity/VotesLog"
+		/>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="У вас нет доступа"
 		/>
 	</div>
 </template>

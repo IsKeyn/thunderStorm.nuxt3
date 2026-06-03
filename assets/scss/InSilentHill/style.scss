@@ -134,6 +134,10 @@ textarea {
   font-size: var(--text-small-text);
 }
 
+.strong {
+  @apply font-bold;
+}
+
 span.flip-text-box {
   @apply
     absolute bottom-[20%] md:bottom-[30px]
@@ -197,6 +201,10 @@ span.flip-text-box {
 
   color: var(--third-text-color);
   text-decoration: none;
+}
+
+.sub-title {
+  @apply block text-[1.2rem] mt-4 mb-4;
 }
 /* КОНЕЦ Заголовки */
 

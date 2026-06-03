@@ -3,11 +3,24 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
 
 const form = ref(
 		{
+			id: {
+				name: 'id',
+				value: null,
+				type: 'notEditable',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			name: {
 				name: 'Заголовок',
 				value: '',
@@ -106,6 +119,13 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			show_editor: {
+				name: 'Показывать редактора',
+				value: 0,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			active: {
 				name: 'Активность',
 				value: 1,
@@ -120,13 +140,6 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			show_editor: {
-				name: 'Показывать редактора',
-				value: 0,
-				type: 'checkbox',
-				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
 			created_at: {
 				name: 'Дата создания',
 				value: '',
@@ -138,8 +151,8 @@ const form = ref(
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Статьи';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -155,7 +168,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Статьи',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -167,15 +180,27 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				:form="form"
-				fetchUrl="admin/articles"
-				:showTags="true"
-				:showSeo="true"
-				:hasResource="true"
-				:useBlockEditor="true"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('article.edit')"
+			:form="form"
+			fetchUrl="admin/article"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:showSeo="true"
+			:showMenu="true"
+			:hasResource="true"
+			:useBlockEditor="true"
+			:showAdditionalFieldsTab="true"
+			:useVersionList="true"
+			previewUrl="/article/{slug}"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>

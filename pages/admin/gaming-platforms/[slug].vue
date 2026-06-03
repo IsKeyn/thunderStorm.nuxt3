@@ -3,18 +3,30 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
 
 const form = ref(
 		{
+			id: {
+				name: 'id',
+				value: null,
+				type: 'notEditable',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			name: {
-				name: 'Наименование',
+				name: 'Название',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
-				showMaxLength: true,
 			},
 			short_name: {
 				name: 'Короткое название',
@@ -35,6 +47,15 @@ const form = ref(
 					rule: 'slug',
 				},
 			},
+			title_image: {
+				name: 'Титульное изображение',
+				value: null,
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			description: {
 				name: 'Описание',
 				value: '',
@@ -49,13 +70,6 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			spc_id: {
-				name: 'speedrun.com id',
-				value: '',
-				type: 'text',
-				validateRules: null,
-				classes: ['w-full', 'mt-[5px]'],
-			},
 			sort: {
 				name: 'Сортировка',
 				value: '',
@@ -63,12 +77,35 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			active: {
+				name: 'Активность',
+				value: true,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
+			spc_id: {
+				name: 'speedrun.com id',
+				value: '',
+				type: 'text',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			created_by: {
+				name: 'Кем создан',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Игровые платформы';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -84,7 +121,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Игровые платформы',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -93,14 +130,38 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
+
+const extensions = [
+	{
+		name: 'MultiImages',
+		keyForBackend: 'covers',
+		params: null,
+	},
+];
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				:form="form"
-				fetchUrl="admin/entity/GamingPlatform"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('gaming-platform.edit')"
+			:form="form"
+			fetchUrl="admin/gaming-platform"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:showSeo="true"
+			:hasResource="true"
+			:showAdditionalFieldsTab="true"
+			previewUrl="/gaming-platform/{slug}"
+			:useVersionList="true"
+
+			:extensions="extensions"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>

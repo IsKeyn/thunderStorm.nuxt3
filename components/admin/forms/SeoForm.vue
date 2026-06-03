@@ -1,6 +1,7 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
-import {watch} from "vue";
+
+import { watch } from "vue";
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -35,21 +36,13 @@ const form = ref({
 	},
 });
 
-const hasFirstLoad = ref(false);
-
 const updateItems = (value) => {
 	for (let key in form.value) {
 		form.value[key].value = value[key];
 	}
 }
 
-// Устанавливаем текущие значения, пришедшие с бекенда
-watch(() => props.modelValue, (newValue) => {
-	if (!hasFirstLoad.value) {
-		updateItems(toRaw(newValue));
-		hasFirstLoad.value = true;
-	}
-}, { deep: true });
+updateItems(toRaw(props.modelValue));
 
 // Устанавливаем новые значения, при изменении в форме
 watch(form.value, () => {

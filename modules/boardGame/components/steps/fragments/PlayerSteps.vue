@@ -47,7 +47,7 @@ const setCurrentStep = () => {
 	if (userStore.player) {
 		/* Шаг 3 - Профиль игры */
 		if (
-				userStore.player.current_game ||
+				userStore.player.has_current_game ||
 				((userStore.player?.step_count === 0 || userStore.player?.finishBoard) && userStore.player?.item_roll_count === 0)
 		) {
 			setStep(3); return;

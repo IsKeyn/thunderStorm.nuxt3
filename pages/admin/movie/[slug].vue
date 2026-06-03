@@ -3,15 +3,21 @@ definePageMeta({
 	layout: 'admin',
 });
 
-import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
-import CreateEditForm from '@/components/admin/forms/CreateEditForm.vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import CreateEditFormV2 from '@/components/admin/forms/CreateEditFormV2.vue';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
 
 const form = ref(
 		{
 			id: {
 				name: 'id',
-				value: '',
-				type: 'hidden',
+				value: null,
+				type: 'notEditable',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -20,15 +26,6 @@ const form = ref(
 				value: '',
 				type: 'text',
 				validateRules: 'required, minLength_3, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			title_image: {
-				name: 'Титульное изображение',
-				value: '',
-				keyValueFromObject: 'id',
-				objectValue: null,
-				type: 'fileFromGallery',
-				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			slug: {
@@ -41,6 +38,15 @@ const form = ref(
 					sourceFieldKey: 'name',
 					rule: 'slug',
 				},
+			},
+			title_image: {
+				name: 'Титульное изображение',
+				value: '',
+				keyValueFromObject: 'id',
+				objectValue: null,
+				type: 'fileFromGallery',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
 			},
 			created_at: {
 				name: 'Дата создания',
@@ -56,12 +62,27 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
+			sort: {
+				name: 'Сортировка',
+				value: null,
+				type: 'number',
+				validateRules: 'integer',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			active: {
+				name: 'Активность',
+				value: true,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
 		}
 );
 
 const pageType = ref('');
-const route = useRoute();
 
+const title = 'Фильмы';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -77,7 +98,7 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitedPath[1]}`,
 		},
 		{
-			name: 'Фильмы',
+			name: title,
 			href: `/${splitedPath[1]}/${splitedPath[2]}`,
 		},
 		{
@@ -120,38 +141,32 @@ const extensions = [
 		params: null,
 	},
 ];
-
-const defaultValuesForAdditionalFields = [
-	{
-		name: 'Название',
-		slug: 'name',
-		value: '',
-		sort: '10',
-	},
-	{
-		name: 'Количество дисков',
-		slug: 'disc_count',
-		value: '',
-		sort: '20',
-	},
-];
 </script>
 
 <template>
-	<div>
-		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
-		<CreateEditForm
-				:form="form"
-				fetchUrl="admin/movie"
-				:additionalFieldsEnable="true"
-				:defaultValuesForAdditionalFields="defaultValuesForAdditionalFields"
-				:showTags="true"
-				:showSeo="true"
-				:showMenu="true"
-				:hasResource="true"
-				:useAdditionalData="true"
-				:extensions="extensions"
-				:showAdditionalData="true"
-		/>
-	</div>
+	<PageHeader
+			:title="title"
+			:breadCrumbs="breadCrumbsArray"
+	/>
+	<CreateEditFormV2
+			v-if="checkPermission('movie.edit')"
+			:form="form"
+			fetchUrl="admin/movie"
+			:additionalFieldsEnable="true"
+			:showTags="true"
+			:showSeo="true"
+			:showMenu="true"
+			:hasResource="true"
+			:useAdditionalData="true"
+			:useBlockEditor="true"
+			:showAdditionalFieldsTab="true"
+			:useVersionList="true"
+			:extensions="extensions"
+			previewUrl="/movie/{slug}"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="У вас нет доступа"
+	/>
 </template>

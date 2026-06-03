@@ -1,4 +1,6 @@
 <script setup>
+// TODO легаси код, удалить компонент, когда он не будет нигде использоваться
+
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 

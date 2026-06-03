@@ -2,6 +2,8 @@
 import FileFromGallery from './fragments/FileFromGallery.vue';
 import EntityList from './fragments/EntityList.vue';
 import EntityBind from './fragments/EntityBind.vue';
+import JsonEditor from './fragments/JsonEditor.vue';
+import SelectWithSearch from '@/components/forms/fragments/SelectWithSearch.vue';
 
 import { watch } from 'vue'
 
@@ -97,6 +99,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	wrapperTagName: {
+		type: String,
+		default: 'label',
+	},
 	// Дополнительные классы для тега <label>
 	labelClasses: {
 		type: [String, Array],
@@ -116,6 +122,7 @@ const props = defineProps({
 const label = ref(null);
 
 const previewImage = ref('');
+const bindValues = ref({});
 
 watch(() => props.element.value, (newValue) => {
 	if (newValue && props.name === 'phone') {
@@ -133,7 +140,7 @@ watch(() => props.element.value, (newValue) => {
 			bindValues.value.id = props.form[props.element.bindField].value;
 		}
 	}
-}, { deep: true });
+}, { deep: true, immediate: true });
 
 watch(() => props.element.validateResult, (newValue) => {
 	if (newValue && newValue.length > 0) {
@@ -235,8 +242,6 @@ const currentLength = computed(() => {
 });
 
 /* НАЧАЛО: Laravel привязка сущности тип EntityBind */
-const bindValues = ref({});
-
 watch(() => bindValues.value, () => {
 	if (props.element.type === 'EntityBind') {
 		props.element.value = bindValues.value.entity;
@@ -258,11 +263,22 @@ const copyValue = () => {
 				alert('Ошибка копирования:', err);
 			});
 }
+
+const wrapperTag = computed(() => {
+	let name = props.wrapperTagName;
+
+	if (props.element.type === 'json') {
+		name = 'div';
+	}
+
+	return name;
+});
 </script>
 
 <template>
-	<label
+	<component
 			v-if="element.type !== 'disable'"
+			:is="wrapperTag"
 			ref="label"
 			:class="[element.type === 'hidden' ? 'hidden' : getLabelClasses]"
 	>
@@ -271,7 +287,12 @@ const copyValue = () => {
 		>
 			{{ element.validateResult }}
 		</span>
-		<span v-if="showTitle && element.name">{{ element.name }}</span>
+		<span
+				v-if="showTitle && (element.title || element.name)"
+				class="block"
+		>
+			{{ element.title ? element.title : element.name }}
+		</span>
 		<template
 				v-if="
 					element.type === 'text' ||
@@ -284,6 +305,19 @@ const copyValue = () => {
 		>
 			<span :class="['input-wrap', wrapClasses]">
 				<input
+						v-if="element.type === 'number' && (element.min || element.max)"
+						v-model="element.value"
+						:type="element.type"
+						:name="name"
+						:min="element.min"
+						:max="element.max"
+						:friendly-name="element.name"
+						:placeholder="element.placeholder"
+						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+						@input="onInput"
+				/>
+				<input
+						v-else
 						v-model="element.value"
 						:type="element.type"
 						:name="name"
@@ -448,7 +482,28 @@ const copyValue = () => {
 				>
 					{{ option.name }}
 				</option>
+				<option v-if="!element.options.some(item => item.value === element.value)">
+					{{ element.value }}
+				</option>
 			</select>
+		</template>
+		<template v-else-if="element.type === 'select-with-search'">
+			<SelectWithSearch
+					:options="element.options"
+					v-model="element.value"
+			/>
+		</template>
+		<template v-else-if="element.type === 'select-with-search-multiselect'">
+			<SelectWithSearch
+					:options="element.options"
+					v-model="element.value"
+					:multiSelect="true"
+			/>
+		</template>
+		<template v-else-if="element.type === 'json'">
+			<JsonEditor
+					v-model="element.value"
+			/>
 		</template>
 		<template v-else-if="element.type === 'fileFromGallery'">
 			<FileFromGallery
@@ -467,7 +522,7 @@ const copyValue = () => {
 					:type="element.type"
 			/>
 				<span class="checkbox-name" v-if="element.html" v-html="element.html" />
-				<span class="checkbox-name" v-else>{{ element.name }}</span>
+				<span class="checkbox-name" v-else>{{ element.title ? element.title : element.name }}</span>
 			</span>
 		</template>
 		<template v-else-if="element.type === 'range'">
@@ -485,7 +540,6 @@ const copyValue = () => {
 				v-model="element.value"
 				:apiUrl="element.apiUrl"
 				:body="element.body ? element.body : {}"
-				:hasResource="element?.hasResource === true"
 		/>
 		<EntityBind
 				v-else-if="element.type === 'EntityBind'"
@@ -508,7 +562,7 @@ const copyValue = () => {
 		>
 			{{ element.validateResult }}
 		</span>
-	</label>
+	</component>
 </template>
 
 <style lang="scss" scoped>

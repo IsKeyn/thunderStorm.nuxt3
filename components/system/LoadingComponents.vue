@@ -3,9 +3,7 @@ import { useLoadStateStore } from '@/stores/loadState';
 const loadState = useLoadStateStore();
 
 import { helper } from '@/composables/helper.js'
-const {
-	filterByPairFieldValue,
-} = helper();
+const { filterByPairFieldValue } = helper();
 
 const fullscreenLoads = computed(() => {
 	return filterByPairFieldValue(loadState.loadList, 'preloaderType', 'fullscreen');

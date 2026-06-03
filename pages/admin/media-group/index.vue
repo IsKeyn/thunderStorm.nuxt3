@@ -6,6 +6,9 @@ definePageMeta({
 import BreadCrumbs from '@/components/menu/BreadCrumbs.vue';
 import ListTable from '@/components/admin/list/ListTable.vue';
 
+import { roles } from '@/composables/roles.js';
+const { checkPermission } = roles();
+
 const titles = ref(
 		{
 			id: {
@@ -55,8 +58,14 @@ const breadCrumbsArray = computed(() => {
 	<div>
 		<BreadCrumbs :breadCrumbs="breadCrumbsArray" />
 		<ListTable
+				v-if="checkPermission('media-group.edit')"
 			:titles="titles"
 			fetchUrl="admin/media-group"
+		/>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="У вас нет доступа"
 		/>
 	</div>
 </template>

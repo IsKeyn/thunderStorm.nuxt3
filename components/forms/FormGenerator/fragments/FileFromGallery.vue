@@ -114,7 +114,11 @@ if (props.formHandlerType === 1) {
 			</div>
 		</div>
 		<div v-if="element.objectValue && element.objectValue.src" class="col-span-2 text-center">
-			<img :src="element.objectValue.src" class="inline-block max-w-[500px] max-h-[500px]">
+			<img
+					:src="element.objectValue.src"
+					:media-id="element.objectValue.id"
+					class="inline-block max-w-[500px] max-h-[500px] media-obj"
+			>
 		</div>
 	</div>
 
