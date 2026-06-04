@@ -83,7 +83,7 @@ const breadCrumbsArray = computed(() => {
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<CreateEditFormV2
-			v-if="checkPermission('bg.status-effect-on-player.edit')"
+			v-if="checkPermission('bg.status-effect-bind.edit')"
 			:form="form"
 			fetchUrl="admin/BoardGame/StatusEffectBind"
 			:hasResource="true"
