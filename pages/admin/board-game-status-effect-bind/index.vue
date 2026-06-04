@@ -105,7 +105,7 @@ const usedFilters = [
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<ListTableV2
-			v-if="checkPermission('bg.status-effect-on-player.edit')"
+			v-if="checkPermission('bg.status-effect-bind.edit')"
 			:titles="titles"
 			fetchUrl="admin/BoardGame/StatusEffectBind"
 			entity="StatusEffect"
