@@ -106,11 +106,11 @@ const showHideMobileSearch = () => {
 <!--					</router-link>-->
 				</div>
 				<div class="center-block">
-					<FastSearchLine
-							class="search-line"
-							placeholder="Начните вводить текст для поиска"
-							@parentHandler="showHideMenu(false)"
-					/>
+<!--					<FastSearchLine-->
+<!--							class="search-line"-->
+<!--							placeholder="Начните вводить текст для поиска"-->
+<!--							@parentHandler="showHideMenu(false)"-->
+<!--					/>-->
 				</div>
 				<div class="right-block">
 					<font-awesome-icon

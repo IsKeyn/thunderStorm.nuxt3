@@ -3,6 +3,11 @@ import RollList from '@/components/entity/RollList.vue';
 
 const usedFilters = [
 	{
+		name: 'minMaxData',
+		langName: 'Дата выхода',
+		requestData: true,
+	},
+	{
 		name: 'gamePlatforms',
 		langName: 'Игровые платформы',
 		type: 'multiselect',

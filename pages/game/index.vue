@@ -3,6 +3,11 @@ import List from '@/components/entity/List.vue';
 
 const usedFilters = [
 	{
+		name: 'minMaxData',
+		langName: 'Дата выхода',
+		requestData: true,
+	},
+	{
 		name: 'gamePlatforms',
 		langName: 'Игровые платформы',
 		type: 'multiselect',
@@ -76,5 +81,6 @@ const sortOptions = [
 		name="Игры"
 		title="Игры"
 		:usedFilters="usedFilters"
+		:sortOptions="sortOptions"
 	/>
 </template>
