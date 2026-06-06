@@ -4,6 +4,11 @@ const {
 	getFormattedDate
 } = date();
 
+import { helper } from '@/composables/helper.js'
+const {
+	cutText,
+} = helper();
+
 const props = defineProps({
 	data: {
 		type: Object,
@@ -30,7 +35,7 @@ const props = defineProps({
 			<img :src="data?.covers?.[0]?.src ? data.covers[0].src : '/images/silent-hill/sh_no_image_cover.webp'">
 			<div class="fields">
 				<span class="name">{{ data.name }}</span>
-				<span class="description">{{ data.description }}</span>
+				<span class="description">{{ cutText(data.description, 15) }}</span>
 
 				<span v-if="data?.role?.name" class="mt-4">
 					{{ data.role.name }}
@@ -54,7 +59,7 @@ const props = defineProps({
 		@apply flex gap-6 w-full;
 
 		img {
-			@apply w-[90px];
+			@apply w-[90px] h-full;
 		}
 
 		.fields {
