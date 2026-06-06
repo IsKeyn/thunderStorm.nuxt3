@@ -66,7 +66,7 @@ const dataByGroups = computed(() => {
 						v-for="(data, index) in group.items"
 						:key="index"
 						:data="data"
-						:entity="entity"
+						entity="game"
 				/>
 			</div>
 		</div>
