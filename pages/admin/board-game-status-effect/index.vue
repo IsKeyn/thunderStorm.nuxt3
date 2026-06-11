@@ -37,7 +37,7 @@ const titles = ref(
 				type: 'cutText',
 				sortable: true,
 			},
-			image: {
+			title_image: {
 				name: 'Изображение',
 				type: 'media'
 			},

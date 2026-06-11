@@ -71,7 +71,7 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			image: {
+			title_image: {
 				name: 'Медиа',
 				value: '',
 				keyValueFromObject: 'id',
