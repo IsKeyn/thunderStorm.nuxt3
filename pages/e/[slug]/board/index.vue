@@ -1,9 +1,9 @@
 <script setup>
-import Board from '@/modules/boardGame/components/pages/Board.vue';
-
 definePageMeta({
 	layout: 'board-game',
 });
+
+import Board from '@/modules/boardGame/components/pages/Board.vue';
 </script>
 
 <template>

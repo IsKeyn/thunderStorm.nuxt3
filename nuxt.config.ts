@@ -4,10 +4,12 @@ export default defineNuxtConfig({
       '@pinia/nuxt',
       '@nuxtjs/tailwindcss',
       'nuxt-yandex-metrika',
+      'floating-vue/nuxt',
   ],
   devtools: { enabled: true },
   css: [
-    '@fortawesome/fontawesome-svg-core/styles.css'
+    '@fortawesome/fontawesome-svg-core/styles.css',
+    'floating-vue/dist/style.css',
   ],
   yandexMetrika: {
     id: '53288371',
@@ -36,6 +38,9 @@ export default defineNuxtConfig({
     apiSecret: '123',
     // Keys within public are also exposed client-side
     public: {
+      floatingVue: {
+        // Опциональные настройки
+      },
       theme: 'KeynTR',
       url: '', // .env NUXT_PUBLIC_API_URL
       apiUrl: '', // .env NUXT_PUBLIC_API_URL

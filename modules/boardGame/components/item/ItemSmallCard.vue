@@ -12,26 +12,26 @@ const props = defineProps({
 
 <template>
 	<div
-			v-if="element.statusEffect"
-			class="status-effect-small-card"
+			v-if="element.item"
+			class="item-small-card"
 	>
 		<VTooltip>
 			<img
-					v-if="element.statusEffect?.image"
-					:src="getResizeImg(element.statusEffect.image)"
-					:alt="element.statusEffect.name"
-					:title="element.statusEffect.name"
+					v-if="element.item?.image"
+					:src="getResizeImg(element.item.image)"
+					:alt="element.item.name"
+					:title="element.item.name"
 					:class="['cursor-pointer media-obj']"
-					:media-id="element.statusEffect.image.id"
+					:media-id="element.item.image.id"
 			>
 			<span v-if="element.quantity > 1" class="quantity">{{ element.quantity }}</span>
 			<template #popper>
 				<div class="description">
 					<div class="mb-2">
-						{{ element.statusEffect.name }}
+						{{ element.item.name }}
 					</div>
 					<div>
-						{{ element.statusEffect.description }}
+						{{ element.item.short_description }}
 					</div>
 				</div>
 			</template>
@@ -40,7 +40,7 @@ const props = defineProps({
 </template>
 
 <style lang="scss" scoped>
-.status-effect-small-card {
+.item-small-card {
 	@apply relative w-[60px] h-[60px];
 
 	border: 2px solid var(--third-block-color);
@@ -51,10 +51,10 @@ const props = defineProps({
 
 	.quantity {
 		@apply
-		absolute bottom-[-2px] right-[-2px]
-		bg-[var(--third-block-color)] text-[var(--main-dark-text-color)] text-[1rem]
-		block w-[1.5rem] h-[1.5rem] text-center
-		flex items-center justify-center;
+			absolute bottom-[-2px] right-[-2px]
+			bg-[var(--third-block-color)] text-[var(--main-dark-text-color)] text-[1rem]
+			block w-[1.5rem] h-[1.5rem] text-center
+			flex items-center justify-center;
 	}
 
 	.description {

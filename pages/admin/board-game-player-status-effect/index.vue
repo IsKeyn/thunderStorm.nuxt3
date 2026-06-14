@@ -25,7 +25,7 @@ const titles = ref(
 				apiUrl: 'user/list',
 				sortable: true,
 			},
-			board_game_player_id: {
+			bg_player_id: {
 				name: 'ID игрока',
 				type: 'text',
 				sortable: true,

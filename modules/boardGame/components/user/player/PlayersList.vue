@@ -1,7 +1,14 @@
 <script setup>
-import PlayerCard from '@/modules/boardGame/components/user/player/PlayerCard.vue';
+import PlayerCard from '@/modules/boardGame/components/user/player/playerCards/PlayerCard.vue';
+import PlayerCardV2 from '@/modules/boardGame/components/user/player/playerCards/PlayerCardV2.vue';
+import SearchFilterSort from '@/components/filters/SearchFilterSort.vue';
+import Pagination from '@/components/navigation/Pagination.vue';
+import PublicRecommendation from '@/components/recommendation/PublicRecommendation.vue';
 
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
+
+import { useFiltersStore } from '@/stores/filters';
+const filtersStore = useFiltersStore();
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
@@ -9,7 +16,53 @@ const boardGameStore = useBoardGameStore();
 import { api } from '@/composables/api.js'
 const { sendApiRequest, responseErrors } = api();
 
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route, router } = helper();
+
+import { filters } from '@/composables/filters/filters.js';
+const {
+	setFilterName,
+	setFilter,
+	setQueryFilters,
+} = filters();
+
+const props = defineProps({
+	perPage: {
+		type: Number,
+		default: 15,
+	},
+	entity: {
+		type: String,
+		required: true,
+	},
+	usedFilters: {
+		type: Array,
+		default: [],
+	},
+	defaultFilters: {
+		type: Object,
+		default: {},
+	},
+	sortOptions: {
+		type: Array,
+		default: [],
+	}
+});
+
+import { pagination } from '@/composables/ui/pagination.js'
+const {
+	page,
+	perPage,
+	setRefresh,
+	changePage,
+	setPerPage
+} = pagination(props.perPage);
+
+const filterName = setFilterName([ 'list', props.fetchUrl ]);
+
+// Устанавливаем фильтры их get параметров
+setQueryFilters(filterName, props.usedFilters, props.defaultFilters);
+
 const requestName = 'getBoardGamePlayerList';
 
 const {
@@ -19,11 +72,17 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
+			const query = {
+				page: page.value,
+				perPage: perPage.value,
+				filters: filtersStore.filters[filterName],
+			};
+
 			const response = await Promise.resolve(
-					sendApiRequest(`board-game/v2/player/list/${route.params.slug}`, 'GET', {}, requestName)
+					sendApiRequest(`board-game/v2/player/list/${route.params.slug}`, 'GET', query, requestName)
 			);
 
-			return response?.data || null;
+			return response || null;
 		},
 		{
 			server: true,
@@ -31,81 +90,87 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || []);
+const fetchedData = computed(() => requestData.value?.data || []);
+const paginationData = computed(() => requestData.value?.meta || null);
 
-/* Сортировка списка игроков */
-const sortType = ref('byFullPoints');
-const sortDirection = ref('desc');
+// Передаем функцию refresh в композабл pagination
+setRefresh(refresh);
 
-const sortedPlayerList = computed(() => {
-	// Создаем копию массива для сортировки
-	const dataToSort = [...fetchedData.value];
+/* НАЧАЛО: Фильтры */
+let oldFilter = filtersStore.filters[filterName] ?? {};
 
-	return dataToSort.sort((a, b) => {
-		if (sortType.value === 'byFullPoints') {
-			return sortDirection.value === 'desc' ? b.full_points - a.full_points : a.full_points - b.full_points;
+const updateDataWithFilters = () => {
+	if (JSON.stringify(oldFilter) !== JSON.stringify(filtersStore.filters?.[filterName])) {
+		oldFilter = filtersStore.filters?.[filterName];
+		page.value = 1;
+		refresh();
+	}
+}
+
+// Отслеживаем нажатие кнопок назад\вперед в браузере, для обновления фильтра, в случае изменении get параметров
+const isBrowserNavigation = ref(false);
+const handlePopState = async () => { isBrowserNavigation.value = true; };
+
+onMounted(() => { window.addEventListener('popstate', handlePopState); });
+onUnmounted(() => { window.removeEventListener('popstate', handlePopState); });
+
+watch(() => route.query, async () => {
+	/* TODO на данный момент нет решения без таймаута, проблема в том, что сначала срабатывает данный watch, а потом событие popstate */
+	setTimeout(() => {
+		if (isBrowserNavigation.value) {
+			isBrowserNavigation.value = false;
+			setQueryFilters(filterName);
+			updateDataWithFilters();
 		}
+	}, 100)}, { deep: true }
+);
 
-		if (sortType.value === 'pointsPerSeconds') {
-			// Если у обоих seconds = 0, сохраняем их исходный порядок
-			if (a.seconds === 0 && b.seconds === 0) return 0;
-			// Если у a seconds = 0, помещаем его ниже
-			if (a.seconds === 0) return sortDirection.value === 'desc' ? 1 : -1;
-			// Если у b seconds = 0, помещаем его ниже
-			if (b.seconds === 0) return sortDirection.value === 'desc' ? -1 : 1;
+watch(() => filtersStore.filters?.[filterName], () => {
+	updateDataWithFilters();
+}, { deep: true });
 
-			const ppSecondA = a.full_points ? (a.full_points / a.seconds) : 0;
-			const ppSecondB = b.full_points ? (b.full_points / b.seconds) : 0;
-
-			return sortDirection.value === 'desc' ? ppSecondB - ppSecondA : ppSecondA - ppSecondB;
-		}
-
-		return 0; // Добавляем возврат по умолчанию
-	});
-});
+/* КОНЕЦ: Фильтры */
 </script>
 
 <template>
-	<div class="flex justify-end mb-4">
-		<div class="sort-box">
-			<select v-model="sortType" class="w-full mr-4">
-				<option value="byFullPoints">По количеству очков</option>
-				<option value="pointsPerSeconds">По соотношению очки/время</option>
-			</select>
+	<div class="relative">
+		<SearchFilterSort
+				:entity="props.entity"
+				filterRequestUrl="board-game/v2/player/filters"
+				:filterName="filterName"
+				:total="paginationData?.total"
+				type="public"
+				:usedFilters="usedFilters"
+				:sortOptions="sortOptions"
+		/>
+		<ui-BigPreloader
+				v-if="requestInProgress"
+				class="h-full"
+				theme="image"
+				:themeType="9"
+		/>
+		<div v-else-if="fetchedData && fetchedData.length">
+			<div
+					v-for="(player, index) in fetchedData"
+					:key="player.id || index"
+			>
+				<PlayerCardV2 :element="player" />
+			</div>
 		</div>
-		<button>
-			<font-awesome-icon
-					v-if="sortDirection === 'desc'"
-					:icon="['fas', 'arrow-down-wide-short']"
-					@click="sortDirection = 'asc'"
-			/>
-			<font-awesome-icon
-					v-if="sortDirection === 'asc'"
-					:icon="['fas', 'arrow-up-short-wide']"
-					@click="sortDirection = 'desc'"
-			/>
-		</button>
+		<ui-itemBox
+				v-else
+				classes="red"
+		/>
+		<Pagination
+				v-if="paginationData"
+				:pagination="paginationData"
+				:navigationButtons="true"
+				:perPageOptionsProp="[15, 30, 45]"
+				@changePage="changePage"
+				@setPerPage="setPerPage"
+		/>
+		<PublicRecommendation />
 	</div>
-	<ui-BigPreloader v-if="requestInProgress" />
-	<template v-else-if="fetchedData && fetchedData.length">
-		<div
-				v-for="(player, index) in sortedPlayerList"
-				:key="player.id || index"
-		>
-			<PlayerCard
-					:element="player"
-					:place="sortDirection === 'desc' ? index : sortedPlayerList.length - index - 1"
-					:useLightBox="true"
-			/>
-		</div>
-	</template>
-	<span v-else>
-		Участников пока нет
-	</span>
 </template>
 
-<style lang="scss" scoped>
-.sort-box {
-	@apply flex items-center;
-}
-</style>
+<style lang="scss" scoped />

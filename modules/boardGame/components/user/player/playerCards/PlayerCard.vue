@@ -132,7 +132,7 @@ const goToTwitch = (twitchChanel) => {
 				v-if="place !== null"
 				class="control-panel"
 		>
-			<span :class="['place', getPlaceColor(place + 1)]">{{ place + 1 }}</span>
+			<span :class="['place', getPlaceColor(place)]">{{ place }}</span>
 		</div>
 	</Nuxt-link>
 </template>

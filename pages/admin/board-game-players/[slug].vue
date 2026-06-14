@@ -37,6 +37,12 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			points_per_hour: {
+				name: 'Очков в час',
+				value: null,
+				type: 'text',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			item_roll_count: {
 				name: 'Доступное количество ролов игры',
 				value: '',

@@ -25,6 +25,11 @@ const titles = ref(
 				apiUrl: 'user/list',
 				sortable: true,
 			},
+			bg_player_id: {
+				name: 'ID игрока',
+				type: 'text',
+				sortable: true,
+			},
 			board_game_game_list_id: {
 				name: 'ID игры в списке доступных на эвенте игр',
 				sortable: true,

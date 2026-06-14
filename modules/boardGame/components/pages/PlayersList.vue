@@ -21,6 +21,49 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
+
+const usedFilters = [
+	{
+		name: 'twitchStreamOnline',
+		langName: 'Стрим онлайн',
+		type: 'checkbox',
+	},
+	{
+		name: 'only_inactive',
+		langName: 'Показать не активных',
+		type: 'checkbox',
+	},
+];
+
+const sortOptions = [
+	{
+		name: 'По количеству очков',
+		value: 'full_points',
+	},
+	{
+		name: 'По соотношению очки/время',
+		value: 'points_per_hour',
+	},
+	{
+		name: 'Никнейму',
+		value: 'name',
+	},
+	{
+		name: 'Дата регистрации',
+		value: 'created_at',
+	},
+	{
+		name: 'Последней активности',
+		value: 'updated_at',
+	},
+];
+
+const defaultFilters = {
+	sort: {
+		field: "full_points",
+		sort: "desc",
+	},
+}
 </script>
 
 <template>
@@ -30,6 +73,9 @@ const breadCrumbsArray = computed(() => {
 			:showMainPageInBreadCrumbs="false"
 	/>
 	<PlayersList
-			:boardGameId="boardGameStore.boardGameInfo.id"
+			entity="BoardGamePlayer"
+			:usedFilters="usedFilters"
+			:sortOptions="sortOptions"
+			:defaultFilters="defaultFilters"
 	/>
 </template>

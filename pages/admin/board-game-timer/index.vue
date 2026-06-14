@@ -36,6 +36,11 @@ const titles = ref(
 				sortable: true,
 				type: 'rounded-box',
 			},
+			elapsed_seconds: {
+				name: 'Секунд учтено',
+				sortable: true,
+				type: 'rounded-box',
+			},
 			active: {
 				name: 'Активность',
 				type: 'boolean',

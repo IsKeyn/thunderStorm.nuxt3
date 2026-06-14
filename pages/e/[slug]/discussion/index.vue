@@ -1,9 +1,9 @@
 <script setup>
-import Discussion from '@/modules/boardGame/components/pages/Discussion.vue';
-
 definePageMeta({
 	layout: 'board-game',
 });
+
+import Discussion from '@/modules/boardGame/components/pages/Discussion.vue';
 </script>
 
 <template>

@@ -36,6 +36,11 @@ const titles = ref(
 				sortable: true,
 				type: 'rounded-box',
 			},
+			points_per_hour: {
+				name: 'Очков в час',
+				sortable: true,
+				type: 'rounded-box',
+			},
 			item_roll_count: {
 				name: 'Доступное количество ролов игры',
 				sortable: true,

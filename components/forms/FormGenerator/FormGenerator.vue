@@ -314,7 +314,6 @@ const wrapperTag = computed(() => {
 						:friendly-name="element.name"
 						:placeholder="element.placeholder"
 						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
-						@input="onInput"
 				/>
 				<input
 						v-else
@@ -324,7 +323,6 @@ const wrapperTag = computed(() => {
 						:friendly-name="element.name"
 						:placeholder="element.placeholder"
 						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
-						@input="onInput"
 				/>
 				<span class="additional-action-wrap">
 					<span

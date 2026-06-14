@@ -22,7 +22,7 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			board_game_player_id: {
+			bg_player_id: {
 				name: 'ID игрока',
 				type: 'text',
 				validateRules: '',

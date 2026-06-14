@@ -29,6 +29,12 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			bg_player_id: {
+				name: 'ID игрока',
+				type: 'text',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			board_game_game_list_id: {
 				name: 'ID игры в списке доступных на эвенте игр',
 				value: '',
