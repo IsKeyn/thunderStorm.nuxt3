@@ -53,22 +53,22 @@ const sendTwitchRequest = async () => {
 
 <template>
 	<div>
-		<span class="social-auth-title">Авторизоваться через:</span>
-		<div class="button-block">
-			<button
-					class="twitch"
-					@click="authWithSocial('twitch')"
-			>
-				<font-awesome-icon
-						v-if="requestInProgress"
-						:icon="['fas', 'spinner']"
-						spin-pulse
-				/>
-				<template v-else>
-					Twitch <font-awesome-icon icon="fa-brands fa-twitch" />
-				</template>
-			</button>
-		</div>
+<!--		<span class="social-auth-title">Авторизоваться через:</span>-->
+<!--		<div class="button-block">-->
+<!--			<button-->
+<!--					class="twitch"-->
+<!--					@click="authWithSocial('twitch')"-->
+<!--			>-->
+<!--				<font-awesome-icon-->
+<!--						v-if="requestInProgress"-->
+<!--						:icon="['fas', 'spinner']"-->
+<!--						spin-pulse-->
+<!--				/>-->
+<!--				<template v-else>-->
+<!--					Twitch <font-awesome-icon icon="fa-brands fa-twitch" />-->
+<!--				</template>-->
+<!--			</button>-->
+<!--		</div>-->
 	</div>
 </template>
 
