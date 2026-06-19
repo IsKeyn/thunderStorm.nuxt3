@@ -9,7 +9,7 @@ import Seo from '@/modules/boardGame/components/boardGame/Seo.vue';
 
 
 import Notifications from '@/components/notifications/Notifications.vue';
-
+import MediaById from '@/components/media/MediaById.vue';
 
 
 import Header from '@/modules/boardGame/components/layout/Header.vue';
@@ -56,6 +56,7 @@ provide('layoutMethods', {
 				</div>
 			</article>
 			<Notifications />
+			<MediaById />
 			<Footer />
 		</template>
 	</div>

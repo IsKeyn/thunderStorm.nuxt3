@@ -67,6 +67,11 @@ const titles = ref(
 				type: 'rounded-box',
 				sortable: true,
 			},
+			points: {
+				name: 'Получил очков за игру',
+				type: 'rounded-box',
+				sortable: true,
+			},
 			created_by: {
 				name: 'Создал',
 				type: 'EntityList',

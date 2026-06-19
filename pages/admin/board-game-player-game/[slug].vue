@@ -127,6 +127,13 @@ const form = ref(
 				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			points: {
+				name: 'Получил очков за игру',
+				value: '',
+				type: 'text',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			created_by: {
 				name: 'Кем создан',
 				value: '',

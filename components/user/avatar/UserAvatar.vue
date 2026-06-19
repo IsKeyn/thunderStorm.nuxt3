@@ -3,8 +3,7 @@ import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 const emit = defineEmits(['afterChangeAvatar']);
 
-import { inject, ref, watch } from 'vue'
-const layoutMethods = inject('layoutMethods')
+import { computed, ref, watch } from 'vue'
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -29,18 +28,33 @@ const {
 } = validate();
 
 const props = defineProps({
-	userInfo: {
+	user: {
 		type: Object,
 		default: {},
 	},
 	classes: {
 		type: String,
 		default: 'w-full h-full',
-	}
+	},
+	/* Доступные значения:
+		'purple', 'gold', 'silver', 'bronze', 'ruby', 'azure', 'emerald', 'amethyst-yellow', 'sapphire', 'obsidian', 'rose-gold'
+	*/
+	borderType: {
+		type: String,
+		default: '',
+	},
+	canChange: {
+		type: Boolean,
+		default: true,
+	},
+	useLightBox: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const isCurrentUser = computed(() => {
-	if (userStore.user && Object.keys(userStore.user).length > 0 && userStore.user.id === props.userInfo.id) {
+	if (userStore.user && Object.keys(userStore.user).length > 0 && userStore.user.id === props.user.id) {
 		return true;
 	}
 
@@ -122,13 +136,23 @@ const getUserData = async () => {
 		requestInProgress.value = false;
 	}
 }
+
+const wrapperClasses = computed(() => {
+	const cls = ['avatar-box'];
+	if (props.borderType) {
+		cls.push(`border-${props.borderType}`);
+	}
+	return cls;
+});
 </script>
 
 <template>
-	<div class="avatar">
-		<template v-if="isCurrentUser">
+	<div :class="[wrapperClasses]">
+		<template v-if="canChange && isCurrentUser">
 			<label>
-				<font-awesome-icon class="change-avatar-button shadow-lg" icon="fa-solid fa-camera" />
+				<div class="change-avatar-button">
+					<font-awesome-icon class="shadow-lg" icon="fa-solid fa-camera" />
+				</div>
 
 				<FormGenerator
 						class="hidden"
@@ -143,14 +167,25 @@ const getUserData = async () => {
 				/>
 			</label>
 		</template>
-		<img
-				v-if="userInfo.avatar"
-				:src="getResizeImg(userInfo.avatar)"
-				:alt="userInfo.name"
-				:title="userInfo.name"
-				:class="classes"
-				@click="layoutMethods.setOpenedImage(userInfo.avatar)"
-		>
+		<template v-if="user.avatar">
+			<img
+					v-if="useLightBox"
+					:class="classes"
+					:src="getResizeImg(user.avatar)"
+					:alt="user.name"
+					:title="user.name"
+					:media-id="user.avatar.id"
+					:not-for-lb-nav="true"
+					class="media-obj asd asd"
+			>
+			<img
+					v-else
+					:class="classes"
+					:src="getResizeImg(user.avatar)"
+					:alt="user.name"
+					:title="user.name"
+			>
+		</template>
 		<img
 				v-else
 				:class="classes"
@@ -160,26 +195,5 @@ const getUserData = async () => {
 </template>
 
 <style lang="scss" scoped>
-.avatar {
-	@apply relative;
-
-	aspect-ratio: 1 / 1;
-
-	img {
-		@apply object-cover cursor-pointer mx-auto rounded-full;
-	}
-
-	.change-avatar-button {
-		@apply absolute text-[3rem] text-[var(--main-dark-text-color)] cursor-pointer hidden;
-
-		top: calc(50% - 1.5rem);
-		left: calc(50% - 1.5rem);
-	}
-
-	&:hover {
-		.change-avatar-button {
-			@apply block;
-		}
-	}
-}
+@import url('~/assets/scss/Fragments/avatarStyles.scss');
 </style>

@@ -43,6 +43,12 @@ const form = ref(
 				type: 'text',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			place: {
+				name: 'Место',
+				value: null,
+				type: 'text',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			item_roll_count: {
 				name: 'Доступное количество ролов игры',
 				value: '',

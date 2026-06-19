@@ -4,16 +4,18 @@ import GameCard from '@/modules/boardGame/components/game/GameCard.vue';
 import { computed } from "vue";
 
 import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody } = api();
+const { sendApiRequest } = api();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const props = defineProps({
 	userName: {
 		type: String,
-		default: '',
+		default: null,
 	},
 });
 
-const route = useRoute();
 const requestName = 'getBoardGamePlayerCurrentGame';
 
 const {
@@ -41,16 +43,23 @@ const fetchedData = computed(() => requestData.value || null);
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
-	<template v-else-if="fetchedData && fetchedData.length > 0">
-		<div v-for="(element, key) in fetchedData" :key="key">
-			<GameCard :element="element"/>
-		</div>
-	</template>
-	<template v-else>
-		Текущая игра отсутствует
-	</template>
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
+	<GameCard
+			v-else-if="fetchedData && fetchedData.length"
+			v-for="(element, key) in fetchedData"
+			:key="key"
+			:element="element"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Текущая игра отсутствует"
+	/>
 </template>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped />

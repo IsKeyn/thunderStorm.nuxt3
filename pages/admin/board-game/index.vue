@@ -60,6 +60,11 @@ const titles = ref(
 				type: 'boolean',
 				sortable: true,
 			},
+			is_test: {
+				name: 'Тестовая игра',
+				type: 'boolean',
+				sortable: true,
+			},
 			created_by: {
 				name: 'Кем создан',
 				type: 'EntityList',

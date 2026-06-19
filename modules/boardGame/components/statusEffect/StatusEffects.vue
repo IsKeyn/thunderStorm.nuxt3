@@ -2,7 +2,12 @@
 import StatusEffectCard from '@/modules/boardGame/components/statusEffect/StatusEffectCard.vue';
 
 import { computed } from "vue";
-const route = useRoute();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { api } from '@/composables/api.js';
+const { sendApiRequest } = api();
 
 const props = defineProps({
 	userName: {
@@ -23,12 +28,6 @@ const props = defineProps({
 	},
 });
 
-import { api } from '@/composables/api.js';
-const { sendApiRequest } = api();
-
-import { notifications } from '@/composables/notifications.js';
-const { alert, error } = notifications();
-
 const requestName = 'getBoardGamePlayerStatusEffectHistory';
 
 const {
@@ -43,7 +42,7 @@ const {
 						sendApiRequest(`board-game/v2/player/getStatusEffects/${route.params.slug}/${props.userName}`, 'GET', {}, requestName, '')
 				);
 
-				return response?.data || null;
+				return response || null;
 			}
 		},
 		{
@@ -52,7 +51,7 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || null);
+const fetchedData = computed(() => requestData.value?.data || null);
 
 const nonActiveSe = computed(() => {
 	const grouped = {};
@@ -78,14 +77,17 @@ const nonActiveSe = computed(() => {
 const updateList = () => {
 	refresh();
 }
-
-// TODO только текущий пользователь может использовать статус эффекты
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
 	<div
-			v-else-if="fetchedData && fetchedData.length > 0"
+			v-else-if="fetchedData && fetchedData.length"
 			:class="['inventory', classes]"
 	>
 		<div class="box mb-[2rem]">
@@ -119,9 +121,11 @@ const updateList = () => {
 			</div>
 		</div>
 	</div>
-	<template v-else>
-		Статус эффекты отсутствуют
-	</template>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Статус эффекты отсутствуют"
+	/>
 </template>
 
 <style lang="scss" scoped>

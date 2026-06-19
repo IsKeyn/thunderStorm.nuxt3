@@ -1,43 +1,31 @@
 <script setup>
+import Slider from '@/components/sliders/vueSlider/Slider.vue';
 import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
 import Timer from '@/modules/boardGame/components/timer/Timer.vue';
 
-import { inject } from "vue";
-
-const route = useRoute();
-
-const layoutMethods = inject('layoutMethods')
-
-import { media } from '@/composables/media.js'
-const {
-	getResizeImg,
-} = media();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { date } from '@/composables/date.js';
 const {
 	getFormattedDate,
 	getFormattedHoursFromSeconds,
-	twoDigits,
+	getHoursFromMinutes,
 } = date();
 
 import { userFunctions } from '@/composables/userFunctions.js';
-const {
-	userStore,
-} = userFunctions();
+const { userStore } = userFunctions();
 
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
-const {
-	addTextToPoints
-} = boardGame();
+const { addTextToPoints } = boardGame();
+
+import { bgGames } from '@/composables/BoardGame/bgGames.js'
+const { getLongPlayLink, getStatusName, getStatusClass, getDifficultName } = bgGames();
 
 const props = defineProps({
 	element: {
 		type: Object,
 		default: {},
-	},
-	classes: {
-		type: String,
-		default: '',
 	},
 	showInfoButtons: {
 		type: Boolean,
@@ -47,7 +35,8 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
-	theme: { // default , PlayerActionWithGame , CurrentGame
+	/* default , PlayerActionWithGame , CurrentGame */
+	theme: {
 		type: String,
 		default: 'default',
 	},
@@ -67,54 +56,15 @@ const props = defineProps({
 		type: Number,
 		default: 0,
 	},
+	difficultInPercent: {
+		type: Boolean,
+		default: false,
+	},
 });
-
-const getStatusName = (status) => {
-	switch (status) {
-		case 0: return 'Текущая';
-		case 1: return 'Рерольнута';
-		case 2: return 'Пройдена';
-		case 3: return 'Отдана';
-		case 4: return 'В очереди';
-	}
-}
-
-const getStatusClass = (status) => {
-	if (props.theme === 'CurrentGame') return;
-
-	switch (status) {
-		case 0: return 'violet';
-		case 1: return 'red';
-		case 2: return 'green';
-		case 3: return 'blue';
-		case 4: return 'yellow';
-	}
-}
-
-const getLongPlayLink = () => {
-	let urlSearch = 'https://www.youtube.com/results?search_query=';
-	urlSearch += ' ' + props.element.game.game.name;
-
-	if (props.element.game.platform) {
-		urlSearch += ' ' + props.element.game.platform.name;
-	}
-
-	urlSearch += ' longplay';
-
-	return urlSearch;
-}
-
-const getHours = (minutes) => {
-	let formattedTime = '';
-
-	formattedTime += twoDigits(Math.floor(minutes / 60)) + ':' + twoDigits(minutes % 60);
-
-	return formattedTime;
-}
 </script>
 
 <template>
-	<div :class="['item-box',  getStatusClass(element.status), theme]">
+	<div :class="['item-box',  getStatusClass(element.status, theme), theme]">
 		<div
 				v-if="showStatusBar"
 				:class="['status-bar']"
@@ -127,17 +77,15 @@ const getHours = (minutes) => {
 			>{{ element.user.name }}</router-link> - </span>{{ getStatusName(element.status) }} <span v-if="getFormattedHoursFromSeconds(element.time)">(время прохождения {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
 		</div>
 		<div class="content-box">
-			<img
-					v-if="showCover && element.game.game.covers && element.game.game.covers[0]"
-					:src="getResizeImg(element.game.game.covers[0], 300)"
-					:alt="element.game.game.name"
-					:title="element.game.game.name"
-					@click="layoutMethods.setOpenedImage(element.game.game.covers[0])"
-			>
 			<PublicAvatar
 					v-if="theme === 'PlayerActionWithGame'"
 					:user="element.user"
 					:useLightBox="true"
+			/>
+			<Slider
+					v-else-if="showCover && element.game.game.covers"
+					:items="element.game.game.covers"
+					class="slider"
 			/>
 			<div class="info">
 				<span
@@ -152,8 +100,11 @@ const getHours = (minutes) => {
 				>
 					<div>
 						<span class="line-info" v-if="element.game.platform">Платформа: {{ element.game.platform.name }}</span>
-						<span class="line-info" v-if="element.game.game?.release_dates[0]?.date">Год релиза: {{ getFormattedDate('Y', element.game.game.release_dates[0].date) }}</span>
-						<span class="line-info" v-if="element.game.points !== null && element.game.points !== undefined">Очки за игру: {{ element.game.computed_points ? element.game.computed_points : element.game.points }}</span>
+						<span class="line-info" v-if="element.game.game?.release_dates?.[0]?.date">Год релиза: {{ getFormattedDate('Y', element.game.game.release_dates[0].date) }}</span>
+
+						<span class="line-info" v-if="element.points">Получил очков за игру: {{ element.points }}</span>
+						<span class="line-info" v-else-if="element.game.points !== null && element.game.points !== undefined">Очки за игру: {{ element.game.computed_points ? element.game.computed_points : element.game.points }}</span>
+
 						<span
 								v-if="element.game.added_by && element.game.added_by_user.name"
 								class="line-info"
@@ -167,36 +118,42 @@ const getHours = (minutes) => {
 						<span class="line-info" v-if="element?.game?.source">Источник: {{ element.game.source }}</span>
 						<span
 								class="line-info"
-								v-if="element?.game?.difficult && element.game.difficult !== '0'"
+								v-if="element?.game?.difficult"
 						>
-							Сложность: {{ element.game.difficult }}%
+							<template v-if="difficultInPercent">
+								Сложность: {{ element.game.difficult }}%
+							</template>
+							<template v-else>
+								Сложность: {{ getDifficultName(element.game.difficult) }}
+							</template>
 						</span>
 						<span
 								class="line-info"
 								v-if="element?.game?.game_completion_time && element.game.game_completion_time !== '0'"
 						>
-							Время прохождения (HLTB): {{ getHours(element.game.game_completion_time) }}
+							Время прохождения (HLTB): {{ getHoursFromMinutes(element.game.game_completion_time) }}
 						</span>
 						<span
-								class="line-info"
 								v-if="pointsForFinishGame"
+								class="line-info"
 						>
 							С учетом вашего стрика x{{ streak }} за прохождение игры вы получите {{ addTextToPoints(pointsForFinishGame) }}
 						</span>
 						<span
-								class="line-info mt-4"
 								v-if="element.game.description"
+								class="line-info mt-4"
 						>
 							Условия прохождения: {{ element.game.description }}
 						</span>
 					</div>
+
 					<div v-if="showInfoButtons">
 						<div class="mb-2">Ссылки:</div>
 						<ul>
 							<li>
 								<a
 										class="mr-[1rem]"
-										:href="getLongPlayLink()"
+										:href="getLongPlayLink(element.game)"
 										target="_blank"
 								>Лонгплей</a>
 							</li>
@@ -267,10 +224,11 @@ const getHours = (minutes) => {
 	.content-box {
 		@apply lg:flex w-full p-[1rem];
 
-		img {
+		img,
+		.slider {
 			@apply
 				mx-auto mb-4 lg:m-0
-				w-[150px] h-auto object-contain cursor-pointer
+				w-[200px] h-auto object-contain cursor-pointer
 			;
 		}
 

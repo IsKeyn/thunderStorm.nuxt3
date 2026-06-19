@@ -1,23 +1,17 @@
 <script setup>
-import { inject, watch } from "vue";
-
 const emit = defineEmits(['updateList']);
-const layoutMethods = inject('layoutMethods')
 
 import { helper } from '@/composables/helper.js'
 const { route, hasWebSocked } = helper();
 
-import { boardGame } from '@/composables/BoardGame/boardGame.js'
-const { refreshLayoutData } = boardGame();
-
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
 
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
+
 import { media } from '@/composables/media.js'
 const { getResizeImg } = media();
-
-import { userFunctions } from '@/composables/userFunctions.js';
-const { isAuth, userStore } = userFunctions();
 
 import { notifications } from '@/composables/notifications.js';
 const { choiceAlert, error, alert } = notifications();
@@ -128,7 +122,9 @@ const sendActivateSeRequest = async (type) => {
 		const response = await sendApiRequest('board-game/v2/status-effect/use', 'POST', body, 'bg_useStatusEffect', '', 'method');
 
 		if (response) {
-			if (response.error) {
+			if (response.status === 'error' && response.status_message) {
+				error(response.status_message);
+			} else if (response.error) {
 				error(response.error);
 			} else {
 				if (response.message) {
@@ -140,12 +136,11 @@ const sendActivateSeRequest = async (type) => {
 						alert(`Вы отказались от статус эффекта "${props.element.statusEffect.name}"`);
 					}
 				}
-
-				requestInProgress.value = false;
-
 				if (!hasWebSocked()) refreshLayoutData();
 				emit('updateList');
 			}
+
+			requestInProgress.value = false;
 		}
 	} catch (e) {
 		error(e);
@@ -155,28 +150,41 @@ const sendActivateSeRequest = async (type) => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
 	<div
 			v-else-if="element && element.statusEffect"
 			:class="[
-			'item-box',
-			getTypeClass(element.statusEffect?.debuff),
-			showControlPanel || element.quantity > 1 ? 'add-padding-right' : '',
-			theme,
-			classes,
-	]">
-		<img
-				v-if="element.statusEffect?.image"
-				:src="getResizeImg(element.statusEffect?.image)"
-				:alt="element.statusEffect.name"
-				:title="element.statusEffect.name"
-				:class="[useLightBox ? 'cursor-pointer' : '']"
-				@click="useLightBox ? layoutMethods.setOpenedImage(element.statusEffect.image) : false"
-		>
+				'item-box',
+				getTypeClass(element.statusEffect?.debuff),
+				element.statusEffect.quantity > 1 ? 'add-padding-right' : '',
+				theme,
+				classes,
+			]"
+	>
+		<template v-if="element.statusEffect?.image">
+			<img
+					v-if="useLightBox"
+					:src="getResizeImg(element.statusEffect.image)"
+					:alt="element.statusEffect.name"
+					:title="element.statusEffect.name"
+					:class="['cursor-pointer media-obj']"
+					:media-id="element.statusEffect.image.id"
+			>
+			<img
+					v-else
+					:src="getResizeImg(element.statusEffect.image)"
+					:alt="element.statusEffect.name"
+					:title="element.statusEffect.name"
+			>
+		</template>
+
 		<div class="info">
-			<span class="name">
-				{{ element.statusEffect.name }}
-			</span>
+			<span class="name">{{ element.statusEffect.name }}</span>
 			<span
 					v-if="element.statusEffect.description"
 					:class="[
@@ -208,11 +216,6 @@ const sendActivateSeRequest = async (type) => {
 					>Выполнен</button>
 				</template>
 			</div>
-		</div>
-		<div
-				v-if="showControlPanel"
-				class="control-panel"
-		>
 		</div>
 		<div
 				v-if="element.statusEffect.quantity > 1"
@@ -253,11 +256,7 @@ const sendActivateSeRequest = async (type) => {
 		@apply pr-[3rem];
 	}
 
-	&.default {
-		//&:hover {
-		//	@apply bg-[var(--second-active-color)];
-		//}
-	}
+	&.default {}
 
 	img {
 		@apply w-[70px] h-[70px];

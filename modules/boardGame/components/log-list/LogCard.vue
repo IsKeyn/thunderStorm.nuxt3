@@ -1,7 +1,8 @@
 <script setup>
 import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
 
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
@@ -51,7 +52,7 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 .item-box {
-	@apply p-2 mb-2 bg-[var(--second-bg-color)] block lg:flex;
+	@apply p-2 mb-2 bg-[var(--second-bg-color)] block lg:flex rounded-none;
 
 	.info {
 		@apply pl-3 pr-3 text-[var(--main-text-color)] w-full;
@@ -70,7 +71,6 @@ const props = defineProps({
 	}
 }
 </style>
-
 
 <style lang="scss" scoped>
 .street-light-theme {

@@ -90,7 +90,7 @@ const pointsWithText = computed(() => {
 	<div class="wrapper">
 		<template v-if="isAuth">
 			<div class="info-block">
-				<span class="nickname">{{ userStore.user.name }}</span>
+				<span class="nickname">{{ userStore.player.user.public_name ?? userStore.player.user.name }}</span>
 				<span
 						v-if="userStore.player && Object.keys(userStore.player).length > 0"
 						class="points"

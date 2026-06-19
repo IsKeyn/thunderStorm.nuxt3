@@ -1,9 +1,10 @@
 <script setup>
-import Modal from '@/components/modals/Modal.vue';
-
 import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import UseItem from '@/modules/boardGame/components/item/UseItem.vue';
 import StatusEffectCard from '@/modules/boardGame/components/statusEffect/StatusEffectCard.vue';
+import Modal from '@/components/modals/Modal.vue';
+
+const emit = defineEmits(['updateInventory']);
 
 import { computed, ref } from "vue";
 
@@ -13,7 +14,11 @@ const { route, hasWebSocked } = helper();
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
 const { refreshLayoutData } = boardGame();
 
-const emit = defineEmits(['updateInventory']);
+import { api } from '@/composables/api.js';
+const { sendApiRequest } = api();
+
+import { notifications } from '@/composables/notifications.js';
+const { alert, error } = notifications();
 
 const props = defineProps({
 	items: {
@@ -40,13 +45,11 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	groupUnusedItems: {
+		type: Boolean,
+		default: false,
+	},
 });
-
-import { api } from '@/composables/api.js';
-const { sendApiRequest } = api();
-
-import { notifications } from '@/composables/notifications.js';
-const { alert, error } = notifications();
 
 const requestName = 'getBoardGamePlayerInventoryHistory';
 
@@ -62,7 +65,7 @@ const {
 						sendApiRequest(`board-game/v2/player/getInventory/${route.params.slug}/${props.userName}`, 'GET', {}, requestName, '')
 				);
 
-				return response?.data || null;
+				return response || null;
 			}
 		},
 		{
@@ -72,11 +75,7 @@ const {
 );
 
 const fetchedData = computed(() => {
-	if (requestData.value) {
-		return requestData.value;
-	} else {
-		return props.items;
-	}
+	return requestData.value ? requestData.value?.data : props.items;
 });
 
 const usedItems = computed(() => {
@@ -84,6 +83,27 @@ const usedItems = computed(() => {
 
 	if (fetchedData.value) {
 		fetchedData.value.filter(item => item.has_used).forEach((item) => {
+			if (item.item) {
+				if (grouped[item.item.id]) {
+					grouped[item.item.id].item.quantity++;
+				} else {
+					grouped[item.item.id] = { ...item };
+					grouped[item.item.id].item.quantity = 1;
+				}
+			}
+		});
+	}
+
+	return Object.values(grouped).sort(function(a, b) {
+		return b.item.quantity - a.item.quantity;
+	});
+});
+
+const unusedItems = computed(() => {
+	const grouped = {};
+
+	if (fetchedData.value) {
+		fetchedData.value.filter(item => !item.has_used).forEach((item) => {
 			if (item.item) {
 				if (grouped[item.item.id]) {
 					grouped[item.item.id].item.quantity++;
@@ -151,9 +171,14 @@ const useItemRequest = async (inventory_id, name, additionalParams = {}) => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
 	<div
-			v-else-if="fetchedData && fetchedData.length > 0"
+			v-else-if="fetchedData && fetchedData.length"
 			:class="['inventory', classes]"
 	>
 		<div class="box mb-[2rem]">
@@ -161,12 +186,13 @@ const useItemRequest = async (inventory_id, name, additionalParams = {}) => {
 			<span v-if="fetchedData.filter(item => !item.has_used).length === 0">Предметов нет</span>
 			<div class="wrapper">
 				<ItemCard
-						v-for="(element, key) in fetchedData.filter(item => !item.has_used)"
+						v-for="(element, key) in groupUnusedItems ? unusedItems : fetchedData.filter(item => !item.has_used)"
 						:key="key"
 						:element="element.item"
 						:inventoryItem="element"
 						:useLightBox="true"
 						:showControlPanel="canUse"
+						:showDropChance="false"
 						@useItem="useItem"
 				/>
 			</div>
@@ -183,11 +209,12 @@ const useItemRequest = async (inventory_id, name, additionalParams = {}) => {
 						:key="key"
 						:element="element.item"
 						:useLightBox="true"
+						:showDropChance="false"
 				/>
 			</div>
 		</div>
 		<div
-				v-if="statusEffects.length > 0"
+				v-if="statusEffects.length"
 				class="box"
 		>
 			<h2 class="inv-title">Статус эффекты игрока</h2>
@@ -204,9 +231,11 @@ const useItemRequest = async (inventory_id, name, additionalParams = {}) => {
 			</div>
 		</div>
 	</div>
-	<template v-else>
-		Предметы отсутствуют
-	</template>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Предметы отсутствуют"
+	/>
 
 	<Modal
 			:showOpenModal="modalOpen"
@@ -243,5 +272,4 @@ const useItemRequest = async (inventory_id, name, additionalParams = {}) => {
 .inv-title {
 	@apply font-bold mb-4 uppercase;
 }
-
 </style>

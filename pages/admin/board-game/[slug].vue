@@ -75,6 +75,13 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			is_test: {
+				name: 'Тестовая игра',
+				value: false,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			started_at: {
 				name: 'Дата начала',
 				value: '',

@@ -1,5 +1,4 @@
 <script setup>
-import PlayerCard from '@/modules/boardGame/components/user/player/playerCards/PlayerCard.vue';
 import PlayerCardV2 from '@/modules/boardGame/components/user/player/playerCards/PlayerCardV2.vue';
 import SearchFilterSort from '@/components/filters/SearchFilterSort.vue';
 import Pagination from '@/components/navigation/Pagination.vue';

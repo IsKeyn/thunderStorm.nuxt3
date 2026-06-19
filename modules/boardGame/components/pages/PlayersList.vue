@@ -4,7 +4,8 @@ import PlayersList from '@/modules/boardGame/components/user/player/PlayersList.
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const pageName = 'Список участников';
 const breadCrumbsArray = computed(() => {
@@ -37,9 +38,13 @@ const usedFilters = [
 
 const sortOptions = [
 	{
-		name: 'По количеству очков',
-		value: 'full_points',
+		name: 'По месту',
+		value: 'place',
 	},
+	// {
+	// 	name: 'По количеству очков',
+	// 	value: 'full_points',
+	// },
 	{
 		name: 'По соотношению очки/время',
 		value: 'points_per_hour',
@@ -60,8 +65,8 @@ const sortOptions = [
 
 const defaultFilters = {
 	sort: {
-		field: "full_points",
-		sort: "desc",
+		field: "place",
+		sort: "asc",
 	},
 }
 </script>
