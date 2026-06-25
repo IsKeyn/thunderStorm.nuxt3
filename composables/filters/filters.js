@@ -127,7 +127,7 @@ export function filters() {
 
         if (usedFilters.length > 0) {
             usedFilters.forEach((item) => {
-                if (checkList.filter((i) => i === item.name).length === 0) {
+                if (checkList.filter((i) => i === item.name).length === 0 && item.type !== 'hidden') {
                     checkList.push(item.name);
                 }
             });

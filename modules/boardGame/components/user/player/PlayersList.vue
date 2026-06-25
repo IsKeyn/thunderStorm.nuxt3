@@ -6,6 +6,8 @@ import PublicRecommendation from '@/components/recommendation/PublicRecommendati
 
 import { computed, ref, watch } from "vue";
 
+const emit = defineEmits(['onClickFunc']);
+
 import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
 
@@ -45,7 +47,25 @@ const props = defineProps({
 	sortOptions: {
 		type: Array,
 		default: [],
-	}
+	},
+	showPagination: {
+		type: Boolean,
+		required: true,
+	},
+	showFilters: {
+		type: Boolean,
+		required: true,
+	},
+	/* Действие при нажатии route, emit */
+	clickDoType: {
+		type: String,
+		default: 'route',
+	},
+	/* Отображать блок выбора случайного игрока */
+	showSelectRandomPlayer: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
@@ -129,11 +149,32 @@ watch(() => filtersStore.filters?.[filterName], () => {
 }, { deep: true });
 
 /* КОНЕЦ: Фильтры */
+
+/* Данный для случайного игрока */
+const dataForRandomPlayer = {
+	type: 'randomPlayer',
+	model: 'App\\Models\\BoardGame\\BoardGamePlayer',
+	user: {
+		name: "Случайный игрок",
+		public_name: "Случайный игрок",
+		avatar: null,
+	},
+	points: '???',
+	full_points: '????',
+	points_per_hour: '??',
+	streak: '?',
+	step_count: '?',
+	item_roll_count: '?',
+	finishBoard: false,
+	position: '??',
+	place: '?',
+};
 </script>
 
 <template>
 	<div class="relative">
 		<SearchFilterSort
+				v-if="showFilters"
 				:entity="props.entity"
 				filterRequestUrl="board-game/v2/player/filters"
 				:filterName="filterName"
@@ -149,11 +190,22 @@ watch(() => filtersStore.filters?.[filterName], () => {
 				:themeType="9"
 		/>
 		<div v-else-if="fetchedData && fetchedData.length">
+			<div v-if="showSelectRandomPlayer">
+				<PlayerCardV2
+						:element="dataForRandomPlayer"
+						:clickDoType="clickDoType"
+						@onClickFunc="$emit('onClickFunc', $event)"
+				/>
+			</div>
 			<div
 					v-for="(player, index) in fetchedData"
 					:key="player.id || index"
 			>
-				<PlayerCardV2 :element="player" />
+				<PlayerCardV2
+						:element="player"
+						:clickDoType="clickDoType"
+						@onClickFunc="$emit('onClickFunc', $event)"
+				/>
 			</div>
 		</div>
 		<ui-itemBox
@@ -161,7 +213,7 @@ watch(() => filtersStore.filters?.[filterName], () => {
 				classes="red"
 		/>
 		<Pagination
-				v-if="paginationData"
+				v-if="showPagination && paginationData"
 				:pagination="paginationData"
 				:navigationButtons="true"
 				:perPageOptionsProp="[15, 30, 45]"

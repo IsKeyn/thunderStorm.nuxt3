@@ -1,7 +1,7 @@
 <script setup>
 import Settings from '@/components/games/gamblingGame/Settings.vue';
 
-import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
+import ItemCard from '@/modules/boardGame/components/item/ItemCardGg.vue';
 import GameGamblingCard from '@/modules/boardGame/components/game/GameGamblingCard.vue';
 import Game from '@/components/games/gamblingGame/card/Game.vue';
 
@@ -80,7 +80,7 @@ const props = defineProps({
 	},
 	cardType: { // Тип карточки в рулетке
 		type: String,
-		default: 'itemCard',
+		default: 'ItemCard',
 	},
 
 	showItemCount: { // Отображать количество элементов в рулетке

@@ -1,5 +1,5 @@
 <script setup>
-import GamblingGame from '@/components/games/GamblingGame.vue'
+import GamblingGameV2_1 from '@/components/games/gamblingGame/GamblingGameV2_1.vue'
 import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.vue';
 
@@ -14,10 +14,7 @@ const { route, hasWebSocked } = helper();
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
 const { refreshLayoutData } = boardGame();
 
-const props = defineProps({});
-
 const requestName = 'getBoardGameGamblingGameItemList';
-
 const hiddenRefresh = ref(false);
 
 const {
@@ -68,12 +65,18 @@ const closeDroppedItemBox = () => {
 </script>
 
 <template>
-<!--	<ui-BigPreloader v-if="requestInProgress && !hiddenRefresh" />-->
-	<div v-if="requestInProgress && !hiddenRefresh"></div>
-	<div class="item-box" v-else-if="fetchedData && fetchedData.status === 'error' && fetchedData.status_message">
-		{{ fetchedData.status_message }}
-	</div>
-	<div v-else-if="fetchedData && fetchedData.items && fetchedData.items.length > 0">
+	<ui-BigPreloader
+			v-if="requestInProgress && !hiddenRefresh"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
+	<ui-itemBox
+			v-else-if="fetchedData && fetchedData?.status === 'error' && fetchedData?.status_message"
+			classes="red"
+			:message="fetchedData.status_message"
+	/>
+	<div v-else-if="fetchedData?.items?.length">
 		<div v-if="droppedItem" class="flex flex-col items-center">
 			<ItemCard
 					class="w-full"
@@ -81,11 +84,13 @@ const closeDroppedItemBox = () => {
 					:openFullDescription="true"
 					:useLightBox="true"
 					:playSound="true"
+					:showDropChance="false"
 			/>
 			<button class="btn btn-simple" @click="closeDroppedItemBox">{{ fetchedData.player.item_roll_count > 0 ? 'Крутить ещё' : 'Закрыть' }}</button>
 		</div>
-		<GamblingGame
+		<GamblingGameV2_1
 				v-else
+				cardType="ItemCard"
 				:items="fetchedData.items"
 				:roll_count="fetchedData.player.item_roll_count"
 				:requestObj="requestObj"
@@ -93,15 +98,21 @@ const closeDroppedItemBox = () => {
 				:showItemCount="false"
 				:showRollCount="true"
 				:requestParentData="requestInProgress"
-				@funcAfterRollWithDelay2="showItem"
+				@funcAfterRollWithDelay1000="showItem"
 		/>
-		<ui-BigPreloader v-if="requestInProgress && !hiddenRefresh" />
+		<ui-BigPreloader
+				v-if="requestInProgress && !hiddenRefresh"
+				class="h-full"
+				theme="image"
+				:themeType="9"
+		/>
 		<InventoryItems
 				v-else
 				classes="mt-8"
 				:items="fetchedData.player.inventory"
-				:statusEffects="fetchedData.player.status_effects"
+				:statusEffects="fetchedData.player.statusEffects"
 				:canUse="true"
+				:useBindStatusEffect="true"
 				@updateInventory="hiddenUpdate"
 		/>
 	</div>

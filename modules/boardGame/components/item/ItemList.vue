@@ -5,7 +5,7 @@ import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import { computed, ref } from "vue";
 
 import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody } = api();
+const { sendApiRequest } = api();
 
 const form = ref(
 		{
@@ -34,7 +34,7 @@ const {
 					sendApiRequest(`board-game/v2/item/list/${route.params.slug}/`, 'GET', {}, requestName, '')
 			);
 
-			return response?.data || null;
+			return response || null;
 		},
 		{
 			server: true,
@@ -42,7 +42,7 @@ const {
 		}
 );
 
-const itemList = computed(() => requestData.value || null);
+const itemList = computed(() => requestData.value?.data || null);
 
 const filteredItems = computed(() => {
 	return itemList.value.filter((item) => {
@@ -52,7 +52,12 @@ const filteredItems = computed(() => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
 	<div v-else class="wrapper">
 		<FormGenerator
 				v-if="form.searchLine"
@@ -71,7 +76,12 @@ const filteredItems = computed(() => {
 				:key="key"
 				:element="element"
 				:useLightBox="true"
+				:showDropChance="false"
 		/>
-		<span v-else>Предметов нет</span>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="Предметов нет"
+		/>
 	</div>
 </template>

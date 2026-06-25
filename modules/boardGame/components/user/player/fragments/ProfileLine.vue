@@ -181,7 +181,7 @@ const otherStreamPlatform = computed(() => {
 						<template v-if="isCurrentUser">
 							<button
 									class="btn btn-simple-1 mr-2"
-									@click="s$emit('showUserMessagesModal')"
+									@click="$emit('showUserMessagesModal')"
 							>
 								<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Мои сообщения
 							</button>
@@ -345,7 +345,7 @@ const otherStreamPlatform = computed(() => {
 			@apply lg:grid grid-cols-12;
 
 			.box {
-				@apply col-span-4;
+				@apply col-span-4 min-h-[60px];
 
 				a {
 					&:hover {

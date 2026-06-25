@@ -146,6 +146,13 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
+
+const extensions = [
+	{
+		name: 'BoardGameSettings',
+		keyForBackend: 'settings',
+	},
+];
 </script>
 
 <template>
@@ -166,6 +173,7 @@ const breadCrumbsArray = computed(() => {
 			:showAdditionalFieldsTab="true"
 			:useVersionList="true"
 			previewUrl="/e/{slug}"
+			:extensions="extensions"
 	/>
 	<ui-itemBox
 			v-else

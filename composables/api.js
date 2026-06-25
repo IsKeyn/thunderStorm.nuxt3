@@ -202,9 +202,29 @@ export function api() {
         return reverse ? src.replace(backendUrl.value, '{backend-url}') : src.replace('http://localhost:8000', backendUrl.value).replace('{backend-url}', backendUrl.value);
     }
 
-    const responseHandler = async (response) => {
+    const responseHandler = async (
+        response,
+        from = null,
+        successMessage = null,
+
+    ) => {
         const notificationsModule = await import("@/composables/notifications.js");
         const { alert, error } = notificationsModule.notifications();
+
+        if (!response) {
+            error(
+                'Ответ от сервера пуст',
+                null,
+                null,
+                false,
+                from,
+                null,
+                false,
+                null
+            );
+
+            return;
+        }
 
         if (response.error) {
             error(
@@ -212,11 +232,13 @@ export function api() {
                 null,
                 null,
                 false,
-                'Сохранение настроек таймера',
+                from,
                 null,
                 false,
                 null
             );
+
+            return;
         }
 
         if (response.status) {
@@ -225,12 +247,25 @@ export function api() {
                 2000,
                 '#004d42',
                 false,
-                'Сохранение настроек таймера',
+                from,
                 null,
                 false,
                 null
             );
+
+            return;
         }
+
+        if (response.message) {
+            alert(
+                response.message,
+                10000
+            );
+
+            return;
+        }
+
+        alert(successMessage);
     }
 
     return {

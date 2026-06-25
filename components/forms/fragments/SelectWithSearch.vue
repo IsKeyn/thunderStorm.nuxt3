@@ -223,7 +223,11 @@ onBeforeUnmount(() => {
 	}
 
 	.select-dropdown {
-		@apply absolute top-full left-0 right-0 bg-[var(--main-block-color)] border border-[var(--second-border-color)] mt-1 shadow-lg z-50 max-h-[300px] overflow-hidden flex flex-col;
+		@apply
+			absolute top-full left-0 right-0
+			bg-[var(--main-block-color)] border border-[var(--second-border-color)]
+			mt-1 shadow-lg z-50 max-h-[300px] overflow-hidden flex flex-col
+		;
 
 		.search-container {
 			@apply p-2 border-b border-[var(--second-border-color)];
@@ -251,6 +255,17 @@ onBeforeUnmount(() => {
 			.no-results {
 				@apply p-3 text-center italic;
 			}
+		}
+	}
+}
+</style>
+
+<style lang="scss" scoped>
+.street-light-theme {
+	.custom-select {
+		.select-dropdown {
+			@apply bg-[var(--second-block-color)] text-[var(--main-dark-text-color)];
+			;
 		}
 	}
 }

@@ -34,7 +34,7 @@ const props = defineProps({
 		/>
 		<div class="info">
 			<template v-if="theme === 'default'">
-				<span class="name">
+				<span v-if="element?.user?.name" class="name">
 					<Nuxt-link
 							:to="`/e/${route.params.slug}/player/${element.user.name}`"
 					>{{ element.user.name }}</Nuxt-link> - {{ getFormattedDate('d ru_mouths_name Y в H:i', element.created_at) }}

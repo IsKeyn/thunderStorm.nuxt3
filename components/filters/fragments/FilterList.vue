@@ -119,19 +119,19 @@ const activeFiltersList = computed(() => {
 							key: item.name,
 						});
 					}
-				}
-
-				if (
-						typeof filtersStore.filters[filterName][item.name] === 'object'
-						&& filtersStore.filters[filterName][item.name].length > 0
-				) {
-					filtersStore.filters[filterName][item.name].forEach((value) => {
-						result.push({
-							name: item.name === 'tags' ? value : findNameByKeyAndId(item.name, value),
-							value: value,
-							key: item.name,
+				} else if (item.type !== 'hidden') {
+					if (
+							typeof filtersStore.filters[filterName][item.name] === 'object'
+							&& filtersStore.filters[filterName][item.name].length > 0
+					) {
+						filtersStore.filters[filterName][item.name].forEach((value) => {
+							result.push({
+								name: item.name === 'tags' ? value : findNameByKeyAndId(item.name, value),
+								value: value,
+								key: item.name,
+							});
 						});
-					});
+					}
 				}
 			}
 		});

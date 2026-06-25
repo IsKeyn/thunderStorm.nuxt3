@@ -131,7 +131,6 @@ const itemForUse = ref();
 
 const useItem = (item) => {
 	openCloseModalFunc();
-
 	itemForUse.value = item;
 }
 
@@ -140,30 +139,37 @@ const useItemFromEmit = (params) => {
 	useItemRequest(params.item.id, params.item.item.item.name, params.additionalParams);
 }
 
-const useItemRequest = async (inventory_id, name, additionalParams = {}) => {
+const useItemRequest = async (
+		inventoryId,
+		name,
+		additionalParams = {}
+) => {
 	try {
 		const body = {
-			id: inventory_id,
+			id: inventoryId,
 			slug: route.params.slug,
 			additionalParams,
 		}
 
-		const response = await sendApiRequest('board-game/v2/inventory/use', 'POST', body, 'bg_useItem', 'small', 'method');
+		const response = await sendApiRequest('board-game/v2/inventory/useItem', 'POST', body, 'bg_useItem', 'small', 'method');
 
-		if (response) {
-			if (response.error) {
-				error(response.error);
-			} else {
-				if (response.message) {
-					alert(response.message, 10000);
-				} else {
-					alert(`Предмет "${name}" был использован`);
-				}
-
-				if (!hasWebSocked()) refreshLayoutData();
-				emit('updateInventory');
-			}
+		if (!response) {
+			error('Ответ от сервера пуст');
+			return;
 		}
+
+		if (response.error) {
+			error(response.error);
+			return;
+		}
+
+		alert(
+				response.message ? response.message : `Предмет "${name}" был использован`,
+				10000
+		);
+
+		if (!hasWebSocked()) refreshLayoutData();
+		emit('updateInventory');
 	} catch (e) {
 		error(e);
 	}

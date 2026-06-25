@@ -22,6 +22,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	groupUnusedSe: {
+		type: Boolean,
+		default: false,
+	},
 	classes: {
 		type: String,
 		default: null,
@@ -53,24 +57,56 @@ const {
 
 const fetchedData = computed(() => requestData.value?.data || null);
 
-const nonActiveSe = computed(() => {
+const unusedSe = computed(() => {
 	const grouped = {};
 
 	if (fetchedData.value) {
-		fetchedData.value.filter(item => !item.active).forEach((item) => {
-			if (item.statusEffect) {
-				if (grouped[item.statusEffect.id]) {
-					grouped[item.statusEffect.id].statusEffect.quantity++;
+		fetchedData.value.filter(item => item.active).forEach((item) => {
+			// ИСПРАВЛЕНИЕ: используем ?. чтобы избежать ошибки, если statusEffectBind === null
+			const effect = item.statusEffectBind?.statusEffect;
+
+			if (effect) {
+				if (grouped[effect.id]) {
+					grouped[effect.id].statusEffectBind.statusEffect.quantity++;
 				} else {
-					grouped[item.statusEffect.id] = { ...item };
-					grouped[item.statusEffect.id].statusEffect.quantity = 1;
+					grouped[effect.id] = { ...item };
+					grouped[effect.id].statusEffectBind.statusEffect.quantity = 1;
 				}
 			}
 		});
 	}
 
-	return Object.values(grouped).sort(function(a, b) {
-		return b.statusEffect.quantity - a.statusEffect.quantity;
+	return Object.values(grouped).sort((a, b) => {
+		// На всякий случай добавим ?. и в сортировку
+		const qtyA = a.statusEffectBind?.statusEffect?.quantity || 0;
+		const qtyB = b.statusEffectBind?.statusEffect?.quantity || 0;
+		return qtyB - qtyA;
+	});
+});
+
+const nonActiveSe = computed(() => {
+	const grouped = {};
+
+	if (fetchedData.value) {
+		fetchedData.value.filter(item => !item.active).forEach((item) => {
+			// ИСПРАВЛЕНИЕ: используем ?.
+			const effect = item.statusEffectBind?.statusEffect;
+
+			if (effect) {
+				if (grouped[effect.id]) {
+					grouped[effect.id].statusEffectBind.statusEffect.quantity++;
+				} else {
+					grouped[effect.id] = { ...item };
+					grouped[effect.id].statusEffectBind.statusEffect.quantity = 1;
+				}
+			}
+		});
+	}
+
+	return Object.values(grouped).sort((a, b) => {
+		const qtyA = a.statusEffectBind?.statusEffect?.quantity || 0;
+		const qtyB = b.statusEffectBind?.statusEffect?.quantity || 0;
+		return qtyB - qtyA;
 	});
 });
 
@@ -95,7 +131,7 @@ const updateList = () => {
 			<span v-if="fetchedData && fetchedData.filter(item => item.active).length === 0">У игрока нет активных статус эффектов</span>
 			<div class="wrapper">
 				<StatusEffectCard
-						v-for="(element, key) in fetchedData.filter(item => item.active)"
+						v-for="(element, key) in groupUnusedSe ? unusedSe : fetchedData.filter(item => item.active)"
 						:key="key"
 						:element="element"
 						:useLightBox="true"

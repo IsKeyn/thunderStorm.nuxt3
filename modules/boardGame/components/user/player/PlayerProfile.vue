@@ -187,7 +187,7 @@ const pageForRedirect = computed(() => {
 				<div class="twitch">
 					<TwitchCard
 							v-if="hasStream && scriptTwitchIsOnline"
-							:channel="twitch"
+							:channel="twitch.value"
 					/>
 				</div>
 			</template>
@@ -208,6 +208,7 @@ const pageForRedirect = computed(() => {
 				<StatusEffects
 						:userName="userName"
 						:showUsedItemsBox="true"
+						:groupUnusedSe="true"
 				/>
 			</template>
 			<template #tab-logsHistory>

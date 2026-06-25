@@ -88,11 +88,6 @@ const sortOptions = [
 
 const usedFilters = [
 	{
-		name: 'onlyTrashed',
-		langName: 'Только удаленные',
-		type: 'checkbox',
-	},
-	{
 		name: 'tags',
 		langName: 'Теги',
 		type: 'curtained',

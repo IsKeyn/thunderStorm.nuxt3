@@ -9,10 +9,14 @@ import GameOver from '@/modules/boardGame/components/steps/fragments/GameOver.vu
 import RememberButton from '@/modules/boardGame/components/steps/fragments/RememberButton.vue';
 
 import { ref } from "vue";
+
 const emit = defineEmits(['setPageName']);
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { userFunctions } from '@/composables/userFunctions.js';
 const {
@@ -31,8 +35,6 @@ import { animate } from '@/composables/animate.js';
 const {
 	scrollToElement,
 } = animate();
-
-const route = useRoute();
 
 const setPageNameFunc = (name) => {
 	emit('setPageName', name);

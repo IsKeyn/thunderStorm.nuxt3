@@ -1,45 +1,47 @@
 <script setup>
 import Tabs from '@/components/ui/tabs/Tabs.vue';
-
 import Inventory from '@/modules/boardGame/components/item/Inventory.vue';
 import ItemList from '@/modules/boardGame/components/item/ItemList.vue';
 import Board from '@/modules/boardGame/components/board/Board.vue';
-import GameList from '@/modules/boardGame/components/game/GameList.vue';
 import GameProfile from '@/modules/boardGame/components/game/GameProfile.vue';
+import GameList from '@/modules/boardGame/components/game/GameList.vue';
 
 const emit = defineEmits(['setPageName']);
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
-const steps = ref({
+const steps = {
 	1: {
 		title: 'Действие 1 - Лут предметов и их использование',
+		buttonName: 'Инвентарь',
 		description: 'Прокрутите рулетку предметов доступное количество раз, ознакомтесь с выпавшими предметами и при необходимости используйте их',
 	},
 	2: {
 		title: 'Действие 2 - Игровая доска, ход и действия на клетках',
+		buttonName: 'Игровое поле',
 		description: 'Бросьте кубик, если вы попадете на клетку с действием, примите решение с действием',
 	},
 	3: {
 		title: 'Действие 3 - Выбор игры и её прохождение',
+		buttonName: 'Игра',
 		description: 'Крутаните рулетку игр и выберите игру для прохождения, помните, что рерол игры накладывает штрафы. Во время прохождения игры необходимо включать таймер',
 	},
-});
+};
 
-const firstStep = computed(() => {
-	return Object.keys(steps.value)[0];
-});
+const firstStep = () => {
+	return Object.keys(steps)[0];
+};
 
-const lastStep = computed(() => {
-	const keys = Object.keys(steps.value);
+const lastStep = () => {
+	const keys = Object.keys(steps);
 	return keys[keys.length - 1];
-});
+};
 
 const currentStep = ref(1);
 
 const setStep = (stepNumber) => {
-	emit('setPageName', steps.value[stepNumber].title);
+	emit('setPageName', steps[stepNumber].title);
 	currentStep.value = stepNumber;
 }
 
@@ -48,7 +50,10 @@ const setCurrentStep = () => {
 		/* Шаг 3 - Профиль игры */
 		if (
 				userStore.player.has_current_game ||
-				((userStore.player?.step_count === 0 || userStore.player?.finishBoard) && userStore.player?.item_roll_count === 0)
+				(
+						(userStore.player?.step_count === 0 || userStore.player?.finishBoard)
+						&& userStore.player?.item_roll_count === 0
+				)
 		) {
 			setStep(3); return;
 		}
@@ -68,14 +73,14 @@ const changeStep = (direction) => {
 		case 'next':
 			const nextStep = currentStep.value + 1;
 
-			if (steps.value[nextStep]) {
+			if (steps[nextStep]) {
 				setStep(nextStep);
 			}
 			break;
 		case 'prev':
 			const prevStep = currentStep.value - 1;
 
-			if (steps.value[prevStep]) {
+			if (steps[prevStep]) {
 				setStep(prevStep);
 			}
 			break;
@@ -110,23 +115,39 @@ const tabsGameElements = [
 </script>
 
 <template>
+	<div class="buttons">
+		<div class="left">
+			<button
+					v-if="currentStep !== Number(firstStep())"
+					class="btn btn-simple"
+					@click="changeStep('prev')"
+			><font-awesome-icon icon="fa-solid fa-arrow-left" /> Шаг назад</button>
+		</div>
+
+		<div class="center">
+			<button
+					v-for="(step, key) in steps"
+					:key="key"
+					:class="['btn btn-simple', currentStep === Number(key) ? 'active' : null]"
+					@click="setStep(Number(key))"
+			>
+				{{ key }} - {{ step.buttonName }}
+			</button>
+		</div>
+
+		<div class="right">
+			<button
+					v-if="currentStep !== Number(lastStep())"
+					class="btn btn-simple ml-2"
+					@click="changeStep('next')"
+			>Шаг вперед <font-awesome-icon icon="fa-solid fa-arrow-right" /></button>
+		</div>
+	</div>
+
 	<layout-InfoBlock
 			v-if="currentStep"
 			:text="steps[currentStep].description"
-			classes="!mb-0"
 	/>
-	<div class="text-right">
-		<button
-				v-if="currentStep !== Number(firstStep)"
-				class="btn btn-simple"
-				@click="changeStep('prev')"
-		><font-awesome-icon icon="fa-solid fa-arrow-left" /> Шаг назад</button>
-		<button
-				v-if="currentStep !== Number(lastStep)"
-				class="btn btn-simple ml-2"
-				@click="changeStep('next')"
-		>Шаг вперед <font-awesome-icon icon="fa-solid fa-arrow-right" /></button>
-	</div>
 
 	<div v-if="currentStep === 1">
 		<Tabs
@@ -164,7 +185,27 @@ const tabsGameElements = [
 </template>
 
 <style lang="scss" scoped>
-.info-box {
-	@apply rounded-none;
+.buttons {
+	@apply w-full block lg:grid grid-cols-12 text-[1.2rem];
+
+	.left {
+		@apply col-span-4 flex justify-start;
+	}
+
+	.center {
+		@apply col-span-4 flex justify-center;
+
+		button {
+			@apply mr-1;
+
+			&.active {
+				@apply bg-[var(--main-hover-color)];
+			}
+		}
+	}
+
+	.right {
+		@apply col-span-4 flex justify-end;
+	}
 }
 </style>

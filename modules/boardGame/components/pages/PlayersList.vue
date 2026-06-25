@@ -1,11 +1,46 @@
 <script setup>
 import PlayersList from '@/modules/boardGame/components/user/player/PlayersList.vue';
 
+const emit = defineEmits(['onClickFunc']);
+
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
+
+const props = defineProps({
+	showPageHeader: {
+		type: Boolean,
+		default: true,
+	},
+	defaultFiltersProp: {
+		type: Object,
+		default: {},
+	},
+	usedFiltersProp: {
+		type: Object,
+		default: [],
+	},
+	showPagination: {
+		type: Boolean,
+		default: true,
+	},
+	showFilters: {
+		type: Boolean,
+		default: true,
+	},
+	/* Действие при нажатии route, emit */
+	clickDoType: {
+		type: String,
+		default: 'route',
+	},
+	/* Отображать блок выбора случайного игрока */
+	showSelectRandomPlayer: {
+		type: Boolean,
+		default: false,
+	},
+});
 
 const pageName = 'Список участников';
 const breadCrumbsArray = computed(() => {
@@ -50,6 +85,10 @@ const sortOptions = [
 		value: 'points_per_hour',
 	},
 	{
+		name: 'По позиции на поле',
+		value: 'position',
+	},
+	{
 		name: 'Никнейму',
 		value: 'name',
 	},
@@ -73,14 +112,20 @@ const defaultFilters = {
 
 <template>
 	<layout-PageHeader
+			v-if="showPageHeader"
 			:title="pageName"
 			:breadCrumbs="breadCrumbsArray"
 			:showMainPageInBreadCrumbs="false"
 	/>
 	<PlayersList
 			entity="BoardGamePlayer"
-			:usedFilters="usedFilters"
+			:usedFilters="[ ...usedFilters, ...usedFiltersProp ]"
 			:sortOptions="sortOptions"
-			:defaultFilters="defaultFilters"
+			:defaultFilters="{ ...defaultFilters, ...defaultFiltersProp }"
+			:showPagination="showPagination"
+			:showFilters="showFilters"
+			:clickDoType="clickDoType"
+			:showSelectRandomPlayer="showSelectRandomPlayer"
+			@onClickFunc="$emit('onClickFunc', $event)"
 	/>
 </template>

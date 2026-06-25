@@ -60,7 +60,7 @@ const activateSe = (type) => {
 		title = 'Применение статус эффекта';
 		message = 'Вы выполнили условие статус эффекта?';
 
-		JSON.parse(props.element.statusEffect.actions).forEach((item) => {
+		JSON.parse(props.element.statusEffectBind.statusEffect.actions).forEach((item) => {
 			if (item.actions) {
 				item.actions.forEach((action, key) => {
 					if (key === 1 && action.choiceMessage) {
@@ -73,7 +73,7 @@ const activateSe = (type) => {
 		title = 'Отказ от выполнения статус эффекта';
 		message = 'При отказе от статус эффекта, вы получите штраф.';
 
-		JSON.parse(props.element.statusEffect.actions).forEach((item) => {
+		JSON.parse(props.element.statusEffectBind.statusEffect.actions).forEach((item) => {
 			if (item.actions) {
 				item.actions.forEach((action, key) => {
 					if (key === 0 && action.choiceMessage) {
@@ -131,9 +131,9 @@ const sendActivateSeRequest = async (type) => {
 					alert(response.message, 10000);
 				} else {
 					if (type === 'accept') {
-						alert(`Вы применили статус эффект "${props.element.statusEffect.name}"`);
+						alert(`Вы применили статус эффект "${props.element.statusEffectBind.statusEffect.name}"`);
 					} else if (type === 'denied') {
-						alert(`Вы отказались от статус эффекта "${props.element.statusEffect.name}"`);
+						alert(`Вы отказались от статус эффекта "${props.element.statusEffectBind.statusEffect.name}"`);
 					}
 				}
 				if (!hasWebSocked()) refreshLayoutData();
@@ -153,50 +153,48 @@ const sendActivateSeRequest = async (type) => {
 	<ui-BigPreloader
 			v-if="requestInProgress"
 			class="h-full"
-			theme="image"
-			:themeType="9"
 	/>
 	<div
-			v-else-if="element && element.statusEffect"
+			v-else-if="element && element.statusEffectBind.statusEffect"
 			:class="[
 				'item-box',
-				getTypeClass(element.statusEffect?.debuff),
-				element.statusEffect.quantity > 1 ? 'add-padding-right' : '',
+				getTypeClass(element?.statusEffectBind?.statusEffect?.debuff),
+				element.statusEffectBind.statusEffect.quantity > 1 ? 'add-padding-right' : '',
 				theme,
 				classes,
 			]"
 	>
-		<template v-if="element.statusEffect?.image">
+		<template v-if="element.statusEffectBind.statusEffect?.image">
 			<img
 					v-if="useLightBox"
-					:src="getResizeImg(element.statusEffect.image)"
-					:alt="element.statusEffect.name"
-					:title="element.statusEffect.name"
+					:src="getResizeImg(element.statusEffectBind.statusEffect.image)"
+					:alt="element.statusEffectBind.statusEffect.name"
+					:title="element.statusEffectBind.statusEffect.name"
 					:class="['cursor-pointer media-obj']"
-					:media-id="element.statusEffect.image.id"
+					:media-id="element.statusEffectBind.statusEffect.image.id"
 			>
 			<img
 					v-else
-					:src="getResizeImg(element.statusEffect.image)"
-					:alt="element.statusEffect.name"
-					:title="element.statusEffect.name"
+					:src="getResizeImg(element.statusEffectBind.statusEffect.image)"
+					:alt="element.statusEffectBind.statusEffect.name"
+					:title="element.statusEffectBind.statusEffect.name"
 			>
 		</template>
 
 		<div class="info">
-			<span class="name">{{ element.statusEffect.name }}</span>
+			<span class="name">{{ element.statusEffectBind.statusEffect.name }}</span>
 			<span
-					v-if="element.statusEffect.description"
+					v-if="element.statusEffectBind.statusEffect.description"
 					:class="[
 							'description',
 							cutDescription ? 'cut-description' : '',
 					]"
 			>
-				{{ element.statusEffect.description }}
+				{{ element.statusEffectBind.statusEffect.description }}
 			</span>
 			<div
 					v-if="element.active"
-					v-for="(action, key) in JSON.parse(element.statusEffect.actions)"
+					v-for="(action, key) in JSON.parse(element.statusEffectBind.statusEffect.actions)"
 					class="actions"
 			>
 				<template v-if="showControlPanel && action && action.type === 'choice'">
@@ -218,10 +216,10 @@ const sendActivateSeRequest = async (type) => {
 			</div>
 		</div>
 		<div
-				v-if="element.statusEffect.quantity > 1"
+				v-if="element.statusEffectBind.statusEffect.quantity > 1"
 				class="count-panel"
 		>
-			x{{ element.statusEffect.quantity }}
+			x{{ element.statusEffectBind.statusEffect.quantity }}
 		</div>
 	</div>
 </template>

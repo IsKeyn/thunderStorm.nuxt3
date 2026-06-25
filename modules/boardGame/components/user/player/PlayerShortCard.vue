@@ -6,17 +6,13 @@ import Timer from '@/modules/boardGame/components/timer/Timer.vue';
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
-const route = useRoute();
-const router = useRouter();
+import { helper } from '@/composables/helper.js'
+const { route, router } = helper();
 
 const props = defineProps({
 	element: {
 		type: Object,
 		default: {},
-	},
-	place: {
-		type: Number,
-		default: null,
 	},
 	theme: {
 		type: String,
@@ -47,30 +43,21 @@ const getPlaceColor = (place) => {
 		case 3: return 'bronze';
 	}
 }
-
-const statusEffectForShow = computed(() => {
-	if (props.element.status_effects.length > 4) {
-		return props.element.status_effects.slice(0, 3);
-	} else {
-		return props.element.status_effects;
-	}
-});
 </script>
 
 <template>
 	<Nuxt-link
-			:class="['player-box', bgClasses, getPlaceColor(place + 1)]"
+			:class="['player-box', bgClasses, getPlaceColor(element.place)]"
 			:to="openProfile ? `/e/${route.params.slug}/player/${element.user.name}` : null"
 	>
-		<div :class="['name-place-box', getPlaceColor(place + 1)]">
-			{{ element.user.name }}
+		<div :class="['name-place-box', getPlaceColor(element.place)]">
+			{{ element.user.public_name }}
 		</div>
 		<PublicAvatar
 				:user="element.user"
-				:useLightBox="useLightBox"
 				classes="w-[100%] aspect-square object-cover"
 		/>
-		<span :class="['place', getPlaceColor(place + 1)]">{{ place + 1 }}</span>
+		<span :class="['place', getPlaceColor(element.place)]">{{ element.place }}</span>
 	</Nuxt-link>
 </template>
 
@@ -95,7 +82,7 @@ const statusEffectForShow = computed(() => {
 	}
 
 	.place {
-		@apply absolute rounded-full w-[2.5rem] h-[2.5rem] text-center flex items-center justify-center bottom-[-15px] text-[1.3rem];
+		@apply absolute rounded-full w-[2.5rem] h-[2.5rem] text-center flex items-center justify-center bottom-[-15px] text-[1.3rem] z-[10];
 
 		left: calc(50% - 1.5rem);
 

@@ -6,7 +6,7 @@ const route = useRoute();
 const menu = computed(() => {
 	return [
 		{
-			name: 'Главная',
+			name: 'Действия',
 			path: '/e/' + route.params.slug + '/',
 			icon: ['fas', 'house']
 		},

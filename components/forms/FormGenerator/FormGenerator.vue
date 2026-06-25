@@ -487,12 +487,14 @@ const wrapperTag = computed(() => {
 		</template>
 		<template v-else-if="element.type === 'select-with-search'">
 			<SelectWithSearch
+					:classes="getFieldClasses"
 					:options="element.options"
 					v-model="element.value"
 			/>
 		</template>
 		<template v-else-if="element.type === 'select-with-search-multiselect'">
 			<SelectWithSearch
+					:classes="getFieldClasses"
 					:options="element.options"
 					v-model="element.value"
 					:multiSelect="true"
