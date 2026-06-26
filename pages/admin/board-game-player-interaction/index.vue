@@ -14,26 +14,18 @@ const { checkPermission } = roles();
 
 const titles = ref(
 		{
-			id: {
-				name: 'id',
+			type: {
+				name: 'Тип',
 				sortable: true,
 				type: 'rounded-box',
 			},
-			bg_player_id: {
-				name: 'ID игрока',
-				type: 'text',
+			status: {
+				name: 'Статус',
 				sortable: true,
 			},
-			user_id: {
-				name: 'ID пользователя',
-				type: 'EntityList',
-				apiUrl: 'user/list',
-				sortable: true,
-			},
-			position: {
-				name: 'Позиция',
-				sortable: true,
-				type: 'rounded-box',
+			description: {
+				name: 'Описание',
+				type: 'cutText',
 			},
 			board_game_id: {
 				name: 'ID настолькой игры',
@@ -41,19 +33,15 @@ const titles = ref(
 				apiUrl: 'board-game/get-list',
 				sortable: true,
 			},
-			has_use_effect: {
-				name: 'Был ли использован эффект ячейки',
-				type: 'boolean',
+			bg_player_id: {
+				name: 'ID игрока',
+				type: 'text',
 				sortable: true,
 			},
-			sort: {
-				name: 'Сортировка',
-				type: 'rounded-box',
-				sortable: true,
-			},
-			active: {
-				name: 'Активность',
-				type: 'boolean',
+			with_player: {
+				name: 'С игроков',
+				type: 'EntityList',
+				apiUrl: 'user/list',
 				sortable: true,
 			},
 			created_by: {
@@ -62,12 +50,26 @@ const titles = ref(
 				apiUrl: 'user/list',
 				sortable: true,
 			},
+			entity_type: {
+				name: 'Модель',
+				sortable: true,
+			},
+			entity_id: {
+				name: 'id элемента',
+				sortable: true,
+			},
+			active: {
+				name: 'Активность',
+				type: 'boolean',
+				sortable: true,
+			},
+
 		}
 );
 
 const pageType = ref('');
 
-const title = 'Позиции игроков';
+const title = 'Взаимодействия игроков';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -126,16 +128,16 @@ const usedFilters = [
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<ListTableV2
-			v-if="checkPermission('bg.player-position.edit')"
+			v-if="checkPermission('bg.player-interaction.edit')"
 			:titles="titles"
-			fetchUrl="admin/BoardGame/PlayerPosition"
-			entity="BoardGamePlayerPosition"
+			fetchUrl="admin/BoardGame/PlayerInteraction"
+			entity="PlayerInteractions"
 			:hasResource="true"
 			:usePagination="true"
 			:usedFilters="usedFilters"
 			:defaultFilters="defaultFilters"
 			:sortOptions="sortOptions"
-			filterRequestUrl="admin/BoardGame/PlayerPosition/filters"
+			filterRequestUrl="admin/BoardGame/PlayerInteraction/filters"
 	/>
 	<ui-itemBox
 			v-else

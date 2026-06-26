@@ -32,7 +32,7 @@ const form = ref(
 			bg_player_id: {
 				name: 'ID игрока',
 				type: 'text',
-				validateRules: '',
+				validateRules: 'required',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			board_game_game_list_id: {

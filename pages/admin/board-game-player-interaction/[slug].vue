@@ -14,26 +14,26 @@ const { checkPermission } = roles();
 
 const form = ref(
 		{
-			bg_player_id: {
-				name: 'ID игрока',
-				type: 'text',
-				validateRules: 'required',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			user_id: {
-				name: 'ID пользователя',
-				value: '',
-				type: 'EntityList',
-				apiUrl: 'user/list',
-				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			position: {
-				name: 'Позиция',
+			type: {
+				name: 'Тип',
 				value: '',
 				type: 'text',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
+			},
+			status: {
+				name: 'Статус',
+				value: '',
+				type: 'text',
+				validateRules: 'required, maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			description: {
+				name: 'Описание',
+				value: '',
+				type: 'textarea',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
 			board_game_id: {
 				name: 'Настольная игра',
@@ -43,19 +43,39 @@ const form = ref(
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			has_use_effect: {
-				name: 'Был ли использован эффект ячейки',
-				value: false,
-				type: 'checkbox',
+			bg_player_id: {
+				name: 'ID игрока',
+				type: 'text',
+				validateRules: 'required',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			with_player: {
+				name: 'С игроков',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			created_by: {
+				name: 'Кем создано',
+				value: '',
+				type: 'EntityList',
+				apiUrl: 'user/list',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			entity_type: {
+				name: 'Привязка к сущности',
+				type: 'EntityBind',
+				bindField: 'entity_id',
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
-				showTitle: false,
 			},
-			sort: {
-				name: 'Сортировка',
-				value: '',
-				type: 'text',
-				validateRules: null,
+			entity_id: {
+				name: 'Привязка к сущности',
+				type: 'disable',
+				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			active: {
@@ -66,20 +86,12 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]'],
 				showTitle: false,
 			},
-			created_by: {
-				name: 'Кем создано',
-				value: '',
-				type: 'EntityList',
-				apiUrl: 'user/list',
-				validateRules: 'maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
 		}
 );
 
 const pageType = ref('');
 
-const title = 'Позиции игроков';
+const title = 'Взаимодействия игроков';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -112,9 +124,9 @@ const breadCrumbsArray = computed(() => {
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<CreateEditFormV2
-			v-if="checkPermission('bg.player-position.edit')"
+			v-if="checkPermission('bg.player-interaction.edit')"
 			:form="form"
-			fetchUrl="admin/BoardGame/PlayerPosition"
+			fetchUrl="admin/BoardGame/PlayerInteraction"
 			:hasResource="true"
 			:useVersionList="true"
 	/>
