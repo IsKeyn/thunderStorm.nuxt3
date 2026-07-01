@@ -1,9 +1,11 @@
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
 import { helper } from '@/composables/helper.js'
+import { useBoardGameStore } from '@/stores/boardGame';
 
 export function boardGame() {
     const { route } = helper();
+    const boardGameStore = useBoardGameStore();
 
     const getStatusName = (boardGameData) => {
         switch (boardGameData.status) {
@@ -58,10 +60,21 @@ export function boardGame() {
         refreshNuxtData(requestName);
     }
 
+    const getSettingValue = (settingName) => {
+        if (!settingName) return null;
+
+        const setting = boardGameStore?.boardGameInfo?.settings.filter((item) => item.code === settingName);
+
+        if (!setting) return null;
+
+        return setting?.[0]?.value ? setting[0].value : null;
+    }
+
     return {
         getStatusName,
         getDateString,
         addTextToPoints,
         refreshLayoutData,
+        getSettingValue,
     };
 }

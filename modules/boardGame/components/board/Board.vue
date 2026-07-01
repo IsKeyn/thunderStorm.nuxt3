@@ -5,7 +5,10 @@ import BoardCellInfo from '@/modules/boardGame/components/board/BoardCellInfo.vu
 import CellEffectCard from '@/modules/boardGame/components/board/CellEffectCard.vue';
 import PlayerInteractionCard from '@/modules/boardGame/components/player-interactions/PlayerInteractionCard.vue';
 
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
+
+const { subscribe, unsubscribe } = useWebSocket();
+const runtimeConfig = useRuntimeConfig();
 
 import { helper } from '@/composables/helper.js'
 const { route, hasWebSocked } = helper();
@@ -58,7 +61,7 @@ const firstFieldIndex = computed(() => {
 const lastFieldIndex = computed(() => {
 	let maxIndex = 1;
 
-	if (fetchedData.value && fetchedData.value?.board?.columns) {
+	if (fetchedData.value?.board?.columns) {
 		JSON.parse(fetchedData.value.board.columns).forEach((item) => {
 			item.cols.forEach((col) => {
 				if (col.index && col.index > maxIndex) {
@@ -76,41 +79,46 @@ const currentPlayer = computed(() => {
 	return fetchedData.value.players.filter((item) => item.user_id === userStore.user.id)[0];
 });
 
-const otherPlayers = computed(() => {
-	return fetchedData.value.players.filter((item) => item.user_id !== userStore.user.id);
-});
+const playersOnCols = computed(() => {
+	let result = [];
 
-const getPlayerOnCol = (col) => {
-	return otherPlayers.value.filter((player) => player.position === col);
-}
-
-const playersOnCols = ref([]);
-
-watch(() => fetchedData.value, () => {
-	playersOnCols.value = [];
-
-	if (fetchedData.value && fetchedData.value.players) {
+	if (fetchedData.value?.players) {
 		fetchedData.value.players.forEach((item) => {
-				if (playersOnCols.value[item.position]) {
-					playersOnCols.value[item.position].push(item);
+			if (item.id !== playerForMove.value) {
+				if (result[item.position]) {
+					result[item.position].push(item);
 				} else {
-					playersOnCols.value[item.position] = [item];
+					result[item.position] = [item];
 				}
+			}
 		});
 	}
-}, { deep: true, immediate: true });
 
-const currentPlayerConst = ref(null);
+	return result;
+});
+
+const movePlayerConst = ref(null);
 
 const showEffectsBox = ref(true);
 
-const changePosition = (positionData, oldPositionNumber = null) => {
+const moveCurrentPlayer = (positionData) => {
+	changePosition(positionData, currentPlayer.value);
+}
+
+const changePosition = (
+		positionData,
+		player,
+		oldPositionNumber = null,
+		toggleShowEffectsBox = true,
+		scrollToMovedPlayer = true
+) => {
 	if (positionData) {
-		showEffectsBox.value = false;
+		if (toggleShowEffectsBox) {
+			showEffectsBox.value = false;
+		}
 
-		const oldPosition = oldPositionNumber ? oldPositionNumber : currentPlayer.value.position;
+		const oldPosition = oldPositionNumber ? oldPositionNumber : player.position;
 		const newPosition = positionData.firstPosition.position;
-
 		let steps = newPosition - oldPosition;
 		let direction = null;
 
@@ -121,23 +129,36 @@ const changePosition = (positionData, oldPositionNumber = null) => {
 		}
 
 		if (direction) {
-			currentPlayerConst.value = fetchedData.value.players.filter((item) => item.user_id === userStore.user.id)[0];
+			movePlayerConst.value = fetchedData.value.players.filter((item) => item.id === player.id)[0];
 
-			if (currentPlayerConst.value) {
+			if (movePlayerConst.value) {
 				setTimeout(() => {
-					scrollToElement('currentPlayer');
+					if (scrollToMovedPlayer) {
+						scrollToElement('movedPlayer_' + player.id);
+					}
 
 					for (let i = 0; i < Math.abs(steps); i++) {
 						if (direction === 'forward') {
 							setTimeout(() => {
-								currentPlayerConst.value.position++;
+								movePlayerConst.value.position++;
 
 								if (Math.abs(steps) - 1 === i) {
 									if (positionData.firstPosition.position !== positionData.finalPosition.position) {
-										changePosition({ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition}, positionData.firstPosition.position);
+										changePosition(
+												{ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition},
+												player,
+												positionData.firstPosition.position,
+												toggleShowEffectsBox,
+												scrollToMovedPlayer,
+										);
 									} else {
-										showEffectsBox.value = true;
+										if (toggleShowEffectsBox) {
+											showEffectsBox.value = true;
+										}
+
 										if (!hasWebSocked()) refreshLayoutData();
+										playerForMove.value = null;
+										moveQueue.value.shift();
 										refresh();
 									}
 								}
@@ -146,14 +167,25 @@ const changePosition = (positionData, oldPositionNumber = null) => {
 
 						if (direction === 'back') {
 							setTimeout(() => {
-								currentPlayerConst.value.position--;
+								movePlayerConst.value.position--;
 
 								if (Math.abs(steps) - 1 === i) {
 									if (positionData.firstPosition.position !== positionData.finalPosition.position) {
-										changePosition({ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition}, positionData.firstPosition.position);
+										changePosition(
+												{ firstPosition: positionData.finalPosition, finalPosition: positionData.finalPosition},
+												player,
+												positionData.firstPosition.position,
+												toggleShowEffectsBox,
+												scrollToMovedPlayer,
+										);
 									} else {
-										showEffectsBox.value = true;
+										if (toggleShowEffectsBox) {
+											showEffectsBox.value = true;
+										}
+
 										if (!hasWebSocked()) refreshLayoutData();
+										playerForMove.value = null;
+										moveQueue.value.shift();
 										refresh();
 									}
 								}
@@ -173,7 +205,7 @@ const getTdClasses = (col) => {
 	if (col.useThisField) {
 		returnData.push('playable-field');
 
-		if (firstFieldIndex.value === col.index || lastFieldIndex.value === col.index ) {
+		if (firstFieldIndex.value === col.index || lastFieldIndex.value === col.index) {
 			returnData.push('color4');
 		} else if (col.index % 2 === 0) {
 			returnData.push('color2');
@@ -221,9 +253,74 @@ const hasUsed = (position) => {
 		return false;
 	}
 }
+
+/* Передвижение НЕ текущего игрока по игровому полю */
+const moveQueue = ref([]);
+const playerForMove = ref(null);
+
+const movedPlayer = computed(() => {
+	if (playerForMove.value) {
+		return fetchedData.value.players.filter((item) => item.id === playerForMove.value)[0];
+	}
+});
+
+/*
+* Формат data
+* {
+		playerId: 45,
+		positionData: {
+			finalPosition: {
+				position: 45,
+			},
+			firstPosition: {
+				position: 45,
+			}
+		},
+	}
+*/
+const movePlayer = (data) => {
+	moveQueue.value.push(data);
+}
+
+/* Наблюдаем за очередью движений, если элеметов  */
+const queueInterval = ref(null);
+
+watch(() => moveQueue.value, () => {
+	if (queueInterval.value && moveQueue.value.length === 0) {
+		clearInterval(queueInterval.value);
+	} else if (moveQueue.value.length) {
+		queueInterval.value = setInterval(() => {
+			if (!playerForMove.value && moveQueue.value[0]) {
+				playerForMove.value = moveQueue.value[0].playerId;
+
+				if (moveQueue.value[0]?.positionData) {
+					changePosition(moveQueue.value[0].positionData, movedPlayer.value);
+				}
+			}
+		}, 500);
+	}
+}, { deep: true, immediate: true });
+
+onMounted(() => {
+	/* Если подключен WebSocked */
+	if (runtimeConfig.public.hasWebSockedServer) {
+		const { unsubscribe: stop, subscriptionId } = subscribe(
+				'MovePlayer',
+				'MovePlayer',
+				(data) => {
+					if (data.playerId === userStore.player.id) {
+						return;
+					}
+					movePlayer(data);
+				},
+				'public'
+		);
+	}
+});
 </script>
 
 <template>
+	<button @click="movePlayer()">adas</button>
 	<div v-if="fetchedData">
 		<div
 				v-if="isAuth && currentPlayer"
@@ -234,7 +331,7 @@ const hasUsed = (position) => {
 					position="vertical"
 					:dices="['d6']"
 					:rollCount="currentPlayer.step_count"
-					@changePosition="changePosition"
+					@changePosition="movePlayer"
 			/>
 			<div class="item-box player-position-info">
 				<span class="block">Текущая позиция на поле: {{ currentPlayer.position }}</span>
@@ -293,12 +390,28 @@ const hasUsed = (position) => {
 						>
 							<img
 									v-if="currentPlayer && currentPlayer.position === col.index"
-									id="currentPlayer"
+									:id="`movedPlayer_${currentPlayer.id}`"
 									class="player-token"
 									:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
 									:title="currentPlayer.user.name"
 							>
 						</nuxt-link>
+
+						<nuxt-link
+								v-if="movedPlayer"
+								target="_blank"
+								:to="`/e/${route.params.slug}/player/${movedPlayer.user.name}`"
+								:title="movedPlayer.user.name"
+						>
+							<img
+									v-if="movedPlayer && movedPlayer.position === col.index"
+									:id="`movedPlayer_${movedPlayer.id}`"
+									class="player-token"
+									:src="movedPlayer.user.avatar ? getResizeImg(movedPlayer.user.avatar) : '/images/system/no-avatar.png'"
+									:title="movedPlayer.user.name"
+							>
+						</nuxt-link>
+
 						<span class="field-number">{{ col.name }}</span>
 						<font-awesome-icon
 								v-if="getEffectsByPosition(col.index).length > 0"
@@ -337,7 +450,17 @@ const hasUsed = (position) => {
 		</table>
 		</div>
 	</div>
-	<ui-BigPreloader v-else-if="requestInProgress" />
+	<ui-BigPreloader
+			v-else-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
+	<ui-itemBox
+			v-else
+			message="Ошибка получения игрового поля"
+			classes="red"
+	/>
 
 	<Modal
 			:showOpenModal="boxOpen"

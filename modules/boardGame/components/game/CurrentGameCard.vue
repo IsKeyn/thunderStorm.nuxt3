@@ -3,10 +3,9 @@ import GameCard from '@/modules/boardGame/components/game/GameCard.vue';
 import GameFinishForm from '@/modules/boardGame/components/game/GameFinishForm.vue';
 import InviteToCoopForm from '@/modules/boardGame/components/game/InviteToCoopForm.vue';
 import PlayerInteractionCard from '@/modules/boardGame/components/player-interactions/PlayerInteractionCard.vue';
+import OtherPlayersActionsWithGame from '@/modules/boardGame/components/game/otherPlayersActionsWithGame/OtherPlayersActionsWithGame.vue';
 
 import { inject } from "vue";
-
-const layoutMethods = inject('layoutMethods')
 
 const emit = defineEmits(['toggleFormVisible', 'updateData']);
 
@@ -145,31 +144,12 @@ const pointsForFinishGame = computed(() => {
 			@toggleFormVisible="toggleFormVisible"
 			@updateData="emit('updateData', $event)"
 	/>
-	<template v-if="showOtherPlayersActions">
-		<span class="user-interface-title text-left">Действия участников с данной игрой</span>
-		<GameCard
-				v-if="currentGame.other_players_actions.length > 0"
-				v-for="(element, key) in currentGame.other_players_actions"
-				:key="key"
-				:element="element"
-				theme="PlayerActionWithGame"
-				:showCover="false"
+
+	<template v-if="currentGame?.game?.game?.slug">
+		<OtherPlayersActionsWithGame
+				:eventSlug="route.params.slug"
+				:gameSlug="currentGame.game.game.slug"
 		/>
-		<div v-else class="item-box">
-			Участникам эта игра ещё не выпадала
-		</div>
-		<span class="user-interface-title text-left">Действия с данной игрой на других ивентах</span>
-		<GameCard
-				v-if="currentGame.other_players_actions_in_other_events.length > 0"
-				v-for="(element, key) in currentGame.other_players_actions_in_other_events"
-				:key="key"
-				:element="element"
-				theme="PlayerActionWithGame"
-				:showCover="false"
-		/>
-		<div v-else class="item-box">
-			На других ивентах эта игра ещё не выпадала
-		</div>
 	</template>
 </template>
 

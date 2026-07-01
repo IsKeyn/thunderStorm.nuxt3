@@ -9,7 +9,7 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
-	entity: {
+	pathToDetail: {
 		type: String,
 		required: true,
 	},
@@ -29,7 +29,7 @@ const props = defineProps({
 						v-if="data.slug"
 						:target="target"
 						class="full-block"
-						:to="`/${entity}/${data.slug}`"
+						:to="`/${pathToDetail}/${data.slug}`"
 				/>
 				<div>
 					<span class="name">{{ data.name }}</span>
@@ -115,6 +115,14 @@ const props = defineProps({
 	&:hover {
 		.info-box {
 			@apply flex;
+		}
+	}
+}
+
+.street-light-theme {
+	.image {
+		.info-box {
+			@apply bg-black/60 text-[var(--main-dark-text-color)];
 		}
 	}
 }

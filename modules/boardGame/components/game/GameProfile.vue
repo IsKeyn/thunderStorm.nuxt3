@@ -1,5 +1,5 @@
 <script setup>
-import GamblingGame from '@/components/games/GamblingGame.vue'
+import GamblingGameV2_1 from '@/components/games/gamblingGame/GamblingGameV2_1.vue'
 import CurrentGameCard from '@/modules/boardGame/components/game/CurrentGameCard.vue';
 import EditorForPlayerGamesList from '@/components/boardGame/game/EditorForPlayerGamesList.vue';
 
@@ -27,8 +27,10 @@ const props = defineProps({
 /* Получение данных */
 const requestName = 'getBoardGameGamblingGameGameList';
 
-const selectedPlatform = ref(null);
 const hiddenRefresh = ref(false);
+
+const selectedPlatform = ref(null);
+// Проверка, переводить ли игрока на шаг 1
 const check = ref(false);
 
 const {
@@ -45,7 +47,13 @@ const {
 			}
 
 			const response = await Promise.resolve(
-					sendApiRequest(`board-game/v2/player-game/get-player-list/${route.params.slug}/`, 'GET', query, requestName, '')
+					sendApiRequest(
+							`board-game/v2/player-game/get-player-list/${route.params.slug}/`,
+							'GET',
+							query,
+							requestName,
+							''
+					)
 			);
 
 			hiddenRefresh.value = false;
@@ -147,11 +155,30 @@ const roll_count = computed(() => {
 		return 0;
 	}
 });
+
+const windowGgClasses = computed(() => {
+	let returnData = [];
+
+	if (fetchedData.value.listType) {
+		if (fetchedData.value.listType === 'golden') {
+			returnData.push('gold');
+		}
+
+		if (fetchedData.value.listType === 'rerolled') {
+			returnData.push('shit');
+		}
+	}
+
+	return returnData;
+});
 </script>
 
 <template>
 	<ui-BigPreloader
 			v-if="requestInProgress && !hiddenRefresh"
+			class="h-full"
+			theme="image"
+			:themeType="9"
 	/>
 	<div
 			class="item-box"
@@ -165,7 +192,10 @@ const roll_count = computed(() => {
 	>
 		<div
 				class="platforms-container"
-				v-if="selectPlatformAvailable && fetchedData.games && fetchedData.games.length > 0 && (!fetchedData.player.current_game || (fetchedData.player.current_game && editListShow === true))"
+				v-if="selectPlatformAvailable
+				&& fetchedData.games
+				&& fetchedData.games.length > 0
+				&& (!fetchedData.player.current_game || (fetchedData.player.current_game && editListShow === true))"
 		>
 			<div
 					:class="['platform', selectedPlatform === null ? 'active' : '']"
@@ -206,7 +236,7 @@ const roll_count = computed(() => {
 				<div v-if="listDescription" class="item-box">
 					{{ listDescription }}
 				</div>
-				<GamblingGame
+				<GamblingGameV2_1
 						v-if="fetchedData.games"
 						:items="fetchedData.games"
 						:roll_count="roll_count"
@@ -218,7 +248,8 @@ const roll_count = computed(() => {
 						:editListAvailable="editListAvailable"
 						:showItemCount="true"
 						rollCountZeroMessage="Перед круткой рулетки игр вы должны использовать доступные крутки рулетки предметов, а такж использовать доступные ходы на игровом поле"
-						@funcAfterRollWithDelay2="refresh()"
+						:windowClasses="windowGgClasses"
+						@funcAfterRollWithDelay1000="refresh()"
 				/>
 				<button
 						v-if="editListAvailable"

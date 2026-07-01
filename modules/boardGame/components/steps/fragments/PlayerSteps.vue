@@ -4,7 +4,7 @@ import Inventory from '@/modules/boardGame/components/item/Inventory.vue';
 import ItemList from '@/modules/boardGame/components/item/ItemList.vue';
 import Board from '@/modules/boardGame/components/board/Board.vue';
 import GameProfile from '@/modules/boardGame/components/game/GameProfile.vue';
-import GameList from '@/modules/boardGame/components/game/GameList.vue';
+import GameListWithPagination from '@/modules/boardGame/components/game/GameListWithPagination.vue';
 
 const emit = defineEmits(['setPageName']);
 
@@ -147,6 +147,7 @@ const tabsGameElements = [
 	<layout-InfoBlock
 			v-if="currentStep"
 			:text="steps[currentStep].description"
+			classes="!mb-[1.5rem] mt-[1rem]"
 	/>
 
 	<div v-if="currentStep === 1">
@@ -177,7 +178,7 @@ const tabsGameElements = [
 			</template>
 			<template #tab-game-list>
 				<div class="max-w-[1400px] m-auto">
-					<GameList />
+					<GameListWithPagination />
 				</div>
 			</template>
 		</Tabs>

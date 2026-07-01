@@ -74,7 +74,7 @@ const props = defineProps({
 					target="_blank"
 					class="header-link"
 					title="Открыть профайл"
-			>{{ element.user.name }}</router-link> - </span>{{ getStatusName(element.status) }} <span v-if="getFormattedHoursFromSeconds(element.time)">(время прохождения {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
+			>{{ element.user.name }}</router-link> - </span>{{ getStatusName(element.status) }} <span v-if="element.board_game"><nuxt-link :to="`/e/${element.board_game.slug}`" target="_blank" class="event">({{ element.board_game.name }})</nuxt-link></span> <span v-if="getFormattedHoursFromSeconds(element.time)">(время прохождения {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
 		</div>
 		<div class="content-box">
 			<PublicAvatar
@@ -103,7 +103,7 @@ const props = defineProps({
 						<span class="line-info" v-if="element.game.game?.release_dates?.[0]?.date">Год релиза: {{ getFormattedDate('Y', element.game.game.release_dates[0].date) }}</span>
 
 						<span class="line-info" v-if="element.points">Получил очков за игру: {{ element.points }}</span>
-						<span class="line-info" v-else-if="element.game.points !== null && element.game.points !== undefined">Очки за игру: {{ element.game.computed_points ? element.game.computed_points : element.game.points }}</span>
+						<span class="line-info" v-else-if="element.game.computed_points || element.game.points">Очки за игру: {{ element.game.computed_points ? element.game.computed_points : element.game.points }}</span>
 
 						<span
 								v-if="element.game.added_by && element.game.added_by_user.name"
@@ -155,14 +155,14 @@ const props = defineProps({
 										class="mr-[1rem]"
 										:href="getLongPlayLink(element.game)"
 										target="_blank"
-								>Лонгплей</a>
+								>Открыть лонглей (YouTube)</a>
 							</li>
 							<li v-if="element.game.game.slug">
 								<a
 										class="mr-[1rem]"
 										:href="`/game/${element.game.game.slug}`"
 										target="_blank"
-								>Открыть страницу игры</a>
+								>Открыть детальную страницу игры на сайте</a>
 							</li>
 						</ul>
 					</div>

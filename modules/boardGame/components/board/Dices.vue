@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
-const route = useRoute();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const emit = defineEmits(['updateBoardGameInfo', 'fetchLogs', 'changePosition']);
 
@@ -154,7 +156,7 @@ const rollDiceRequest = async (dice) => {
 			useStep: true,
 		}
 
-		const response = await sendApiRequest(`board-game/v2/roll-dice`, 'POST', body, 'boardGameRollDice', '');
+		const response = await sendApiRequest(`board-game/v2/dice/roll`, 'POST', body, 'boardGameRollDice', '');
 
 		if (response) {
 			if (response.error) {
@@ -186,7 +188,10 @@ const rollDiceRequest = async (dice) => {
 
 				// Вызываем функцию, которая изменит позицию игрока на поле
 				if (response.positionData) {
-					emit('changePosition', response.positionData);
+					emit('changePosition', {
+						'playerId': response.playerId,
+						'positionData': response.positionData,
+					});
 				}
 
 				// Изменение статус эффектов
