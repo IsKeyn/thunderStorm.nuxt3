@@ -78,6 +78,16 @@ const titles = ref(
 				apiUrl: 'user/list',
 				sortable: true,
 			},
+			active: {
+				name: 'Активность',
+				type: 'boolean',
+				sortable: true,
+			},
+			finished_at: {
+				name: 'Дата завершения',
+				sortable: true,
+				type: 'date',
+			},
 		}
 );
 

@@ -142,6 +142,21 @@ const form = ref(
 				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			active: {
+				name: 'Активность',
+				value: true,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
+			finished_at: {
+				name: 'Дата завершения',
+				value: '',
+				type: 'datetime-local',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 		}
 );
 

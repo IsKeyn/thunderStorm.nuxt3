@@ -74,7 +74,7 @@ const props = defineProps({
 					target="_blank"
 					class="header-link"
 					title="Открыть профайл"
-			>{{ element.user.name }}</router-link> - </span>{{ getStatusName(element.status) }} <span v-if="element.board_game"><nuxt-link :to="`/e/${element.board_game.slug}`" target="_blank" class="event">({{ element.board_game.name }})</nuxt-link></span> <span v-if="getFormattedHoursFromSeconds(element.time)">(время прохождения {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.updated_at">({{ getFormattedDate('d.m.Y', element.updated_at) }})</span>
+			>{{ element.user.name }}</router-link> - </span>{{ getStatusName(element.status) }} <span v-if="element.board_game"><nuxt-link :to="`/e/${element.board_game.slug}`" target="_blank" class="event">({{ element.board_game.name }})</nuxt-link></span> <span v-if="getFormattedHoursFromSeconds(element.time)">(время в игре {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.finished_at">({{ getFormattedDate('d.m.Y', element.finished_at) }})</span>
 		</div>
 		<div class="content-box">
 			<PublicAvatar

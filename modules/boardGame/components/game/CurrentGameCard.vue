@@ -5,8 +5,6 @@ import InviteToCoopForm from '@/modules/boardGame/components/game/InviteToCoopFo
 import PlayerInteractionCard from '@/modules/boardGame/components/player-interactions/PlayerInteractionCard.vue';
 import OtherPlayersActionsWithGame from '@/modules/boardGame/components/game/otherPlayersActionsWithGame/OtherPlayersActionsWithGame.vue';
 
-import { inject } from "vue";
-
 const emit = defineEmits(['toggleFormVisible', 'updateData']);
 
 import { helper } from '@/composables/helper.js'
