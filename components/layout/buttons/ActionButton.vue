@@ -14,13 +14,17 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
 });
 </script>
 
 <template>
 	<button
 			@click="emit('startAction')"
-			:disabled="actionInProgress"
+			:disabled="actionInProgress || disabled"
 			:class="[buttonClasses]"
 	>
 		<template v-if="!actionInProgress">

@@ -307,7 +307,7 @@ const getTypeText = (type) => {
 			<div v-if="props.doType === 'update'" class="item-box">
 				<template v-if="type === 1">{{ getTypeText(type) }}</template>
 				<template v-if="type === 2">
-					За прохождение игры, вам будут начислены {{ pointsForFinishGame }} очков, очки подсчитаны с учетом вашего стрика, который сейчас равен x{{ streak }}
+					За прохождение игры, вам будут начислены {{ pointsForFinishGame }} очков, очки подсчитаны с учетом вашего стрика, который сейчас равен x{{ streak }} и модификаторов
 				</template>
 				<template v-if="type === 3">Используйте данную кнопку, если передаете игру другому игроку</template>
 			</div>

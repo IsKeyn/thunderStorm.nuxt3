@@ -2,6 +2,7 @@
 import GamblingGameV2_1 from '@/components/games/gamblingGame/GamblingGameV2_1.vue'
 import CurrentGameCard from '@/modules/boardGame/components/game/CurrentGameCard.vue';
 import EditorForPlayerGamesList from '@/components/boardGame/game/EditorForPlayerGamesList.vue';
+import ExceptionPlatforms from '@/modules/boardGame/components/game/ExceptionPlatforms.vue';
 
 const emit = defineEmits(['setStep']);
 
@@ -12,6 +13,9 @@ const { route } = helper();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { getSettingValue } = boardGame();
 
 const props = defineProps({
 	editListAvailable: {
@@ -233,9 +237,15 @@ const windowGgClasses = computed(() => {
 					@showEditList="editListToggle"
 			/>
 			<template v-else-if="!fetchedData.player.timer_status.reached_the_limit">
+				<ExceptionPlatforms
+						v-if="Boolean(getSettingValue('hasExceptionPlatforms'))"
+						@updateData="refresh()"
+				/>
+
 				<div v-if="listDescription" class="item-box">
 					{{ listDescription }}
 				</div>
+
 				<GamblingGameV2_1
 						v-if="fetchedData.games"
 						:items="fetchedData.games"
@@ -267,6 +277,10 @@ const windowGgClasses = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+.item-box {
+	@apply rounded-none;
+}
+
 .loading-box {
 	@apply absolute z-[10] justify-center items-center w-full h-full bg-black/50;
 }

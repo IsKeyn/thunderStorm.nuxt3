@@ -100,6 +100,13 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
+			settings: {
+				name: 'Настройки',
+				value: '',
+				type: 'json',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
+			},
 			sort: {
 				name: 'Сортировка',
 				value: '',

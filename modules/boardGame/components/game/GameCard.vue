@@ -4,7 +4,7 @@ import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
 import Timer from '@/modules/boardGame/components/timer/Timer.vue';
 
 import { helper } from '@/composables/helper.js'
-const { route } = helper();
+const { route, findElementById } = helper();
 
 import { date } from '@/composables/date.js';
 const {
@@ -17,7 +17,7 @@ import { userFunctions } from '@/composables/userFunctions.js';
 const { userStore } = userFunctions();
 
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
-const { addTextToPoints } = boardGame();
+const { addTextToPoints, getSettingValue } = boardGame();
 
 import { bgGames } from '@/composables/BoardGame/bgGames.js'
 const { getLongPlayLink, getStatusName, getStatusClass, getDifficultName } = bgGames();
@@ -52,14 +52,20 @@ const props = defineProps({
 		type: Number,
 		default: 0,
 	},
-	pointsForFinishGame: {
-		type: Number,
-		default: 0,
-	},
 	difficultInPercent: {
 		type: Boolean,
 		default: false,
 	},
+});
+
+const platformDifficult = computed(() => {
+	if (props?.element?.game?.platform.id) {
+		const platforms = JSON.parse(getSettingValue('eventGamePlatforms'));
+
+		const platform = findElementById(platforms, props.element.game.platform.id);
+
+		return getDifficultName(platform.difficult);
+	}
 });
 </script>
 
@@ -129,15 +135,21 @@ const props = defineProps({
 						</span>
 						<span
 								class="line-info"
+								v-if="platformDifficult"
+						>
+							Сложность платформы: {{ platformDifficult }}
+						</span>
+						<span
+								class="line-info"
 								v-if="element?.game?.game_completion_time && element.game.game_completion_time !== '0'"
 						>
 							Время прохождения (HLTB): {{ getHoursFromMinutes(element.game.game_completion_time) }}
 						</span>
 						<span
-								v-if="pointsForFinishGame"
-								class="line-info"
+								v-if="element.points_for_finish"
+								class="line-info mt-4"
 						>
-							С учетом вашего стрика x{{ streak }} за прохождение игры вы получите {{ addTextToPoints(pointsForFinishGame) }}
+							Со стриком x{{ streak }} и модификаторами вы получите {{ addTextToPoints(element.points_for_finish) }} за прохождение
 						</span>
 						<span
 								v-if="element.game.description"
@@ -228,7 +240,7 @@ const props = defineProps({
 		.slider {
 			@apply
 				mx-auto mb-4 lg:m-0
-				w-[200px] h-auto object-contain cursor-pointer
+				w-[300px] h-auto object-contain cursor-pointer
 			;
 		}
 
