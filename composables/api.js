@@ -67,7 +67,13 @@ export function api() {
                     if (showError)  error('Ошибка 405', 3000);
                     break;
                 default:
-                    if (showError) error('Повтори попытку', 3000);
+                    if (showError) {
+                        if (e.response?._data?.error) {
+                            error(e.response?._data?.error)
+                        } else {
+                            error('Повтори попытку', 3000);
+                        }
+                    }
                     break;
             }
 
@@ -195,6 +201,10 @@ export function api() {
             }
 
             responseErrors.value = errorHandler(e, show404page, showError)
+
+            if (showError) {
+                return 'throwError';
+            }
         }
     }
 

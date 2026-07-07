@@ -1,11 +1,20 @@
 <script setup>
-const emit = defineEmits(['useItem']);
+const emit = defineEmits(['useItem', 'sellItem', 'buyItem', 'withdrawnItem']);
 
 import { useSoundStore } from '@/stores/sound';
 const soundStore = useSoundStore();
 
+import { bgPlayer } from '@/composables/boardGame/bgPlayer.js'
+const { player, isActivePlayer } = bgPlayer();
+
 import { media } from '@/composables/media.js'
 const { getResizeImg } = media();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { bgItems } from '@/composables/boardGame/bgItems.js'
+const { calcShopPrice } = bgItems();
 
 const props = defineProps({
 	element: {
@@ -13,6 +22,10 @@ const props = defineProps({
 		default: {},
 	},
 	inventoryItem: {
+		type: Object,
+		default: {},
+	},
+	shopItem: {
 		type: Object,
 		default: {},
 	},
@@ -51,6 +64,10 @@ const props = defineProps({
 	showDropChance: {
 		type: Boolean,
 		default: true,
+	},
+	salesman: {
+		type: Object,
+		default: {},
 	},
 });
 
@@ -148,17 +165,63 @@ const getItemQuality = (dropChance) => {
 					{{ element.item.full_description }}
 
 					<span class="additional-box">
-						Автор: {{ element.item.authorUser ? element.item.authorUser.name : 'InSH Event Team' }}
+						Автор: <router-link
+								v-if="element.item.authorUser"
+								:to="`/e/${route.params.slug}/player/${element.item.authorUser.name}`"
+								class="hover-line"
+								title="Открыть профайл"
+								target="_blank"
+						>{{ element.item.authorUser.name ?? element.item.authorUser.public_name }}</router-link>
+						<span v-else>InSH Event Team</span>
 					</span>
 				</ui-OpeningBox>
 				<span v-if="showDropChance" class="additional-box">
 						Относительный шанс выпадения: {{ element.item.drop_chance }}%
+				</span>
+				<span v-if="price" class="additional-box">
+						Цена продажи: {{ element.item.price }} очков
 				</span>
 				<div v-if="showControlPanel">
 					<button
 							class="btn btn-simple mr-2"
 							@click="emit('useItem', inventoryItem)"
 					>Использовать</button>
+					<button
+							v-if="element.item.price"
+							class="btn btn-simple mr-2"
+							@click="emit('sellItem', inventoryItem)"
+					><font-awesome-icon icon="fa-solid fa-cart-shopping" /> Продать</button>
+				</div>
+				<div
+						v-if="theme === 'shopItem'"
+						class="mt-2"
+				>
+					<div
+							v-if="Object.keys(salesman).length"
+							class="mb-2"
+					>
+						Продавец: <router-link
+							:to="`/e/${route.params.slug}/player/${salesman.name}`"
+							class="hover-line"
+							title="Открыть профайл"
+							target="_blank"
+					>{{ salesman.name ?? salesman.public_name }}</router-link>
+					</div>
+					<div class="mb-2">
+						Стоимость: {{ calcShopPrice(element.item.price) }}
+					</div>
+					<div v-if="isActivePlayer">
+						<button
+								v-if="element.item.price && salesman.id !== player.user_id"
+								class="btn btn-simple mr-2"
+								@click="emit('buyItem', shopItem)"
+						><font-awesome-icon icon="fa-solid fa-cart-shopping" /> Купить</button>
+						<button
+								v-if="salesman.id === player.user_id"
+								class="btn btn-simple mr-2"
+								@click="emit('withdrawnItem', shopItem)"
+						><font-awesome-icon icon="fa-solid fa-arrow-rotate-left" /> Отозвать</button>
+					</div>
 				</div>
 			</div>
 			<div
@@ -179,7 +242,8 @@ const getItemQuality = (dropChance) => {
 		@apply w-full;
 	}
 
-	&.default {
+	&.default,
+	&.shopItem {
 		&.red {
 			border-left: 8px solid #600000;
 		}

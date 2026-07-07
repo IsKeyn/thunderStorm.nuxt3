@@ -1,6 +1,7 @@
 <script setup>
 import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 import UseItem from '@/modules/boardGame/components/item/UseItem.vue';
+import SellItemComponent from '@/modules/boardGame/components/item/SellItem.vue';
 import StatusEffectCard from '@/modules/boardGame/components/statusEffect/StatusEffectCard.vue';
 import Modal from '@/components/modals/Modal.vue';
 
@@ -120,7 +121,7 @@ const unusedItems = computed(() => {
 	});
 });
 
-/* Использование предмета */
+// Использование предмета
 const modalOpen = ref(false);
 
 const openCloseModalFunc = () => {
@@ -137,6 +138,25 @@ const useItem = (item) => {
 const useItemFromEmit = (params) => {
 	openCloseModalFunc();
 	useItemRequest(params.item.id, params.item.item.item.name, params.additionalParams);
+}
+
+// Продажа предмета
+const sellModalStatus = ref(false);
+
+const toggleSellModal = () => {
+	sellModalStatus.value = !sellModalStatus.value;
+};
+
+const itemForSell = ref();
+
+const sellItem = (item) => {
+	toggleSellModal();
+	itemForSell.value = item;
+}
+
+const sellItemFromEmit = (params) => {
+	toggleSellModal();
+	sellItemRequest(params.item.id, params.item.item.item.name, params.additionalParams);
 }
 
 const useItemRequest = async (
@@ -174,6 +194,43 @@ const useItemRequest = async (
 		error(e);
 	}
 };
+
+const sellItemRequest = async (
+		inventoryId,
+		name,
+		additionalParams = {}
+) => {
+	try {
+		const body = {
+			id: inventoryId,
+			slug: route.params.slug,
+			entity_type: 'App\\Models\\BoardGame\\ItemBind',
+			additionalParams,
+		}
+
+		const response = await sendApiRequest('board-game/v2/inventory/sellItem', 'POST', body, 'bg_sellItem', 'small', 'method');
+
+		if (!response) {
+			error('Ответ от сервера пуст');
+			return;
+		}
+
+		if (response.error) {
+			error(response.error);
+			return;
+		}
+
+		alert(
+				response.message ? response.message : `Предмет "${name}" был выставлен на выставлен на продажу`,
+				10000
+		);
+
+		if (!hasWebSocked()) refreshLayoutData();
+		emit('updateInventory');
+	} catch (e) {
+		error(e);
+	}
+}
 </script>
 
 <template>
@@ -200,6 +257,7 @@ const useItemRequest = async (
 						:showControlPanel="canUse"
 						:showDropChance="false"
 						@useItem="useItem"
+						@sellItem="sellItem"
 				/>
 			</div>
 		</div>
@@ -256,6 +314,24 @@ const useItemRequest = async (
 						:item="itemForUse"
 						@openCloseModalFunc="openCloseModalFunc"
 						@useItemFromEmit="useItemFromEmit"
+				/>
+			</div>
+		</div>
+	</Modal>
+
+	<Modal
+			:showOpenModal="sellModalStatus"
+			size="full-width"
+			:fullCloseModal="true"
+			@toggleModal="toggleSellModal"
+	>
+		<div class="modal-parent">
+			<h3 class="modal-title">Продажа предмета</h3>
+			<div class="link-parent-box">
+				<SellItemComponent
+						:item="itemForSell"
+						@toggleSellModal="toggleSellModal"
+						@sellItemFromEmit="sellItemFromEmit"
 				/>
 			</div>
 		</div>

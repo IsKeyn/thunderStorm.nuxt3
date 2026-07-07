@@ -53,6 +53,11 @@ const titles = ref(
 				sortable: true,
 				type: 'rounded-box',
 			},
+			price: {
+				name: 'Цена',
+				sortable: true,
+				type: 'rounded-box',
+			},
 			sort: {
 				name: 'Сортировка',
 				type: 'rounded-box',

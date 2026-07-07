@@ -410,6 +410,7 @@ const effectFor = (action) => {
 		<ItemCard
 				:element="item.item"
 				:useLightBox="true"
+				:showDropChance="false"
 		/>
 
 		<div v-if="item.item.item.actions">

@@ -117,6 +117,13 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			price: {
+				name: 'Цена',
+				value: null,
+				type: 'number',
+				validateRules: null,
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			author: {
 				name: 'Автор',
 				value: '',

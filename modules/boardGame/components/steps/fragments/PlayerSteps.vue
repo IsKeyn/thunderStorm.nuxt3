@@ -2,6 +2,7 @@
 import Tabs from '@/components/ui/tabs/Tabs.vue';
 import Inventory from '@/modules/boardGame/components/item/Inventory.vue';
 import ItemList from '@/modules/boardGame/components/item/ItemList.vue';
+import Shop from '@/modules/boardGame/components/item/Shop.vue';
 import Board from '@/modules/boardGame/components/board/Board.vue';
 import GameProfile from '@/modules/boardGame/components/game/GameProfile.vue';
 import GameListWithPagination from '@/modules/boardGame/components/game/GameListWithPagination.vue';
@@ -94,6 +95,10 @@ const tabsItemElements = [
 		title: 'Инвентарь',
 	},
 	{
+		id: 'shop-items',
+		title: 'Магазин Ксырстыка',
+	},
+	{
 		id: 'item-list',
 		title: 'Список предметов',
 	},
@@ -161,6 +166,9 @@ const tabsGameElements = [
 			</template>
 			<template #tab-item-list>
 				<ItemList />
+			</template>
+			<template #tab-shop-items>
+				<Shop />
 			</template>
 		</Tabs>
 	</div>
