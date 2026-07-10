@@ -1,6 +1,14 @@
 <script setup>
 const props = defineProps({
-	currentPercent: {
+	theme: { // percent, on-from-current
+		type: String,
+		default: 'percent',
+	},
+	fullFill: {
+		type: Number,
+		default: 100,
+	},
+	currentFill: {
 		type: Number,
 		default: 10,
 	},
@@ -11,9 +19,16 @@ const props = defineProps({
 	<div class="bar">
 		<div
 				class="progress"
-				:style="`width: ${currentPercent <= 100 ? currentPercent : 100}%`"
+				:style="`width: ${currentFill <= fullFill ? 100 / (fullFill / currentFill) : 100}%`"
 		/>
-		<span class="percent">{{ currentPercent }}%</span>
+		<span
+				v-if="theme === 'percent'"
+				class="percent"
+		>{{ currentFill }}%</span>
+		<span
+				v-if="theme === 'on-from-current'"
+				class="percent"
+		>{{ currentFill }} из {{ fullFill }}</span>
 	</div>
 </template>
 
@@ -26,7 +41,7 @@ const props = defineProps({
 	}
 
 	.percent {
-		@apply absolute z-[1];
+		@apply absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-[1];
 	}
 }
 </style>

@@ -9,6 +9,7 @@ import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.v
 import StatusEffects from '@/modules/boardGame/components/statusEffect/StatusEffects.vue';
 import PlayerLogs from '@/modules/boardGame/components/user/player/profileElement/PlayerLogs.vue';
 import PlayerEvents from '@/modules/boardGame/components/user/player/profileElement/PlayerEvents.vue';
+import Premium from '@/modules/boardGame/components/user/player/profileElement/Premium.vue';
 import ProfileSettings from '@/components/user/profile/fragments/Settings.vue';
 import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
 import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
@@ -105,6 +106,10 @@ const tabsElements = ref([
 	{
 		id: 'playerEvents',
 		title: 'Участие в ивентах',
+	},
+	{
+		id: 'premium',
+		title: 'Премиум',
 	},
 ]);
 
@@ -214,14 +219,17 @@ const pageForRedirect = computed(() => {
 			<template #tab-logsHistory>
 				<PlayerLogs :userName="userName" />
 			</template>
+			<template #tab-premium>
+				<Premium :userName="userName" />
+			</template>
+			<template #tab-playerEvents>
+				<PlayerEvents :userName="userName" />
+			</template>
 			<template #tab-settings>
 				<ProfileSettings
 						:pageForRedirect="pageForRedirect"
 						@refresh="refresh"
 				/>
-			</template>
-			<template #tab-playerEvents>
-				<PlayerEvents :userName="userName" />
 			</template>
 		</Tabs>
 	</div>

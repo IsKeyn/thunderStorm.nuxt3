@@ -100,6 +100,14 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
+			added_games: {
+				name: 'Добавил свои игры',
+				value: 0,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
 			settings: {
 				name: 'Настройки',
 				value: '',

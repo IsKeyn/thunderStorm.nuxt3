@@ -24,7 +24,12 @@ const props = defineProps({
 	classes: {
 		type: String,
 		default: 'max-w-[30rem]',
-	}
+	},
+	// Отключение ввода в поле
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const selectValue = ref(props.modelValue ?? props.multiSelect ? [] : null);
@@ -56,6 +61,8 @@ const selectOption = (option) => {
 };
 
 const toggleDropdown = () => {
+	if (props.disabled) return false;
+
 	isDropdownOpen.value = !isDropdownOpen.value;
 	if (isDropdownOpen.value) {
 		searchQuery.value = '';
@@ -148,8 +155,10 @@ onBeforeUnmount(() => {
 					{{ getSelectedOptionName }}
 				</template>
 			</span>
-			<font-awesome-icon v-if="isDropdownOpen" :icon="['fas', 'angle-up']" class="select-arrow" />
-			<font-awesome-icon v-else :icon="['fas', 'angle-down']" class="select-arrow" />
+			<template v-if="!disabled">
+				<font-awesome-icon v-if="isDropdownOpen" :icon="['fas', 'angle-up']" class="select-arrow" />
+				<font-awesome-icon v-else :icon="['fas', 'angle-down']" class="select-arrow" />
+			</template>
 		</div>
 
 		<div

@@ -6,6 +6,7 @@ import Shop from '@/modules/boardGame/components/item/Shop.vue';
 import Board from '@/modules/boardGame/components/board/Board.vue';
 import GameProfile from '@/modules/boardGame/components/game/GameProfile.vue';
 import GameListWithPagination from '@/modules/boardGame/components/game/GameListWithPagination.vue';
+import AddGames from '@/modules/boardGame/components/game/AddGames.vue';
 
 const emit = defineEmits(['setPageName']);
 
@@ -116,6 +117,10 @@ const tabsGameElements = [
 		id: 'game-list',
 		title: 'Список игр',
 	},
+	{
+		id: 'add-games',
+		title: 'Добавление игр',
+	},
 ];
 </script>
 
@@ -188,6 +193,9 @@ const tabsGameElements = [
 				<div class="max-w-[1400px] m-auto">
 					<GameListWithPagination />
 				</div>
+			</template>
+			<template #tab-add-games>
+				<AddGames />
 			</template>
 		</Tabs>
 	</div>

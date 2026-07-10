@@ -320,7 +320,6 @@ onMounted(() => {
 </script>
 
 <template>
-	<button @click="movePlayer()">adas</button>
 	<div v-if="fetchedData">
 		<div
 				v-if="isAuth && currentPlayer"

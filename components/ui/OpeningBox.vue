@@ -47,6 +47,11 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	// Позиция иконки открытия: right, left
+	openIconPosition: {
+		type: String,
+		default: 'right',
+	},
 });
 
 const contentStatus = ref(props.defaultContentStatus);
@@ -71,11 +76,11 @@ if (injectToggleContent !== null) {
 <template>
 	<div :class="['opening-box', classes, theme]">
 		<div
-				class="header"
+				:class="['header', openIconPosition]"
 				@click="toggleContent(null)"
 		>
 			<font-awesome-icon v-if="faIcon" :icon="faIcon"/><span :class="titleClasses">{{ maxTitleSize ? cutText(title, maxTitleSize) : title }}</span>
-			<div class="icon-box">
+			<div :class="['icon-box', openIconPosition]">
 				<font-awesome-icon v-if="contentStatus" :icon="['fas', 'angle-up']" :class="openIconClasses" />
 				<font-awesome-icon v-else :icon="['fas', 'angle-down']" :class="openIconClasses" />
 			</div>
@@ -96,18 +101,34 @@ if (injectToggleContent !== null) {
 			@apply
 				relative
 				w-full
-				pt-[10px] pr-[50px] pb-[10px] pl-[15px]
+				pt-[10px] pb-[10px]
 				bg-[var(--second-bg-color)]
 				text-[18px]
 				cursor-pointer
 			;
 
+			&.right {
+				@apply pr-[50px]  pl-[15px];
+			}
+
+			&.left {
+				@apply pr-[15px]  pl-[50px];
+			}
+
 			.icon-box {
 				@apply
-					absolute right-0 top-0
+					absolute top-0
 					w-[50px] h-[50px]
 					text-[20px] text-center leading-[45px]
 				;
+
+				&.right {
+					@apply right-0;
+				}
+
+				&.left {
+					@apply left-0;
+				}
 			}
 		}
 

@@ -19,57 +19,59 @@ const titles = ref(
 				sortable: true,
 				type: 'rounded-box',
 			},
+			bg_player_id: {
+				name: 'ID игрока',
+				type: 'text',
+				sortable: true,
+			},
 			user_id: {
-				name: 'User ID',
+				name: 'ID пользователя',
 				type: 'EntityList',
 				apiUrl: 'user/list',
 				sortable: true,
 			},
 			board_game_id: {
-				name: 'ID настольной игры',
+				name: 'Ивент',
 				type: 'EntityList',
 				apiUrl: 'board-game/get-list',
 				sortable: true,
 			},
-			points: {
-				name: 'Количество очков',
+			name: {
+				name: 'Название',
 				sortable: true,
-				type: 'rounded-box',
 			},
-			points_per_hour: {
-				name: 'Очков в час',
-				sortable: true,
-				type: 'rounded-box',
-			},
-			place: {
-				name: 'Место',
-				sortable: true,
-				type: 'rounded-box',
-			},
-			item_roll_count: {
-				name: 'Доступное количество ролов игры',
-				sortable: true,
-				type: 'rounded-box',
-			},
-			step_count: {
-				name: 'Доступное количество ходов',
-				sortable: true,
-				type: 'rounded-box',
-			},
-			streak: {
-				name: 'Стрик',
-				sortable: true,
-				type: 'rounded-box',
-			},
-			rerolled_own_game_count: {
-				name: 'Рерольнуто своих игр',
-				sortable: true,
-				type: 'rounded-box',
-			},
-			created_by: {
-				name: 'Создан',
+			gaming_platform_id: {
+				name: 'Платформа',
 				type: 'EntityList',
-				apiUrl: 'user/list',
+				apiUrl: 'admin/entity/GamingPlatform',
+				sortable: true,
+			},
+			coop: {
+				name: 'Кооп',
+				type: 'boolean',
+				sortable: true,
+			},
+			game_completion_time: {
+				name: 'Время на прохождение (в минутах)',
+				sortable: true,
+				type: 'rounded-box',
+			},
+			difficulty: {
+				name: 'Сложность в процентах',
+				sortable: true,
+				type: 'rounded-box',
+			},
+			description: {
+				name: 'Описание',
+				type: 'cutText',
+			},
+			status: {
+				name: 'Текущий статус',
+				sortable: true,
+				type: 'rounded-box',
+			},
+			sort: {
+				name: 'Сортировка',
 				sortable: true,
 			},
 			active: {
@@ -77,29 +79,12 @@ const titles = ref(
 				type: 'boolean',
 				sortable: true,
 			},
-			not_active_reason: {
-				name: 'Причина не активности',
-				sortable: true,
-			},
-			added_games: {
-				name: 'Добавил свои игры',
-				type: 'boolean',
-				sortable: true,
-			},
-			sort: {
-				name: 'Сортировка',
-				type: 'rounded-box',
-				sortable: true,
-			},
-			premium: {
-				name: 'Премиум',
-				type: 'boolean',
-				sortable: true,
-			},
 		}
 );
 
-const title = 'Игроки настольной игры';
+const pageType = ref('');
+
+const title = 'Игры добавляемые игроками';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -158,16 +143,16 @@ const usedFilters = [
 			:breadCrumbs="breadCrumbsArray"
 	/>
 	<ListTableV2
-			v-if="checkPermission('bg.players.edit')"
+			v-if="checkPermission('bg.add-game.edit')"
 			:titles="titles"
-			fetchUrl="admin/BoardGame/BoardGamePlayer"
-			entity="BoardGamePlayer"
+			fetchUrl="admin/BoardGame/AddGame"
+			entity="BoardGame"
 			:hasResource="true"
 			:usePagination="true"
 			:usedFilters="usedFilters"
 			:defaultFilters="defaultFilters"
 			:sortOptions="sortOptions"
-			filterRequestUrl="admin/BoardGame/BoardGamePlayer/filters"
+			filterRequestUrl="admin/BoardGame/AddGame/filters"
 	/>
 	<ui-itemBox
 			v-else

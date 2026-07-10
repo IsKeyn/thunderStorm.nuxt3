@@ -117,6 +117,11 @@ const props = defineProps({
 		type: [String, Array],
 		default: '',
 	},
+	// Отключение ввода в поле
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const label = ref(null);
@@ -314,6 +319,7 @@ const wrapperTag = computed(() => {
 						:friendly-name="element.name"
 						:placeholder="element.placeholder"
 						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+						:disabled="disabled"
 				/>
 				<input
 						v-else
@@ -323,6 +329,7 @@ const wrapperTag = computed(() => {
 						:friendly-name="element.name"
 						:placeholder="element.placeholder"
 						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+						:disabled="disabled"
 				/>
 				<span class="additional-action-wrap">
 					<span
@@ -371,6 +378,18 @@ const wrapperTag = computed(() => {
 								title="Очистить поле"
 						/>
 					</span>
+					<VTooltip>
+						<span v-if="element.description">
+							<font-awesome-icon
+									:icon="['fa-solid', 'fa-circle-info']"
+									class="additional-action-icon"
+									title="Описание поля"
+							/>
+						</span>
+						<template #popper>
+							<div class="description">{{ element.description }}</div>
+						</template>
+					</VTooltip>
 				</span>
 			</span>
 		</template>
@@ -381,6 +400,7 @@ const wrapperTag = computed(() => {
 					:friendly-name="element.name"
 					:placeholder="element.placeholder"
 					:class="getFieldClasses"
+					:disabled="disabled"
 			/>
 		</template>
 		<template v-else-if="element.type === 'file'">
@@ -393,6 +413,7 @@ const wrapperTag = computed(() => {
 						:friendly-name="element.name"
 						:placeholder="element.placeholder"
 						:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+						:disabled="disabled"
 						@change="element.value = $event.target.files"
 				/>
 			</template>
@@ -407,6 +428,7 @@ const wrapperTag = computed(() => {
 									:friendly-name="element.name"
 									:placeholder="element.placeholder"
 									class="hidden"
+									:disabled="disabled"
 									@change="element.value = $event.target.files"
 							/>
 							<div
@@ -442,6 +464,7 @@ const wrapperTag = computed(() => {
 									:friendly-name="element.name"
 									:placeholder="element.placeholder"
 									class="hidden"
+									:disabled="disabled"
 									@change="element.value = $event.target.files"
 							/>
 							<div
@@ -465,6 +488,7 @@ const wrapperTag = computed(() => {
 		<template v-else-if="element.type === 'select'">
 			<select
 					:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+					:disabled="disabled"
 					v-model="element.value"
 			>
 				<option
@@ -489,6 +513,8 @@ const wrapperTag = computed(() => {
 			<SelectWithSearch
 					:classes="getFieldClasses"
 					:options="element.options"
+					:valueKey="element.valueKey ?? 'value'"
+					:disabled="disabled"
 					v-model="element.value"
 			/>
 		</template>
@@ -496,6 +522,8 @@ const wrapperTag = computed(() => {
 			<SelectWithSearch
 					:classes="getFieldClasses"
 					:options="element.options"
+					:valueKey="element.valueKey ?? 'value'"
+					:disabled="disabled"
 					v-model="element.value"
 					:multiSelect="true"
 			/>
@@ -520,6 +548,7 @@ const wrapperTag = computed(() => {
 			<input
 					v-model="element.value"
 					:type="element.type"
+					:disabled="disabled"
 			/>
 				<span class="checkbox-name" v-if="element.html" v-html="element.html" />
 				<span class="checkbox-name" v-else>{{ element.title ? element.title : element.name }}</span>
@@ -533,6 +562,7 @@ const wrapperTag = computed(() => {
 					:max="element.max ? element.max : 1"
 					:step="element.step ? element.step : 0.1"
 					:class="[getFieldClasses, (element.validateResult ? 'error' : '')]"
+					:disabled="disabled"
 			/>
 		</template>
 		<EntityList
