@@ -22,6 +22,9 @@ const {
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
 
+import { media } from '@/composables/media.js'
+const { getResizeImg } = media();
+
 const props = defineProps({
 	element: {
 		type: Object,
@@ -82,15 +85,26 @@ const otherStreamPlatform = computed(() => {
 			v-if="element && element.user"
 			:class="['player-box', type]"
 	>
-		<div class="first-line">
-			<div class="bg" />
+		<div
+				class="first-line"
+				:style="[
+					`${element.premium && element.backgroundImage
+					? 'background-image: url(' + getResizeImg(element.backgroundImage, 1500) + ');'
+					: ''}`,
+					`background-size: ${element?.settings?.pave ? 'contain' : 'cover'}`,
+					`background-position: ${element?.settings?.backgroundPosition ? element.settings.backgroundPosition : ''}`,
+					`background-repeat: ${element?.settings?.pave ? 'repeat' : 'no-repeat'}`,
+				]"
+		>
+			<div v-if="!element.premium" class="bg"/>
+			<div v-else class="vein" :style="`background: rgba(0, 0, 0, ${element?.settings?.vein ? element.settings.vein : '0.5'})`" />
 			<div class="avatar-box-main">
 				<UserAvatar
 						:user="element.user"
 						:useLightBox="type === 'detail'"
 						:canChange="type === 'detail'"
 						classes="w-[90%] aspect-square object-cover"
-						borderType="gold"
+						:borderType="`${ element.premium && element?.settings?.avatarBorder ? element.settings.avatarBorder : '' }`"
 						@afterChangeAvatar="$emit('refresh')"
 				/>
 				<div
@@ -123,9 +137,12 @@ const otherStreamPlatform = computed(() => {
 					>Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></span>
 					<span v-if="!isCurrentUser" class="wrapper default message"><font-awesome-icon icon="fa-solid fa-envelope" /></span>
 				</div>
-				<div class="field">
+				<div
+						v-if="element.premium && element?.settings?.premiumMessage"
+						class="field"
+				>
 					<span class="wrapper default shimmer">
-						<font-awesome-icon icon="fa-solid fa-bullhorn" class="inline mr-2" /> Премиум сообщение
+						<font-awesome-icon icon="fa-solid fa-bullhorn" class="inline mr-2" /> {{ element?.settings?.premiumMessage ? element.settings.premiumMessage : '' }}
 					</span>
 				</div>
 

@@ -83,6 +83,8 @@ const saveData = async () => {
 				response.message ? response.message : 'Сохранено',
 				10000
 		);
+
+		refresh();
 	} catch (e) {
 		error(e);
 	}
@@ -200,16 +202,15 @@ watch(() => value.value, () => {
 			/>
 			<div
 					v-if="cantSubmitDataForReviewMessages.length"
-					class="item-box"
+					class="item-box !p-4"
 			>
-				Вы можете сохранить свой список игр, но для отправки на модерацию для добавления вы должны решить следующие проблемы:
-				<span
-						v-for="(value, key) in cantSubmitDataForReviewMessages"
-						:key="key"
-						class="block field"
-				>
-					{{ value }}
-				</span>
+				<span class="block mb-2">Вы можете сохранить свой список игр, но для отправки на модерацию для добавления вы должны решить следующие проблемы:</span>
+				<ul>
+					<li
+							v-for="(value, key) in cantSubmitDataForReviewMessages"
+							:key="key"
+					>{{ value }}</li>
+				</ul>
 			</div>
 			<div class="flex">
 				<button

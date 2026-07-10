@@ -97,12 +97,15 @@ const pointsWithText = computed(() => {
 				>{{ pointsWithText }} (<font-awesome-icon icon="fa-solid fa-bolt" />x{{ userStore.player.streak }})</span>
 			</div>
 			<div class="avatar">
-					<img
-							:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
-							:alt="userStore.user.name"
-							:title="`${userStore.user.name} - профайл пользователя`"
-							@click="toggleUserMenu()"
-					/>
+				<UserAvatar
+						:user="userStore.user"
+						:useLightBox="false"
+						:canChange="false"
+						classes="w-[4rem] h-[4rem] rounded-full object-cover !z-0"
+						:borderType="`${ userStore.player.premium && userStore.player?.settings?.avatarBorder ? userStore.player.settings.avatarBorder : '' }`"
+						@afterChangeAvatar="$emit('refresh')"
+						@click="toggleUserMenu()"
+				/>
 
 				<span
 						v-if="useNotifications && useNotifications.currentUserNotificationCount && useNotifications.currentUserNotificationCount > 0"

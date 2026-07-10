@@ -22,7 +22,7 @@ const props = defineProps({
 		default: 'Выберите опцию',
 	},
 	classes: {
-		type: String,
+		type: [String, Array],
 		default: 'max-w-[30rem]',
 	},
 	// Отключение ввода в поле

@@ -10,6 +10,7 @@ import StatusEffects from '@/modules/boardGame/components/statusEffect/StatusEff
 import PlayerLogs from '@/modules/boardGame/components/user/player/profileElement/PlayerLogs.vue';
 import PlayerEvents from '@/modules/boardGame/components/user/player/profileElement/PlayerEvents.vue';
 import Premium from '@/modules/boardGame/components/user/player/profileElement/Premium.vue';
+import Widgets from '@/modules/boardGame/components/user/player/profileElement/Widgets.vue';
 import ProfileSettings from '@/components/user/profile/fragments/Settings.vue';
 import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
 import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
@@ -107,10 +108,6 @@ const tabsElements = ref([
 		id: 'playerEvents',
 		title: 'Участие в ивентах',
 	},
-	{
-		id: 'premium',
-		title: 'Премиум',
-	},
 ]);
 
 /* Добавление табов собственного профиля */
@@ -121,8 +118,20 @@ watch(() => isCurrentUser.value, () => {
 		if (result === undefined) {
 			tabsElements.value.push(
 					{
+						id: 'premium',
+						title: 'Премиум',
+					}
+			);
+			tabsElements.value.push(
+					{
 						id: 'settings',
 						title: 'Настройки',
+					}
+			);
+			tabsElements.value.push(
+					{
+						id: 'widgets',
+						title: 'Виджеты',
 					}
 			);
 		}
@@ -220,7 +229,17 @@ const pageForRedirect = computed(() => {
 				<PlayerLogs :userName="userName" />
 			</template>
 			<template #tab-premium>
-				<Premium :userName="userName" />
+				<Premium
+						:element="userInfo"
+						:userName="userName"
+						@refresh="refresh"
+				/>
+			</template>
+			<template #tab-widgets>
+				<Widgets
+						:element="userInfo"
+						:userName="userName"
+				/>
 			</template>
 			<template #tab-playerEvents>
 				<PlayerEvents :userName="userName" />

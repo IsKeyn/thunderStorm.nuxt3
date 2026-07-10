@@ -283,13 +283,6 @@ const getTitle = (item) => {
 				:fieldClasses="field.classes"
 		/>
 	</div>
-
-<!--	<ActionButton-->
-<!--			buttonClasses="btn btn-simple"-->
-<!--			buttonName="Разлогинить"-->
-<!--			:actionInProgress="requestInProgress"-->
-<!--			@startAction="logout()"-->
-<!--	/>-->
 </template>
 
 <style lang="scss" scoped>
