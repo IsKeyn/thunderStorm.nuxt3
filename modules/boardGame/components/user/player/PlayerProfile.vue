@@ -7,6 +7,7 @@ import CurrentGame from '@/modules/boardGame/components/user/player/profileEleme
 import GameHistory from '@/modules/boardGame/components/user/player/profileElement/GameHistory.vue';
 import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.vue';
 import StatusEffects from '@/modules/boardGame/components/statusEffect/StatusEffects.vue';
+import PlayerInteractionsList from '@/modules/boardGame/components/player-interactions/PlayerInteractionsList.vue';
 import PlayerLogs from '@/modules/boardGame/components/user/player/profileElement/PlayerLogs.vue';
 import PlayerEvents from '@/modules/boardGame/components/user/player/profileElement/PlayerEvents.vue';
 import Premium from '@/modules/boardGame/components/user/player/profileElement/Premium.vue';
@@ -99,6 +100,10 @@ const tabsElements = ref([
 	{
 		id: 'statusEffectsHistory',
 		title: 'История статус эффектов',
+	},
+	{
+		id: 'playerInteractionsHistory',
+		title: 'История взаимодействий',
 	},
 	{
 		id: 'logsHistory',
@@ -223,6 +228,13 @@ const pageForRedirect = computed(() => {
 						:userName="userName"
 						:showUsedItemsBox="true"
 						:groupUnusedSe="true"
+				/>
+			</template>
+			<template #tab-playerInteractionsHistory>
+				<PlayerInteractionsList
+						:checkCondition="false"
+						:showDescription="false"
+						:user_id="userInfo.user_id"
 				/>
 			</template>
 			<template #tab-logsHistory>

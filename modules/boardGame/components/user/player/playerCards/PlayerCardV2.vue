@@ -1,5 +1,6 @@
 <script setup>
 import ProfileLine from '@/modules/boardGame/components/user/player/fragments/ProfileLine.vue';
+import ProfileLineShort from '@/modules/boardGame/components/user/player/fragments/ProfileLineShort.vue';
 
 const emit = defineEmits(['onClickFunc']);
 
@@ -46,6 +47,14 @@ const props = defineProps({
 			:to="openProfile ? `/e/${route.params.slug}/player/${element.user.name}` : null"
 	>
 		<ProfileLine
+				v-if="theme === 'default'"
+				:element="element"
+				type="list"
+				:hideItems="hideItems"
+				:hideStatusEffect="hideStatusEffect"
+		/>
+		<ProfileLineShort
+				v-if="theme === 'short'"
 				:element="element"
 				type="list"
 				:hideItems="hideItems"
@@ -58,6 +67,14 @@ const props = defineProps({
 			@click="$emit('onClickFunc', element)"
 	>
 		<ProfileLine
+				v-if="theme === 'default'"
+				:element="element"
+				type="list"
+				:hideItems="hideItems"
+				:hideStatusEffect="hideStatusEffect"
+		/>
+		<ProfileLineShort
+				v-if="theme === 'short'"
 				:element="element"
 				type="list"
 				:hideItems="hideItems"

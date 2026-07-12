@@ -31,6 +31,10 @@ const props = defineProps({
 		type: Array,
 		default: [],
 	},
+	selectedPlayerTheme: {
+		type: String,
+		default: 'default',
+	},
 });
 
 const selectedOption = ref(null);
@@ -75,6 +79,20 @@ const defaultFiltersProp = computed(() => {
 		}
 	}
 
+	if (props.target === 'notPlayBattleForPoints') {
+		returnData.notPlayBattleForPoints = {
+			user_id: props.currentPlayer.user.id,
+			bg_slug: route.params.slug,
+		};
+	}
+
+	if (props.target === 'notInvitedToCoop') {
+		returnData.notInvitedToCoop = {
+			user_id: props.currentPlayer.user.id,
+			bg_slug: route.params.slug,
+		};
+	}
+
 	return returnData;
 });
 
@@ -99,6 +117,16 @@ const usedFiltersProp = [
 		langName: 'Только ближайщие',
 		type: 'hidden',
 	},
+	{
+		name: 'notPlayBattleForPoints',
+		langName: 'Игроки, с которыми ещё не играли в битву за очки',
+		type: 'hidden',
+	},
+	{
+		name: 'notInvitedToCoop',
+		langName: 'Игроки, с которыми вы ещё не играли в кооп',
+		type: 'hidden',
+	},
 ];
 </script>
 
@@ -111,7 +139,7 @@ const usedFiltersProp = [
 			<PlayerCardV2
 					v-if="selectedOption"
 					:element="selectedOption"
-					theme="short"
+					:theme="selectedPlayerTheme"
 					:bgClasses="bgClasses"
 					:hideStatusEffect="true"
 					:openProfile="false"

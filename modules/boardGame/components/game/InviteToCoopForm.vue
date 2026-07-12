@@ -2,9 +2,9 @@
 import AlertBox from '@/components/notifications/AlertBlock.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
-import SelectPlayer from '@/modules/boardGame/components/user/player/SelectPlayer.vue';
+import SelectPlayerDetailList from '@/modules/boardGame/components/user/player/SelectPlayerDetailList.vue';
 
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
 const emit = defineEmits(['toggleFormVisible', 'updateData']);
 
@@ -12,7 +12,7 @@ import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
 import { userFunctions } from '@/composables/userFunctions.js';
-const { isAuth } = userFunctions();
+const { isAuth, userStore } = userFunctions();
 
 import { validate } from '@/composables/validate.js';
 const { validateForm } = validate();
@@ -22,9 +22,6 @@ const { sendApiRequest } = api();
 
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
-
-import { players } from '@/composables/BoardGame/players.js';
-const { getPlayersForItem } = players();
 
 const props = defineProps({
 	board_game_game_list_id: {
@@ -55,32 +52,6 @@ form.value.comment = {
 if (props.game.game.name) {
 	form.value.comment.value += props.game.game.name;
 }
-
-// Получение времени игры
-const requestName = 'getBoardGamePlayersWithInventory';
-
-const {
-	data: requestData,
-	pending: requestGetPlayersInProgress,
-	refresh
-} = await useAsyncData(
-		requestName,
-		async () => {
-			let type = 'inviteToCoop';
-
-			const response = await Promise.resolve(
-					sendApiRequest(`board-game/v2/player/listWithInventory/${route.params.slug}/`, 'GET', { type }, requestName, '')
-			);
-
-			return response.data || null;
-		},
-		{
-			server: true,
-			lazy: true,
-		}
-);
-
-const fetchedPlayers = computed(() => requestData.value || null);
 
 const selectedPlayer = ref({});
 
@@ -147,17 +118,18 @@ const sendRequest = async () => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestGetPlayersInProgress" class="h-full" />
-	<div v-else class="w-full mt-[1rem]">
+	<div class="w-full mt-[1rem]">
 		<AlertBox
 				:errorsMessages="errorsMessages"
 				class="mb-2"
 		/>
 		<div v-if="isAuth">
-			<SelectPlayer
-					v-if="fetchedPlayers"
-					:players="getPlayersForItem('other', fetchedPlayers)"
+			<SelectPlayerDetailList
 					v-model="selectedPlayer"
+					target="notInvitedToCoop"
+					:expectedPlayers="[userStore.player.id]"
+					:currentPlayer="userStore.player"
+					selectedPlayerTheme="short"
 			/>
 
 			<FormGenerator

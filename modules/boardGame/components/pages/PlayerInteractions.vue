@@ -1,7 +1,11 @@
 <script setup>
 import PlayerInteractionsList from '@/modules/boardGame/components/player-interactions/PlayerInteractionsList.vue';
 
-const route = useRoute();
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
@@ -29,5 +33,9 @@ const breadCrumbsArray = computed(() => {
 			:breadCrumbs="breadCrumbsArray"
 			:showMainPageInBreadCrumbs="false"
 	/>
-	<PlayerInteractionsList />
+	<PlayerInteractionsList
+			:user_id="userStore.user.id"
+			:active="true"
+			:listenUpdates="true"
+	/>
 </template>

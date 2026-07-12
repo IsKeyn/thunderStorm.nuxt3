@@ -96,7 +96,7 @@ const otherStreamPlatform = computed(() => {
 					`background-repeat: ${element?.settings?.pave ? 'repeat' : 'no-repeat'}`,
 				]"
 		>
-			<div v-if="!element.premium || !element.backgroundImage" class="bg"/>
+			<div v-if="!element.premium" class="bg"/>
 			<div v-else class="vein" :style="`background: rgba(0, 0, 0, ${element?.settings?.vein ? element.settings.vein : '0.5'})`" />
 			<div class="avatar-box-main">
 				<UserAvatar
@@ -119,13 +119,6 @@ const otherStreamPlatform = computed(() => {
 						{{ element.place }}
 					</span>
 				</div>
-			</div>
-			<div v-if="type === 'detail'" class="timer-box">
-				<Timer
-						:userId="element.user_id"
-						:showName="false"
-						:showControlButtons="false"
-				/>
 			</div>
 			<div class="content line-content">
 				<div class="field">
@@ -171,77 +164,6 @@ const otherStreamPlatform = computed(() => {
 				</div>
 			</div>
 		</div>
-		<div :class="['second-line', type]">
-			<div class="content line-content">
-				<template v-if="type === 'detail'">
-					<div class="box">
-						<NuxtLink
-								v-if="twitch.value"
-								class="btn btn-simple-1 mr-2 inline-block"
-								:to="`https://www.twitch.tv/${twitch.value}`"
-								target="_blank"
-								:title="`Twitch канал ${element?.user?.public_name}`"
-						>
-							Twitch канал <font-awesome-icon icon="fa-brands fa-twitch" />
-						</NuxtLink>
-						<NuxtLink
-								v-if="otherStreamPlatform.value"
-								class="btn btn-simple-1 mr-2 inline-block"
-								:to="otherStreamPlatform.value"
-								target="_blank"
-								title="Платформа стрима"
-						>
-							Платформа стрима <font-awesome-icon icon="fa-regular fa-circle-play" />
-						</NuxtLink>
-					</div>
-					<div class="box">
-						<template v-if="isCurrentUser">
-							<button
-									class="btn btn-simple-1 mr-2"
-									@click="$emit('showUserMessagesModal')"
-							>
-								<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Мои сообщения
-							</button>
-							<button
-									class="btn btn-simple-1 mr-2"
-									@click="$emit('showNotificationModal')"
-							>
-								<font-awesome-icon icon="fa-solid fa-bell" class="mr-2" /> Мои уведомления
-							</button>
-							<button
-									class="btn btn-simple-1 mr-2"
-									@click="logout"
-							>
-								<font-awesome-icon :icon="['fas', 'right-from-bracket']" class="mr-2" /> Выйти
-							</button>
-						</template>
-					</div>
-				</template>
-				<template v-else-if="type === 'list'">
-					<div class="box">
-						<GameGamblingCard
-								v-if="element?.current_game?.game"
-								:element="element.current_game.game"
-								:itemHeight="60"
-								overlayClasses="!bg-black/60"
-						/>
-					</div>
-					<div class="box">
-						<SmallCardsLine
-								v-if="!hideItems"
-								:element="element.inventory"
-								type="items"
-						/>
-					</div>
-					<div class="box">
-						<SmallCardsLine
-								v-if="!hideStatusEffect"
-								:element="element.statusEffects"
-						/>
-					</div>
-				</template>
-			</div>
-		</div>
 	</div>
 </template>
 
@@ -276,7 +198,7 @@ const otherStreamPlatform = computed(() => {
 		}
 
 		.avatar-box-main {
-			@apply absolute z-[2] left-[2rem] bottom-[-2rem] max-w-[12rem];
+			@apply absolute z-[2] left-[2rem] bottom-[-0.5rem] max-w-[12rem];
 
 			.absolute-place-box {
 				@apply absolute z-10;

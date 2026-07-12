@@ -1,9 +1,7 @@
 <script setup>
-import SelectPlayer from '@/modules/boardGame/components/user/player/SelectPlayer.vue';
+import SelectPlayerDetailList from '@/modules/boardGame/components/user/player/SelectPlayerDetailList.vue';
 
-import { computed, inject, ref } from "vue";
-
-const layoutMethods = inject('layoutMethods')
+import { ref } from "vue";
 
 import { helper } from '@/composables/helper.js'
 const { route, hasWebSocked } = helper();
@@ -22,9 +20,6 @@ const { isAuth, userStore } = userFunctions();
 
 import { notifications } from '@/composables/notifications.js';
 const { choiceAlert, error, alert } = notifications();
-
-import { players } from '@/composables/BoardGame/players.js';
-const { getPlayersForItem } = players();
 
 const props = defineProps({
 	element: {
@@ -60,73 +55,6 @@ const props = defineProps({
 		default: null,
 	},
 });
-
-const getTypeClass = (type) => {
-	// Отключено так как у "Эффектов клетки" нет установок бафф, дебафф
-	// if (type) {
-	// 	return 'red';
-	// } else {
-	// 	return 'green';
-	// }
-}
-
-// Проверяем нужно ли грузить список игроков
-const needOtherPlayers = computed(() => {
-	let returnData = false;
-
-	JSON.parse(props.element.boardPositionEffect.actions).forEach((item) => {
-		if (item.target !== 'current') {
-			returnData = true;
-		}
-	});
-
-	return returnData;
-})
-
-const requestName = computed(() => {
-	let returnData = 'getBoardGamePlayersWithInventory';
-
-	if (props?.name) {
-		returnData += '_' + props.name;
-	}
-
-	if (props?.element?.id) {
-		returnData += '_' + props.element.id;
-	}
-
-	return returnData;
-});
-
-const {
-	data: requestData,
-	pending: requestInProgress,
-	refresh
-} = await useAsyncData(
-		requestName.value,
-		async () => {
-			if (needOtherPlayers.value) {
-				let type = null;
-
-				JSON.parse(props.element.boardPositionEffect.actions).forEach((item, key) => {
-					if (key === 0 && item.value) {
-						type = item.value;
-					}
-				});
-
-				const response = await Promise.resolve(
-						sendApiRequest(`board-game/v2/player/listWithInventory/${route.params.slug}/`, 'GET', { type }, requestName.value, '')
-				);
-
-				return response.data || null;
-			}
-		},
-		{
-			server: true,
-			lazy: true,
-		}
-);
-
-const fetchedPlayers = computed(() => requestData.value || null);
 
 const selectedPlayer = ref({});
 
@@ -225,25 +153,31 @@ const setRequest = async (type) => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
 	<div
-			v-else-if="Object.keys(element).length > 0"
+			v-if="Object.keys(element).length > 0"
 			:class="[
 				'item-box',
-				getTypeClass(element?.boardPositionEffect?.debuff),
 				showControlPanel || element.quantity > 1 ? 'add-padding-right' : '',
 				theme,
 				classes,
 			]"
 		>
-		<img
-				v-if="element.boardPositionEffect?.title_image"
-				:src="getResizeImg(element.boardPositionEffect?.title_image)"
-				:alt="element.boardPositionEffect.name"
-				:title="element.boardPositionEffect.name"
-				:class="[useLightBox ? 'cursor-pointer' : '']"
-				@click="useLightBox ? layoutMethods.setOpenedImage(element.boardPositionEffect.title_image) : false"
-		>
+		<template v-if="element.boardPositionEffect?.title_image">
+			<img
+					v-if="useLightBox"
+					:src="getResizeImg(element.boardPositionEffect?.title_image)"
+					:alt="element.boardPositionEffect.name"
+					:title="element.boardPositionEffect.name"
+					class="media-obj"
+					:media-id="element.boardPositionEffect?.title_image?.id"
+			>
+			<img
+					v-else
+					:src="getResizeImg(element.boardPositionEffect?.title_image)"
+					:alt="element.boardPositionEffect.name"
+					:title="element.boardPositionEffect.name"
+			>
+		</template>
 		<div class="info">
 			<span class="name">
 				{{ element.boardPositionEffect.name }}
@@ -272,12 +206,14 @@ const setRequest = async (type) => {
 					</button>
 				</template>
 				<template v-if="showControlPanel && action && action.type === 'playerInteractions'">
-					<span class="">Выберите игрока для приглашения</span>
-					<SelectPlayer
-							v-if="fetchedPlayers"
-							bgClasses="!bg-[var(--main-hover-color)]"
-							:players="getPlayersForItem(action.target, fetchedPlayers)"
+					<span class="block mt-2 mb-2">Выберите игрока для приглашения</span>
+					<SelectPlayerDetailList
 							v-model="selectedPlayer"
+							bgClasses="!bg-[var(&#45;&#45;main-hover-color)]"
+							:target="action.target"
+							:expectedPlayers="[userStore.player.id]"
+							:currentPlayer="userStore.player"
+							selectedPlayerTheme="short"
 					/>
 					<button
 							v-if="Object.keys(selectedPlayer).length > 0"

@@ -336,10 +336,11 @@ onMounted(() => {
 				<span class="block">Текущая позиция на поле: {{ currentPlayer.position }}</span>
 				<span class="block">Доступное количество бросков кубика: {{ currentPlayer.step_count }}</span>
 				<PlayerInteractionCard
-						v-if="fetchedData?.current_player?.board_interaction && fetchedData.current_player.board_interaction.length > 0"
+						v-if="fetchedData?.current_player?.board_interaction && fetchedData.current_player.board_interaction.length"
 						v-for="(element, key) in fetchedData.current_player.board_interaction"
 						:key="key"
 						class="mt-4"
+						:user_id="userStore.user.id"
 						:element="element"
 						@update="refresh"
 				/>

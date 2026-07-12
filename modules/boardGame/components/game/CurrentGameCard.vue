@@ -104,6 +104,7 @@ const showTimer = computed(() => {
 			v-for="(element, key) in coopInteraction"
 			:key="key"
 			class="mt-4"
+			:user_id="player.user_id"
 			:element="element"
 			@update="emit('updateData')"
 	/>

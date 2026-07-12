@@ -3,7 +3,8 @@ import UserShortCard from '@/modules/boardGame/components/user/UserShortCard.vue
 
 const emit = defineEmits(['update']);
 
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
@@ -11,26 +12,28 @@ const { sendApiRequest } = api();
 import { notifications } from '@/composables/notifications.js';
 const { alert, error, choiceAlert } = notifications();
 
-import { userFunctions } from '@/composables/userFunctions.js';
-const {
-	isAuth,
-	userStore,
-} = userFunctions();
-
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
 
 const props = defineProps({
+	user_id: {
+		type: Number,
+		default: null,
+	},
 	element: {
 		type: Object,
 		default: {},
 	},
+	checkCondition: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const type = computed(() => {
-	if (props.element.created_by !== userStore.user.id) {
+	if (props.element.with_player === props.user_id) {
 		return 'incoming';
-	} else if (props.element.created_by === userStore.user.id) {
+	} else if (props.element.created_by === props.user_id) {
 		return 'outgoing';
 	}
 });
@@ -49,6 +52,10 @@ const status = computed(() => {
 		case 1: return 'Запрос отправлен';
 		case 2: return 'Запрос принят';
 		case 3: return 'Отказано';
+		case 4: return type.value === 'incoming' ? 'Соперник выиграл' : 'Я выиграл';
+		case 5: return type.value === 'incoming' ? 'Соперник проиграл' : 'Я проиграл';
+		case 6: return 'Отозван';
+		case 7: return 'Кооп завершен';
 	}
 });
 
@@ -57,10 +64,14 @@ const statusClass = computed(() => {
 		case 1: return 'blue';
 		case 2: return 'green';
 		case 3: return 'red';
+		case 4: return type.value === 'incoming' ? 'red' : 'green';
+		case 5: return type.value === 'incoming' ? 'green' : 'red';
+		case 6: return 'red';
+		case 7: return 'green';
 	}
 });
 
-/* Функции изменения запросов */
+// Функции изменения запросов
 const startAction = (type) => {
 	choiceAlert(
 			{
@@ -97,13 +108,11 @@ const sendRequest = async (type) => {
 
 		const response = await sendApiRequest('board-game/v2/interactions/action/', 'POST', body, 'SetActionBoardGamePlayerInteractions', 'fullscreenTransparent');
 
+		requestInProgress.value = false;
+
 		if (response && response.error) {
 			error(response.error);
 		} else if (response) {
-			// Обработка ошибок
-
-			requestInProgress.value = false;
-
 			switch (type) {
 				case 'accept': alert('Вы приняли предложение'); break;
 				case 'refuse': alert('Вы отказались от предложения'); break;
@@ -115,8 +124,8 @@ const sendRequest = async (type) => {
 			error('Пустой ответ');
 		}
 	} catch (e) {
-		error(e);
 		requestInProgress.value = false;
+		error(e);
 	}
 }
 </script>
@@ -137,15 +146,18 @@ const sendRequest = async (type) => {
 				<template v-if="type === 'incoming'">
 					<UserShortCard :user="element.created_by_data" />
 					<font-awesome-icon class="icon" icon="fa-regular fa-circle-right" />
-					<UserShortCard :user="userStore.user" />
+					<UserShortCard :user="element.with_player_data" />
 				</template>
 				<template v-else-if="type === 'outgoing'">
-					<UserShortCard :user="userStore.user" />
+					<UserShortCard :user="element.created_by_data" />
 					<font-awesome-icon class="icon" icon="fa-regular fa-circle-right" />
 					<UserShortCard :user="element.with_player_data" />
 				</template>
 			</div>
-			<div class="choice-btn">
+			<div
+					v-if="checkCondition"
+					class="choice-btn"
+			>
 				<div v-if="type === 'incoming'">
 					<div v-if="element.type === 'battleForPoints'">
 						<template v-if="element.status === 2">
@@ -153,7 +165,7 @@ const sendRequest = async (type) => {
 						</template>
 					</div>
 
-					<template v-if="element.status === 1">
+					<template v-if="element.status === 1 && user_id === element.with_player">
 						<button
 								class="btn btn-simple mr-2"
 								@click="startAction('accept')"
@@ -178,7 +190,7 @@ const sendRequest = async (type) => {
 						</template>
 					</div>
 
-					<template v-if="element.status === 1">
+					<template v-if="element.status === 1 || element.status === 2">
 						<button
 								class="btn btn-simple"
 								@click="startAction('recall')"
