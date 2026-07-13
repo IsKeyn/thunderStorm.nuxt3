@@ -14,6 +14,10 @@ const props = defineProps({
 		type: String,
 		default: 'statusEffect',
 	},
+	classes: {
+		type: String,
+		default: 'elements',
+	},
 });
 
 const showAll = ref(false);
@@ -67,7 +71,7 @@ const elementsForShow = computed(() => {
 <template>
 	<div
 			v-if="groupedElements.length"
-			class="elements"
+			:class="classes"
 	>
 		<StatusEffectSmallCard
 				v-if="type === 'statusEffect'"
@@ -100,11 +104,11 @@ const elementsForShow = computed(() => {
 <style lang="scss" scoped>
 .elements {
 	@apply lg:col-span-4 2xl:col-span-4 flex gap-1 justify-start lg:justify-end pl-3 pr-3 mt-4 lg:mt-0;
+}
 
-	.element-small-card-count {
-		@apply relative w-[60px] h-[60px] bg-[var(--third-block-color)] text-[1.5rem] text-[var(--main-dark-text-color)] flex items-center justify-center;
+.element-small-card-count {
+	@apply relative w-[60px] h-[60px] bg-[var(--third-block-color)] text-[1.5rem] text-[var(--main-dark-text-color)] flex items-center justify-center;
 
-		border: 2px solid var(--third-block-color);
-	}
+	border: 2px solid var(--third-block-color);
 }
 </style>

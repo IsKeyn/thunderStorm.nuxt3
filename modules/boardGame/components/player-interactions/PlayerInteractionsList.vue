@@ -1,7 +1,7 @@
 <script setup>
 import PlayerInteractionCard from '@/modules/boardGame/components/player-interactions/PlayerInteractionCard.vue';
 
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const { subscribe, unsubscribe } = useWebSocket();
 const runtimeConfig = useRuntimeConfig();
@@ -43,6 +43,7 @@ const props = defineProps({
 });
 
 const requestName = 'getBoardGamePlayerInteractions';
+const hiddenRefresh = ref(false);
 
 const {
 	data: requestData,
@@ -67,6 +68,7 @@ const {
 					)
 			);
 
+			hiddenRefresh.value = false;
 			return response || null;
 		},
 		{
@@ -93,18 +95,23 @@ const outgoing = computed(() => {
 const description = 'Страница взаимодействия с другими игроками. На этой странице вы можете отслеживать свои запросы на взаимодействие с другими игроками, а также принимать решения о входящих предложениях.';
 
 onMounted(async () => {
-	if (Object.keys(userStore.user).length) {
-		if (props.listenUpdates && runtimeConfig.public.hasWebSockedServer) {
-			const userId = userStore.user?.id;
+	if (isAuth.value
+			&& Object.keys(userStore.user).length
+			&& props.listenUpdates
+			&& runtimeConfig.public.hasWebSockedServer
+	) {
+		const userId = userStore.user?.id;
 
-			const { unsubscribe: stop, subscriptionId } = subscribe(
-					`App.Models.User.${userId}`,
-					'PlayerInteractions',
-					(data) => {
-						fetchedData.value = data;
+		const { unsubscribe: stop, subscriptionId } = subscribe(
+				`App.Models.User.${userId}`,
+				'BoardGame.PlayerInteractions',
+				(data) => {
+					if (data.status === 'update') {
+						hiddenRefresh.value = true;
+						refresh();
 					}
-			);
-		}
+				}
+		);
 	}
 });
 </script>
@@ -116,7 +123,7 @@ onMounted(async () => {
 			classes="!mb-6"
 	/>
 	<ui-BigPreloader
-			v-if="requestInProgress"
+			v-if="requestInProgress && !hiddenRefresh"
 			theme="image"
 			:themeType="9"
 	/>

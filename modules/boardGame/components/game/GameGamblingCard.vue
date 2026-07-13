@@ -29,7 +29,7 @@ const props = defineProps({
 <template>
 	<div
 			:class="['item-box', classes]"
-			:style="`background-image: url('${getResizeImg(element.game.title_image, 1500)}');`"
+			:style="`background-image: url('${getResizeImg(element.game.title_image, 1500)}'); height: ${itemHeight}px;`"
 	>
 		<div :class="['card-overlay', classes, overlayClasses]" />
 		<div class="content-box" :style="`height: ${itemHeight}px`">

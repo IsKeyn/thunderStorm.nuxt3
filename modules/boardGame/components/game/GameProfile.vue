@@ -6,10 +6,16 @@ import ExceptionPlatforms from '@/modules/boardGame/components/game/ExceptionPla
 
 const emit = defineEmits(['setStep']);
 
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+
+const { subscribe, unsubscribe } = useWebSocket();
+const runtimeConfig = useRuntimeConfig();
+
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth, userStore } = userFunctions();
 
 import { helper } from '@/composables/helper.js'
-const { route } = helper();
+const { route, hasWebSocked } = helper();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
@@ -174,6 +180,26 @@ const windowGgClasses = computed(() => {
 	}
 
 	return returnData;
+});
+
+onMounted(async () => {
+	if (isAuth.value
+			&& Object.keys(userStore.user).length
+			&& runtimeConfig.public.hasWebSockedServer
+	) {
+		const userId = userStore.user.id;
+
+		subscribe(
+				`App.Models.User.${userId}`,
+				'BoardGame.PlayerInteractions',
+				(data) => {
+					if (data.status === 'update') {
+						hiddenRefresh.value = true;
+						refresh();
+					}
+				}
+		);
+	}
 });
 </script>
 

@@ -315,6 +315,18 @@ onMounted(() => {
 				},
 				'public'
 		);
+
+		if (isAuth.value && userStore?.user?.id) {
+			subscribe(
+					`App.Models.User.${userStore.user.id}`,
+					'BoardGame.PlayerInteractions',
+					(data) => {
+						if (data.status === 'update') {
+							refresh();
+						}
+					}
+			);
+		}
 	}
 });
 </script>
