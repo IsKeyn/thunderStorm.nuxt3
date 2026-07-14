@@ -87,10 +87,10 @@ provide('layoutMethods', {
 			</article>
 			<Notifications />
 			<MediaById />
-			<SideButton
-				title="Старая версия сайта"
-				url="https://old.insilenthill.ru"
-			/>
+<!--			<SideButton-->
+<!--				title="Старая версия сайта"-->
+<!--				url="https://old.insilenthill.ru"-->
+<!--			/>-->
 			<Footer />
 		</div>
 	</div>

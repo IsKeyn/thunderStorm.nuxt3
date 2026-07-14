@@ -23,6 +23,9 @@ import MainMenu from '@/modules/boardGame/components/menu/MainMenu.vue';
 
 import Sound from '@/components/audio/Sound.vue';
 
+import { settings } from '@/composables/settings.js'
+const { getSettingFirstValue } = settings();
+
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
@@ -40,35 +43,43 @@ provide('layoutMethods', {
 
 <template>
 	<CookieAccept />
-	<SystemComponents />
-	<ReceiveMainData />
 
-	<Seo />
+	<div v-if="!getSettingFirstValue('disable-events')">
+		<SystemComponents />
+		<ReceiveMainData />
 
-	<div class="board-game-main">
-		<div id="modals" />
-		<template v-if="boardGameStore.boardGameInfo">
-			<Header />
-			<article>
-				<div class="flex">
-					<MainMenu />
-					<div class="content-box">
-						<slot />
+		<Seo />
+
+		<div class="board-game-main">
+			<div id="modals" />
+			<template v-if="boardGameStore.boardGameInfo">
+				<Header />
+				<article>
+					<div class="flex">
+						<MainMenu />
+						<div class="content-box">
+							<slot />
+						</div>
 					</div>
-				</div>
-			</article>
-			<Notifications />
-			<Footer />
-		</template>
-	</div>
+				</article>
+				<Notifications />
+				<Footer />
+			</template>
+		</div>
 
-	<media-LightBox
-			v-if="openedImage"
-			:image="openedImage"
-			:setViewsLog="true"
-			@setCurrentElement="setOpenedImage"
+		<media-LightBox
+				v-if="openedImage"
+				:image="openedImage"
+				:setViewsLog="true"
+				@setCurrentElement="setOpenedImage"
+		/>
+		<Sound />
+	</div>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="В данный момент ивенты отключены"
 	/>
-	<Sound />
 </template>
 
 <style lang="scss">
