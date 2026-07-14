@@ -1,4 +1,5 @@
 <script setup>
+import CookieAccept from '@/components/actions/CookieAccept.vue';
 import SystemComponents from '@/components/system/SystemComponents.vue';
 import ReceiveMainData from '@/modules/boardGame/components/boardGame/ReceiveMainData.vue';
 
@@ -38,6 +39,7 @@ provide('layoutMethods', {
 </script>
 
 <template>
+	<CookieAccept />
 	<SystemComponents />
 	<ReceiveMainData />
 

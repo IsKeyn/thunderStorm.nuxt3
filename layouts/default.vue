@@ -1,4 +1,6 @@
 <script setup>
+import CookieAccept from '@/components/actions/CookieAccept.vue';
+
 // useHead({
 // 	link: [
 // 		{
@@ -72,6 +74,7 @@ provide('layoutMethods', {
 
 <template>
 	<div :class="theme">
+		<CookieAccept />
 		<SystemComponents />
 		<MainBackground />
 		<div class="main">
