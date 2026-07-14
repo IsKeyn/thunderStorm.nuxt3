@@ -5,6 +5,8 @@ import CommentsList from '@/components/comments/CommentsList.vue';
 
 const emit = defineEmits(['refresh']);
 
+const { getSettingFirstValue } = settings();
+
 const props = defineProps({
 	entityType: {
 		type: String,
@@ -33,7 +35,7 @@ const fetchComments = () => {
 </script>
 
 <template>
-	<div>
+	<div v-if="!getSettingFirstValue('disable-comments')">
 		<OpeningBox :title="addCommentTitle">
 			<AddCommentForm
 					:entityType="entityType"
@@ -48,4 +50,9 @@ const fetchComments = () => {
 				ref="commentsListRef"
 		/>
 	</div>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Комментарии в данный момент отключены"
+	/>
 </template>
