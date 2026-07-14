@@ -1,4 +1,6 @@
 <script setup>
+import CookieAccept from '@/components/actions/CookieAccept.vue';
+
 // useHead({
 // 	link: [
 // 		{
@@ -72,6 +74,7 @@ provide('layoutMethods', {
 
 <template>
 	<div :class="theme">
+		<CookieAccept />
 		<SystemComponents />
 		<MainBackground />
 		<div class="main">
@@ -84,10 +87,10 @@ provide('layoutMethods', {
 			</article>
 			<Notifications />
 			<MediaById />
-			<SideButton
-				title="Старая версия сайта"
-				url="https://old.insilenthill.ru"
-			/>
+<!--			<SideButton-->
+<!--				title="Старая версия сайта"-->
+<!--				url="https://old.insilenthill.ru"-->
+<!--			/>-->
 			<Footer />
 		</div>
 	</div>
