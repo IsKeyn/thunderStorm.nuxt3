@@ -60,6 +60,12 @@ const domain = computed(() => {
 					:description="boardGameStore.boardGameInfo?.description"
 					:image="getResizeImg(boardGameStore.boardGameInfo?.media, 500)"
 			/>
+			<div title="Сайт имеет возрастную маркировку 18+" class="ml-2 flex flex-top">
+				<svg class="inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+					<circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="4"/>
+					<text x="50" y="60" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="currentColor">18+</text>
+				</svg>
+			</div>
 		</div>
 	</footer>
 </template>

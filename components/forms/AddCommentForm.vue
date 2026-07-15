@@ -72,6 +72,17 @@ const createForm = () => {
 				validateRules: 'required, email, minLength_2, maxLength_50',
 				classes: 'min-w-[30%]',
 			};
+
+		createdForm.personal_data_processing_policy = {
+			name: 'Я согласен с правилами использования материалов сайта и политикой по обработке персональных данных',
+					showTitle: false,
+					html: 'Я согласен с <a href="/article/rule-for-use-site/" class="underline" target="_blank">правилами сайта</a> и <a href="/article/consent-of-personal-data/" class="underline" target="_blank">политикой по обработке персональных данных</a>',
+					value: false,
+					type: 'checkbox',
+					validateRules: 'required',
+					validateErrorText: 'Соглашение с правилами сайта и политикой по обработке персональных данных обязательно',
+					classes: ['w-full', 'mt-[5px]'],
+		};
 	}
 
 	createdForm.message = {
@@ -179,6 +190,17 @@ watch(() => userStore.user, () => {
 					:showTitle="false"
 					validateErrorPosition="bottom"
 					:fieldClasses="form.name.classes"
+			/>
+		</div>
+		<div>
+			<FormGenerator
+					:name="personal_data_processing_policy"
+					:element="form.personal_data_processing_policy"
+					:showValidateError=true
+					:showTitle="false"
+					validateErrorPosition="bottom"
+					:labelClasses="['block', 'mb-[10px]']"
+					:fieldClasses="form.classes"
 			/>
 		</div>
 	</div>

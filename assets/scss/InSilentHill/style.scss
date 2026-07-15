@@ -50,6 +50,18 @@
     }
   }
 
+  &.btn-unwanted {
+    @apply bg-[var(--button-unwanted-color-1)];
+
+    &:hover {
+      @apply bg-[var(--button-unwanted-color-1-hover)];
+    }
+
+    &.active {
+      @apply bg-[var(--button-unwanted-color-1-hover)];
+    }
+  }
+
   &.btn-disable,
   &:disabled {
     @apply bg-[var(--button-disable-color-1)] cursor-not-allowed;

@@ -5,6 +5,8 @@ import SocialAuthComponent from '@/components/user/auth/SocialAuthComponent.vue'
 
 const route = useRoute();
 
+const { getSettingFirstValue } = settings();
+
 import { validate } from '@/composables/validate.js';
 import { api } from '@/composables/api.js';
 import { useUserStore } from '@/stores/user';
@@ -64,11 +66,11 @@ const form = ref(
 			personal_data_processing_policy: {
 				name: 'Я согласен с правилами использования материалов сайта и политикой по обработке персональных данных',
 				showTitle: false,
-				html: 'Я согласен с <a href="/article/rule-for-use-site/" target="_blank">правилами использования материалов сайта</a> и <a href="/article/consent-of-personal-data/" target="_blank">политикой по обработке персональных данных</a>',
+				html: 'Я согласен с <a href="/article/rule-for-use-site/" class="underline" target="_blank">правилами использования материалов сайта</a> и <a href="/article/consent-of-personal-data/" class="underline" target="_blank">политикой по обработке персональных данных</a>',
 				value: false,
 				type: 'checkbox',
 				validateRules: 'required',
-				validateErrorText: 'Соглашение с правилами использования материалов сайта и пополитикой по обработке персональных данных обязательно для регистрации',
+				validateErrorText: 'Соглашение с правилами использования материалов сайта и политикой по обработке персональных данных обязательно для регистрации',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -208,7 +210,7 @@ const getUserData = async () => {
 </script>
 
 <template>
-	<div>
+	<div v-if="!Boolean(Number(getSettingFirstValue('disable-registration')))">
 		<template v-if="userStore.user && Object.keys(userStore.user).length > 0 && Authorization">
 			<template v-if="userStore.user.email_verified_at">
 				Вы уже зарегистрированы
@@ -280,4 +282,9 @@ const getUserData = async () => {
 			/>
 		</template>
 	</div>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Регистрация в данный момент отключена"
+	/>
 </template>
