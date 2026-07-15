@@ -44,7 +44,7 @@ provide('layoutMethods', {
 <template>
 	<CookieAccept />
 
-	<div v-if="!getSettingFirstValue('disable-events')">
+	<div v-if="!Boolean(Number(getSettingFirstValue('disable-events')))">
 		<SystemComponents />
 		<ReceiveMainData />
 

@@ -6,7 +6,7 @@ const { getSettingFirstValue } = settings();
 </script>
 
 <template>
-	<BoardGameList v-if="!getSettingFirstValue('disable-events')" />
+	<BoardGameList v-if="!Boolean(Number(getSettingFirstValue('disable-events')))" />
 	<ui-itemBox
 			v-else
 			classes="red"
