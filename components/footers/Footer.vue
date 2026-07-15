@@ -107,7 +107,7 @@ footer {
 	}
 
 	.footer-icon-block {
-		@apply relative col-span-1 text-right;
+		@apply relative col-span-1 text-center md:text-right;
 
 		.site-map {
 			@apply text-[35px];
