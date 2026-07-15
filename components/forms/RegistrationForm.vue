@@ -210,7 +210,7 @@ const getUserData = async () => {
 </script>
 
 <template>
-	<div v-if="!getSettingFirstValue('disable-registration')">
+	<div v-if="!Boolean(Number(getSettingFirstValue('disable-registration')))">
 		<template v-if="userStore.user && Object.keys(userStore.user).length > 0 && Authorization">
 			<template v-if="userStore.user.email_verified_at">
 				Вы уже зарегистрированы

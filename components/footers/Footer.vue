@@ -56,6 +56,12 @@ const toggleSendBugModal = () => {
 		<div class="cutting" />
 		<div class="footer-icon-block">
 			<router-link to="/site_map" class="site-map"><font-awesome-icon :icon="['fas', 'map']" /></router-link>
+			<div title="Сайт имеет возрастную маркировку 18+">
+				<svg class="inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+					<circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="4"/>
+					<text x="50" y="60" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="currentColor">18+</text>
+				</svg>
+			</div>
 		</div>
 	</footer>
 	<Modal
@@ -101,7 +107,7 @@ footer {
 	}
 
 	.footer-icon-block {
-		@apply relative col-span-1 text-right;
+		@apply relative col-span-1 text-center md:text-right;
 
 		.site-map {
 			@apply text-[35px];

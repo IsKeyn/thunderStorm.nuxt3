@@ -35,7 +35,7 @@ const fetchComments = () => {
 </script>
 
 <template>
-	<div v-if="!getSettingFirstValue('disable-comments')">
+	<div v-if="!Boolean(Number(getSettingFirstValue('disable-comments')))">
 		<OpeningBox :title="addCommentTitle">
 			<AddCommentForm
 					:entityType="entityType"
