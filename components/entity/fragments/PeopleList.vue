@@ -11,6 +11,14 @@ const props = defineProps({
 		type: Array,
 		required: true,
 	},
+	name: {
+		type: String,
+		default: null,
+	},
+	listPage: {
+		type: String,
+		required: true,
+	},
 });
 
 const getSlotName = (n) => `slot-${n + 1}`;
@@ -67,11 +75,12 @@ const carouselConfig = {
 <template>
 	<div class="mb-6">
 		<nuxt-link
-				to="person/"
+				v-if="name"
+				:to="`${listPage}/`"
 				class="block title mt-4 mb-4"
 				target="_blank"
 		>
-			Персоны
+			{{ name }}
 		</nuxt-link>
 		<SliderWithSlots
 				:count="data.length"
@@ -86,7 +95,7 @@ const carouselConfig = {
 				<WildCard
 						:data="item"
 						:entity="entity"
-						listPage="person"
+						:listPage="listPage"
 				/>
 			</template>
 		</SliderWithSlots>

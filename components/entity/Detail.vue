@@ -151,6 +151,16 @@ const getSlotName = (n) => `slot-${n + 1}`;
 						v-if="fetchedData.people && fetchedData.people.length"
 						:data="fetchedData.people"
 						:entity="entity"
+						name="Персоны"
+						listPage="person"
+				/>
+
+				<PeopleList
+						v-if="fetchedData.characters && fetchedData.characters.length"
+						:data="fetchedData.characters"
+						:entity="entity"
+						name="Персонажи"
+						listPage="character"
 				/>
 
 				<SeriesList

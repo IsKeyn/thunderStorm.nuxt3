@@ -185,6 +185,13 @@ const extensions = [
 		},
 	},
 	{
+		name: 'Characters',
+		keyForBackend: 'characters',
+		params: {
+			additionalDataKeys: ['character', 'character_role'],
+		},
+	},
+	{
 		name: 'Links',
 		keyForBackend: 'links',
 		params: null,

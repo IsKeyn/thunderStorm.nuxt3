@@ -95,7 +95,7 @@ const form = ref(
 
 const pageType = ref('');
 
-const title = 'Персоны';
+const title = 'Персонажи';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -139,7 +139,7 @@ const extensions = [
 		<CreateEditFormV2
 				v-if="checkPermission('person.edit')"
 				:form="form"
-				fetchUrl="admin/person"
+				fetchUrl="admin/character"
 				:additionalFieldsEnable="true"
 				:showTags="true"
 				:showSeo="true"
