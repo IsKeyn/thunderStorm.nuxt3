@@ -1,11 +1,15 @@
 <script setup>
 import ProfileLine from '@/modules/boardGame/components/user/player/fragments/ProfileLine.vue';
 import ProfileLineShort from '@/modules/boardGame/components/user/player/fragments/ProfileLineShort.vue';
+import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
 
 const emit = defineEmits(['onClickFunc']);
 
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
+
+import { userMessage } from '@/composables/userMessage.js';
+const { userMessagesModalRef, showUserMessagesModal } = userMessage();
 
 const props = defineProps({
 	element: {
@@ -52,6 +56,7 @@ const props = defineProps({
 				type="list"
 				:hideItems="hideItems"
 				:hideStatusEffect="hideStatusEffect"
+				@showUserMessagesModal="showUserMessagesModal"
 		/>
 		<ProfileLineShort
 				v-if="theme === 'short'"
@@ -81,6 +86,8 @@ const props = defineProps({
 				:hideStatusEffect="hideStatusEffect"
 		/>
 	</div>
+
+	<UserMessagesModal ref="userMessagesModalRef" />
 </template>
 
 <style lang="scss" scoped>

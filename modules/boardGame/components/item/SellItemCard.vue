@@ -117,8 +117,6 @@ const withdrawnItemRequest = async (shopItem) => {
 
 		const response = await sendApiRequest('board-game/v2/shop/withdrawn', 'POST', body, 'bg_withdrawnItem', 'small', 'method');
 
-		console.log(111, response);
-
 		if (!response) {
 			error('Ответ от сервера пуст');
 			return;

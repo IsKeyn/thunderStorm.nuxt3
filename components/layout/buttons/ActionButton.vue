@@ -18,6 +18,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	type: {
+		type: String,
+		default: 'submit',
+	}
 });
 </script>
 
@@ -26,6 +30,7 @@ const props = defineProps({
 			@click="emit('startAction')"
 			:disabled="actionInProgress || disabled"
 			:class="[buttonClasses]"
+			:type="type"
 	>
 		<template v-if="!actionInProgress">
 			<slot />

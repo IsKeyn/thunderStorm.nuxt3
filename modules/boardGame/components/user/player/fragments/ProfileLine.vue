@@ -78,6 +78,10 @@ const otherStreamPlatform = computed(() => {
 
 	return false;
 });
+
+const sendMessage = (user) => {
+	emit('showUserMessagesModal', user);
+}
 </script>
 
 <template>
@@ -135,7 +139,7 @@ const otherStreamPlatform = computed(() => {
 							class="wrapper twitch"
 							@click.prevent="goToTwitch(boardGameStore.playersOnline[element.user.id])"
 					>Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></span>
-					<span v-if="!isCurrentUser" class="wrapper default message"><font-awesome-icon icon="fa-solid fa-envelope" /></span>
+					<span v-if="!isCurrentUser" class="wrapper default message" @click.prevent="sendMessage(element.user)"><font-awesome-icon icon="fa-solid fa-envelope" /></span>
 				</div>
 				<div
 						v-if="element.premium && element?.settings?.premiumMessage"
