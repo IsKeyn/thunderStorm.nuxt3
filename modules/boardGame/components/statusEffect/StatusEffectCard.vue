@@ -60,7 +60,7 @@ const activateSe = (type) => {
 		title = 'Применение статус эффекта';
 		message = 'Вы выполнили условие статус эффекта?';
 
-		JSON.parse(props.element.statusEffectBind.statusEffect.actions).forEach((item) => {
+		props.element.statusEffectBind.statusEffect.actions.forEach((item) => {
 			if (item.actions) {
 				item.actions.forEach((action, key) => {
 					if (key === 1 && action.choiceMessage) {
@@ -73,7 +73,7 @@ const activateSe = (type) => {
 		title = 'Отказ от выполнения статус эффекта';
 		message = 'При отказе от статус эффекта, вы получите штраф.';
 
-		JSON.parse(props.element.statusEffectBind.statusEffect.actions).forEach((item) => {
+		props.element.statusEffectBind.statusEffect.actions.forEach((item) => {
 			if (item.actions) {
 				item.actions.forEach((action, key) => {
 					if (key === 0 && action.choiceMessage) {
@@ -194,7 +194,7 @@ const sendActivateSeRequest = async (type) => {
 			</span>
 			<div
 					v-if="element.active"
-					v-for="(action, key) in JSON.parse(element.statusEffectBind.statusEffect.actions)"
+					v-for="(action, key) in element.statusEffectBind.statusEffect.actions"
 					class="actions"
 			>
 				<template v-if="showControlPanel && action && action.type === 'choice'">

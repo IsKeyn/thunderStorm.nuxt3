@@ -41,12 +41,6 @@ const titles = ref(
 				name: 'Изображение',
 				type: 'media'
 			},
-			board_game_id: {
-				name: 'Настольная игра',
-				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
-				sortable: true,
-			},
 			debuff: {
 				name: 'Дебаф',
 				type: 'boolean',

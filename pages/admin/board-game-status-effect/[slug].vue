@@ -80,14 +80,6 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			board_game_id: {
-				name: 'Настольная игра',
-				value: '',
-				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
 			debuff: {
 				name: 'Дебаф',
 				value: 0,
