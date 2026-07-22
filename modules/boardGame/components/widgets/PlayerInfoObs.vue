@@ -21,6 +21,10 @@ const props = defineProps({
 		type: Number,
 		default: null,
 	},
+	bg_slug: {
+		type: String,
+		default: '',
+	},
 });
 
 const requestName = 'getBgPlayerWithInventory';
@@ -60,10 +64,14 @@ const fetchedData = ref([]);
 const hasSubscribe = ref(false);
 
 const setSubscribe = () => {
-	if (runtimeConfig.public.hasWebSockedServer && fetchedData.value?.user?.id && !hasSubscribe.value) {
+	if (runtimeConfig.public.hasWebSockedServer && !hasSubscribe.value) {
+		let channelName = 'playerInfoForObs';
+
+		channelName += `.${route.query.bg_slug ?? props.bg_slug}.${route.query.player_id ?? props.player_id}`;
+
 		hasSubscribe.value = true;
 		const { unsubscribe: stop, subscriptionId } = subscribe(
-				`App.Models.User.${fetchedData.value.user.id}`,
+				channelName,
 				'BoardGame.PlayerInfoForObs',
 				(data) => {
 					if (data.status === 'update') {

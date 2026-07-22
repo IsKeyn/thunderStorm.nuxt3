@@ -1,5 +1,7 @@
 <script setup>
 import SelectPlayerDetailList from '@/modules/boardGame/components/user/player/SelectPlayerDetailList.vue';
+import TheCunningElf from '@/modules/boardGame/components/board/cellGames/TheCunningElf.vue';
+import UnusefulButton from '@/modules/boardGame/components/board/cellGames/UnusefulButton.vue';
 
 import { ref } from "vue";
 
@@ -107,7 +109,7 @@ const setAction = (type) => {
 							{
 								name: 'Да',
 								func: () => {
-									setRequest(type);
+									setRequest('activate-effect');
 								},
 								additionalKeywordFunc: 'close',
 							},
@@ -148,6 +150,13 @@ const setRequest = async (type) => {
 		}
 	} catch (e) {
 		error(e);
+	}
+}
+
+const getGameInitComponent = (name) => {
+	switch (name) {
+		case 'TheCunningElf': return TheCunningElf;
+		case 'UnusefulButton': return UnusefulButton;
 	}
 }
 </script>
@@ -193,7 +202,7 @@ const setRequest = async (type) => {
 			</span>
 			<div
 					v-if="element.boardPositionEffect && element.boardPositionEffect.actions && !hasUsed"
-					v-for="(action, key) in JSON.parse(element.boardPositionEffect.actions)"
+					v-for="(action, key) in element.boardPositionEffect.actions"
 					:key="key"
 					class="actions"
 			>
@@ -222,6 +231,12 @@ const setRequest = async (type) => {
 					>
 						Отправить приглашение
 					</button>
+				</template>
+				<template v-if="showControlPanel && action && action.type === 'game'">
+					<component
+							:is="getGameInitComponent(action.gameName)"
+							:element="element"
+					/>
 				</template>
 			</div>
 		</div>

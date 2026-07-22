@@ -39,10 +39,6 @@ const titles = ref(
 				name: 'Изображение',
 				type: 'media'
 			},
-			actions: {
-				name: 'Действия (json)',
-				type: 'cutText',
-			},
 			type: {
 				name: 'Тип',
 				sortable: true,

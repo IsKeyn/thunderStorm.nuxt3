@@ -1,14 +1,13 @@
 <script setup>
-import Tabs from '@/components/ui/tabs/Tabs.vue';
-import Inventory from '@/modules/boardGame/components/item/Inventory.vue';
 import ItemList from '@/modules/boardGame/components/item/ItemList.vue';
 
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
-const pageName = 'Инвентарь';
+const pageName = 'Предметы в ивенте';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -24,16 +23,6 @@ const breadCrumbsArray = computed(() => {
 	];
 });
 
-const tabsElements = [
-	{
-		id: 'inventory',
-		title: 'Инвентарь',
-	},
-	{
-		id: 'item-list',
-		title: 'Список предметов',
-	},
-];
 </script>
 
 <template>
@@ -42,19 +31,7 @@ const tabsElements = [
 			:breadCrumbs="breadCrumbsArray"
 			:showMainPageInBreadCrumbs="false"
 	/>
-	<Tabs
-			:tabs="tabsElements"
-			type="if"
-			defaultCurrentTab="inventory"
-	>
-		<template #tab-inventory>
-			<Inventory />
-		</template>
-		<template #tab-item-list>
-			<ItemList />
-		</template>
-	</Tabs>
-
+	<ItemList />
 </template>
 
 <style lang="scss" scoped></style>

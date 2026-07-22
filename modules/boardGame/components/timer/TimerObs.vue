@@ -64,7 +64,7 @@ const timerName = ref('');
 const settings = ref({
 	font: 'Digital-7',
 	animation: true,
-	showTitle: false,
+	showTitle: true,
 });
 
 const isRunning = ref(null);

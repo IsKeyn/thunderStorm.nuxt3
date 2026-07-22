@@ -14,6 +14,7 @@ const props = defineProps({
 const themeList = ref(
 		[
 			{ value: 'InSilentHill', name: 'InSilentHill', },
+			{ value: 'autumn', name: 'Осень', },
 			{ value: 'green', name: 'Зеленая', },
 			{ value: 'ocean', name: 'Океан', },
 			{ value: 'street', name: 'Улица', },

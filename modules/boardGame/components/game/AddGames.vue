@@ -230,7 +230,7 @@ watch(() => value.value, () => {
 
 		</template>
 		<div v-if="checkResult.status === 2">
-			<div class="item-box !mb-[1rem]">Вы можете добавить свои игры, при выполнении условий</div>
+			<div class="item-box !mb-[1rem]"><font-awesome-icon :icon="['fas', 'circle-info']" /> Вы можете добавить свои игры, при выполнении условий</div>
 			<div class="wrapper">
 				<div v-if="addingGamesConditions?.position" class="col-span-6">
 					Необходимо достигнуть позиции {{ addingGamesConditions.position }} на игровом поле

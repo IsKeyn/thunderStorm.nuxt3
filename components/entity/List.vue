@@ -25,6 +25,10 @@ const {
 } = filters();
 
 const props = defineProps({
+	showHeader: {
+		type: Boolean,
+		default: true,
+	},
 	entity: {
 		type: String,
 		required: true,
@@ -225,6 +229,7 @@ const dataByGroups = computed(() => {
 
 <template>
 	<PageHeader
+			v-if="showHeader"
 			:title="title"
 			:breadCrumbs="getBreadCrumbs()"
 	/>

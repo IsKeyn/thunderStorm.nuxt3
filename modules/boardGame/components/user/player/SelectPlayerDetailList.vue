@@ -157,9 +157,10 @@ const usedFiltersProp = [
 				@toggleModal="toggleOptions"
 		>
 			<div class="modal-parent">
-				<h3 class="modal-title">Применение предмета</h3>
+				<h3 class="modal-title">Выбор игрока, на кого применить</h3>
 				<div class="link-parent-box">
 					<PlayersList
+							filterNamePostfix="select_players"
 							:showPageHeader="false"
 							:usedFiltersProp="usedFiltersProp"
 							:defaultFiltersProp="defaultFiltersProp"

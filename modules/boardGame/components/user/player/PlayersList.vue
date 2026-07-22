@@ -28,6 +28,10 @@ const {
 } = filters();
 
 const props = defineProps({
+	filterNamePostfix: {
+		type: String,
+		default: 'players_default',
+	},
 	perPage: {
 		type: Number,
 		default: 15,
@@ -77,7 +81,7 @@ const {
 	setPerPage
 } = pagination(props.perPage);
 
-const filterName = setFilterName([ 'list', props.fetchUrl ]);
+const filterName = setFilterName([ 'list', props.filterNamePostfix ]);
 
 // Устанавливаем фильтры их get параметров
 setQueryFilters(filterName, props.usedFilters, props.defaultFilters);

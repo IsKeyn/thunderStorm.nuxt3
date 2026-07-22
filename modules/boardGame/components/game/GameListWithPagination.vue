@@ -7,6 +7,13 @@ const { route } = helper();
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
 const { getSettingValue } = boardGame();
 
+const props = defineProps({
+	showHeader: {
+		type: Boolean,
+		default: true,
+	},
+});
+
 const defaultEventGamePlatforms = [
 	{
 		id:	25,
@@ -126,6 +133,7 @@ const defaultFilters = {
 
 <template>
 	<List
+			:showHeader="showHeader"
 			entity="game"
 			:pathToDetail="`e/${route.params.slug}/game`"
 			name="Игры"

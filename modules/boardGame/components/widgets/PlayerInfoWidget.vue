@@ -31,6 +31,7 @@ const copyObsLink = () => {
 	<div class="grid grid-cols-2">
 		<PlayerInfoObs
 				:player_id="userStore.player.id"
+				:bg_slug="route.params.slug"
 		/>
 		<Settings />
 	</div>

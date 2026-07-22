@@ -2,6 +2,7 @@
 import CookieAccept from '@/components/actions/CookieAccept.vue';
 import SystemComponents from '@/components/system/SystemComponents.vue';
 import ReceiveMainData from '@/modules/boardGame/components/boardGame/ReceiveMainData.vue';
+import ImportantLogsListener from '@/modules/boardGame/components/log-list/ImportantLogsListener.vue';
 
 
 
@@ -47,6 +48,7 @@ provide('layoutMethods', {
 	<div v-if="!Boolean(Number(getSettingFirstValue('disable-events')))">
 		<SystemComponents />
 		<ReceiveMainData />
+		<ImportantLogsListener />
 
 		<Seo />
 
@@ -100,6 +102,7 @@ provide('layoutMethods', {
 @import url('~/assets/scss/Dashboard/themes/Street.scss');
 @import url('~/assets/scss/Dashboard/themes/StreetLight.scss');
 @import url('~/assets/scss/Dashboard/themes/WinterLight.scss');
+@import url('~/assets/scss/Dashboard/themes/Autumn.scss');
 </style>
 
 <style lang="scss" scoped>

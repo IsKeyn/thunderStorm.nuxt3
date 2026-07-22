@@ -10,6 +10,10 @@ import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
 const props = defineProps({
+	filterNamePostfix: {
+		type: String,
+		default: 'players_default',
+	},
 	showPageHeader: {
 		type: Boolean,
 		default: true,
@@ -119,6 +123,7 @@ const defaultFilters = {
 	/>
 	<PlayersList
 			entity="BoardGamePlayer"
+			:filterNamePostfix="filterNamePostfix"
 			:usedFilters="[ ...usedFilters, ...usedFiltersProp ]"
 			:sortOptions="sortOptions"
 			:defaultFilters="{ ...defaultFilters, ...defaultFiltersProp }"

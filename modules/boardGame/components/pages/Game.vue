@@ -1,14 +1,13 @@
 <script setup>
-import Tabs from '@/components/ui/tabs/Tabs.vue';
-import GameList from '@/modules/boardGame/components/game/GameList.vue';
-import GameProfile from '@/modules/boardGame/components/game/GameProfile.vue';
+import GameListWithPagination from '@/modules/boardGame/components/game/GameListWithPagination.vue';
 
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
-const pageName = 'Игра';
+const pageName = 'Игры в ивенте';
 const breadCrumbsArray = computed(() => {
 	const splitedPath = route.path.split('/');
 
@@ -23,17 +22,6 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
-
-const tabsElements = [
-	{
-		id: 'game',
-		title: 'Профиль игры',
-	},
-	{
-		id: 'game-list',
-		title: 'Список игр',
-	},
-];
 </script>
 
 <template>
@@ -42,21 +30,9 @@ const tabsElements = [
 			:breadCrumbs="breadCrumbsArray"
 			:showMainPageInBreadCrumbs="false"
 	/>
-	<Tabs
-			:tabs="tabsElements"
-			type="if"
-			defaultCurrentTab="game"
-	>
-		<template #tab-game>
-			<GameProfile />
-		</template>
-		<template #tab-game-list>
-			<div class="max-w-[1400px] m-auto">
-				<GameList />
-			</div>
-		</template>
-	</Tabs>
-
+	<div class="max-w-[1400px] m-auto">
+		<GameListWithPagination :showHeader="false" />
+	</div>
 </template>
 
 <style lang="scss" scoped></style>

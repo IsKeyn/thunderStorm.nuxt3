@@ -40,6 +40,7 @@ watch(() => soundVolume.value, () => {
 
 const updateSoundVolume = () => {
 	if (isAuth) {
+		userStore.user.settings ??= {};
 		userStore.user.settings.soundVolume = Number(soundVolume.value.value);
 	}
 

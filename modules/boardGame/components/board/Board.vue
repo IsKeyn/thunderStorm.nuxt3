@@ -294,7 +294,7 @@ watch(() => moveQueue.value, () => {
 				playerForMove.value = moveQueue.value[0].playerId;
 
 				if (moveQueue.value[0]?.positionData) {
-					changePosition(moveQueue.value[0].positionData, movedPlayer.value);
+					changePosition(moveQueue.value[0].positionData, movedPlayer.value, null, false);
 				}
 			}
 		}, 500);
