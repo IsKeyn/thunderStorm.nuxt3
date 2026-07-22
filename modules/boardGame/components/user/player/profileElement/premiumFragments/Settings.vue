@@ -121,7 +121,7 @@ const form = ref({
 			},
 		],
 		placeholder: 'Позицию фона',
-		labelClasses: 'col-span-4',
+		labelClasses: 'col-span-12 xl:col-span-4',
 		classes: 'w-full',
 	},
 	vein: {
@@ -132,14 +132,14 @@ const form = ref({
 		min: 0,
 		max: 1,
 		step: 0.1,
-		labelClasses: 'col-span-4',
+		labelClasses: 'col-span-12 xl:col-span-4',
 		classes: 'w-full',
 	},
 	pave: {
 		name: 'Замостить',
 		value: props.element?.settings?.pave ? props.element.settings.pave : '',
 		type: 'checkbox',
-		labelClasses: 'col-span-4',
+		labelClasses: 'col-span-12 xl:col-span-4',
 		classes: 'w-full',
 	},
 });

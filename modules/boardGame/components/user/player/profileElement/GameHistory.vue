@@ -142,7 +142,7 @@ const chartOptions = {
 
 <style lang="scss" scoped>
 .game-count-line {
-	@apply block lg:flex justify-center;
+	@apply flex justify-center;
 
 	span {
 		@apply block lg:inline mr-[1.5rem];

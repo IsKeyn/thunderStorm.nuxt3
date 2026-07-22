@@ -17,16 +17,19 @@ const steps = {
 	1: {
 		title: 'Действие 1 - Лут предметов и их использование',
 		buttonName: 'Инвентарь',
+		icon: ['fa-solid', 'fa-hat-wizard'],
 		description: 'Прокрутите рулетку предметов доступное количество раз, ознакомтесь с выпавшими предметами и при необходимости используйте их',
 	},
 	2: {
 		title: 'Действие 2 - Игровая доска, ход и действия на клетках',
+		icon: ['fas', 'dice'],
 		buttonName: 'Игровое поле',
 		description: 'Бросьте кубик, если вы попадете на клетку с действием, примите решение с действием',
 	},
 	3: {
 		title: 'Действие 3 - Выбор игры и её прохождение',
 		buttonName: 'Игра',
+		icon: ['fas', 'gamepad'],
 		description: 'Крутаните рулетку игр и выберите игру для прохождения, помните, что рерол игры накладывает штрафы. Во время прохождения игры необходимо включать таймер',
 	},
 };
@@ -129,9 +132,10 @@ const tabsGameElements = [
 		<div class="left">
 			<button
 					v-if="currentStep !== Number(firstStep())"
-					class="btn btn-simple"
+					class="btn btn-simple nav-button"
+					title="Шаг назад"
 					@click="changeStep('prev')"
-			><font-awesome-icon icon="fa-solid fa-arrow-left" /> Шаг назад</button>
+			><font-awesome-icon icon="fa-solid fa-arrow-left" /><span class="description"> Шаг назад</span></button>
 		</div>
 
 		<div class="center">
@@ -141,16 +145,18 @@ const tabsGameElements = [
 					:class="['btn btn-simple', currentStep === Number(key) ? 'active' : null]"
 					@click="setStep(Number(key))"
 			>
-				{{ key }} - {{ step.buttonName }}
+				<font-awesome-icon :icon="step.icon" />
+				<span class="name">{{ key }} - {{ step.buttonName }}</span>
 			</button>
 		</div>
 
 		<div class="right">
 			<button
 					v-if="currentStep !== Number(lastStep())"
-					class="btn btn-simple ml-2"
+					class="btn btn-simple ml-2 nav-button"
+					title="Шаг вперед"
 					@click="changeStep('next')"
-			>Шаг вперед <font-awesome-icon icon="fa-solid fa-arrow-right" /></button>
+			><span class="description">Шаг вперед </span><font-awesome-icon icon="fa-solid fa-arrow-right" /></button>
 		</div>
 	</div>
 
@@ -203,14 +209,14 @@ const tabsGameElements = [
 
 <style lang="scss" scoped>
 .buttons {
-	@apply w-full block lg:grid grid-cols-12 text-[1.2rem];
+	@apply w-full block grid grid-cols-12 text-[1.2rem];
 
 	.left {
-		@apply col-span-4 flex justify-start;
+		@apply col-span-3 lg:col-span-4 flex justify-start;
 	}
 
 	.center {
-		@apply col-span-4 flex justify-center;
+		@apply col-span-6 lg:col-span-4 flex justify-center;
 
 		button {
 			@apply mr-1;
@@ -218,11 +224,25 @@ const tabsGameElements = [
 			&.active {
 				@apply bg-[var(--main-hover-color)];
 			}
+
+			svg {
+				@apply xl:hidden;
+			}
+
+			.name {
+				@apply hidden xl:inline;
+			}
 		}
 	}
 
 	.right {
-		@apply col-span-4 flex justify-end;
+		@apply col-span-3 lg:col-span-4 flex justify-end;
+	}
+
+	.nav-button {
+		.description {
+			@apply hidden sm:inline;
+		}
 	}
 }
 </style>

@@ -140,7 +140,8 @@ const choiceCardRequest = async () => {
 
 	.quote-box {
 		@apply
-			absolute top-1/2 -translate-y-1/2 left-1/4 -translate-x-1/2
+			absolute
+		top-[10px] md:top-[30%] lg:top-1/2 lg:-translate-y-1/2 left-0 lg:left-1/4 lg:-translate-x-1/2
 			bg-[var(--body-bg-color)] text-[var(--main-dark-text-color)] p-[1rem] text-[1.5rem]
 			max-w-[45%] cursor-pointer
 			text-wrap

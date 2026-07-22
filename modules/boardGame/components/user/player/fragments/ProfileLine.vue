@@ -124,47 +124,41 @@ const sendMessage = (user) => {
 					</span>
 				</div>
 			</div>
-			<div v-if="type === 'detail'" class="timer-box">
-				<Timer
-						:userId="element.user_id"
-						:showName="false"
-						:showControlButtons="false"
-				/>
-			</div>
 			<div class="content line-content">
-				<div class="field">
-					<span class="wrapper default">{{ element.user.public_name ?? element.user.name }}</span>
-					<span
-							v-if="boardGameStore.playersOnline && boardGameStore.playersOnline[element.user.id]"
-							class="wrapper twitch"
-							@click.prevent="goToTwitch(boardGameStore.playersOnline[element.user.id])"
-					>Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></span>
-					<span v-if="!isCurrentUser" class="wrapper default message" @click.prevent="sendMessage(element.user)"><font-awesome-icon icon="fa-solid fa-envelope" /></span>
-				</div>
-				<div
-						v-if="element.premium && element?.settings?.premiumMessage"
-						class="field"
-				>
+				<div class="wild-box">
+					<div class="field">
+						<span class="wrapper default">{{ element.user.public_name ?? element.user.name }}</span>
+						<span
+								v-if="boardGameStore.playersOnline && boardGameStore.playersOnline[element.user.id]"
+								class="wrapper twitch"
+								@click.prevent="goToTwitch(boardGameStore.playersOnline[element.user.id])"
+						>Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></span>
+						<span v-if="!isCurrentUser" class="wrapper default message" @click.prevent="sendMessage(element.user)"><font-awesome-icon icon="fa-solid fa-envelope" /></span>
+					</div>
+					<div
+							v-if="element.premium && element?.settings?.premiumMessage"
+							class="field"
+					>
 					<span class="wrapper default shimmer">
 						<font-awesome-icon icon="fa-solid fa-bullhorn" class="inline mr-2" /> {{ element?.settings?.premiumMessage ? element.settings.premiumMessage : '' }}
 					</span>
-				</div>
+					</div>
 
-				<div class="field">
+					<div class="field">
 					<span v-if="element?.full_points" class="wrapper default">
 						Результат: {{ element.full_points }}
 					</span>
-					<span class="wrapper default">Очков в час: {{ element.points_per_hour ?? 0 }}</span>
-					<span class="wrapper default">На поле: {{ element.position ? element.position : 'Не ходил' }}</span>
-					<span class="wrapper default">Стрик: x{{ element.streak }}</span>
-					<span
-							v-if="type === 'detail' && element.created_at"
-							class="wrapper default"
-					>В ивенте с {{ getFormattedDate('d ru_mouths_name Y', element.created_at) }}</span>
-					<span
-							v-if="type === 'detail'"
-							class="wrapper default"
-					>
+						<span class="wrapper default">Очков в час: {{ element.points_per_hour ?? 0 }}</span>
+						<span class="wrapper default">На поле: {{ element.position ? element.position : 'Не ходил' }}</span>
+						<span class="wrapper default">Стрик: x{{ element.streak }}</span>
+						<span
+								v-if="type === 'detail' && element.created_at"
+								class="wrapper default"
+						>В ивенте с {{ getFormattedDate('d ru_mouths_name Y', element.created_at) }}</span>
+						<span
+								v-if="type === 'detail'"
+								class="wrapper default"
+						>
 						<template v-if="element.active">
 							Участвует
 						</template>
@@ -172,11 +166,19 @@ const sendMessage = (user) => {
 							Не участвует
 						</template>
 					</span>
+					</div>
+				</div>
+				<div v-if="type === 'detail'" class="box">
+					<Timer
+							:userId="element.user_id"
+							:showName="false"
+							:showControlButtons="false"
+					/>
 				</div>
 			</div>
 		</div>
 		<div :class="['second-line', type]">
-			<div class="content line-content">
+			<div class="content line-content second">
 				<template v-if="type === 'detail'">
 					<div class="box">
 						<NuxtLink
@@ -250,148 +252,5 @@ const sendMessage = (user) => {
 </template>
 
 <style lang="scss" scoped>
-.player-box {
-	@apply block mb-4;
-
-	&.line {
-		@apply cursor-pointer;
-	}
-
-	&:hover {
-		.first-line {
-			.bg {
-				@apply bg-[var(--second-active-color)];
-			}
-		}
-	}
-
-	.first-line {
-		@apply min-h-[10rem] relative bg-[var(--main-bg-color)];
-
-		.bg {
-			@apply absolute z-[0] w-full h-full bg-[var(--body-bg-color)];
-
-			transition: all 0.3s ease;
-			mask-position: center center;
-			mask-repeat: repeat;
-
-			mask-size: 200px;
-			mask-image: url('/images/board-games/player-bg.png');
-		}
-
-		.avatar-box-main {
-			@apply absolute z-[2] left-[2rem] bottom-[-2rem] max-w-[12rem];
-
-			.absolute-place-box {
-				@apply absolute z-10;
-
-				bottom: -1.5rem;
-				left: calc(50% - 1.5rem);
-
-				.place {
-					@apply
-					bg-[var(--success-color)] text-[var(--main-dark-text-color)] text-[1.3rem]
-					block w-[3rem] h-[3rem] rounded-full text-center mb-[0.3rem]
-					flex items-center justify-center;
-
-					&.gold {
-						@apply bg-[#FFD700] text-[#000000];
-					}
-
-					&.silver {
-						@apply bg-[#C0C0C0] text-[#000000];
-					}
-
-					&.bronze {
-						@apply bg-[#CD7F32];
-					}
-				}
-			}
-		}
-
-		.content {
-			.field {
-				@apply mb-5;
-
-				.wrapper {
-					@apply mr-[0.5rem] pt-[0.5rem] pb-[0.5rem] pr-[1rem] pl-[1rem] font-bold rounded-full;
-				}
-
-				.default {
-					@apply bg-[var(--second-bg-color)] text-[var(--main-dark-text-color)];
-				}
-
-				.twitch {
-					@apply cursor-pointer bg-[#9147ff] text-[#ffffff];
-				}
-
-				.message {
-					@apply cursor-pointer;
-				}
-
-				.shimmer {
-					@apply relative overflow-hidden inline-flex items-center w-fit rounded-full;
-
-					&::after {
-						content: '';
-
-						@apply absolute inset-0 -translate-x-full rounded-full;
-
-						background: linear-gradient(
-										90deg,
-										transparent,
-										rgba(255, 255, 255, 0.25),
-										transparent
-						);
-						animation: shimmer 3s infinite ease-in-out;
-						will-change: transform;
-					}
-				}
-			}
-		}
-
-		.timer-box {
-			@apply w-[30%] p-[0.5rem] absolute top-0 right-[0.5rem];
-		}
-	}
-
-	.second-line {
-		@apply min-h-[6rem];
-
-		&.list {
-			@apply bg-[var(--second-bg-color)] text-[var(--main-dark-text-color)];
-		}
-
-		.content {
-			@apply lg:grid grid-cols-12;
-
-			.box {
-				@apply col-span-4 min-h-[60px];
-
-				a {
-					&:hover {
-						@apply no-underline;
-					}
-				}
-			}
-		}
-	}
-
-	.line-content {
-		@apply relative z-[1] pt-[1rem] pb-[1rem] pl-[15rem];
-	}
-}
-
-@keyframes shimmer {
-	0% { transform: translateX(-100%); }
-	100% { transform: translateX(100%); }
-}
-
-.street-light-theme {
-	.first-line {
-		.bg {
-			@apply bg-[var(--third-bg-color)];
-		}
-	}
-}
+@import url('~/assets/scss/Fragments/profileLine.scss');
 </style>

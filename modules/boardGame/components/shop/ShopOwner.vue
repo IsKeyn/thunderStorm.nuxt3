@@ -122,24 +122,31 @@ const titleImage = {
 
 	.article-image {
 		@apply w-full h-full object-cover object-top;
+
 		object-position: 50% -135px;
+
+		@media (max-width: 1024px) {
+			object-position: 100% -10px;
+		}
 	}
 
 	.quote-box {
 		@apply
-			absolute top-1/2 -translate-y-1/2 left-1/4 -translate-x-1/2
+			absolute
+			top-[10px] md:top-[30%] lg:top-1/2 lg:-translate-y-1/2 left-0 lg:left-1/4 lg:-translate-x-1/2
 			bg-[var(--body-bg-color)] text-[var(--main-dark-text-color)] p-[1rem] text-[2rem]
-			max-w-[45%] cursor-pointer
+			max-w-full lg:max-w-[45%] cursor-pointer
 			text-wrap
 			break-words
+			opacity-80
 		;
 	}
 
 	.store-profit {
 		@apply
-			absolute bottom-[1rem] right-[1rem]
+			absolute bottom-[1rem] lg:right-[1rem]
 			bg-[var(--body-bg-color)] text-[var(--main-dark-text-color)] p-[1rem] text-[1rem]
-			max-w-[45%] cursor-pointer
+			max-w-full lg:max-w-[45%] cursor-pointer
 			text-wrap
 			break-words
 		;

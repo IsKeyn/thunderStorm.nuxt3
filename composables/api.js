@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue';
 import { useCookie } from '#imports';
 import { useLoadStateStore } from '@/stores/loadState';
+import { useRequestHeaders } from '#imports'; // Добавьте этот импорт
 
 export function api() {
     const runtimeConfig = useRuntimeConfig();
@@ -14,26 +15,45 @@ export function api() {
     const sessionCookieName = computed(() => runtimeConfig.public.sessionCookieName);
 
     const getCsrfCookie = async (updateToken = false) => {
-        if (!updateToken && useCookie('XSRF-TOKEN').value) {
-            return useCookie('XSRF-TOKEN');
-        } else {
-            try {
-                await $fetch(
-                    `${backendUrl.value}/sanctum/csrf-cookie`,
-                    {
-                        withCredentials: true, // Отправлять куки
-                        credentials: 'include', // Сохранять куки
-                        headers: {
-                            Accept: 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                    },
-                );
+        const xsrfCookie = useCookie('XSRF-TOKEN');
 
-                return useCookie('XSRF-TOKEN');
-            } catch (e) {
-                errorHandler(e)
+        // Если токен уже есть и нас не просят обновлять - возвращаем его
+        if (!updateToken && xsrfCookie.value) {
+            return xsrfCookie.value;
+        }
+
+        try {
+            // На сервере нам нужно передать существующие куки запроса,
+            // чтобы Laravel понял, кто мы такие (если сессия уже начата)
+            const headers = {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            };
+
+            if (process.server) {
+                // Передаем куки текущего запроса пользователя на бэкенд
+                headers.Cookie = useRequestHeaders(['cookie']).cookie;
             }
+
+            await $fetch(`${backendUrl.value}/sanctum/csrf-cookie`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: headers,
+            });
+
+            // ВАЖНО: После запроса на сервере кука XSRF-TOKEN может не появиться
+            // в useCookie автоматически, если она пришла в Set-Cookie заголовке.
+            // Однако, Laravel Sanctum обычно требует, чтобы мы сами взяли токен из куки.
+
+            // Повторная проверка куки. Если на сервере useCookie не подхватил Set-Cookie,
+            // придется парсить заголовки ответа вручную, но в Nuxt 3 useCookie должен работать,
+            // если настроен правильно.
+
+            return useCookie('XSRF-TOKEN').value;
+
+        } catch (e) {
+            errorHandler(e);
+            return null;
         }
     };
 
@@ -154,9 +174,24 @@ export function api() {
                 Referer: publicUrl.value,
             };
 
+            // --- ИСПРАВЛЕНИЕ ДЛЯ SSR ---
+            // Если мы на сервере, мы должны передать куки клиента на бэкенд
+            if (process.server) {
+                const cookies = useRequestHeaders(['cookie']).cookie;
+                if (cookies) {
+                    headers.Cookie = cookies;
+                }
+            }
+            // ---------------------------
+
+            let csrfToken = null;
+
             if (method === 'POST' || method === 'DELETE' || method === 'PUT') {
-                const csrfCookie = await getCsrfCookie();
-                headers['X-XSRF-TOKEN'] = csrfCookie.value;
+                // Получаем токен. Функция getCsrfCookie должна убедиться, что он есть.
+                csrfToken = await getCsrfCookie();
+                if (csrfToken) {
+                    headers['X-XSRF-TOKEN'] = csrfToken;
+                }
             } else if (method === 'GET') {
                 const sessionCookie = useCookie(sessionCookieName.value);
                 headers.Cookie = `${sessionCookieName.value}=${sessionCookie.value};`;
@@ -164,11 +199,12 @@ export function api() {
 
             const opts = {
                 method,
-                credentials: 'include',
                 headers,
+                // credentials: 'include' работает в браузере.
+                // На сервере он игнорируется, поэтому мы выше вручную добавили Cookie в headers.
+                credentials: 'include',
             };
 
-            /* body - для POST подобных запросов, query - для GET запросов */
             if (method === 'POST' || method === 'DELETE' || method === 'PUT') {
                 opts.body = body;
             } else if (method === 'GET') {
@@ -178,8 +214,9 @@ export function api() {
             let response = null;
 
             if (lazy === true) {
-                const { pending, data, error } = useLazyFetch(request, opts);
-                response = data;
+                // useLazyFetch не поддерживает await таким образом внутри async функции без обертки
+                // Лучше использовать обычный $fetch для универсальности или разнести логику
+                response = await $fetch(request, opts);
             } else {
                 response = await $fetch(request, opts);
             }
@@ -188,20 +225,13 @@ export function api() {
                 if (requestName && loadState.loadList[requestName]) {
                     loadState.loadList[requestName].status = 'finish';
                 }
-
                 return response;
-            } else {
-                if (requestName && loadState.loadList[requestName]) {
-                    loadState.loadList[requestName].status = 'finish';
-                }
             }
         } catch (e) {
             if (requestName && loadState.loadList[requestName]) {
                 loadState.loadList[requestName].status = 'error';
             }
-
-            responseErrors.value = errorHandler(e, show404page, showError)
-
+            responseErrors.value = errorHandler(e, show404page, showError);
             if (showError) {
                 return 'throwError';
             }

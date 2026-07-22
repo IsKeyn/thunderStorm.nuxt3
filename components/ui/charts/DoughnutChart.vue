@@ -17,7 +17,13 @@ const props = defineProps({
 </script>
 
 <template>
-	<div style="height: 300px; width: 400px">
+	<div class="wrapper">
 		<Doughnut :data="chartData" :options="chartOptions" />
 	</div>
 </template>
+
+<style lang="scss" scoped>
+.wrapper {
+	@apply h-[300px] w-full sm:w-[400px];
+}
+</style>
