@@ -103,7 +103,7 @@ const elementsForShow = computed(() => {
 
 <style lang="scss" scoped>
 .elements {
-	@apply lg:col-span-4 2xl:col-span-4 flex gap-1 justify-start lg:justify-end pl-3 pr-3 mt-4 lg:mt-0;
+	@apply lg:col-span-4 2xl:col-span-4 flex flex-wrap gap-1 justify-start lg:justify-end pl-3 pr-3 mt-4 lg:mt-0;
 }
 
 .element-small-card-count {

@@ -1,7 +1,9 @@
 import { computed, ref } from 'vue';
+
+import { useRequestHeaders } from '#imports';
+
 import { useCookie } from '#imports';
 import { useLoadStateStore } from '@/stores/loadState';
-import { useRequestHeaders } from '#imports'; // Добавьте этот импорт
 
 export function api() {
     const runtimeConfig = useRuntimeConfig();
@@ -19,7 +21,8 @@ export function api() {
 
         // Если токен уже есть и нас не просят обновлять - возвращаем его
         if (!updateToken && xsrfCookie.value) {
-            return xsrfCookie.value;
+            // return xsrfCookie.value;
+            return xsrfCookie;
         }
 
         try {
@@ -49,7 +52,8 @@ export function api() {
             // придется парсить заголовки ответа вручную, но в Nuxt 3 useCookie должен работать,
             // если настроен правильно.
 
-            return useCookie('XSRF-TOKEN').value;
+            // return useCookie('XSRF-TOKEN').value;
+            return useCookie('XSRF-TOKEN');
 
         } catch (e) {
             errorHandler(e);
@@ -174,7 +178,6 @@ export function api() {
                 Referer: publicUrl.value,
             };
 
-            // --- ИСПРАВЛЕНИЕ ДЛЯ SSR ---
             // Если мы на сервере, мы должны передать куки клиента на бэкенд
             if (process.server) {
                 const cookies = useRequestHeaders(['cookie']).cookie;
@@ -182,7 +185,6 @@ export function api() {
                     headers.Cookie = cookies;
                 }
             }
-            // ---------------------------
 
             let csrfToken = null;
 
@@ -190,7 +192,7 @@ export function api() {
                 // Получаем токен. Функция getCsrfCookie должна убедиться, что он есть.
                 csrfToken = await getCsrfCookie();
                 if (csrfToken) {
-                    headers['X-XSRF-TOKEN'] = csrfToken;
+                    headers['X-XSRF-TOKEN'] = csrfToken.value;
                 }
             } else if (method === 'GET') {
                 const sessionCookie = useCookie(sessionCookieName.value);
@@ -200,8 +202,6 @@ export function api() {
             const opts = {
                 method,
                 headers,
-                // credentials: 'include' работает в браузере.
-                // На сервере он игнорируется, поэтому мы выше вручную добавили Cookie в headers.
                 credentials: 'include',
             };
 
@@ -214,9 +214,8 @@ export function api() {
             let response = null;
 
             if (lazy === true) {
-                // useLazyFetch не поддерживает await таким образом внутри async функции без обертки
-                // Лучше использовать обычный $fetch для универсальности или разнести логику
-                response = await $fetch(request, opts);
+                const { pending, data, error } = useLazyFetch(request, opts);
+                response = data;
             } else {
                 response = await $fetch(request, opts);
             }
@@ -226,12 +225,18 @@ export function api() {
                     loadState.loadList[requestName].status = 'finish';
                 }
                 return response;
+            } else {
+                if (requestName && loadState.loadList[requestName]) {
+                    loadState.loadList[requestName].status = 'finish';
+                }
             }
         } catch (e) {
             if (requestName && loadState.loadList[requestName]) {
                 loadState.loadList[requestName].status = 'error';
             }
+
             responseErrors.value = errorHandler(e, show404page, showError);
+
             if (showError) {
                 return 'throwError';
             }

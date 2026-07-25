@@ -79,6 +79,18 @@ const otherStreamPlatform = computed(() => {
 	return false;
 });
 
+const messenger = computed(() => {
+	if (userStore && userStore.user && userStore.user.additional_fields) {
+		const field = userStore.user.additional_fields.filter((item) => item.slug === 'messenger');
+
+		if (field.length > 0 && field[0]) {
+			return field[0];
+		}
+	}
+
+	return false;
+});
+
 const sendMessage = (user) => {
 	emit('showUserMessagesModal', user);
 }
@@ -130,10 +142,10 @@ const sendMessage = (user) => {
 						<span class="wrapper default">{{ element.user.public_name ?? element.user.name }}</span>
 						<span
 								v-if="boardGameStore.playersOnline && boardGameStore.playersOnline[element.user.id]"
-								class="wrapper twitch"
+								class="wrapper twitch-wrapper"
 								@click.prevent="goToTwitch(boardGameStore.playersOnline[element.user.id])"
 						>Онлайн <font-awesome-icon icon="fa-brands fa-twitch" fade /></span>
-						<span v-if="!isCurrentUser" class="wrapper default message" @click.prevent="sendMessage(element.user)"><font-awesome-icon icon="fa-solid fa-envelope" /></span>
+						<span v-if="isAuth && !isCurrentUser" class="wrapper default message" @click.prevent="sendMessage(element.user)"><font-awesome-icon icon="fa-solid fa-envelope" /></span>
 					</div>
 					<div
 							v-if="element.premium && element?.settings?.premiumMessage"
@@ -155,17 +167,13 @@ const sendMessage = (user) => {
 								v-if="type === 'detail' && element.created_at"
 								class="wrapper default"
 						>В ивенте с {{ getFormattedDate('d ru_mouths_name Y', element.created_at) }}</span>
-						<span
-								v-if="type === 'detail'"
-								class="wrapper default"
-						>
 						<template v-if="element.active">
-							Участвует
+							<span class="wrapper default">Участвует</span>
 						</template>
 						<template v-else>
-							Не участвует
+							<span class="wrapper default">Не участвует</span>
+							<span v-if="element.not_active_reason" class="wrapper default">{{ element.not_active_reason }}</span>
 						</template>
-					</span>
 					</div>
 				</div>
 				<div v-if="type === 'detail'" class="box">
@@ -198,6 +206,15 @@ const sendMessage = (user) => {
 								title="Платформа стрима"
 						>
 							Платформа стрима <font-awesome-icon icon="fa-regular fa-circle-play" />
+						</NuxtLink>
+						<NuxtLink
+								v-if="messenger.value"
+								class="btn btn-simple-1 mr-2 inline-block"
+								:to="messenger.value"
+								target="_blank"
+								title="Мессенджер"
+						>
+							Мессенджер <font-awesome-icon icon="fa-brands fa-telegram" />
 						</NuxtLink>
 					</div>
 					<div class="box">

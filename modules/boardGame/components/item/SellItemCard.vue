@@ -30,6 +30,7 @@ const buyItem = (shopItem) => {
 
 	if (userStore.player.points < price) {
 		error(`У вас не достаточно очков для покупки предмета "${shopItem.item.item.name}", его стоимость ${price} у вас есть ${userStore.player.points}`);
+		return;
 	}
 
 	choiceAlert(
@@ -70,6 +71,11 @@ const buyItemRequest = async (shopItem) => {
 
 		if (response.error) {
 			error(response.error);
+			return;
+		}
+
+		if (response.status === 'error' && response.status_message) {
+			error(response.status_message);
 			return;
 		}
 

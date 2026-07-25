@@ -21,9 +21,9 @@ const props = defineProps({
 		type: Number,
 		default: null,
 	},
-	bg_slug: {
-		type: String,
-		default: '',
+	setTheme: {
+		type: Boolean,
+		default: true,
 	},
 });
 
@@ -67,7 +67,7 @@ const setSubscribe = () => {
 	if (runtimeConfig.public.hasWebSockedServer && !hasSubscribe.value) {
 		let channelName = 'playerInfoForObs';
 
-		channelName += `.${route.query.bg_slug ?? props.bg_slug}.${route.query.player_id ?? props.player_id}`;
+		channelName += `.${route.query.player_id ?? props.player_id}`;
 
 		hasSubscribe.value = true;
 		const { unsubscribe: stop, subscriptionId } = subscribe(
@@ -78,7 +78,8 @@ const setSubscribe = () => {
 						hiddenRefresh.value = true;
 						refresh();
 					}
-				}
+				},
+				'public'
 		);
 	}
 }
@@ -88,6 +89,11 @@ watchEffect(() => {
 	fetchedData.value = requestData.value?.data || {};
 
 	if (process.client) {
+		if (props.setTheme && fetchedData.value?.settings?.widgetSettings?.theme) {
+			document.documentElement.classList.value = '';
+			document.documentElement.classList.add(fetchedData.value.settings.widgetSettings.theme + '-theme');
+		}
+
 		setSubscribe();
 	}
 });

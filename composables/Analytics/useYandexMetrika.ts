@@ -8,6 +8,11 @@ export const useYandexMetrika = () => {
         const config = useRuntimeConfig();
         const counterId = config.public.ymCounterId;
 
+        if (!counterId) {
+            console.log('[Yandex Metrika] НЕ инициализирована так как отсуствует NUXT_YM_COUNTER_ID');
+            return;
+        }
+
         const script = document.createElement('script');
         script.type = 'text/javascript';
         script.async = true;

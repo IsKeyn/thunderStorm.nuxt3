@@ -52,6 +52,10 @@ const defaultEventGamePlatforms = [
 	},
 ];
 
+const gamePlatformsOptions = computed(() => {
+	return getSettingValue('eventGamePlatforms') ? JSON.parse(getSettingValue('eventGamePlatforms')) : defaultEventGamePlatforms;
+});
+
 const usedFilters = [
 	{
 		name: 'minMaxData',
@@ -63,7 +67,7 @@ const usedFilters = [
 		langName: 'Игровые платформы',
 		type: 'multiselect',
 		parse: true,
-		options: JSON.parse(getSettingValue('eventGamePlatforms')) ?? defaultEventGamePlatforms,
+		options: gamePlatformsOptions.value,
 	},
 	{
 		name: 'genres',
@@ -90,6 +94,11 @@ const usedFilters = [
 		type: 'hidden',
 		requestData: true,
 		parse: true,
+	},
+	{
+		name: 'onlyGold',
+		langName: 'Только золотая коллекция',
+		type: 'checkbox',
 	},
 	{
 		name: 'tags',

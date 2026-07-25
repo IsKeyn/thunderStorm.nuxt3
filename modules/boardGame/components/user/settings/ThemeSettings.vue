@@ -3,6 +3,9 @@ import { onMounted, watch } from "vue";
 
 const emit = defineEmits(['update:modelValue']);
 
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth } = userFunctions();
+
 const props = defineProps({
 	defaultTheme: {
 		type: String,

@@ -63,11 +63,14 @@ export function boardGame() {
     const getSettingValue = (settingName) => {
         if (!settingName) return null;
 
-        const setting = boardGameStore?.boardGameInfo?.settings.filter((item) => item.code === settingName);
+        const settings = boardGameStore?.boardGameInfo?.settings;
 
-        if (!setting) return null;
+        // Проверяем, что settings существует и является именно массивом
+        if (!Array.isArray(settings)) return null;
 
-        return setting?.[0]?.value ? setting[0].value : null;
+        const setting = settings.find((item) => item.code === settingName);
+
+        return setting?.value ?? null;
     }
 
     return {

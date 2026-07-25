@@ -50,6 +50,21 @@ const form = ref(
 				classes: 'w-full',
 				showTitle: false,
 			},
+			theme: {
+				name: 'Тема',
+				value: userStore?.player?.settings?.widgetSettings?.theme ?? 'InSilentHill',
+				type: 'select',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				options: [
+					{ value: 'InSilentHill', name: 'InSilentHill', },
+					{ value: 'autumn', name: 'Осень', },
+					{ value: 'green', name: 'Зеленая', },
+					{ value: 'ocean', name: 'Океан', },
+					{ value: 'street', name: 'Улица', },
+					{ value: 'street-light', name: 'Улица (светлая)', },
+				],
+			},
 		},
 );
 

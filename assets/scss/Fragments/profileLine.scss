@@ -83,7 +83,7 @@
             @apply bg-[var(--second-bg-color)] text-[var(--main-dark-text-color)];
           }
 
-          .twitch {
+          .twitch-wrapper {
             @apply cursor-pointer bg-[#9147ff] text-[#ffffff];
           }
 
@@ -154,7 +154,7 @@
     @apply relative z-[1] pt-[15rem] xl:pt-[1rem] pb-[1rem] xl:pb-0 xl:pl-[15rem];
 
     &.second {
-      @apply pt-[0rem] xl:pt-[1rem];
+      @apply pt-[1rem] xl:pt-[1rem] xl:pb-[1rem];
     }
   }
 }

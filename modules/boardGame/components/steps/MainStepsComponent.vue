@@ -94,7 +94,7 @@ const scrollToJoinButton = () => {
 				</div>
 			</div>
 			<div v-else id="eventJoinBox">
-				<Auth message="Для участия в ивенте войдите на сайт или зарегистрируйтесь" />
+				<Auth message="Для участия в ивенте авторизуйтесь на сайт или зарегистрируйтесь" />
 			</div>
 		</template>
 		<template v-else-if="boardGameStore.boardGameInfo.status === 2">

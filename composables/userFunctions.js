@@ -8,7 +8,7 @@ export function userFunctions() {
     const { sendApiRequest, errorHandler } = api();
 
     const isAuth = computed(() => {
-        return userStore.user && Object.keys(userStore.user).length > 0;
+        return userStore.user && Object.keys(userStore.user).length > 0 && userStore.user.id;
     });
 
     const isEmailVerified = computed(() => {

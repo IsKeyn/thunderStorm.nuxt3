@@ -98,6 +98,13 @@ onUnmounted(() => {
 onMounted(() => {
 	startMessageToggle();
 });
+
+const userName = computed(() => {
+	if (userStore?.user) {
+		if (userStore.user.public_name) return userStore.user.public_name;
+		if (userStore.user.name) return userStore.user.name;
+	}
+});
 </script>
 
 <template>
@@ -109,11 +116,21 @@ onMounted(() => {
 	<div class="wrapper">
 		<template v-if="isAuth">
 			<div class="info-block">
-				<span class="nickname">{{ userStore.player.user.public_name ?? userStore.player.user.name }}</span>
-				<span
-						v-if="userStore.player && Object.keys(userStore.player).length > 0"
-						class="points"
-				>{{ pointsWithText }} (<font-awesome-icon icon="fa-solid fa-bolt" />x{{ userStore.player.streak }})</span>
+				<span class="nickname">{{ userName }}</span>
+				<template v-if="userStore.player && Object.keys(userStore.player).length > 0">
+					<span v-if="userStore.player.active" class="points">{{ pointsWithText }} (<font-awesome-icon icon="fa-solid fa-bolt" />x{{ userStore.player.streak }})</span>
+					<span v-else>
+						<template v-if="userStore.player.not_active_reason">
+							{{ userStore.player.not_active_reason }}
+						</template>
+						<template>
+							Ваш профиль игрока не активен
+						</template>
+					</span>
+				</template>
+				<template v-else>
+					<span>Вы не участник ивента, примите участие через страницу действия</span>
+				</template>
 			</div>
 			<div class="avatar">
 				<UserAvatar

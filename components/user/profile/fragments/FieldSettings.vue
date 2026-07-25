@@ -40,7 +40,7 @@ const form = ref(
 				value: '',
 				type: 'text',
 				placeholder: 'Twitch канал',
-				validateRules: 'minLength_2, maxLength_50',
+				validateRules: 'minLength_2, maxLength_100',
 				classes: 'w-full',
 			},
 			other_stream_platform: {
@@ -48,7 +48,15 @@ const form = ref(
 				value: '',
 				type: 'text',
 				placeholder: 'Укажите ссылку',
-				validateRules: 'minLength_2, maxLength_50',
+				validateRules: 'minLength_2, maxLength_100',
+				classes: 'w-full',
+			},
+			messenger: {
+				name: 'Ссылка на ваш профиль в мессенджере',
+				value: '',
+				type: 'text',
+				placeholder: 'Укажите ссылку',
+				validateRules: 'minLength_2, maxLength_100',
 				classes: 'w-full',
 			},
 		},
@@ -62,6 +70,7 @@ const setValue = () => {
 	form.value.public_name.value = userStore.user.public_name ?? userStore.user.name;
 	form.value.twitch.value = `https://www.twitch.tv/${twitch.value.value}`;
 	form.value.other_stream_platform.value = otherStreamPlatform.value.value;
+	form.value.messenger.value = messenger.value.value;
 }
 
 const twitch = computed(() => {
@@ -79,6 +88,18 @@ const twitch = computed(() => {
 const otherStreamPlatform = computed(() => {
 	if (userStore && userStore.user && userStore.user.additional_fields) {
 		const field = userStore.user.additional_fields.filter((item) => item.slug === 'other_stream_platform');
+
+		if (field.length > 0 && field[0]) {
+			return field[0];
+		}
+	}
+
+	return false;
+});
+
+const messenger = computed(() => {
+	if (userStore && userStore.user && userStore.user.additional_fields) {
+		const field = userStore.user.additional_fields.filter((item) => item.slug === 'messenger');
 
 		if (field.length > 0 && field[0]) {
 			return field[0];
@@ -134,6 +155,12 @@ const sendRequest = async () => {
 					slug: 'other_stream_platform',
 					value: preparedFormData.other_stream_platform,
 					sort: 200,
+				},
+				{
+					name: 'Ссылка на ваш профиль в мессенджере',
+					slug: 'messenger',
+					value: preparedFormData.messenger,
+					sort: 300,
 				},
 			],
 			public_name: preparedFormData.public_name,

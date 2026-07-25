@@ -45,6 +45,7 @@ const {
 		}
 );
 
+const fetchedData = computed(() => requestData.value || null);
 const checkResult = computed(() => requestData.value?.result || null);
 const records = computed(() => requestData.value?.records || []);
 
@@ -184,10 +185,15 @@ watch(() => value.value, () => {
 
 <template>
 	<ui-BigPreloader
-			v-if="requestInProgress"
+			v-if="requestInProgress && !hiddenRefresh"
 			class="h-full"
 			theme="image"
 			:themeType="9"
+	/>
+	<ui-itemBox
+			v-else-if="fetchedData && fetchedData?.status === 'error' && fetchedData?.status_message"
+			classes="red"
+			:message="fetchedData.status_message"
 	/>
 	<div v-else-if="isAuth && checkResult">
 		<template v-if="checkResult.status === 1">

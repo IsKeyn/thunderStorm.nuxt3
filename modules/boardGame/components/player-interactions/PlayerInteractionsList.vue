@@ -12,9 +12,6 @@ const { route, hasWebSocked } = helper();
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
 
-import { userFunctions } from '@/composables/userFunctions.js';
-const { userStore } = userFunctions();
-
 const props = defineProps({
 	user_id: {
 		type: Number,
@@ -117,60 +114,60 @@ onMounted(async () => {
 </script>
 
 <template>
-	<layout-InfoBlock
-			v-if="showDescription"
-			:text="description"
-			classes="!mb-6"
-	/>
-	<ui-BigPreloader
-			v-if="requestInProgress && !hiddenRefresh"
-			theme="image"
-			:themeType="9"
-	/>
-	<div
-			v-else-if="fetchedData && fetchedData.status === 'error' && fetchedData.status_message"
-			class="item-box"
-	>
-		{{ fetchedData.status_message }}
-	</div>
-	<div
-			v-else-if="fetchedData.length"
-			:class="['interactions', classes]"
-	>
-		<div class="box">
-			<h2 class="inv-title">Исходящие запросы</h2>
-			<span v-if="outgoing.length === 0">Запросов нет</span>
-			<div class="wrapper">
-				<PlayerInteractionCard
-						v-for="(element, key) in outgoing"
-						:key="key"
-						:element="element"
-						:user_id="user_id"
-						:checkCondition="checkCondition"
-						@update="refresh"
-				/>
+		<layout-InfoBlock
+				v-if="showDescription"
+				:text="description"
+				classes="!mb-6"
+		/>
+		<ui-BigPreloader
+				v-if="requestInProgress && !hiddenRefresh"
+				theme="image"
+				:themeType="9"
+		/>
+		<div
+				v-else-if="fetchedData && fetchedData.status === 'error' && fetchedData.status_message"
+				class="item-box"
+		>
+			{{ fetchedData.status_message }}
+		</div>
+		<div
+				v-else-if="fetchedData.length"
+				:class="['interactions', classes]"
+		>
+			<div class="box">
+				<h2 class="inv-title">Исходящие запросы</h2>
+				<span v-if="outgoing.length === 0">Запросов нет</span>
+				<div class="wrapper">
+					<PlayerInteractionCard
+							v-for="(element, key) in outgoing"
+							:key="key"
+							:element="element"
+							:user_id="user_id"
+							:checkCondition="checkCondition"
+							@update="refresh"
+					/>
+				</div>
+			</div>
+			<div class="box mb-[2rem]">
+				<h2 class="inv-title">Входящие запросы</h2>
+				<span v-if="incoming.length === 0">Запросов нет</span>
+				<div class="wrapper">
+					<PlayerInteractionCard
+							v-for="(element, key) in incoming"
+							:key="key"
+							:element="element"
+							:user_id="user_id"
+							:checkCondition="checkCondition"
+							@update="refresh"
+					/>
+				</div>
 			</div>
 		</div>
-		<div class="box mb-[2rem]">
-			<h2 class="inv-title">Входящие запросы</h2>
-			<span v-if="incoming.length === 0">Запросов нет</span>
-			<div class="wrapper">
-				<PlayerInteractionCard
-						v-for="(element, key) in incoming"
-						:key="key"
-						:element="element"
-						:user_id="user_id"
-						:checkCondition="checkCondition"
-						@update="refresh"
-				/>
-			</div>
-		</div>
-	</div>
-	<ui-itemBox
-			v-else
-			classes="red"
-			message="Взаимодействия отсутствуют"
-	/>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="Взаимодействия отсутствуют"
+		/>
 </template>
 
 <style lang="scss" scoped>

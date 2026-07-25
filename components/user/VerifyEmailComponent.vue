@@ -1,19 +1,19 @@
 <script setup>
+import AuthComponent from '@/components/user/AuthComponent.vue';
+
 import { onMounted } from 'vue'
 
-import AuthComponent from '@/components/user/AuthComponent.vue';
+import { helper } from '@/composables/helper.js'
+const { route, router } = helper();
 
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
-import { useUserStore } from '@/stores/user';
-const userStore = useUserStore();
-
 import { api } from '@/composables/api.js';
 const { apiUrl, errorHandler, sendApiRequest } = api();
 
-const route = useRoute();
-const router = useRouter();
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth, userStore } = userFunctions();
 
 const message = ref('');
 const requestInProgress = ref(false);
@@ -28,6 +28,8 @@ onMounted(() => {
 const initVerify = () => {
 	if (Object.keys(userStore.user).length > 0) {
 		if (userStore.user.email_verified_at) {
+			message.value = 'Ваш email уже подтверждён';
+
 			alert(
 					'Ваш email уже подтверждён',
 					3000,
@@ -72,6 +74,8 @@ const sendVerifyEmailRequest = async (params) => {
 
 		if (response) {
 			userStore.user = response.data;
+			message.value = 'Ваш email подтверждён';
+
 			alert(
 					'Ваш email подтверждён',
 					3000,
@@ -140,7 +144,12 @@ const reloadPage = () => {
 <template>
 	<div>
 		<ClientOnly>
-			<template v-if="Object.keys(userStore.user).length === 0">
+			<ui-itemBox
+					v-if="isAuth && message"
+					classes="green"
+					:message="message"
+			/>
+			<template v-else>
 				<AuthComponent
 					class="mt-5"
 					title="Авторизуйтесь для подтверждения email адреса"
