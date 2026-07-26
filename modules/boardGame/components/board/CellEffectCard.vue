@@ -177,7 +177,7 @@ const getGameInitComponent = (name) => {
 					:src="getResizeImg(element.boardPositionEffect?.title_image)"
 					:alt="element.boardPositionEffect.name"
 					:title="element.boardPositionEffect.name"
-					class="media-obj"
+					:class="['media-obj', hasUsed ? 'has-used' : '']"
 					:media-id="element.boardPositionEffect?.title_image?.id"
 			>
 			<img
@@ -185,6 +185,7 @@ const getGameInitComponent = (name) => {
 					:src="getResizeImg(element.boardPositionEffect?.title_image)"
 					:alt="element.boardPositionEffect.name"
 					:title="element.boardPositionEffect.name"
+					:class="[hasUsed ? 'has-used' : '']"
 			>
 		</template>
 		<div class="info">
@@ -200,52 +201,56 @@ const getGameInitComponent = (name) => {
 			>
 				{{ element.boardPositionEffect.description }}
 			</span>
-			<div
-					v-if="element.boardPositionEffect && element.boardPositionEffect.actions && !hasUsed"
-					v-for="(action, key) in element.boardPositionEffect.actions"
-					:key="key"
-					class="actions"
-			>
-				<template v-if="showControlPanel && action && action.effectType === 'fightWithBoss'">
-					<button
-							class="btn btn-simple"
-							@click="setAction('fightWithBoss-win')"
-					>
-						Я победил босса
-					</button>
-				</template>
-				<template v-if="showControlPanel && action && action.type === 'playerInteractions'">
-					<span class="block mt-2 mb-2">Выберите игрока для приглашения</span>
-					<SelectPlayerDetailList
-							v-model="selectedPlayer"
-							bgClasses="!bg-[var(&#45;&#45;main-hover-color)]"
-							:target="action.target"
-							:expectedPlayers="[userStore.player.id]"
-							:currentPlayer="userStore.player"
-							selectedPlayerTheme="short"
-					/>
-					<button
-							v-if="Object.keys(selectedPlayer).length > 0"
-							class="btn btn-simple"
-							@click="sendInvitation()"
-					>
-						Отправить приглашение
-					</button>
-				</template>
-				<template v-if="showControlPanel && action && action.type === 'game'">
-					<component
-							:is="getGameInitComponent(action.gameName)"
-							:element="element"
-					/>
-				</template>
-			</div>
 		</div>
+	</div>
+	<div
+			v-if="element.boardPositionEffect && element.boardPositionEffect.actions && !hasUsed"
+			v-for="(action, key) in element.boardPositionEffect.actions"
+			:key="key"
+			class="actions"
+	>
+		<template v-if="showControlPanel && action && action.effectType === 'fightWithBoss'">
+			<button
+					class="btn btn-simple"
+					@click="setAction('fightWithBoss-win')"
+			>
+				Я победил босса
+			</button>
+		</template>
+		<template v-if="showControlPanel && action && action.type === 'playerInteractions'">
+			<span class="block mt-2 mb-2">Выберите игрока для приглашения</span>
+			<SelectPlayerDetailList
+					v-model="selectedPlayer"
+					bgClasses="!bg-[var(&#45;&#45;main-hover-color)]"
+					:target="action.target"
+					:expectedPlayers="[userStore.player.id]"
+					:currentPlayer="userStore.player"
+					selectedPlayerTheme="short"
+			/>
+			<button
+					v-if="Object.keys(selectedPlayer).length > 0"
+					class="btn btn-simple"
+					@click="sendInvitation()"
+			>
+				Отправить приглашение
+			</button>
+		</template>
+		<template v-if="showControlPanel && action && action.type === 'game'">
+			<component
+					:is="getGameInitComponent(action.gameName)"
+					:element="element"
+			/>
+		</template>
 	</div>
 </template>
 
 <style lang="scss" scoped>
 .item-box {
 	@apply p-2 mb-2 bg-[var(--second-bg-color)] rounded-none flex relative min-h-[86px];
+
+	.has-used {
+		filter: grayscale(100%);
+	}
 
 	&.default {
 		&.red {

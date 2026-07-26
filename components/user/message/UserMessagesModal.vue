@@ -35,3 +35,5 @@ defineExpose({
 		</div>
 	</Modal>
 </template>
+
+<style lang="scss" />

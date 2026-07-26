@@ -140,6 +140,8 @@ const setSelectedUser = (id) => {
 	if (chatKey.value !== null && chatKey.value !== undefined && !fetchedData.value[chatKey.value]?.messages?.length) {
 		fetchOlderMessages();
 	}
+
+	togeShowedElement();
 }
 
 const fetchOlderMessages = async () => {
@@ -250,6 +252,21 @@ const setLastReadMessage = (messageId) => {
 		fetchedData.value[chatKey.value].unread_count = 0;
 	}
 }
+
+// Переключение для мобилок
+const elementForShow = ref('show-messages');
+
+const togeShowedElement = () => {
+	if (elementForShow.value === 'show-messages') {
+		elementForShow.value = 'show-user-list';
+		return;
+	}
+
+	if (elementForShow.value === 'show-user-list') {
+		elementForShow.value = 'show-messages';
+		return;
+	}
+}
 </script>
 
 <template>
@@ -260,10 +277,22 @@ const setLastReadMessage = (messageId) => {
 			:themeType="9"
 	/>
 	<template v-else-if="fetchedData && fetchedData.length">
+		<button
+				class="btn btn-simple-1 toggle-button"
+				@click="togeShowedElement()"
+		>
+			<font-awesome-icon icon="fa-solid fa-arrow-right-arrow-left" class="mr-2" />
+			<template v-if="elementForShow === 'show-user-list'">
+				Показать сообщения
+			</template>
+			<template v-if="elementForShow === 'show-messages'">
+				Показать пользователей
+			</template>
+		</button>
 		<div class="message-box">
 			<div
 					v-if="fetchedData"
-					class="user-list"
+					:class="['user-list', elementForShow]"
 			>
 				<div v-for="(chat, key) in fetchedData" :key="key">
 					<SimpleCard
@@ -275,7 +304,7 @@ const setLastReadMessage = (messageId) => {
 					/>
 				</div>
 			</div>
-			<div class="message-list">
+			<div :class="['message-list', elementForShow]">
 				<MessageListCard
 						:selectedUserId="selectedUserId"
 						:messages="selectedUserMessages"
@@ -298,16 +327,35 @@ const setLastReadMessage = (messageId) => {
 </template>
 
 <style lang="scss" scoped>
+.toggle-button {
+	@apply block lg:hidden;
+}
+
 .message-box {
 	@apply flex gap-3;
 
 	.user-list {
-		@apply min-w-[200px];
+		@apply hidden min-w-[200px];
+
+		&.show-user-list {
+			@apply block lg:block;
+		}
+
+		&.show-messages {
+			@apply hidden lg:block;
+		}
 	}
 
 	.message-list {
-		@apply h-full w-full pl-3;
-		border-left: 1px solid var(--main-border-color);
+		@apply h-full w-full pl-3 lg:border-l lg:border-[--main-border-color];
+
+		&.show-user-list {
+			@apply hidden lg:block;
+		}
+
+		&.show-messages {
+			@apply block lg:block;
+		}
 	}
 }
 </style>

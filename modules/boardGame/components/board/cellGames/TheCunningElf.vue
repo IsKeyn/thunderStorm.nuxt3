@@ -136,14 +136,18 @@ const choiceCardRequest = async () => {
 	.article-image {
 		@apply w-full h-full object-cover object-top;
 		object-position: 50% -195px;
+
+		@media (max-width: 1700px) {
+			object-position: 100% -10px;
+		}
 	}
 
 	.quote-box {
 		@apply
 			absolute
-		top-[10px] md:top-[30%] lg:top-1/2 lg:-translate-y-1/2 left-0 lg:left-1/4 lg:-translate-x-1/2
-			bg-[var(--body-bg-color)] text-[var(--main-dark-text-color)] p-[1rem] text-[1.5rem]
-			max-w-[45%] cursor-pointer
+			top-[10px] md:top-[30%] lg:top-1/2 lg:-translate-y-1/2 left-0 lg:left-1/4 lg:-translate-x-1/2
+			bg-[var(--body-bg-color)] text-[var(--main-dark-text-color)] p-[1rem] text-[1rem] lg:text-[1.1rem] min-[1700px]:text-[1.5rem]
+			max-w-full lg:max-w-[45%] cursor-pointer
 			text-wrap
 			break-words
 			opacity-80
@@ -159,10 +163,14 @@ const choiceCardRequest = async () => {
 	@apply flex justify-center items-center gap-5 w-full my-8;
 
 	.entertainment-card {
-		@apply relative cursor-pointer;
+		@apply relative cursor-pointer
+			h-[10rem] w-[100px]
+			sm:h-[14rem] sm:w-[140px]
+			md:h-[16rem] md:w-[160px]
+			lg:h-[18rem] md:w-[180px]
+			xl:h-[20rem] xl:w-[206px]
+		;
 		perspective: 1000px;
-		width: 206px;
-		height: 20rem;
 
 		.card-inner {
 			@apply relative w-full h-full;
@@ -202,7 +210,7 @@ const choiceCardRequest = async () => {
 				@apply relative z-10 p-4 text-black;
 
 				.card-description {
-					@apply text-[0.9rem] leading-relaxed ;
+					@apply text-[0.6rem] md:text-[0.9rem] leading-relaxed ;
 				}
 			}
 		}

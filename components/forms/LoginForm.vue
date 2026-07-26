@@ -3,7 +3,6 @@ import { watch } from 'vue'
 
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ResentVerifyEmail from '@/components/user/fragments/ResentVerifyEmail.vue';
-import SocialAuthComponent from '@/components/user/auth/SocialAuthComponent.vue';
 
 import { useUserStore } from '@/stores/user';
 import { api } from '@/composables/api.js';
@@ -292,10 +291,12 @@ const getUserData = async () => {
 			</div>
 		</template>
 	</form>
-	<SocialAuthComponent
-			class="mt-2"
-			:registerOnEventBySlug="registerOnEventBySlug"
-	/>
+	<button
+			class="btn btn-simple w-full"
+			@click.prevent="$emit('setActionType', { value: 'auth_from_service', title: 'Авторизация через сервисы' })"
+	>
+		Авторизоваться через сервисы <font-awesome-icon icon="fa-solid fa-arrow-right-to-bracket" />
+	</button>
 </template>
 
 <style lang="scss">

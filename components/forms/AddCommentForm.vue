@@ -74,7 +74,7 @@ const createForm = () => {
 			};
 
 		createdForm.personal_data_processing_policy = {
-			name: 'Я согласен с правилами использования материалов сайта и политикой по обработке персональных данных',
+			name: 'Я согласен с правилами использования сайта и политикой по обработке персональных данных',
 					showTitle: false,
 					html: 'Я согласен с <a href="/article/rule-for-use-site/" class="underline" target="_blank">правилами сайта</a> и <a href="/article/consent-of-personal-data/" class="underline" target="_blank">политикой по обработке персональных данных</a>',
 					value: false,

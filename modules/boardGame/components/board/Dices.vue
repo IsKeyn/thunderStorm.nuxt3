@@ -347,6 +347,8 @@ const getDotSizeClasses = () => {
 			justify-center items-center
 			cursor-pointer
 			relative
+			mx-auto
+			mb-4
 		;
 
 		border-radius: 15px;

@@ -494,10 +494,10 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .dice-and-info-block {
-	@apply flex mb-[2rem];
+	@apply xl:flex mb-[2rem];
 
 	.player-position-info {
-		@apply block ml-4 w-full rounded-none mb-0 p-4;
+		@apply block xl:ml-4 w-full rounded-none mb-0 p-4;
 	}
 }
 

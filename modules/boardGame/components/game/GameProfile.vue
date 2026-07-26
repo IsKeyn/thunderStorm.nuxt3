@@ -283,7 +283,7 @@ onMounted(async () => {
 						:itemHeight="105"
 						:editListAvailable="editListAvailable"
 						:showItemCount="true"
-						rollCountZeroMessage="Перед круткой рулетки игр вы должны использовать доступные крутки рулетки предметов, а такж использовать доступные ходы на игровом поле"
+						rollCountZeroMessage="Перед круткой рулетки игр вы должны использовать доступные крутки рулетки предметов, а также использовать доступные ходы на игровом поле"
 						:windowClasses="windowGgClasses"
 						@funcAfterRollWithDelay1000="refresh()"
 				/>
