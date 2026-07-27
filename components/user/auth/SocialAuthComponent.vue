@@ -57,21 +57,13 @@ const authWithSocial = (social) => {
 	}
 
 	if (!formError.value) {
-		switch (social) {
-			case 'twitch':
-				sendTwitchRequest();
-				break;
-
-			case 'yandex':
-				sendYandexRequest();
-				break;
-		}
+		getRedirectUrlRequest(social);
 	}
 }
 
 const requestInProgress = ref(false);
 
-const sendTwitchRequest = async () => {
+const getRedirectUrlRequest = async (social) => {
 	requestInProgress.value = true;
 
 	const body = {};
@@ -81,31 +73,7 @@ const sendTwitchRequest = async () => {
 	}
 
 	try {
-		const response = await sendApiRequest('auth/twitch/redirect', 'GET', body, 'sendTwitchRedirectRequest');
-
-		requestInProgress.value = false;
-
-		if (response?.url) {
-			sessionStorage.setItem('pageForRedirect', route.fullPath);
-			window.location.href = response.url;
-		}
-	} catch (e) {
-		error(e);
-		requestInProgress.value = false;
-	}
-}
-
-const sendYandexRequest = async () => {
-	requestInProgress.value = true;
-
-	const body = {};
-
-	if (props.registerOnEventBySlug) {
-		sessionStorage.setItem('registerOnEventBySlug', props.registerOnEventBySlug);
-	}
-
-	try {
-		const response = await sendApiRequest('auth/yandex/redirect', 'GET', body, 'sendYandexRedirectRequest');
+		const response = await sendApiRequest(`auth/${social}/redirect`, 'GET', body, `${social}SendRedirectRequest`);
 
 		requestInProgress.value = false;
 
@@ -153,6 +121,20 @@ onMounted(() => {
 				</template>
 			</button>
 
+			<button
+					class="vkontakte"
+					@click="authWithSocial('vkontakte')"
+			>
+				<font-awesome-icon
+						v-if="requestInProgress"
+						:icon="['fas', 'spinner']"
+						spin-pulse
+				/>
+				<template v-else>
+					<font-awesome-icon icon="fa-brands fa-vk" /> Вконтакте
+				</template>
+			</button>
+
 			<div>
 				<div v-if="isUnknown">
 					<ui-itemBox
@@ -174,6 +156,20 @@ onMounted(() => {
 						/>
 						<template v-else>
 							Twitch <font-awesome-icon icon="fa-brands fa-twitch" />
+						</template>
+					</button>
+
+					<button
+							class="google"
+							@click="authWithSocial('google')"
+					>
+						<font-awesome-icon
+								v-if="requestInProgress"
+								:icon="['fas', 'spinner']"
+								spin-pulse
+						/>
+						<template v-else>
+							Google <font-awesome-icon icon="fa-brands fa-google" />
 						</template>
 					</button>
 				</div>
@@ -213,11 +209,11 @@ onMounted(() => {
 }
 
 .button-block {
-	.twitch {
-		@apply w-full p-2 bg-[#9147ff] text-[#ffffff] pl-4 pr-4 mb-2;
+	.vkontakte {
+		@apply w-full p-2 bg-[#0077FF] text-[#ffffff] pl-4 pr-4 mb-2;
 
 		&:hover {
-			@apply bg-[#772ce8];
+			@apply bg-[#0056CC];
 		}
 	}
 
@@ -229,5 +225,20 @@ onMounted(() => {
 		}
 	}
 
+	.twitch {
+		@apply w-full p-2 bg-[#9147ff] text-[#ffffff] pl-4 pr-4 mb-2;
+
+		&:hover {
+			@apply bg-[#772ce8];
+		}
+	}
+
+	.google {
+		@apply w-full p-2 bg-[#4285F4] text-[#ffffff] pl-4 pr-4 mb-2;
+
+		&:hover {
+			@apply bg-[#1a73e8];
+		}
+	}
 }
 </style>

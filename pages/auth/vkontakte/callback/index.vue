@@ -3,5 +3,5 @@ import AuthCallback from '@/components/user/auth/AuthCallback.vue';
 </script>
 
 <template>
-	<AuthCallback oauthName="yandex" />
+	<AuthCallback oauthName="vkontakte" />
 </template>

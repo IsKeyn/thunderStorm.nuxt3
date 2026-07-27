@@ -1,7 +1,7 @@
 <script setup>
-import TwitchCallback from '@/components/user/auth/TwitchCallback.vue';
+import AuthCallback from '@/components/user/auth/AuthCallback.vue';
 </script>
 
 <template>
-	<TwitchCallback />
+	<AuthCallback oauthName="twitch" />
 </template>
