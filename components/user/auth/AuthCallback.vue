@@ -13,6 +13,13 @@ const { sendApiRequest } = api();
 import { helper } from '@/composables/helper.js'
 const { route, router } = helper();
 
+const props = defineProps({
+	oauthName: {
+		type: String,
+		default: null,
+	},
+});
+
 const requestInProgress = ref(false);
 
 const initLogin = async () => {
@@ -30,27 +37,29 @@ const initLogin = async () => {
 				body.registerOnEventBySlug = registerOnEventBySlug;
 			}
 
-			const response = await sendApiRequest('auth/yandex/apiCallback', 'POST', body, 'userAutoLogin', 'sendYandexApiCallbackRequest');
+			const response = await sendApiRequest(`auth/${props.oauthName}/apiCallback`, 'POST', body, 'userAutoLogin', `${props.oauthName}SendApiCallbackRequest`);
 
-			if (response) {
-				if (response.error) {
-					error(response.error);
-				} else {
-					requestInProgress.value = false;
+			requestInProgress.value = false;
 
-					userStore.user = response;
-					alert(`Добро пожаловать ${userStore.user.name}!`);
-
-					const redirectUrl = sessionStorage.getItem('pageForRedirect');
-
-					sessionStorage.removeItem('registerOnEventBySlug');
-					sessionStorage.removeItem('pageForRedirect');
-					// router.push({ path: redirectUrl ? redirectUrl : '/' });
-					window.location.href = redirectUrl ? redirectUrl : '/';
-				}
-			} else {
+			if (!response) {
 				error('Пустой ответ');
+				return;
 			}
+
+			if (response.error) {
+				error(response.error);
+				return;
+			}
+
+			userStore.user = response;
+			alert(`Добро пожаловать ${userStore.user.name}!`);
+
+			const redirectUrl = sessionStorage.getItem('pageForRedirect');
+
+			sessionStorage.removeItem('registerOnEventBySlug');
+			sessionStorage.removeItem('pageForRedirect');
+
+			window.location.href = redirectUrl ? redirectUrl : '/';
 		} catch (e) {
 			error(e);
 			requestInProgress.value = false;
@@ -67,4 +76,4 @@ onMounted(() => {
 	<ui-BigPreloader v-if="requestInProgress" />
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />
