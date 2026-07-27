@@ -3,6 +3,8 @@ import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { ref } from "vue";
 
+const { isRussia, isUnknown, fetchCountry } = useGeo();
+
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
@@ -116,6 +118,10 @@ const sendYandexRequest = async () => {
 		requestInProgress.value = false;
 	}
 }
+
+onMounted(() => {
+	fetchCountry();
+});
 </script>
 
 <template>
@@ -146,19 +152,38 @@ const sendYandexRequest = async () => {
 					<font-awesome-icon icon="fa-brands fa-yandex" /> Yandex
 				</template>
 			</button>
-			<button
-					class="twitch"
-					@click="authWithSocial('twitch')"
-			>
-				<font-awesome-icon
-						v-if="requestInProgress"
-						:icon="['fas', 'spinner']"
-						spin-pulse
+
+			<div>
+				<div v-if="isUnknown">
+					<ui-itemBox
+							classes="red"
+							message="Определяем ваш регион..."
+					/>
+				</div>
+
+				<!-- Показываем авторизацию через иностранные сервисы, если точно знаем, что это НЕ Россия -->
+				<div v-else-if="!isRussia" class="premium-content">
+					<button
+							class="twitch"
+							@click="authWithSocial('twitch')"
+					>
+						<font-awesome-icon
+								v-if="requestInProgress"
+								:icon="['fas', 'spinner']"
+								spin-pulse
+						/>
+						<template v-else>
+							Twitch <font-awesome-icon icon="fa-brands fa-twitch" />
+						</template>
+					</button>
+				</div>
+
+				<ui-itemBox
+						v-else
+						classes="red"
+						message="В соответствии с законодательством РФ мы вынуждены закрыть авторизацию для посетителей из РФ с помощью зарубежных сервисов"
 				/>
-				<template v-else>
-					Twitch <font-awesome-icon icon="fa-brands fa-twitch" />
-				</template>
-			</button>
+			</div>
 		</div>
 		<div class="grid grid-cols-6">
 			<div class="col-span-3" />
