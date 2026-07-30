@@ -187,6 +187,13 @@ onMounted(() => {
 				<a
 						href="#"
 						class="block small-text"
+						@click.prevent="$emit('setActionType', { value: 'login', title: 'Авторизация' })"
+				>
+					Авторизоваться
+				</a>
+				<a
+						href="#"
+						class="block small-text"
 						@click.prevent="$emit('setActionType', { value: 'recovery_password', title: 'Восстановление пароля' })"
 				>
 					Забыли пароль
