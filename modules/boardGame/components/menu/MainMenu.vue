@@ -1,34 +1,46 @@
 <script setup>
 import { ref } from "vue";
 
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const menu = computed(() => {
 	return [
 		{
-			name: 'Главная',
+			name: 'Действия',
 			path: '/e/' + route.params.slug + '/',
 			icon: ['fas', 'house']
+		},
+		{
+			name: 'Об ивенте',
+			icon: ['fa-brands', 'fa-readme'],
+			group: [
+				{
+					name: 'Игры',
+					path: '/e/' + route.params.slug + '/game/',
+					icon: ['fas', 'gamepad']
+				},
+				{
+					name: 'Игровое поле',
+					path: '/e/' + route.params.slug + '/board/',
+					icon: ['fas', 'dice']
+				},
+				{
+					name: 'Предметы в ивенте',
+					path: '/e/' + route.params.slug + '/inventory/',
+					icon: ['fas', 'hat-wizard']
+				},
+				{
+					name: 'Правила и описание',
+					path: '/e/' + route.params.slug + '/rules/',
+					icon: ['fas', 'book-open-reader'],
+				},
+			],
 		},
 		{
 			name: 'Участники',
 			path: '/e/' + route.params.slug + '/player/',
 			icon: ['fas', 'trophy']
-		},
-		{
-			name: 'Игровое поле',
-			path: '/e/' + route.params.slug + '/board/',
-			icon: ['fas', 'dice']
-		},
-		{
-			name: 'Игра',
-			path: '/e/' + route.params.slug + '/game/',
-			icon: ['fas', 'gamepad']
-		},
-		{
-			name: 'Инвентарь',
-			path: '/e/' + route.params.slug + '/inventory/',
-			icon: ['fas', 'hat-wizard']
 		},
 		{
 			name: 'Взаимодействия',
@@ -46,14 +58,14 @@ const menu = computed(() => {
 					icon: ['fa-solid', 'fa-stopwatch'],
 				},
 				{
-					name: 'Логи',
-					path: '/e/' + route.params.slug + '/log-list/',
-					icon: ['fa-solid', 'fa-rectangle-list'],
-				},
-				{
 					name: 'Обсуждение',
 					path: '/e/' + route.params.slug + '/discussion/',
 					icon: ['fa-solid', 'fa-message']
+				},
+				{
+					name: 'Логи',
+					path: '/e/' + route.params.slug + '/log-list/',
+					icon: ['fa-solid', 'fa-rectangle-list'],
 				},
 			],
 		},

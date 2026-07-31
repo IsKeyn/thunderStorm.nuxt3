@@ -1,5 +1,6 @@
 <script setup>
 import DoughnutChart from '@/components/ui/charts/DoughnutChart.vue';
+import Pagination from '@/components/navigation/Pagination.vue';
 import GameCard from '@/modules/boardGame/components/game/GameCard.vue';
 
 import { computed } from "vue";
@@ -7,14 +8,29 @@ import { computed } from "vue";
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
 
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
 const props = defineProps({
 	userName: {
 		type: String,
-		default: '',
+		default: null,
+	},
+	perPage: {
+		type: Number,
+		default: 10,
 	},
 });
 
-const route = useRoute();
+import { pagination } from '@/composables/ui/pagination.js'
+const {
+	page,
+	perPage,
+	setRefresh,
+	changePage,
+	setPerPage
+} = pagination(props.perPage);
+
 const requestName = 'getBoardGamePlayerGameHistory';
 
 const {
@@ -25,11 +41,16 @@ const {
 		requestName,
 		async () => {
 			if (props.userName) {
+				const query = {
+					page: page.value,
+					perPage: perPage.value,
+				};
+
 				const response = await Promise.resolve(
-						sendApiRequest(`board-game/v2/player/getGames/${route.params.slug}/${props.userName}`, 'GET', {}, requestName, '')
+						sendApiRequest(`board-game/v2/player/getGames/${route.params.slug}/${props.userName}`, 'GET', query, requestName, '')
 				);
 
-				return response?.data || null;
+				return response || null;
 			}
 		},
 		{
@@ -38,41 +59,34 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || null);
+const fetchedData = computed(() => requestData.value?.data || []);
+const dataForChart = computed(() => requestData.value?.data_for_chart || []);
+const paginationData = computed(() => requestData.value?.meta || null);
 
-const finishedGamesCount = computed(() => {
-	return fetchedData.value ? fetchedData.value.filter((item) => item.status === 2).length : [];
-});
+// Передаем функцию refresh в композабл pagination
+setRefresh(refresh);
 
-const rerolledGamesCount = computed(() => {
-	return fetchedData.value ? fetchedData.value.filter((item) => item.status === 1).length : [];
-});
+const chartData = ref({});
 
-const givenAwayGamesCount = computed(() => {
-	return fetchedData.value ? fetchedData.value.filter((item) => item.status === 3).length : [];
-});
-
-const chartData = {
-	labels: ['Пройденные', 'Рерольнутые', 'Отданные'],
-	datasets: [
-		{
-			label: 'Игры',
-			data: [
-				finishedGamesCount,
-				rerolledGamesCount,
-				givenAwayGamesCount
-			],
-			backgroundColor: [
-				'#005d00',
-				'#600000',
-				'#000460'
-			],
-			borderColor: 'rgba(0, 0, 0, 0)', // Цвет обводки
-			borderWidth: 2, // Толщина обводки
-			hoverOffset: 4
-		}
-	]
-};
+watch(() => dataForChart.value, () => {
+	chartData.value = {
+		labels: ['Пройденные', 'Рерольнутые', 'Отданные'],
+		datasets: [
+			{
+				label: 'Игры',
+				data: dataForChart.value,
+				backgroundColor: [
+					'#005d00',
+					'#600000',
+					'#000460'
+				],
+				borderColor: 'rgba(0, 0, 0, 0)', // Цвет обводки
+				borderWidth: 2, // Толщина обводки
+				hoverOffset: 4
+			}
+		]
+	};
+}, { deep: true, immediate: true });
 
 const chartOptions = {
 	responsive: true,
@@ -84,11 +98,6 @@ const chartOptions = {
 				color: '#C0C0C0' // Черный цвет для текста легенды
 			}
 		},
-		// title: {
-		// 	display: true,
-		// 	text: 'Игры',
-		// 	color: '#000000' // Черный цвет для заголовка
-		// },
 		tooltip: {
 			titleColor: '#C0C0C0', // Черный цвет заголовка подсказки
 			bodyColor: '#C0C0C0'  // Черный цвет текста подсказки
@@ -98,23 +107,42 @@ const chartOptions = {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
-	<template v-else-if="fetchedData && fetchedData.length > 0">
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
+	<div v-else-if="fetchedData && fetchedData.length">
 		<div class="item-box game-count-line">
 			<DoughnutChart :chart-data="chartData" :chart-options="chartOptions" />
 		</div>
-		<div v-for="(element, key) in fetchedData" :key="key">
-			<GameCard :element="element"/>
-		</div>
-	</template>
-	<template v-else>
-		История игр отсутствует
-	</template>
+		<GameCard
+				v-for="(element, key) in fetchedData"
+				:key="key"
+				:element="element"
+		/>
+	</div>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="История игр отсутствует"
+	/>
+
+	<Pagination
+			v-if="paginationData"
+			:pagination="paginationData"
+			:navigationButtons="true"
+			:perPageOptionsProp="[10, 20, 40]"
+			:setQueryParams="false"
+			@changePage="changePage"
+			@setPerPage="setPerPage"
+	/>
 </template>
 
 <style lang="scss" scoped>
 .game-count-line {
-	@apply block lg:flex justify-center;
+	@apply flex justify-center;
 
 	span {
 		@apply block lg:inline mr-[1.5rem];

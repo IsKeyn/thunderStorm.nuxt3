@@ -1,45 +1,52 @@
 <script setup>
 import Tabs from '@/components/ui/tabs/Tabs.vue';
-
 import Inventory from '@/modules/boardGame/components/item/Inventory.vue';
 import ItemList from '@/modules/boardGame/components/item/ItemList.vue';
+import Shop from '@/modules/boardGame/components/item/Shop.vue';
 import Board from '@/modules/boardGame/components/board/Board.vue';
-import GameList from '@/modules/boardGame/components/game/GameList.vue';
 import GameProfile from '@/modules/boardGame/components/game/GameProfile.vue';
+import GameListWithPagination from '@/modules/boardGame/components/game/GameListWithPagination.vue';
+import AddGames from '@/modules/boardGame/components/game/AddGames.vue';
 
 const emit = defineEmits(['setPageName']);
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
-const steps = ref({
+const steps = {
 	1: {
 		title: 'Действие 1 - Лут предметов и их использование',
+		buttonName: 'Инвентарь',
+		icon: ['fa-solid', 'fa-hat-wizard'],
 		description: 'Прокрутите рулетку предметов доступное количество раз, ознакомтесь с выпавшими предметами и при необходимости используйте их',
 	},
 	2: {
 		title: 'Действие 2 - Игровая доска, ход и действия на клетках',
+		icon: ['fas', 'dice'],
+		buttonName: 'Игровое поле',
 		description: 'Бросьте кубик, если вы попадете на клетку с действием, примите решение с действием',
 	},
 	3: {
 		title: 'Действие 3 - Выбор игры и её прохождение',
+		buttonName: 'Игра',
+		icon: ['fas', 'gamepad'],
 		description: 'Крутаните рулетку игр и выберите игру для прохождения, помните, что рерол игры накладывает штрафы. Во время прохождения игры необходимо включать таймер',
 	},
-});
+};
 
-const firstStep = computed(() => {
-	return Object.keys(steps.value)[0];
-});
+const firstStep = () => {
+	return Object.keys(steps)[0];
+};
 
-const lastStep = computed(() => {
-	const keys = Object.keys(steps.value);
+const lastStep = () => {
+	const keys = Object.keys(steps);
 	return keys[keys.length - 1];
-});
+};
 
 const currentStep = ref(1);
 
 const setStep = (stepNumber) => {
-	emit('setPageName', steps.value[stepNumber].title);
+	emit('setPageName', steps[stepNumber].title);
 	currentStep.value = stepNumber;
 }
 
@@ -48,7 +55,10 @@ const setCurrentStep = () => {
 		/* Шаг 3 - Профиль игры */
 		if (
 				userStore.player.has_current_game ||
-				((userStore.player?.step_count === 0 || userStore.player?.finishBoard) && userStore.player?.item_roll_count === 0)
+				(
+						(userStore.player?.step_count === 0 || userStore.player?.finishBoard)
+						&& userStore.player?.item_roll_count === 0
+				)
 		) {
 			setStep(3); return;
 		}
@@ -68,14 +78,14 @@ const changeStep = (direction) => {
 		case 'next':
 			const nextStep = currentStep.value + 1;
 
-			if (steps.value[nextStep]) {
+			if (steps[nextStep]) {
 				setStep(nextStep);
 			}
 			break;
 		case 'prev':
 			const prevStep = currentStep.value - 1;
 
-			if (steps.value[prevStep]) {
+			if (steps[prevStep]) {
 				setStep(prevStep);
 			}
 			break;
@@ -87,6 +97,10 @@ const tabsItemElements = [
 	{
 		id: 'inventory',
 		title: 'Инвентарь',
+	},
+	{
+		id: 'shop-items',
+		title: 'Магазин Ксырстыка',
 	},
 	{
 		id: 'item-list',
@@ -106,27 +120,51 @@ const tabsGameElements = [
 		id: 'game-list',
 		title: 'Список игр',
 	},
+	{
+		id: 'add-games',
+		title: 'Добавление игр',
+	},
 ];
 </script>
 
 <template>
+	<div class="buttons">
+		<div class="left">
+			<button
+					v-if="currentStep !== Number(firstStep())"
+					class="btn btn-simple nav-button"
+					title="Шаг назад"
+					@click="changeStep('prev')"
+			><font-awesome-icon icon="fa-solid fa-arrow-left" /><span class="description"> Шаг назад</span></button>
+		</div>
+
+		<div class="center">
+			<button
+					v-for="(step, key) in steps"
+					:key="key"
+					:class="['btn btn-simple', currentStep === Number(key) ? 'active' : null]"
+					@click="setStep(Number(key))"
+			>
+				<font-awesome-icon :icon="step.icon" />
+				<span class="name">{{ key }} - {{ step.buttonName }}</span>
+			</button>
+		</div>
+
+		<div class="right">
+			<button
+					v-if="currentStep !== Number(lastStep())"
+					class="btn btn-simple ml-2 nav-button"
+					title="Шаг вперед"
+					@click="changeStep('next')"
+			><span class="description">Шаг вперед </span><font-awesome-icon icon="fa-solid fa-arrow-right" /></button>
+		</div>
+	</div>
+
 	<layout-InfoBlock
 			v-if="currentStep"
 			:text="steps[currentStep].description"
-			classes="!mb-0"
+			classes="!mb-[1.5rem] mt-[1rem]"
 	/>
-	<div class="text-right">
-		<button
-				v-if="currentStep !== Number(firstStep)"
-				class="btn btn-simple"
-				@click="changeStep('prev')"
-		><font-awesome-icon icon="fa-solid fa-arrow-left" /> Шаг назад</button>
-		<button
-				v-if="currentStep !== Number(lastStep)"
-				class="btn btn-simple ml-2"
-				@click="changeStep('next')"
-		>Шаг вперед <font-awesome-icon icon="fa-solid fa-arrow-right" /></button>
-	</div>
 
 	<div v-if="currentStep === 1">
 		<Tabs
@@ -139,6 +177,9 @@ const tabsGameElements = [
 			</template>
 			<template #tab-item-list>
 				<ItemList />
+			</template>
+			<template #tab-shop-items>
+				<Shop />
 			</template>
 		</Tabs>
 	</div>
@@ -156,15 +197,52 @@ const tabsGameElements = [
 			</template>
 			<template #tab-game-list>
 				<div class="max-w-[1400px] m-auto">
-					<GameList />
+					<GameListWithPagination />
 				</div>
+			</template>
+			<template #tab-add-games>
+				<AddGames />
 			</template>
 		</Tabs>
 	</div>
 </template>
 
 <style lang="scss" scoped>
-.info-box {
-	@apply rounded-none;
+.buttons {
+	@apply w-full block grid grid-cols-12 text-[1.2rem];
+
+	.left {
+		@apply col-span-3 lg:col-span-4 flex justify-start;
+	}
+
+	.center {
+		@apply col-span-6 lg:col-span-4 flex justify-center;
+
+		button {
+			@apply mr-1;
+
+			&.active {
+				@apply bg-[var(--main-hover-color)];
+			}
+
+			svg {
+				@apply xl:hidden;
+			}
+
+			.name {
+				@apply hidden xl:inline;
+			}
+		}
+	}
+
+	.right {
+		@apply col-span-3 lg:col-span-4 flex justify-end;
+	}
+
+	.nav-button {
+		.description {
+			@apply hidden sm:inline;
+		}
+	}
 }
 </style>

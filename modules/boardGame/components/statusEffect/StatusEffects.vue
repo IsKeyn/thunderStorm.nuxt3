@@ -2,7 +2,12 @@
 import StatusEffectCard from '@/modules/boardGame/components/statusEffect/StatusEffectCard.vue';
 
 import { computed } from "vue";
-const route = useRoute();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { api } from '@/composables/api.js';
+const { sendApiRequest } = api();
 
 const props = defineProps({
 	userName: {
@@ -17,17 +22,15 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	groupUnusedSe: {
+		type: Boolean,
+		default: false,
+	},
 	classes: {
 		type: String,
 		default: null,
 	},
 });
-
-import { api } from '@/composables/api.js';
-const { sendApiRequest } = api();
-
-import { notifications } from '@/composables/notifications.js';
-const { alert, error } = notifications();
 
 const requestName = 'getBoardGamePlayerStatusEffectHistory';
 
@@ -43,7 +46,7 @@ const {
 						sendApiRequest(`board-game/v2/player/getStatusEffects/${route.params.slug}/${props.userName}`, 'GET', {}, requestName, '')
 				);
 
-				return response?.data || null;
+				return response || null;
 			}
 		},
 		{
@@ -52,40 +55,75 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || null);
+const fetchedData = computed(() => requestData.value?.data || null);
+
+const unusedSe = computed(() => {
+	const grouped = {};
+
+	if (fetchedData.value) {
+		fetchedData.value.filter(item => item.active).forEach((item) => {
+			// ИСПРАВЛЕНИЕ: используем ?. чтобы избежать ошибки, если statusEffectBind === null
+			const effect = item.statusEffectBind?.statusEffect;
+
+			if (effect) {
+				if (grouped[effect.id]) {
+					grouped[effect.id].statusEffectBind.statusEffect.quantity++;
+				} else {
+					grouped[effect.id] = { ...item };
+					grouped[effect.id].statusEffectBind.statusEffect.quantity = 1;
+				}
+			}
+		});
+	}
+
+	return Object.values(grouped).sort((a, b) => {
+		// На всякий случай добавим ?. и в сортировку
+		const qtyA = a.statusEffectBind?.statusEffect?.quantity || 0;
+		const qtyB = b.statusEffectBind?.statusEffect?.quantity || 0;
+		return qtyB - qtyA;
+	});
+});
 
 const nonActiveSe = computed(() => {
 	const grouped = {};
 
 	if (fetchedData.value) {
 		fetchedData.value.filter(item => !item.active).forEach((item) => {
-			if (item.statusEffect) {
-				if (grouped[item.statusEffect.id]) {
-					grouped[item.statusEffect.id].statusEffect.quantity++;
+			// ИСПРАВЛЕНИЕ: используем ?.
+			const effect = item.statusEffectBind?.statusEffect;
+
+			if (effect) {
+				if (grouped[effect.id]) {
+					grouped[effect.id].statusEffectBind.statusEffect.quantity++;
 				} else {
-					grouped[item.statusEffect.id] = { ...item };
-					grouped[item.statusEffect.id].statusEffect.quantity = 1;
+					grouped[effect.id] = { ...item };
+					grouped[effect.id].statusEffectBind.statusEffect.quantity = 1;
 				}
 			}
 		});
 	}
 
-	return Object.values(grouped).sort(function(a, b) {
-		return b.statusEffect.quantity - a.statusEffect.quantity;
+	return Object.values(grouped).sort((a, b) => {
+		const qtyA = a.statusEffectBind?.statusEffect?.quantity || 0;
+		const qtyB = b.statusEffectBind?.statusEffect?.quantity || 0;
+		return qtyB - qtyA;
 	});
 });
 
 const updateList = () => {
 	refresh();
 }
-
-// TODO только текущий пользователь может использовать статус эффекты
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
 	<div
-			v-else-if="fetchedData && fetchedData.length > 0"
+			v-else-if="fetchedData && fetchedData.length"
 			:class="['inventory', classes]"
 	>
 		<div class="box mb-[2rem]">
@@ -93,7 +131,7 @@ const updateList = () => {
 			<span v-if="fetchedData && fetchedData.filter(item => item.active).length === 0">У игрока нет активных статус эффектов</span>
 			<div class="wrapper">
 				<StatusEffectCard
-						v-for="(element, key) in fetchedData.filter(item => item.active)"
+						v-for="(element, key) in groupUnusedSe ? unusedSe : fetchedData.filter(item => item.active)"
 						:key="key"
 						:element="element"
 						:useLightBox="true"
@@ -119,9 +157,11 @@ const updateList = () => {
 			</div>
 		</div>
 	</div>
-	<template v-else>
-		Статус эффекты отсутствуют
-	</template>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Статус эффекты отсутствуют"
+	/>
 </template>
 
 <style lang="scss" scoped>

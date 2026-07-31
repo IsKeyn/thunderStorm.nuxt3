@@ -1,0 +1,97 @@
+/*
+* https://color.romanuke.com/tsvetovaya-palitra-3895/
+* #b35a1f #e7b05a #c96a1b #8b4513 #5c2e0f
+*/
+
+:root.autumn-theme {
+  /* Цветовая схема InSilentHill  */
+  /* Цвета */
+  --alert-color: #800000;
+  --error-color: #500000;
+  --success-color: #b5651d;
+
+  /* Фоны */
+  --body-bg-color: #333333;
+  --main-bg-color: #000000;
+  --second-bg-color: #5a2d0c;
+  --third-bg-color: #0b0b0b;
+
+  /* Блоки */
+  --main-block-color: #000000;
+  --second-block-color: #5a2d0c;
+  --third-block-color: #4a240a;
+
+  /* Пелена */
+  --main-veil-color: rgba(0, 0, 0, 0.5);
+
+  /* Модалки */
+  --modal-small-width: 400px;
+  --modal-medium-width: 900px;
+  --modal-full-screen-width: 100%;
+
+  /* Заголовки */
+  --main-title-color: #5c2e0f;
+
+  /* Текст */
+  --main-text-color: #C0C0C0;
+  --main-text-font: Verdana;
+  --second-text-color: #C0C0C0;
+  --third-text-color: #C0C0C0;
+
+  --main-dark-text-color: #C0C0C0;
+  --third-dark-text-color: #C0C0C0;
+
+  /* Размеры шрифтов */
+  --main-font-size: 16px;
+  --main-title-font-size: 18px;
+  --text-small-text: 14px;
+
+  /* Ссылки */
+  --main-href-color: #562200;
+  --main-hover-color: #b35a1f;
+  --main-active-color: #b35a1f;
+  --second-active-color: #b35a1f;
+  --third-active-color: #b35a1f;
+  --second-href-color: #5c2e0f;
+  --second-hover-color: #5c2e0f;
+  --third-hover-color: #DDD;
+
+  /* Рамки */
+  --main-border-color: #5c2e0f;
+  --second-border-color: #333333;
+  --third-border-color: #1c1c1c;
+  --main-very-light-color: #1d1d1d;
+
+  /* Кнопки */
+  --button-color-1: #562200;
+
+  /* Размеры */
+  --main-block-width: 1400px;
+
+  /* Отступлы контентной зоны */
+  --main-padding: 30px;
+  --main-left-padding: 60px;
+  --main-right-padding: 60px;
+  --main-without-left-padding: -60px;
+  --main-without-right-padding: -60px;
+
+  --main-mobile-padding: 20px;
+  --main-mobile-left-padding: 20px;
+  --main-mobile-right-padding: 20px;
+  --main-mobile-without-left-padding: -20px;
+  --main-mobile-without-right-padding: -20px;
+
+  /*
+   * Префикс первые три буквы, пример alerts - --ale-main-color
+   */
+
+  /* Notification */
+  --not-alert-bg-color: #b5651d;
+  --not-error-bg-color: #5c2e0f;
+
+  /* Статьи */
+  --item-color: #c96a1b;
+  --heal-color: #9df700;
+  --ammo-color: #000bea;
+  --epic-color: #4700d8;
+}

@@ -1,20 +1,41 @@
 <script setup>
 import PlayerInteractionCard from '@/modules/boardGame/components/player-interactions/PlayerInteractionCard.vue';
 
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 
-const route = useRoute();
+const { subscribe, unsubscribe } = useWebSocket();
+const runtimeConfig = useRuntimeConfig();
+
+import { helper } from '@/composables/helper.js'
+const { route, hasWebSocked } = helper();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
 
 import { userFunctions } from '@/composables/userFunctions.js';
-const {
-	isAuth,
-	userStore,
-} = userFunctions();
+const { isAuth, userStore } = userFunctions();
 
 const props = defineProps({
+	user_id: {
+		type: Number,
+		default: null,
+	},
+	checkCondition: {
+		type: Boolean,
+		default: true,
+	},
+	active: {
+		type: Boolean,
+		default: false,
+	},
+	showDescription: {
+		type: Boolean,
+		default: true,
+	},
+	listenUpdates: {
+		type: Boolean,
+		default: false,
+	},
 	classes: {
 		type: String,
 		default: null,
@@ -22,6 +43,7 @@ const props = defineProps({
 });
 
 const requestName = 'getBoardGamePlayerInteractions';
+const hiddenRefresh = ref(false);
 
 const {
 	data: requestData,
@@ -30,10 +52,23 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
+			const body = {
+				checkCondition: props.checkCondition,
+				userId: props.user_id,
+				active: props.active,
+			};
+
 			const response = await Promise.resolve(
-					sendApiRequest(`board-game/v2/player/interactions/get/${route.params.slug}/`, 'GET', {}, requestName, '')
+					sendApiRequest(
+							`board-game/v2/player/interactions/get/${route.params.slug}/`,
+							'GET',
+							body,
+							requestName,
+							''
+					)
 			);
 
+			hiddenRefresh.value = false;
 			return response || null;
 		},
 		{
@@ -42,75 +77,100 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || null);
+const fetchedData = ref([]);
+
+// Инициализация из useAsyncData
+watchEffect(() => {
+	fetchedData.value = requestData.value?.data || [];
+});
 
 const incoming = computed(() => {
-	return fetchedData.value?.interaction.filter(item => item.created_by !== userStore.user.id);
+	return fetchedData.value.filter(item => item.created_by !== props.user_id);
 });
 
 const outgoing = computed(() => {
-	return fetchedData.value?.interaction.filter(item => item.created_by === userStore.user.id);
+	return fetchedData.value.filter(item => item.created_by === props.user_id);
 });
 
 const description = 'Страница взаимодействия с другими игроками. На этой странице вы можете отслеживать свои запросы на взаимодействие с другими игроками, а также принимать решения о входящих предложениях.';
+
+onMounted(async () => {
+	if (isAuth.value
+			&& Object.keys(userStore.user).length
+			&& props.listenUpdates
+			&& runtimeConfig.public.hasWebSockedServer
+	) {
+		const userId = userStore.user?.id;
+
+		const { unsubscribe: stop, subscriptionId } = subscribe(
+				`App.Models.User.${userId}`,
+				'BoardGame.PlayerInteractions',
+				(data) => {
+					if (data.status === 'update') {
+						hiddenRefresh.value = true;
+						refresh();
+					}
+				}
+		);
+	}
+});
 </script>
 
 <template>
-	<layout-InfoBlock
-			:text="description"
-			classes="!mb-6"
-	/>
-	<ui-BigPreloader v-if="requestInProgress" />
-	<div class="item-box" v-else-if="fetchedData && fetchedData.status === 'error' && fetchedData.status_message">
-		{{ fetchedData.status_message }}
-	</div>
-	<div
-			v-else-if="fetchedData?.interaction.length > 0"
-			:class="['interactions', classes]"
-	>
-		<div class="box mb-[2rem]">
-			<h2 class="inv-title">Входящие запросы</h2>
-			<span v-if="incoming.length === 0">Предметов нет</span>
-			<div class="wrapper">
-				<PlayerInteractionCard
-						v-for="(element, key) in incoming"
-						:key="key"
-						:element="element"
-						@update="refresh"
-				/>
-<!--				<ItemCard-->
-<!--						v-for="(element, key) in fetchedData.filter(item => !item.has_used)"-->
-<!--						:key="key"-->
-<!--						:element="element.item"-->
-<!--						:inventoryItem="element"-->
-<!--						:useLightBox="true"-->
-<!--						:showControlPanel="canUse"-->
-<!--						@useItem="useItem"-->
-<!--				/>-->
+		<layout-InfoBlock
+				v-if="showDescription"
+				:text="description"
+				classes="!mb-6"
+		/>
+		<ui-BigPreloader
+				v-if="requestInProgress && !hiddenRefresh"
+				theme="image"
+				:themeType="9"
+		/>
+		<div
+				v-else-if="fetchedData && fetchedData.status === 'error' && fetchedData.status_message"
+				class="item-box"
+		>
+			{{ fetchedData.status_message }}
+		</div>
+		<div
+				v-else-if="fetchedData.length"
+				:class="['interactions', classes]"
+		>
+			<div class="box">
+				<h2 class="inv-title">Исходящие запросы</h2>
+				<span v-if="outgoing.length === 0">Запросов нет</span>
+				<div class="wrapper">
+					<PlayerInteractionCard
+							v-for="(element, key) in outgoing"
+							:key="key"
+							:element="element"
+							:user_id="user_id"
+							:checkCondition="checkCondition"
+							@update="refresh"
+					/>
+				</div>
+			</div>
+			<div class="box mb-[2rem]">
+				<h2 class="inv-title">Входящие запросы</h2>
+				<span v-if="incoming.length === 0">Запросов нет</span>
+				<div class="wrapper">
+					<PlayerInteractionCard
+							v-for="(element, key) in incoming"
+							:key="key"
+							:element="element"
+							:user_id="user_id"
+							:checkCondition="checkCondition"
+							@update="refresh"
+					/>
+				</div>
 			</div>
 		</div>
-		<div class="box">
-			<h2 class="inv-title">Исходящие запросы</h2>
-			<span v-if="outgoing.length === 0">Предметов нет</span>
-			<div class="wrapper">
-				<PlayerInteractionCard
-						v-for="(element, key) in outgoing"
-						:key="key"
-						:element="element"
-						@update="refresh"
-				/>
-<!--				<ItemCard-->
-<!--						v-for="(element, key) in usedItems"-->
-<!--						:key="key"-->
-<!--						:element="element.item"-->
-<!--						:useLightBox="true"-->
-<!--				/>-->
-			</div>
-		</div>
-	</div>
-	<template v-else>
-		Взаимодействия отсутствуют
-	</template>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="Взаимодействия отсутствуют"
+		/>
 </template>
 
 <style lang="scss" scoped>

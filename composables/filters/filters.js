@@ -50,6 +50,10 @@ export function filters() {
         return name;
     };
 
+    const storeDefaultFilters = (filterName = 'default', defaultFilter = {}) => {
+        filtersStore.filters[filterName + '_defaultFilters'] = defaultFilter;
+    }
+
     const setFilter = (filter, filterName = 'default') => {
         if (!filtersStore.filters[filterName]) {
             filtersStore.filters[filterName] = {};
@@ -85,7 +89,9 @@ export function filters() {
 
         }
 
-        filtersStore.filters[filterName] = {};
+        filtersStore.filters[filterName] = filtersStore.filters[filterName + '_defaultFilters']
+            ? filtersStore.filters[filterName + '_defaultFilters']
+            : {};
     }
 
     const setQueryFilters = (filterName, usedFilters = [], defaultFilters = {}) => {
@@ -127,7 +133,7 @@ export function filters() {
 
         if (usedFilters.length > 0) {
             usedFilters.forEach((item) => {
-                if (checkList.filter((i) => i === item.name).length === 0) {
+                if (checkList.filter((i) => i === item.name).length === 0 && item.type !== 'hidden') {
                     checkList.push(item.name);
                 }
             });
@@ -148,6 +154,7 @@ export function filters() {
 
     return {
         setFilterName,
+        storeDefaultFilters,
         setFilter,
         clearFilters,
         setQueryFilters,

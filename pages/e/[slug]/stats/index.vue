@@ -1,9 +1,9 @@
 <script setup>
-import Stats from '@/modules/boardGame/components/pages/Stats.vue';
-
 definePageMeta({
 	layout: 'board-game',
 });
+
+import Stats from '@/modules/boardGame/components/pages/Stats.vue';
 </script>
 
 <template>

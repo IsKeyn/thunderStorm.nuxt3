@@ -1,17 +1,16 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ResentVerifyEmail from '@/components/user/fragments/ResentVerifyEmail.vue';
-import SocialAuthComponent from '@/components/user/auth/SocialAuthComponent.vue';
 
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 const { getSettingFirstValue } = settings();
 
 import { validate } from '@/composables/validate.js';
-import { api } from '@/composables/api.js';
-import { useUserStore } from '@/stores/user';
-
 const { validateElement } = validate();
+
+import { api } from '@/composables/api.js';
 const {
 	apiUrl,
 	errorHandler,
@@ -22,6 +21,7 @@ const {
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
+import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
 const props = defineProps({
@@ -64,13 +64,13 @@ const form = ref(
 				classes: ['w-full', 'pr-[25px]', 'mt-[5px]'],
 			},
 			personal_data_processing_policy: {
-				name: 'Я согласен с правилами использования материалов сайта и политикой по обработке персональных данных',
+				name: 'Я согласен с правилами использования сайта и политикой по обработке персональных данных',
 				showTitle: false,
-				html: 'Я согласен с <a href="/article/rule-for-use-site/" class="underline" target="_blank">правилами использования материалов сайта</a> и <a href="/article/consent-of-personal-data/" class="underline" target="_blank">политикой по обработке персональных данных</a>',
+				html: 'Я согласен с <a href="/article/rule-for-use-site/" class="underline" target="_blank">правилами использования сайта</a> и <a href="/article/consent-of-personal-data/" class="underline" target="_blank">политикой по обработке персональных данных</a>',
 				value: false,
 				type: 'checkbox',
 				validateRules: 'required',
-				validateErrorText: 'Соглашение с правилами использования материалов сайта и политикой по обработке персональных данных обязательно для регистрации',
+				validateErrorText: 'Соглашение с правилами использования сайта и политикой по обработке персональных данных обязательно',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}
@@ -276,10 +276,12 @@ const getUserData = async () => {
 					</a>
 				</div>
 			</div>
-			<SocialAuthComponent
-					:registerOnEventBySlug="registerOnEventBySlug"
-					class="mt-2"
-			/>
+			<button
+					class="btn btn-simple w-full"
+					@click.prevent="$emit('setActionType', { value: 'auth_from_service', title: 'Авторизация через сервисы' })"
+			>
+				Авторизоваться через сервисы <font-awesome-icon icon="fa-solid fa-arrow-right-to-bracket" />
+			</button>
 		</template>
 	</div>
 	<ui-itemBox

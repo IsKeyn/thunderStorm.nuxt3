@@ -283,3 +283,11 @@ const addTag = () => {
 		</div>
 	</div>
 </template>
+
+<style lang="scss" scoped>
+.street-light-theme {
+	.tag {
+		@apply text-[var(--main-text-color)];
+	}
+}
+</style>

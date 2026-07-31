@@ -145,7 +145,7 @@ const extensions = [
 				:showSeo="true"
 				:hasResource="true"
 				:showAdditionalFieldsTab="true"
-				previewUrl="/series/{slug}"
+				previewUrl="/character/{slug}"
 				:useVersionList="true"
 
 				:useAdditionalData="true"

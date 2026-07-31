@@ -6,6 +6,10 @@ import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
 import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
 import UserSettings from '@/modules/boardGame/components/user/settings/UserSettings.vue';
 
+const emit = defineEmits(['updateBoardGameInfo', 'showPlayer', 'showInventory', 'showGame', 'showTimer']);
+
+import { ref, onMounted, onUnmounted } from "vue";
+
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
@@ -38,10 +42,6 @@ import { boardGame } from '@/composables/BoardGame/boardGame.js'
 const {
 	addTextToPoints
 } = boardGame();
-
-const emit = defineEmits(['updateBoardGameInfo', 'showPlayer', 'showInventory', 'showGame', 'showTimer']);
-
-import { ref } from "vue";
 
 const boxOpen = ref(false);
 const openCloseBoxFunc = () => {
@@ -79,6 +79,32 @@ const userMenuFunc = (type) => {
 const pointsWithText = computed(() => {
 	return addTextToPoints(userStore.player.full_points);
 });
+
+const showMessageCount = ref(false);
+let messageInterval = null;
+
+const startMessageToggle = () => {
+	if (messageInterval) clearInterval(messageInterval);
+
+	messageInterval = setInterval(() => {
+		showMessageCount.value = !showMessageCount.value;
+	}, 3000);
+};
+
+onUnmounted(() => {
+	if (messageInterval) clearInterval(messageInterval);
+});
+
+onMounted(() => {
+	startMessageToggle();
+});
+
+const userName = computed(() => {
+	if (userStore?.user) {
+		if (userStore.user.public_name) return userStore.user.public_name;
+		if (userStore.user.name) return userStore.user.name;
+	}
+});
 </script>
 
 <template>
@@ -90,28 +116,57 @@ const pointsWithText = computed(() => {
 	<div class="wrapper">
 		<template v-if="isAuth">
 			<div class="info-block">
-				<span class="nickname">{{ userStore.user.name }}</span>
-				<span
-						v-if="userStore.player && Object.keys(userStore.player).length > 0"
-						class="points"
-				>{{ pointsWithText }} (<font-awesome-icon icon="fa-solid fa-bolt" />x{{ userStore.player.streak }})</span>
+				<span class="nickname">{{ userName }}</span>
+				<template v-if="userStore.player && Object.keys(userStore.player).length > 0">
+					<span v-if="userStore.player.active" class="points">{{ pointsWithText }} (<font-awesome-icon icon="fa-solid fa-bolt" />x{{ userStore.player.streak }})</span>
+					<span v-else>
+						<template v-if="userStore.player.not_active_reason">
+							{{ userStore.player.not_active_reason }}
+						</template>
+						<template>
+							Ваш профиль игрока не активен
+						</template>
+					</span>
+				</template>
+				<template v-else>
+					<span>Вы не участник ивента, примите участие через страницу действия</span>
+				</template>
 			</div>
 			<div class="avatar">
-					<img
-							:src="userStore.user.avatar ? getResizeImg(userStore.user.avatar) : '/images/system/no-avatar.png'"
-							:alt="userStore.user.name"
-							:title="`${userStore.user.name} - профайл пользователя`"
-							@click="toggleUserMenu()"
-					/>
+				<UserAvatar
+						:user="userStore.user"
+						:useLightBox="false"
+						:canChange="false"
+						classes="w-[4rem] h-[4rem] rounded-full object-cover !z-0"
+						:borderType="`${ userStore.player.premium && userStore.player?.settings?.avatarBorder ? userStore.player.settings.avatarBorder : '' }`"
+						@afterChangeAvatar="$emit('refresh')"
+						@click="toggleUserMenu()"
+				/>
 
 				<span
 						v-if="useNotifications && useNotifications.currentUserNotificationCount && useNotifications.currentUserNotificationCount > 0"
 						class="notifications"
 						@click="showNotificationModal"
 				>
-					{{ useNotifications.currentUserNotificationCount }}
+					<span>{{ useNotifications.currentUserNotificationCount > 99 ? '99+' : useNotifications.currentUserNotificationCount }}</span>
 				</span>
-				<!--				<font-awesome-icon :icon="['fas', 'camera']" class="change-avatar" />-->
+
+				<span
+						v-if="useNotifications && useNotifications.currentUserMessagesCount && useNotifications.currentUserMessagesCount > 0"
+						class="unread-messages"
+						@click="showUserMessagesModal(null)"
+				>
+            <Transition name="fade-switch" mode="out-in">
+                <div :key="showMessageCount ? 'count' : 'icon'" class="switch-content">
+                    <template v-if="showMessageCount">
+                        <span class="msg-count">{{ useNotifications.currentUserMessagesCount > 99 ? '99+' : useNotifications.currentUserMessagesCount }}</span>
+                    </template>
+                    <template v-else>
+                        <font-awesome-icon icon="fa-solid fa-envelope" class="msg-icon" />
+                    </template>
+                </div>
+            </Transition>
+        </span>
 				<div
 						class="user-menu"
 						v-show="showUserMenu"
@@ -119,16 +174,16 @@ const pointsWithText = computed(() => {
 					<div @click="userMenuFunc('profile');">
 						<font-awesome-icon icon="fa-solid fa-user" class="mr-2" /> Профиль
 					</div>
-<!--					<div @click="userMenuFunc('messages');">-->
-<!--						<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Личные сообщения-->
-<!--						<span v-if="-->
-<!--							useNotifications-->
-<!--							&& useNotifications.currentUserMessagesCount-->
-<!--							&& useNotifications.currentUserMessagesCount > 0"-->
-<!--						>-->
-<!--							({{ useNotifications.currentUserMessagesCount }})-->
-<!--						</span>-->
-<!--					</div>-->
+					<div @click="userMenuFunc('messages');">
+						<font-awesome-icon icon="fa-solid fa-envelope" class="mr-2" /> Личные сообщения
+						<span v-if="
+							useNotifications
+							&& useNotifications.currentUserMessagesCount
+							&& useNotifications.currentUserMessagesCount > 0"
+						>
+							({{ useNotifications.currentUserMessagesCount }})
+						</span>
+					</div>
 					<div @click="userMenuFunc('notifications');">
 						<font-awesome-icon icon="fa-solid fa-bell" class="mr-2" /> Оповещения
 						<span v-if="
@@ -228,6 +283,29 @@ const pointsWithText = computed(() => {
 			;
 		}
 
+		.unread-messages {
+			@apply
+				w-[1.7rem] h-[1.7rem]
+				flex rounded-full justify-center items-center
+				bg-[var(--second-block-color)] text-[var(--main-dark-text-color)]
+				absolute right-0 top-[-0.3rem]
+				overflow-hidden /* Важно для обрезки контента при анимации */
+				;
+
+				// Контейнер для переключаемого контента
+				.switch-content {
+					@apply w-full h-full flex justify-center items-center;
+				}
+
+				.msg-icon {
+					@apply text-[0.8rem]; // Немного уменьшим иконку для лучшего вида
+				}
+
+				.msg-count {
+					@apply text-[0.75rem] font-bold;
+				}
+		}
+
 		img {
 			@apply w-[4rem] h-[4rem] rounded-full object-cover;
 		}
@@ -267,5 +345,27 @@ const pointsWithText = computed(() => {
 	@apply pb-[1rem] mt-[2rem] mb-[1.5rem] block text-[1.1rem];
 
 	border-bottom: 1px solid var(--second-border-color);
+}
+
+// Стили для Vue Transition
+.fade-switch-enter-active,
+.fade-switch-leave-active {
+	transition: all 0.4s ease;
+}
+
+.fade-switch-enter-from {
+	opacity: 0;
+	transform: scale(0.8) translateY(5px);
+}
+
+.fade-switch-leave-to {
+	opacity: 0;
+	transform: scale(0.8) translateY(-5px);
+}
+
+.fade-switch-enter-to,
+.fade-switch-leave-from {
+	opacity: 1;
+	transform: scale(1) translateY(0);
 }
 </style>

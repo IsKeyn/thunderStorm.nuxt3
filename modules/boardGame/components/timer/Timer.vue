@@ -519,12 +519,12 @@ const mainTimerLimitReach = computed(() => {
 <!--					v-model="editedTime"-->
 <!--			>-->
 		</div>
-		<div v-else class="time-display">{{ formattedTime }}</div>
+		<div v-else class="time-display text-with-shadow">{{ formattedTime }}</div>
 		<template v-if="limit">
 			<span class="block mb-[0.5rem]">Лимит времени: {{ formattedLimitTime }}</span>
 			<LoadingBar
 					class="mb-[1rem]"
-					:currentPercent="progress"
+					:currentFill="progress"
 			/>
 		</template>
 		<template v-if="showControlButtons">
@@ -622,5 +622,9 @@ const mainTimerLimitReach = computed(() => {
 			@apply w-full text-center bg-[var(--second-bg-color)];
 		}
 	}
+}
+
+.text-with-shadow {
+	text-shadow: 0 2px 4px rgba(0,0,0,0.10);
 }
 </style>

@@ -46,8 +46,8 @@ const props = defineProps({
 		default: [],
 	},
 	defaultFilters: {
-		type: Array,
-		default: [],
+		type: Object,
+		default: {},
 	},
 	sortOptions: {
 		type: Array,

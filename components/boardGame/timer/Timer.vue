@@ -429,7 +429,7 @@ const formattedLimitTime = computed(() => {
 			<span class="block mb-[0.5rem]">Лимит времени: {{ formattedLimitTime }}</span>
 			<LoadingBar
 					class="mb-[1rem]"
-					:currentPercent="progress"
+					:currentFill="progress"
 			/>
 		</template>
 		<template v-if="showControlButtons">

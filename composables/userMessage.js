@@ -17,8 +17,8 @@ export function userMessage() {
         setUserNotificationMessageCount(response);
     }
 
-    const showUserMessagesModal = () => {
-        userMessagesModalRef.value.showModal();
+    const showUserMessagesModal = (user = null) => {
+        userMessagesModalRef.value.showModal(user);
     }
 
     const setUserNotificationMessageCount = (count) => {

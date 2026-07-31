@@ -75,6 +75,13 @@ const form = ref(
 				validateRules: '',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			is_test: {
+				name: 'Тестовая игра',
+				value: false,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			started_at: {
 				name: 'Дата начала',
 				value: '',
@@ -139,6 +146,13 @@ const breadCrumbsArray = computed(() => {
 		},
 	];
 });
+
+const extensions = [
+	{
+		name: 'BoardGameSettings',
+		keyForBackend: 'settings',
+	},
+];
 </script>
 
 <template>
@@ -159,6 +173,7 @@ const breadCrumbsArray = computed(() => {
 			:showAdditionalFieldsTab="true"
 			:useVersionList="true"
 			previewUrl="/e/{slug}"
+			:extensions="extensions"
 	/>
 	<ui-itemBox
 			v-else

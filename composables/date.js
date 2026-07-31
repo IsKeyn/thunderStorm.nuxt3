@@ -39,6 +39,10 @@ export function date() {
         }
     }
 
+    const getHoursFromMinutes = (minutes) => {
+        return twoDigits(Math.floor(minutes / 60)) + ':' + twoDigits(minutes % 60);
+    }
+
     const monthName = (month, lang = 'ru', langCase = 'ro') => {
 
         /*
@@ -133,6 +137,7 @@ export function date() {
     return {
         getFormattedDate,
         getFormattedHoursFromSeconds,
+        getHoursFromMinutes,
         monthName,
         weekDayName,
         twoDigits

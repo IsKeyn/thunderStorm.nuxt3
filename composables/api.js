@@ -1,4 +1,7 @@
 import { computed, ref } from 'vue';
+
+import { useRequestHeaders } from '#imports';
+
 import { useCookie } from '#imports';
 import { useLoadStateStore } from '@/stores/loadState';
 
@@ -14,26 +17,47 @@ export function api() {
     const sessionCookieName = computed(() => runtimeConfig.public.sessionCookieName);
 
     const getCsrfCookie = async (updateToken = false) => {
-        if (!updateToken && useCookie('XSRF-TOKEN').value) {
-            return useCookie('XSRF-TOKEN');
-        } else {
-            try {
-                await $fetch(
-                    `${backendUrl.value}/sanctum/csrf-cookie`,
-                    {
-                        withCredentials: true, // Отправлять куки
-                        credentials: 'include', // Сохранять куки
-                        headers: {
-                            Accept: 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                    },
-                );
+        const xsrfCookie = useCookie('XSRF-TOKEN');
 
-                return useCookie('XSRF-TOKEN');
-            } catch (e) {
-                errorHandler(e)
+        // Если токен уже есть и нас не просят обновлять - возвращаем его
+        if (!updateToken && xsrfCookie.value) {
+            // return xsrfCookie.value;
+            return xsrfCookie;
+        }
+
+        try {
+            // На сервере нам нужно передать существующие куки запроса,
+            // чтобы Laravel понял, кто мы такие (если сессия уже начата)
+            const headers = {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            };
+
+            if (process.server) {
+                // Передаем куки текущего запроса пользователя на бэкенд
+                headers.Cookie = useRequestHeaders(['cookie']).cookie;
             }
+
+            await $fetch(`${backendUrl.value}/sanctum/csrf-cookie`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: headers,
+            });
+
+            // ВАЖНО: После запроса на сервере кука XSRF-TOKEN может не появиться
+            // в useCookie автоматически, если она пришла в Set-Cookie заголовке.
+            // Однако, Laravel Sanctum обычно требует, чтобы мы сами взяли токен из куки.
+
+            // Повторная проверка куки. Если на сервере useCookie не подхватил Set-Cookie,
+            // придется парсить заголовки ответа вручную, но в Nuxt 3 useCookie должен работать,
+            // если настроен правильно.
+
+            // return useCookie('XSRF-TOKEN').value;
+            return useCookie('XSRF-TOKEN');
+
+        } catch (e) {
+            errorHandler(e);
+            return null;
         }
     };
 
@@ -67,7 +91,13 @@ export function api() {
                     if (showError)  error('Ошибка 405', 3000);
                     break;
                 default:
-                    if (showError) error('Повтори попытку', 3000);
+                    if (showError) {
+                        if (e.response?._data?.error) {
+                            error(e.response?._data?.error)
+                        } else {
+                            error('Повтори попытку', 3000);
+                        }
+                    }
                     break;
             }
 
@@ -148,9 +178,22 @@ export function api() {
                 Referer: publicUrl.value,
             };
 
+            // Если мы на сервере, мы должны передать куки клиента на бэкенд
+            if (process.server) {
+                const cookies = useRequestHeaders(['cookie']).cookie;
+                if (cookies) {
+                    headers.Cookie = cookies;
+                }
+            }
+
+            let csrfToken = null;
+
             if (method === 'POST' || method === 'DELETE' || method === 'PUT') {
-                const csrfCookie = await getCsrfCookie();
-                headers['X-XSRF-TOKEN'] = csrfCookie.value;
+                // Получаем токен. Функция getCsrfCookie должна убедиться, что он есть.
+                csrfToken = await getCsrfCookie();
+                if (csrfToken) {
+                    headers['X-XSRF-TOKEN'] = csrfToken.value;
+                }
             } else if (method === 'GET') {
                 const sessionCookie = useCookie(sessionCookieName.value);
                 headers.Cookie = `${sessionCookieName.value}=${sessionCookie.value};`;
@@ -158,11 +201,10 @@ export function api() {
 
             const opts = {
                 method,
-                credentials: 'include',
                 headers,
+                credentials: 'include',
             };
 
-            /* body - для POST подобных запросов, query - для GET запросов */
             if (method === 'POST' || method === 'DELETE' || method === 'PUT') {
                 opts.body = body;
             } else if (method === 'GET') {
@@ -182,7 +224,6 @@ export function api() {
                 if (requestName && loadState.loadList[requestName]) {
                     loadState.loadList[requestName].status = 'finish';
                 }
-
                 return response;
             } else {
                 if (requestName && loadState.loadList[requestName]) {
@@ -194,7 +235,11 @@ export function api() {
                 loadState.loadList[requestName].status = 'error';
             }
 
-            responseErrors.value = errorHandler(e, show404page, showError)
+            responseErrors.value = errorHandler(e, show404page, showError);
+
+            if (showError) {
+                return 'throwError';
+            }
         }
     }
 
@@ -202,9 +247,29 @@ export function api() {
         return reverse ? src.replace(backendUrl.value, '{backend-url}') : src.replace('http://localhost:8000', backendUrl.value).replace('{backend-url}', backendUrl.value);
     }
 
-    const responseHandler = async (response) => {
+    const responseHandler = async (
+        response,
+        from = null,
+        successMessage = null,
+
+    ) => {
         const notificationsModule = await import("@/composables/notifications.js");
         const { alert, error } = notificationsModule.notifications();
+
+        if (!response) {
+            error(
+                'Ответ от сервера пуст',
+                null,
+                null,
+                false,
+                from,
+                null,
+                false,
+                null
+            );
+
+            return;
+        }
 
         if (response.error) {
             error(
@@ -212,11 +277,13 @@ export function api() {
                 null,
                 null,
                 false,
-                'Сохранение настроек таймера',
+                from,
                 null,
                 false,
                 null
             );
+
+            return;
         }
 
         if (response.status) {
@@ -225,12 +292,25 @@ export function api() {
                 2000,
                 '#004d42',
                 false,
-                'Сохранение настроек таймера',
+                from,
                 null,
                 false,
                 null
             );
+
+            return;
         }
+
+        if (response.message) {
+            alert(
+                response.message,
+                10000
+            );
+
+            return;
+        }
+
+        alert(successMessage);
     }
 
     return {

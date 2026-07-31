@@ -1,10 +1,16 @@
 <script setup>
 import PlayerInteractionsList from '@/modules/boardGame/components/player-interactions/PlayerInteractionsList.vue';
 
-const route = useRoute();
+import { useUserStore } from '@/stores/user';
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
+
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth, userStore } = userFunctions();
 
 const pageName = 'Взаимодействия с игроками';
 const breadCrumbsArray = computed(() => {
@@ -29,5 +35,17 @@ const breadCrumbsArray = computed(() => {
 			:breadCrumbs="breadCrumbsArray"
 			:showMainPageInBreadCrumbs="false"
 	/>
-	<PlayerInteractionsList />
+
+	<PlayerInteractionsList
+			v-if="isAuth"
+			:user_id="userStore.user.id"
+			:active="true"
+			:listenUpdates="true"
+	/>
+	<div
+			v-else
+			class="item-box"
+	>
+		Функционал доступен только авторизованному пользователю
+	</div>
 </template>

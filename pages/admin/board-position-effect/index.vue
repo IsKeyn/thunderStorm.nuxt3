@@ -31,10 +31,6 @@ const titles = ref(
 				name: 'Описание',
 				type: 'cutText',
 			},
-			actions: {
-				name: 'Действие',
-				type: 'cutText',
-			},
 			title_image: {
 				name: 'Медиа',
 				type: 'media',

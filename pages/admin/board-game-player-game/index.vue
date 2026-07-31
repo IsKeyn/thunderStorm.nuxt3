@@ -25,6 +25,11 @@ const titles = ref(
 				apiUrl: 'user/list',
 				sortable: true,
 			},
+			bg_player_id: {
+				name: 'ID игрока',
+				type: 'text',
+				sortable: true,
+			},
 			board_game_game_list_id: {
 				name: 'ID игры в списке доступных на эвенте игр',
 				sortable: true,
@@ -62,11 +67,26 @@ const titles = ref(
 				type: 'rounded-box',
 				sortable: true,
 			},
+			points: {
+				name: 'Получил очков за игру',
+				type: 'rounded-box',
+				sortable: true,
+			},
 			created_by: {
 				name: 'Создал',
 				type: 'EntityList',
 				apiUrl: 'user/list',
 				sortable: true,
+			},
+			active: {
+				name: 'Активность',
+				type: 'boolean',
+				sortable: true,
+			},
+			finished_at: {
+				name: 'Дата завершения',
+				sortable: true,
+				type: 'date',
 			},
 		}
 );

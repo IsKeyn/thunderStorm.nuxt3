@@ -19,6 +19,7 @@ const titles = ref(
 			},
 			media_id: {
 				name: 'Медиа',
+				type: 'media',
 			},
 			url: {
 				name: 'url',

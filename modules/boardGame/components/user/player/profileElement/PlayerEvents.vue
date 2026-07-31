@@ -1,7 +1,10 @@
 <script setup>
 import Card from '@/modules/boardGame/components/boardGame/Card.vue';
 
-import { computed, watch } from "vue";
+import { computed } from "vue";
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
@@ -13,7 +16,6 @@ const props = defineProps({
 	},
 });
 
-const route = useRoute();
 const requestName = 'getBoardGamePlayerEvents';
 
 const {
@@ -28,7 +30,7 @@ const {
 						sendApiRequest(`board-game/v2/player/getEvents/${route.params.slug}/${props.userName}`, 'GET', {}, requestName, '')
 				);
 
-				return response?.data || null;
+				return response || null;
 			}
 		},
 		{
@@ -37,25 +39,27 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || null);
-
-watch(() => props.userName, () => {
-	refresh();
-}, { deep: true });
+const fetchedData = computed(() => requestData.value?.data || null);
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
-	<template v-else-if="fetchedData && fetchedData.length > 0">
-		<Card
-				v-for="(boardGame, key) in fetchedData"
-				:key="key"
-				:element="boardGame"
-		/>
-	</template>
-	<template v-else>
-		Не участвовал в других ивентах
-	</template>
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
+	<Card
+			v-else-if="fetchedData && fetchedData.length"
+			v-for="(boardGame, key) in fetchedData"
+			:key="key"
+			:element="boardGame"
+	/>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Не участвовал в других ивентах"
+	/>
 </template>
 
 <style lang="scss" scoped></style>

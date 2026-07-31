@@ -5,15 +5,14 @@ import UserMessagesList from '@/components/user/message/UserMessagesList.vue';
 import { ref } from "vue";
 
 const modalOpen = ref(false);
-const modalLoading = ref(false);
+const userForMessage = ref(null);
 
-const showModal = () => {
+const showModal = (user) => {
+	if (user) {
+		userForMessage.value = user;
+	}
+
 	modalOpen.value = !modalOpen.value;
-	modalLoading.value = true;
-}
-
-const loadingToggle = (value = false) => {
-	modalLoading.value = value;
 }
 
 defineExpose({
@@ -31,12 +30,10 @@ defineExpose({
 		<div class="modal-parent">
 			<h3 class="modal-title">Личные сообщения</h3>
 			<div class="link-parent-box">
-				<ui-BigPreloader v-if="modalLoading" />
-				<UserMessagesList
-						v-show="!modalLoading"
-						@loadingToggle="loadingToggle"
-				/>
+				<UserMessagesList :userForMessage="userForMessage" />
 			</div>
 		</div>
 	</Modal>
 </template>
+
+<style lang="scss" />

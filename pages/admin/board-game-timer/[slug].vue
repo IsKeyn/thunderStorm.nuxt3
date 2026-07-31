@@ -46,6 +46,12 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			elapsed_seconds: {
+				name: 'Секунд учтено',
+				value: null,
+				type: 'text',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			settings: {
 				name: 'Настройки',
 				value: '',

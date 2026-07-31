@@ -1,17 +1,27 @@
 <script setup>
-import GamblingGame from '@/components/games/GamblingGame.vue'
+import GamblingGameV2_1 from '@/components/games/gamblingGame/GamblingGameV2_1.vue'
 import CurrentGameCard from '@/modules/boardGame/components/game/CurrentGameCard.vue';
 import EditorForPlayerGamesList from '@/components/boardGame/game/EditorForPlayerGamesList.vue';
+import ExceptionPlatforms from '@/modules/boardGame/components/game/ExceptionPlatforms.vue';
 
 const emit = defineEmits(['setStep']);
 
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+
+const { subscribe, unsubscribe } = useWebSocket();
+const runtimeConfig = useRuntimeConfig();
+
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth, userStore } = userFunctions();
 
 import { helper } from '@/composables/helper.js'
-const { route } = helper();
+const { route, hasWebSocked } = helper();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { getSettingValue } = boardGame();
 
 const props = defineProps({
 	editListAvailable: {
@@ -27,8 +37,10 @@ const props = defineProps({
 /* Получение данных */
 const requestName = 'getBoardGameGamblingGameGameList';
 
-const selectedPlatform = ref(null);
 const hiddenRefresh = ref(false);
+
+const selectedPlatform = ref(null);
+// Проверка, переводить ли игрока на шаг 1
 const check = ref(false);
 
 const {
@@ -45,7 +57,13 @@ const {
 			}
 
 			const response = await Promise.resolve(
-					sendApiRequest(`board-game/v2/player-game/get-player-list/${route.params.slug}/`, 'GET', query, requestName, '')
+					sendApiRequest(
+							`board-game/v2/player-game/get-player-list/${route.params.slug}/`,
+							'GET',
+							query,
+							requestName,
+							''
+					)
 			);
 
 			hiddenRefresh.value = false;
@@ -147,11 +165,50 @@ const roll_count = computed(() => {
 		return 0;
 	}
 });
+
+const windowGgClasses = computed(() => {
+	let returnData = [];
+
+	if (fetchedData.value.listType) {
+		if (fetchedData.value.listType === 'golden') {
+			returnData.push('gold');
+		}
+
+		if (fetchedData.value.listType === 'rerolled') {
+			returnData.push('shit');
+		}
+	}
+
+	return returnData;
+});
+
+onMounted(async () => {
+	if (isAuth.value
+			&& Object.keys(userStore.user).length
+			&& runtimeConfig.public.hasWebSockedServer
+	) {
+		const userId = userStore.user.id;
+
+		subscribe(
+				`App.Models.User.${userId}`,
+				'BoardGame.PlayerInteractions',
+				(data) => {
+					if (data.status === 'update') {
+						hiddenRefresh.value = true;
+						refresh();
+					}
+				}
+		);
+	}
+});
 </script>
 
 <template>
 	<ui-BigPreloader
 			v-if="requestInProgress && !hiddenRefresh"
+			class="h-full"
+			theme="image"
+			:themeType="9"
 	/>
 	<div
 			class="item-box"
@@ -165,7 +222,10 @@ const roll_count = computed(() => {
 	>
 		<div
 				class="platforms-container"
-				v-if="selectPlatformAvailable && fetchedData.games && fetchedData.games.length > 0 && (!fetchedData.player.current_game || (fetchedData.player.current_game && editListShow === true))"
+				v-if="selectPlatformAvailable
+				&& fetchedData.games
+				&& fetchedData.games.length > 0
+				&& (!fetchedData.player.current_game || (fetchedData.player.current_game && editListShow === true))"
 		>
 			<div
 					:class="['platform', selectedPlatform === null ? 'active' : '']"
@@ -203,10 +263,16 @@ const roll_count = computed(() => {
 					@showEditList="editListToggle"
 			/>
 			<template v-else-if="!fetchedData.player.timer_status.reached_the_limit">
+				<ExceptionPlatforms
+						v-if="Boolean(getSettingValue('hasExceptionPlatforms'))"
+						@updateData="refresh()"
+				/>
+
 				<div v-if="listDescription" class="item-box">
 					{{ listDescription }}
 				</div>
-				<GamblingGame
+
+				<GamblingGameV2_1
 						v-if="fetchedData.games"
 						:items="fetchedData.games"
 						:roll_count="roll_count"
@@ -214,11 +280,12 @@ const roll_count = computed(() => {
 						:easeOutType="1"
 						:requestParentData="requestInProgress"
 						cardType="GameGamblingCard"
-						:itemHeight="130"
+						:itemHeight="105"
 						:editListAvailable="editListAvailable"
 						:showItemCount="true"
-						rollCountZeroMessage="Перед круткой рулетки игр вы должны использовать доступные крутки рулетки предметов, а такж использовать доступные ходы на игровом поле"
-						@funcAfterRollWithDelay2="refresh()"
+						rollCountZeroMessage="Перед круткой рулетки игр вы должны использовать доступные крутки рулетки предметов, а также использовать доступные ходы на игровом поле"
+						:windowClasses="windowGgClasses"
+						@funcAfterRollWithDelay1000="refresh()"
 				/>
 				<button
 						v-if="editListAvailable"
@@ -236,6 +303,10 @@ const roll_count = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+.item-box {
+	@apply rounded-none;
+}
+
 .loading-box {
 	@apply absolute z-[10] justify-center items-center w-full h-full bg-black/50;
 }

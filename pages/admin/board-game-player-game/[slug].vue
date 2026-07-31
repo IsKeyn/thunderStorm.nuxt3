@@ -29,6 +29,12 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			bg_player_id: {
+				name: 'ID игрока',
+				type: 'text',
+				validateRules: 'required',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			board_game_game_list_id: {
 				name: 'ID игры в списке доступных на эвенте игр',
 				value: '',
@@ -121,12 +127,34 @@ const form = ref(
 				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			points: {
+				name: 'Получил очков за игру',
+				value: '',
+				type: 'text',
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			created_by: {
 				name: 'Кем создан',
 				value: '',
 				type: 'EntityList',
 				apiUrl: 'user/list',
 				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
+			active: {
+				name: 'Активность',
+				value: true,
+				type: 'checkbox',
+				validateRules: '',
+				classes: ['w-full', 'mt-[5px]'],
+				showTitle: false,
+			},
+			finished_at: {
+				name: 'Дата завершения',
+				value: '',
+				type: 'datetime-local',
+				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
 		}

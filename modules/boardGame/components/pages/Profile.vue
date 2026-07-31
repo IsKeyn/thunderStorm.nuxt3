@@ -3,7 +3,8 @@ import PlayerProfile from '@/modules/boardGame/components/user/player/PlayerProf
 
 import { computed } from 'vue'
 
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
@@ -31,8 +32,12 @@ const breadCrumbsArray = computed(() => {
 			href: `/${splitPath[1]}/${splitPath[2]}`,
 		},
 		{
+			name: 'Список участников',
+			href: `/${splitPath[1]}/${splitPath[2]}/player`,
+		},
+		{
 			name: nameForProfile,
-			href: `/${splitPath[1]}/${splitPath[2]}/${splitPath[3]}`,
+			href: `/${splitPath[1]}/${splitPath[2]}/${splitPath[3]}/${splitPath[4]}`,
 		},
 	];
 });

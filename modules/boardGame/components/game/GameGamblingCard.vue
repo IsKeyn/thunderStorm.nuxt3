@@ -15,6 +15,10 @@ const props = defineProps({
 		type: String,
 		default: '',
 	},
+	overlayClasses: {
+		type: String,
+		default: '',
+	},
 	itemHeight: {
 		type: Number,
 		default: 100,
@@ -25,13 +29,13 @@ const props = defineProps({
 <template>
 	<div
 			:class="['item-box', classes]"
-			:style="`background-image: url('${getResizeImg(element.game.title_image, 1500)}');`"
+			:style="`background-image: url('${getResizeImg(element.game.title_image, 1500)}'); height: ${itemHeight}px;`"
 	>
-		<div :class="`card-overlay ${classes}`" />
+		<div :class="['card-overlay', classes, overlayClasses]" />
 		<div class="content-box" :style="`height: ${itemHeight}px`">
 			<div class="info">
 				<span class="name">
-					{{ element.game.name }} <span v-if="element.platform">({{ element.platform.name }})</span>
+					{{ element.game.name }} <span v-if="element.platform">({{ element.platform.short_name ?? element.platform.name }})</span>
 				</span>
 			</div>
 		</div>
@@ -71,7 +75,7 @@ const props = defineProps({
 	}
 
 	.info {
-		@apply pl-3 pr-3 text-[var(--main-text-color)] text-center;
+		@apply pl-3 pr-3 text-[var(--main-dark-text-color)] text-center;
 
 		.name {
 			@apply block mb-1 uppercase;

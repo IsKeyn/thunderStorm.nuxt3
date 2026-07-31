@@ -126,7 +126,7 @@ const setSettingsRequest = async (settings) => {
 		}
 
 		const response = await sendApiRequest('board-game/v2/timer/set-settings', 'PUT', body, {}, requestName);
-		responseHandler(response);
+		responseHandler(response, 'Сохранение настроек таймера');
 		requestInProgress.value = false;
 	} catch (e) {
 		error(e);

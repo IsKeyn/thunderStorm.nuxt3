@@ -19,75 +19,73 @@ const props = defineProps({
 	},
 });
 
-const form = ref({});
-
-form.value.spinTime = {
-	name: 'Время крутки рулетки',
-	value: props.modelValue?.spinTime,
-	type: 'select',
-	options: [
-		{
-			name: '5 секунд',
-			value: 5000,
-		},
-		{
-			name: '10 секунд',
-			value: 10000,
-		},
-		{
-			name: '15 секунд',
-			value: 15000,
-		},
-		{
-			name: '30 секунд',
-			value: 30000,
-		},
-		{
-			name: '60 секунд',
-			value: 60000,
-		},
-	],
-	placeholder: 'Время крутки рулетки',
-	showTitle: true,
-	classes: 'w-full md:min-w-[10rem] mt-2',
-};
-
-form.value.elementToShow = {
-	name: 'Количество элементов в окне рулетки',
-	value: props.modelValue?.elementToShow,
-	type: 'select',
-	options: [
-		{
-			name: '1',
-			value: 1,
-		},
-		{
-			name: '3',
-			value: 3,
-		},
-		{
-			name: '5',
-			value: 5,
-		},
-	],
-	placeholder: 'Количество элементов в окне рулетки',
-	showTitle: true,
-	classes: 'w-full md:min-w-[10rem] mt-2',
-};
-
-form.value.sounds = {
-	name: 'Музыка рулетки',
-	value: props.modelValue?.sounds,
-	type: 'select-with-search-multiselect',
-	options: props.sounds,
-	placeholder: 'Время крутки рулетки',
-	showTitle: true,
-	classes: 'w-full md:min-w-[10rem] mt-2',
-};
+const form = ref({
+	spinTime: {
+		name: 'Время крутки рулетки',
+		value: props.modelValue?.spinTime,
+		type: 'select',
+		options: [
+			{
+				name: '5 секунд',
+				value: 5000,
+			},
+			{
+				name: '10 секунд',
+				value: 10000,
+			},
+			{
+				name: '15 секунд',
+				value: 15000,
+			},
+			{
+				name: '30 секунд',
+				value: 30000,
+			},
+			{
+				name: '60 секунд',
+				value: 60000,
+			},
+		],
+		placeholder: 'Время крутки рулетки',
+		showTitle: true,
+		classes: 'w-full md:min-w-[10rem] mt-2',
+	},
+	elementToShow: {
+		name: 'Количество элементов в окне рулетки',
+		value: props.modelValue?.elementToShow,
+		type: 'select',
+		options: [
+			{
+				name: '1',
+				value: 1,
+			},
+			{
+				name: '3',
+				value: 3,
+			},
+			{
+				name: '5',
+				value: 5,
+			},
+		],
+		placeholder: 'Количество элементов в окне рулетки',
+		showTitle: true,
+		classes: 'w-full md:min-w-[10rem] mt-2',
+	},
+	sounds: {
+		name: 'Музыка рулетки',
+		value: props.modelValue?.sounds,
+		type: 'select-with-search-multiselect',
+		options: props.sounds,
+		placeholder: 'Музыка рулетки',
+		showTitle: true,
+		classes: 'w-full md:min-w-[10rem] mt-2',
+	},
+});
 
 let dontUpdate = false;
 
-watch(() => form.value, (newValue) => {
+watch(() => form.value, () => {
 	if (dontUpdate) {
 		dontUpdate = false;
 		return;
@@ -120,7 +118,7 @@ onMounted(() => {
 	getUserSettings();
 });
 
-const getUserSettings = () => {
+const getUserSettings = async () => {
 	dontUpdate = true;
 
 	if (userStore.user && Object.keys(userStore.user).length && userStore.user.settings.rouletteSetting) {
@@ -128,7 +126,7 @@ const getUserSettings = () => {
 			if (userStore.user.settings.rouletteSetting[key]) form.value[key].value = userStore.user.settings.rouletteSetting[key];
 		}
 	} else {
-		const setting = JSON.parse(sessionStorage.getItem('roulette-setting'));
+		const setting = JSON.parse(sessionStorage.getItem('roulette-setting')) || {};
 
 		for (let key in form.value) {
 			if (setting[key]) form.value[key].value = setting[key];
@@ -136,6 +134,9 @@ const getUserSettings = () => {
 	}
 
 	updateSettings();
+
+	await nextTick();
+	dontUpdate = false;
 }
 
 const requestInProgress = ref(false);

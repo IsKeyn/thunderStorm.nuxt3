@@ -1,5 +1,5 @@
 <script setup>
-import PlayerCard from '@/modules/boardGame/components/user/player/PlayerCard.vue';
+import PlayerCard from '@/modules/boardGame/components/user/player/playerCards/PlayerCard.vue';
 
 import { ref } from 'vue'
 

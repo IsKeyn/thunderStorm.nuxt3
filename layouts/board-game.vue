@@ -2,6 +2,7 @@
 import CookieAccept from '@/components/actions/CookieAccept.vue';
 import SystemComponents from '@/components/system/SystemComponents.vue';
 import ReceiveMainData from '@/modules/boardGame/components/boardGame/ReceiveMainData.vue';
+import ImportantLogsListener from '@/modules/boardGame/components/log-list/ImportantLogsListener.vue';
 
 
 
@@ -10,7 +11,7 @@ import Seo from '@/modules/boardGame/components/boardGame/Seo.vue';
 
 
 import Notifications from '@/components/notifications/Notifications.vue';
-
+import MediaById from '@/components/media/MediaById.vue';
 
 
 import Header from '@/modules/boardGame/components/layout/Header.vue';
@@ -29,6 +30,15 @@ const { getSettingFirstValue } = settings();
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
+import { roles } from '@/composables/roles.js';
+const { hasRole, hasPermission } = roles();
+
+import { userFunctions } from '@/composables/userFunctions.js';
+const {
+	isAuth,
+	userStore,
+} = userFunctions();
+
 import { lightBox } from '@/composables/lightBox.js';
 const {
 	openedImage,
@@ -44,9 +54,10 @@ provide('layoutMethods', {
 <template>
 	<CookieAccept />
 
-	<div v-if="!Boolean(Number(getSettingFirstValue('disable-events')))">
+	<div v-if="!Boolean(Number(getSettingFirstValue('disable-events'))) || (isAuth && hasRole('admin', userStore.user))">
 		<SystemComponents />
 		<ReceiveMainData />
+		<ImportantLogsListener />
 
 		<Seo />
 
@@ -63,6 +74,7 @@ provide('layoutMethods', {
 					</div>
 				</article>
 				<Notifications />
+				<MediaById />
 				<Footer />
 			</template>
 		</div>
@@ -99,6 +111,7 @@ provide('layoutMethods', {
 @import url('~/assets/scss/Dashboard/themes/Street.scss');
 @import url('~/assets/scss/Dashboard/themes/StreetLight.scss');
 @import url('~/assets/scss/Dashboard/themes/WinterLight.scss');
+@import url('~/assets/scss/Dashboard/themes/Autumn.scss');
 </style>
 
 <style lang="scss" scoped>

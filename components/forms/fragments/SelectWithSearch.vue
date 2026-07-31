@@ -22,9 +22,14 @@ const props = defineProps({
 		default: 'Выберите опцию',
 	},
 	classes: {
-		type: String,
+		type: [String, Array],
 		default: 'max-w-[30rem]',
-	}
+	},
+	// Отключение ввода в поле
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const selectValue = ref(props.modelValue ?? props.multiSelect ? [] : null);
@@ -56,6 +61,8 @@ const selectOption = (option) => {
 };
 
 const toggleDropdown = () => {
+	if (props.disabled) return false;
+
 	isDropdownOpen.value = !isDropdownOpen.value;
 	if (isDropdownOpen.value) {
 		searchQuery.value = '';
@@ -148,8 +155,10 @@ onBeforeUnmount(() => {
 					{{ getSelectedOptionName }}
 				</template>
 			</span>
-			<font-awesome-icon v-if="isDropdownOpen" :icon="['fas', 'angle-up']" class="select-arrow" />
-			<font-awesome-icon v-else :icon="['fas', 'angle-down']" class="select-arrow" />
+			<template v-if="!disabled">
+				<font-awesome-icon v-if="isDropdownOpen" :icon="['fas', 'angle-up']" class="select-arrow" />
+				<font-awesome-icon v-else :icon="['fas', 'angle-down']" class="select-arrow" />
+			</template>
 		</div>
 
 		<div
@@ -223,7 +232,11 @@ onBeforeUnmount(() => {
 	}
 
 	.select-dropdown {
-		@apply absolute top-full left-0 right-0 bg-[var(--main-block-color)] border border-[var(--second-border-color)] mt-1 shadow-lg z-50 max-h-[300px] overflow-hidden flex flex-col;
+		@apply
+			absolute top-full left-0 right-0
+			bg-[var(--main-block-color)] border border-[var(--second-border-color)]
+			mt-1 shadow-lg z-50 max-h-[300px] overflow-hidden flex flex-col
+		;
 
 		.search-container {
 			@apply p-2 border-b border-[var(--second-border-color)];
@@ -251,6 +264,17 @@ onBeforeUnmount(() => {
 			.no-results {
 				@apply p-3 text-center italic;
 			}
+		}
+	}
+}
+</style>
+
+<style lang="scss" scoped>
+.street-light-theme {
+	.custom-select {
+		.select-dropdown {
+			@apply bg-[var(--second-block-color)] text-[var(--main-dark-text-color)];
+			;
 		}
 	}
 }

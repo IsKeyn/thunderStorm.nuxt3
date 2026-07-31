@@ -1,9 +1,11 @@
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
 import { helper } from '@/composables/helper.js'
+import { useBoardGameStore } from '@/stores/boardGame';
 
 export function boardGame() {
     const { route } = helper();
+    const boardGameStore = useBoardGameStore();
 
     const getStatusName = (boardGameData) => {
         switch (boardGameData.status) {
@@ -58,10 +60,24 @@ export function boardGame() {
         refreshNuxtData(requestName);
     }
 
+    const getSettingValue = (settingName) => {
+        if (!settingName) return null;
+
+        const settings = boardGameStore?.boardGameInfo?.settings;
+
+        // Проверяем, что settings существует и является именно массивом
+        if (!Array.isArray(settings)) return null;
+
+        const setting = settings.find((item) => item.code === settingName);
+
+        return setting?.value ?? null;
+    }
+
     return {
         getStatusName,
         getDateString,
         addTextToPoints,
         refreshLayoutData,
+        getSettingValue,
     };
 }

@@ -4,6 +4,12 @@ import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 
 import { computed } from "vue";
 
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
+import { api } from '@/composables/api.js';
+const { sendApiRequest } = api();
+
 const props = defineProps({
 	userName: {
 		type: String,
@@ -14,11 +20,6 @@ const props = defineProps({
 		default: 10,
 	},
 });
-
-import { api } from '@/composables/api.js';
-const { sendApiRequest, preparedRequestBody } = api();
-
-const route = useRoute();
 
 const page = ref(route.query.page ? Number(route.query.page) : 1);
 const perPageCount = ref(route.query.perPage ? Number(route.query.perPage) : props.perPage);
@@ -58,11 +59,7 @@ const fetchedData = computed(() => requestData.value?.data || null);
 const paginationData = computed(() => requestData.value?.meta || null);
 
 watch(() => fetchedData.value, (newData) => {
-	if (typeAddedData.value === 'show_more') {
-		logsResult.value = logsResult.value.concat(newData);
-	} else {
-		logsResult.value = newData;
-	}
+	logsResult.value = typeAddedData.value === 'show_more' ? logsResult.value.concat(newData) : newData;
 }, { deep: true, immediate: true });
 
 const getNextPage = async () => {
@@ -75,7 +72,12 @@ const getNextPage = async () => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="typeAddedData !== 'show_more' && requestInProgress" />
+	<ui-BigPreloader
+			v-if="typeAddedData !== 'show_more' && requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
 	<template v-else-if="logsResult && logsResult.length > 0">
 		<LogCard
 				v-for="(log, key) in logsResult"
@@ -95,9 +97,11 @@ const getNextPage = async () => {
 			/>
 		</div>
 	</template>
-	<template v-else>
-		Логов пока нет
-	</template>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Логов пока нет"
+	/>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

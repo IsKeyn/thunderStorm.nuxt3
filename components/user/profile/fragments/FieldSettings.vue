@@ -3,7 +3,12 @@ import AlertBox from '@/components/notifications/AlertBlock.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
 
+const emit = defineEmits(['refresh']);
+
 import { onMounted } from "vue";
+
+import { helper } from '@/composables/helper.js'
+const { hasWebSocked } = helper();
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -22,20 +27,36 @@ const loadState = useLoadStateStore();
 
 const form = ref(
 		{
+			public_name: {
+				name: 'Отображаемое имя',
+				value: '',
+				type: 'text',
+				placeholder: 'Отображаемое имя',
+				validateRules: 'minLength_2, maxLength_50',
+				classes: 'w-full',
+			},
 			twitch: {
-				name: 'Ссылка Twitch канал',
+				name: 'Ссылка на Twitch канал',
 				value: '',
 				type: 'text',
 				placeholder: 'Twitch канал',
-				validateRules: 'required, minLength_2, maxLength_50',
+				validateRules: 'minLength_2, maxLength_100',
 				classes: 'w-full',
 			},
 			other_stream_platform: {
-				name: 'Отличная от twitch стрим площадка',
+				name: 'Ссылка на отличный от twitch стрим площадку',
 				value: '',
 				type: 'text',
 				placeholder: 'Укажите ссылку',
-				validateRules: 'required, minLength_2, maxLength_50',
+				validateRules: 'minLength_2, maxLength_100',
+				classes: 'w-full',
+			},
+			messenger: {
+				name: 'Ссылка на ваш профиль в мессенджере',
+				value: '',
+				type: 'text',
+				placeholder: 'Укажите ссылку',
+				validateRules: 'minLength_2, maxLength_100',
 				classes: 'w-full',
 			},
 		},
@@ -46,7 +67,10 @@ onMounted(() => {
 });
 
 const setValue = () => {
+	form.value.public_name.value = userStore.user.public_name ?? userStore.user.name;
 	form.value.twitch.value = `https://www.twitch.tv/${twitch.value.value}`;
+	form.value.other_stream_platform.value = otherStreamPlatform.value.value;
+	form.value.messenger.value = messenger.value.value;
 }
 
 const twitch = computed(() => {
@@ -55,6 +79,30 @@ const twitch = computed(() => {
 
 		if (twitchField.length > 0 && twitchField[0]) {
 			return twitchField[0];
+		}
+	}
+
+	return false;
+});
+
+const otherStreamPlatform = computed(() => {
+	if (userStore && userStore.user && userStore.user.additional_fields) {
+		const field = userStore.user.additional_fields.filter((item) => item.slug === 'other_stream_platform');
+
+		if (field.length > 0 && field[0]) {
+			return field[0];
+		}
+	}
+
+	return false;
+});
+
+const messenger = computed(() => {
+	if (userStore && userStore.user && userStore.user.additional_fields) {
+		const field = userStore.user.additional_fields.filter((item) => item.slug === 'messenger');
+
+		if (field.length > 0 && field[0]) {
+			return field[0];
 		}
 	}
 
@@ -108,7 +156,14 @@ const sendRequest = async () => {
 					value: preparedFormData.other_stream_platform,
 					sort: 200,
 				},
+				{
+					name: 'Ссылка на ваш профиль в мессенджере',
+					slug: 'messenger',
+					value: preparedFormData.messenger,
+					sort: 300,
+				},
 			],
+			public_name: preparedFormData.public_name,
 		};
 
 		if (twitch.value) {
@@ -123,7 +178,10 @@ const sendRequest = async () => {
 			if (loadState.loadList[requestName]) {
 				loadState.loadList[requestName].status = 'finish';
 			}
-			alert('Ссылка на Ваш twitch канал обновлена');
+
+			alert('Данные обновлены');
+			emit('refresh');
+			if (!hasWebSocked()) refreshLayoutData();
 		}
 	} catch (e) {
 		if (loadState.loadList[requestName]) {
@@ -139,7 +197,7 @@ const sendRequest = async () => {
 <template>
 	<div class="mb-[1rem]">
 		<span class="title block mb-5">Поля профиля</span>
-		<div v-if="userStore.user && Object.keys(userStore.user).length > 0">
+		<div v-if="userStore.user && Object.keys(userStore.user).length">
 			<AlertBox
 					:errorsMessages="errorsMessages"
 					class="mb-2"
@@ -161,10 +219,12 @@ const sendRequest = async () => {
 					@startAction="sendForm()"
 			/>
 		</div>
-		<div v-else>
-			Данный функционал доступен только авторизованному пользователю
-		</div>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="Данный функционал доступен только авторизованному пользователю"
+		/>
 	</div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

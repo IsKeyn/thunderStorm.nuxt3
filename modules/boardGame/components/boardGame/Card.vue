@@ -1,22 +1,12 @@
 <script setup>
-const route = useRoute();
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { media } from '@/composables/media.js'
-const {
-	getResizeImg,
-} = media();
-
-import { date } from '@/composables/date.js';
-const {
-	getFormattedDate,
-	getFormattedHoursFromSeconds
-} = date();
+const { getResizeImg } = media();
 
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
-const {
-	getStatusName,
-	getDateString,
-} = boardGame();
+const { getStatusName, getDateString } = boardGame();
 
 const props = defineProps({
 	element: {

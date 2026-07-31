@@ -80,6 +80,7 @@ const {
 		async () => {
 			const query = {
 				filters: filtersStore.filters[filterName],
+				defaultFilters: filtersStore.filters[filterName + '_defaultFilters'],
 				filterList: getFilterList(),
 			};
 
@@ -101,7 +102,21 @@ const {
 		}
 );
 
-const fetchedData = computed(() => requestData.value || null);
+const fetchedData = computed(() => {
+	if (!requestData.value) {
+		return null;
+	}
+
+	const addedFilters = {};
+
+	props.usedFilters.forEach((item) => {
+		if (item.type === 'multiselect' && !item.requestData) {
+			addedFilters[item.name] = item.options;
+		}
+	});
+
+	return { ...requestData.value, ...addedFilters };
+});
 </script>
 
 <template>

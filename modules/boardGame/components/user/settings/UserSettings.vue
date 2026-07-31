@@ -19,6 +19,9 @@ const { error } = notifications();
 import { useLoadStateStore } from '@/stores/loadState';
 const loadState = useLoadStateStore();
 
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth } = userFunctions();
+
 const showSettingsBlock = ref(false);
 
 const toggleSettingsBlock = () => {
@@ -126,7 +129,7 @@ onMounted(() => {
 					v-model="theme"
 			/>
 			<SoundSettings
-				v-model="soundVolume"
+					v-model="soundVolume"
 			/>
 		</div>
 	</div>

@@ -15,12 +15,16 @@ const eventType = computed(() => {
 <template>
 	<div>
 		<template v-if="eventType">
-			<div class="item-box mt-2 mb-2" v-if="eventType.value === 'upon-request'">
-				Участие в ивенте по запросам. Отправьте запрос на участие в ивенте и его рассмотрит модератор
-			</div>
-			<div class="item-box mt-2 mb-2" v-if="eventType.value === 'registrationIsClose'">
-				Регистрация в ивенте закрыта
-			</div>
+			<layout-InfoBlock
+					v-if="eventType.value === 'upon-request'"
+					text="Участие в ивенте по запросам. Отправьте запрос на участие в ивенте и его рассмотрит модератор"
+					classes="!mb-6"
+			/>
+			<layout-InfoBlock
+					v-if="eventType.value === 'registrationIsClose'"
+					text="Регистрация в ивенте закрыта"
+					classes="!mb-6"
+			/>
 		</template>
 
 		<JoinTheGameForm v-if="eventType?.value !== 'registrationIsClose'" />

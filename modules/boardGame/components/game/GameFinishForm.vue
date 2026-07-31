@@ -130,6 +130,10 @@ const {
 		}
 );
 
+const fetchedData = computed(() => {
+	return requestData.value || null;
+});
+
 watch(() => requestData.value, () => {
 	if (requestData.value
 			&& form.value.hours
@@ -165,19 +169,20 @@ const sendRequest = async () => {
 	requestInProgress.value = true;
 
 	try {
-		const body = {};
+		const body = {
+			slug: route.params.slug,
+			type: props.type,
+			entity_type: "App\\Models\\Game",
+			entity_id: props.game.id,
+			board_game_game_list_id: props.board_game_game_list_id,
+			comment: form.value.comment.value,
+		};
 
-		body.slug = route.params.slug;
-		body.type = props.type;
-		body.entity_type = "App\\Models\\Game";
-		body.entity_id = props.game.id;
-		body.board_game_game_list_id = props.board_game_game_list_id;
-
-		if (props.type === 2) {
+		if (props.type === 1) {
+			body.time = fetchedData.value;
+		} else if (props.type === 2) {
 			body.time = (form.value.hours.value * 60 + form.value.minuts.value) * 60 + form.value.seconds.value;
 		}
-
-		body.comment = form.value.comment.value;
 
 		const response = await sendApiRequest(`board-game/v2/player-game/${props.doType}`, 'POST', body, 'sendFinishGameRequest', '');
 
@@ -243,7 +248,12 @@ const getTypeText = (type) => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="timeRequestInProgress" class="h-full" />
+	<ui-BigPreloader
+			v-if="timeRequestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
+	/>
 	<div v-else class="w-full mt-[1rem]">
 		<span>
 			<template v-if="type === 1">
@@ -297,7 +307,7 @@ const getTypeText = (type) => {
 			<div v-if="props.doType === 'update'" class="item-box">
 				<template v-if="type === 1">{{ getTypeText(type) }}</template>
 				<template v-if="type === 2">
-					За прохождение игры, вам будут начислены {{ pointsForFinishGame }} очков, очки подсчитаны с учетом вашего стрика, который сейчас равен x{{ streak }}
+					За прохождение игры, вам будут начислены {{ pointsForFinishGame }} очков, очки подсчитаны с учетом вашего стрика, который сейчас равен x{{ streak }} и модификаторов
 				</template>
 				<template v-if="type === 3">Используйте данную кнопку, если передаете игру другому игроку</template>
 			</div>
@@ -320,4 +330,4 @@ const getTypeText = (type) => {
 	</div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

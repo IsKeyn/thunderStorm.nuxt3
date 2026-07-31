@@ -1,23 +1,17 @@
 <script setup>
-import { inject, watch } from "vue";
-
 const emit = defineEmits(['updateList']);
-const layoutMethods = inject('layoutMethods')
 
 import { helper } from '@/composables/helper.js'
 const { route, hasWebSocked } = helper();
 
-import { boardGame } from '@/composables/BoardGame/boardGame.js'
-const { refreshLayoutData } = boardGame();
-
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
 
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
+
 import { media } from '@/composables/media.js'
 const { getResizeImg } = media();
-
-import { userFunctions } from '@/composables/userFunctions.js';
-const { isAuth, userStore } = userFunctions();
 
 import { notifications } from '@/composables/notifications.js';
 const { choiceAlert, error, alert } = notifications();
@@ -66,7 +60,7 @@ const activateSe = (type) => {
 		title = 'Применение статус эффекта';
 		message = 'Вы выполнили условие статус эффекта?';
 
-		JSON.parse(props.element.statusEffect.actions).forEach((item) => {
+		props.element.statusEffectBind.statusEffect.actions.forEach((item) => {
 			if (item.actions) {
 				item.actions.forEach((action, key) => {
 					if (key === 1 && action.choiceMessage) {
@@ -79,7 +73,7 @@ const activateSe = (type) => {
 		title = 'Отказ от выполнения статус эффекта';
 		message = 'При отказе от статус эффекта, вы получите штраф.';
 
-		JSON.parse(props.element.statusEffect.actions).forEach((item) => {
+		props.element.statusEffectBind.statusEffect.actions.forEach((item) => {
 			if (item.actions) {
 				item.actions.forEach((action, key) => {
 					if (key === 0 && action.choiceMessage) {
@@ -128,24 +122,25 @@ const sendActivateSeRequest = async (type) => {
 		const response = await sendApiRequest('board-game/v2/status-effect/use', 'POST', body, 'bg_useStatusEffect', '', 'method');
 
 		if (response) {
-			if (response.error) {
+			if (response.status === 'error' && response.status_message) {
+				error(response.status_message);
+			} else if (response.error) {
 				error(response.error);
 			} else {
 				if (response.message) {
 					alert(response.message, 10000);
 				} else {
 					if (type === 'accept') {
-						alert(`Вы применили статус эффект "${props.element.statusEffect.name}"`);
+						alert(`Вы применили статус эффект "${props.element.statusEffectBind.statusEffect.name}"`);
 					} else if (type === 'denied') {
-						alert(`Вы отказались от статус эффекта "${props.element.statusEffect.name}"`);
+						alert(`Вы отказались от статус эффекта "${props.element.statusEffectBind.statusEffect.name}"`);
 					}
 				}
-
-				requestInProgress.value = false;
-
 				if (!hasWebSocked()) refreshLayoutData();
 				emit('updateList');
 			}
+
+			requestInProgress.value = false;
 		}
 	} catch (e) {
 		error(e);
@@ -155,40 +150,51 @@ const sendActivateSeRequest = async (type) => {
 </script>
 
 <template>
-	<ui-BigPreloader v-if="requestInProgress" />
+	<ui-BigPreloader
+			v-if="requestInProgress"
+			class="h-full"
+	/>
 	<div
-			v-else-if="element && element.statusEffect"
+			v-else-if="element && element.statusEffectBind.statusEffect"
 			:class="[
-			'item-box',
-			getTypeClass(element.statusEffect?.debuff),
-			showControlPanel || element.quantity > 1 ? 'add-padding-right' : '',
-			theme,
-			classes,
-	]">
-		<img
-				v-if="element.statusEffect?.image"
-				:src="getResizeImg(element.statusEffect?.image)"
-				:alt="element.statusEffect.name"
-				:title="element.statusEffect.name"
-				:class="[useLightBox ? 'cursor-pointer' : '']"
-				@click="useLightBox ? layoutMethods.setOpenedImage(element.statusEffect.image) : false"
-		>
+				'item-box',
+				getTypeClass(element?.statusEffectBind?.statusEffect?.debuff),
+				element.statusEffectBind.statusEffect.quantity > 1 ? 'add-padding-right' : '',
+				theme,
+				classes,
+			]"
+	>
+		<template v-if="element.statusEffectBind.statusEffect?.image">
+			<img
+					v-if="useLightBox"
+					:src="getResizeImg(element.statusEffectBind.statusEffect.image)"
+					:alt="element.statusEffectBind.statusEffect.name"
+					:title="element.statusEffectBind.statusEffect.name"
+					:class="['cursor-pointer media-obj']"
+					:media-id="element.statusEffectBind.statusEffect.image.id"
+			>
+			<img
+					v-else
+					:src="getResizeImg(element.statusEffectBind.statusEffect.image)"
+					:alt="element.statusEffectBind.statusEffect.name"
+					:title="element.statusEffectBind.statusEffect.name"
+			>
+		</template>
+
 		<div class="info">
-			<span class="name">
-				{{ element.statusEffect.name }}
-			</span>
+			<span class="name">{{ element.statusEffectBind.statusEffect.name }}</span>
 			<span
-					v-if="element.statusEffect.description"
+					v-if="element.statusEffectBind.statusEffect.description"
 					:class="[
 							'description',
 							cutDescription ? 'cut-description' : '',
 					]"
 			>
-				{{ element.statusEffect.description }}
+				{{ element.statusEffectBind.statusEffect.description }}
 			</span>
 			<div
 					v-if="element.active"
-					v-for="(action, key) in JSON.parse(element.statusEffect.actions)"
+					v-for="(action, key) in element.statusEffectBind.statusEffect.actions"
 					class="actions"
 			>
 				<template v-if="showControlPanel && action && action.type === 'choice'">
@@ -210,15 +216,10 @@ const sendActivateSeRequest = async (type) => {
 			</div>
 		</div>
 		<div
-				v-if="showControlPanel"
-				class="control-panel"
-		>
-		</div>
-		<div
-				v-if="element.statusEffect.quantity > 1"
+				v-if="element.statusEffectBind.statusEffect.quantity > 1"
 				class="count-panel"
 		>
-			x{{ element.statusEffect.quantity }}
+			x{{ element.statusEffectBind.statusEffect.quantity }}
 		</div>
 	</div>
 </template>
@@ -253,11 +254,7 @@ const sendActivateSeRequest = async (type) => {
 		@apply pr-[3rem];
 	}
 
-	&.default {
-		//&:hover {
-		//	@apply bg-[var(--second-active-color)];
-		//}
-	}
+	&.default {}
 
 	img {
 		@apply w-[70px] h-[70px];

@@ -57,7 +57,12 @@ const props = defineProps({
 	onlyValue: {
 		type: Boolean,
 		default: true,
-	}
+	},
+	// Максимальное количество элементов репитора
+	maxElements: {
+		type: Number,
+		default: null,
+	},
 });
 
 const value = ref([ ...props.modelValue ]);
@@ -111,6 +116,7 @@ watch(() => value.value, (newValue) => {
 				</div>
 			</div>
 			<button
+					v-if="!maxElements || (maxElements && (repeaterItems.length < maxElements))"
 					class="btn btn-primary"
 					@click="repeaterComponent.addRepeaterItem()"
 			>

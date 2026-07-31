@@ -86,7 +86,7 @@ const carouselConfig = {
 				<ListCard
 						:data="item"
 						entity="game"
-						listPage="person"
+						pathToDetail="game"
 				/>
 			</template>
 		</SliderWithSlots>

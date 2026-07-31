@@ -71,21 +71,13 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},
-			image: {
+			title_image: {
 				name: 'Медиа',
 				value: '',
 				keyValueFromObject: 'id',
 				objectValue: null,
 				type: 'fileFromGallery',
 				validateRules: '',
-				classes: ['w-full', 'mt-[5px]'],
-			},
-			board_game_id: {
-				name: 'Настольная игра',
-				value: '',
-				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
-				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			debuff: {

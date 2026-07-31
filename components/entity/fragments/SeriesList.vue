@@ -114,6 +114,7 @@ const carouselConfig = {
 								<ListCard
 										:data="item"
 										:entity="entity"
+										:pathToDetail="entity"
 								/>
 							</template>
 						</SliderWithSlots>
@@ -150,6 +151,7 @@ const carouselConfig = {
 								<ListCard
 										:data="item"
 										:entity="entity"
+										:pathToDetail="entity"
 								/>
 							</template>
 						</SliderWithSlots>

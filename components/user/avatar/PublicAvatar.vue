@@ -1,13 +1,13 @@
 <script setup>
-import { media } from '@/composables/media.js'
-const {
-	getResizeImg,
-} = media();
+import { computed } from 'vue';
+import { media } from '@/composables/media.js';
+
+const { getResizeImg } = media();
 
 const props = defineProps({
 	user: {
 		type: Object,
-		default: {},
+		default: () => ({}),
 	},
 	useLightBox: {
 		type: Boolean,
@@ -16,16 +16,28 @@ const props = defineProps({
 	classes: {
 		type: String,
 		default: 'w-[100px] h-[100px]',
+	},
+	/* Доступные значения:
+		'purple', 'gold', 'silver', 'bronze', 'ruby', 'azure', 'emerald', 'amethyst-yellow', 'sapphire', 'obsidian', 'rose-gold'
+	*/
+	borderType: {
+		type: String,
+		default: '',
+	},
+});
+
+const wrapperClasses = computed(() => {
+	const cls = ['avatar-box'];
+	if (props.borderType) {
+		cls.push(`border-${props.borderType}`);
 	}
+	return cls;
 });
 </script>
 
 <template>
-	<div
-			v-if="user"
-			class="avatar-box"
-	>
-		<tempalate v-if="user.avatar">
+	<div v-if="user" :class="wrapperClasses">
+		<template v-if="user.avatar">
 			<img
 					v-if="useLightBox"
 					:class="classes"
@@ -43,18 +55,11 @@ const props = defineProps({
 					:alt="user.name"
 					:title="user.name"
 			>
-		</tempalate>
+		</template>
 		<img v-else src="/images/system/no-avatar.png" :class="classes">
 	</div>
 </template>
 
 <style lang="scss" scoped>
-.avatar-box {
-	@apply flex items-center;
-
-	img {
-		@apply object-cover rounded-full cursor-pointer
-		;
-	}
-}
+@import url('~/assets/scss/Fragments/avatarStyles.scss');
 </style>

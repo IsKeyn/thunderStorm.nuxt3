@@ -39,10 +39,6 @@ const titles = ref(
 				name: 'Изображение',
 				type: 'media'
 			},
-			actions: {
-				name: 'Действия (json)',
-				type: 'cutText',
-			},
 			type: {
 				name: 'Тип',
 				sortable: true,
@@ -50,6 +46,11 @@ const titles = ref(
 			},
 			drop_chance: {
 				name: 'Шанс дропа',
+				sortable: true,
+				type: 'rounded-box',
+			},
+			price: {
+				name: 'Цена',
 				sortable: true,
 				type: 'rounded-box',
 			},

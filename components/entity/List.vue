@@ -19,14 +19,23 @@ const { sendApiRequest } = api();
 import { filters } from '@/composables/filters/filters.js';
 const {
 	setFilterName,
+	storeDefaultFilters,
 	setFilter,
 	setQueryFilters,
 } = filters();
 
 const props = defineProps({
+	showHeader: {
+		type: Boolean,
+		default: true,
+	},
 	entity: {
 		type: String,
 		required: true,
+	},
+	pathToDetail: {
+		type: String,
+		default: null,
 	},
 	name: {
 		type: String,
@@ -49,8 +58,8 @@ const props = defineProps({
 		default: [],
 	},
 	defaultFilters: {
-		type: Array,
-		default: [],
+		type: Object,
+		default: {},
 	},
 	sortOptions: {
 		type: Array,
@@ -88,10 +97,12 @@ const {
 	setPerPage
 } = pagination(props.perPage);
 
-const filterName = setFilterName([ 'list', props.fetchUrl ]);
+const filterName = setFilterName([ 'list', props.entity ]);
 
-// Устанавливаем фильтры их get параметров
+/* Устанавливаем фильтры их get параметров */
 setQueryFilters(filterName, props.usedFilters, props.defaultFilters);
+/* Записываем дефолтные фильтры в store */
+storeDefaultFilters(filterName, props.defaultFilters);
 
 const requestName =  props.entity + 'EntityList';
 
@@ -218,6 +229,7 @@ const dataByGroups = computed(() => {
 
 <template>
 	<PageHeader
+			v-if="showHeader"
 			:title="title"
 			:breadCrumbs="getBreadCrumbs()"
 	/>
@@ -245,7 +257,7 @@ const dataByGroups = computed(() => {
 									v-for="(data, index) in group.items"
 									:key="index"
 									:data="data"
-									:entity="entity"
+									:pathToDetail="pathToDetail ?? entity"
 							/>
 						</div>
 					</div>
@@ -257,7 +269,7 @@ const dataByGroups = computed(() => {
 						v-for="(data, index) in fetchedData"
 						:key="index"
 						:data="data"
-						:entity="entity"
+						:pathToDetail="pathToDetail ?? entity"
 				/>
 			</div>
 		</template>

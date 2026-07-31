@@ -10,8 +10,10 @@ import Logout from '@/components/forms/formExtensions/Logout.vue';
 import Series from '@/components/forms/formExtensions/Series.vue';
 import Games from '@/components/forms/formExtensions/Games.vue';
 import People from '@/components/forms/formExtensions/People.vue';
+import Characters from '@/components/forms/formExtensions/Characters.vue';
 import Roles from '@/components/forms/formExtensions/Roles.vue';
 import Permissions from '@/components/forms/formExtensions/Permissions.vue';
+import BoardGameSettings from '@/components/forms/formExtensions/BoardGame/BoardGameSettings.vue';
 
 export function formExtensions() {
     const getFormExt = (name) => {
@@ -28,8 +30,10 @@ export function formExtensions() {
             case 'Series': return Series;
             case 'Games': return Games;
             case 'People': return People;
+            case 'Characters': return Characters;
             case 'Roles': return Roles;
             case 'Permissions': return Permissions;
+            case 'BoardGameSettings': return BoardGameSettings;
         }
     };
 

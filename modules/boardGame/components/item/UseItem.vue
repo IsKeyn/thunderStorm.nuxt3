@@ -1,6 +1,6 @@
 <script setup>
 import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
-import SelectPlayer from '@/modules/boardGame/components/user/player/SelectPlayer.vue';
+import SelectPlayerDetailList from '@/modules/boardGame/components/user/player/SelectPlayerDetailList.vue';
 import SelectItem from '@/modules/boardGame/components/item/SelectItem.vue';
 import SelectEffect from '@/modules/boardGame/components/statusEffect/SelectEffect.vue';
 import SelectGame from '@/modules/boardGame/components/game/SelectGame.vue';
@@ -10,11 +10,11 @@ import { computed, ref, watch } from "vue";
 
 const emit = defineEmits(['openCloseModalFunc', 'useItemFromEmit']);
 
-import { helper } from '@/composables/helper.js'
-const { route } = helper();
-
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
+
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
@@ -33,19 +33,6 @@ const props = defineProps({
 	}
 });
 
-// Проверяем нужно ли грузить список игроков
-const needOtherPlayers = computed(() => {
-	let returnData = false;
-
-	props.item.item.item.actions.forEach((item) => {
-		if (item?.target !== 'current') {
-			returnData = true;
-		}
-	});
-
-	return returnData;
-})
-
 // Проверяем нужно ли грузить список игр
 const needGames = computed(() => {
 	let returnData = false;
@@ -58,32 +45,6 @@ const needGames = computed(() => {
 
 	return returnData;
 })
-
-const requestName = 'getBoardGamePlayersWithInventory';
-
-const {
-	data: requestData,
-	pending: requestInProgress,
-	refresh
-} = await useAsyncData(
-		requestName,
-		async () => {
-			if (needOtherPlayers.value) {
-				const response = await Promise.resolve(
-						sendApiRequest(`board-game/v2/player/listWithInventory/${route.params.slug}/`, 'GET', {}, requestName, '')
-				);
-
-				return response.data || null;
-			}
-		},
-		{
-			server: true,
-			lazy: true,
-		}
-);
-
-const fetchedPlayers = computed(() => requestData.value || null);
-
 
 const gamesRequestName = 'getBoardGamePlayersGames';
 
@@ -195,7 +156,10 @@ const useItem = () => {
 		};
 
 		if (Object.keys(selectedPlayer.value).length !== 0) {
-			arg.additionalParams.player = selectedPlayer.value.id;
+			arg.additionalParams.player =
+					selectedPlayer.value.type === "randomPlayer"
+							? selectedPlayer.value.type
+							: selectedPlayer.value?.id;
 		}
 
 		if (Object.keys(selectedSecondPlayer.value).length !== 0) {
@@ -446,6 +410,7 @@ const effectFor = (action) => {
 		<ItemCard
 				:element="item.item"
 				:useLightBox="true"
+				:showDropChance="false"
 		/>
 
 		<div v-if="item.item.item.actions">
@@ -480,9 +445,11 @@ const effectFor = (action) => {
 							"
 					>
 						<span class="inv-title">Данный предмет требует выбора игрока:</span>
-						<SelectPlayer
-								:players="getPlayersForItem(action.target, fetchedPlayers)"
+						<SelectPlayerDetailList
 								v-model="selectedPlayer"
+								:target="action.target"
+								:expectedPlayers="[userStore.player.id]"
+								:currentPlayer="userStore.player"
 						/>
 					</template>
 
@@ -516,9 +483,11 @@ const effectFor = (action) => {
 
 					<template v-if="Object.keys(selectedPlayer).length > 0 && Object.keys(selectedItem).length !== 0 && (action.target === 'fromTo')">
 						<span class="inv-title">Данный предмет требует выбора второго игрока:</span>
-						<SelectPlayer
-								:players="fetchedPlayers.filter((item) => item.user_id !== userStore.user.id).filter((item) => item.user_id !== selectedPlayer.user_id)"
+						<SelectPlayerDetailList
 								v-model="selectedSecondPlayer"
+								:expectedPlayers="[userStore.player.id, selectedPlayer.id]"
+								:target="action.target"
+								:currentPlayer="userStore.player"
 						/>
 					</template>
 

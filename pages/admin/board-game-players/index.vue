@@ -36,6 +36,16 @@ const titles = ref(
 				sortable: true,
 				type: 'rounded-box',
 			},
+			points_per_hour: {
+				name: 'Очков в час',
+				sortable: true,
+				type: 'rounded-box',
+			},
+			place: {
+				name: 'Место',
+				sortable: true,
+				type: 'rounded-box',
+			},
 			item_roll_count: {
 				name: 'Доступное количество ролов игры',
 				sortable: true,
@@ -69,6 +79,11 @@ const titles = ref(
 			},
 			not_active_reason: {
 				name: 'Причина не активности',
+				sortable: true,
+			},
+			added_games: {
+				name: 'Добавил свои игры',
+				type: 'boolean',
 				sortable: true,
 			},
 			sort: {

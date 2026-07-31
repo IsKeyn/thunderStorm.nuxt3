@@ -4,6 +4,7 @@ definePageMeta({
 });
 
 import VersionList from '@/components/admin/version/VersionList.vue';
+import ServerTime from '@/components/admin/ServerTime.vue';
 
 import { roles } from '@/composables/roles.js';
 const { checkPermission } = roles();
@@ -53,15 +54,17 @@ const titles = {
 <template>
 	<div>
 		Главная страница админки
-		<VersionList
-				v-if="checkPermission('admin.index')"
-				title="Список изменений"
-				nullMessage="Изменения не найдены"
-				requestUrl="admin/version"
-				:titles="titles"
-				:perPage="15"
-				:perPageOptionsProp="[15, 30, 45]"
-		/>
+		<template v-if="checkPermission('admin.index')">
+			<ServerTime />
+			<VersionList
+					title="Список изменений"
+					nullMessage="Изменения не найдены"
+					requestUrl="admin/version"
+					:titles="titles"
+					:perPage="15"
+					:perPageOptionsProp="[15, 30, 45]"
+			/>
+		</template>
 		<ui-itemBox
 				v-else
 				classes="red"

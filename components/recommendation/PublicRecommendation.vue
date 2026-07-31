@@ -69,7 +69,7 @@ const carouselConfig = {
 		},
 		// 500px and up
 		500: {
-			itemsToShow: 4,
+			itemsToShow: 6,
 			snapAlign: 'start',
 		},
 	},

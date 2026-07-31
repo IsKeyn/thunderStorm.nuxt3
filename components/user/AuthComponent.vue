@@ -4,6 +4,7 @@ import LoginForm from '@/components/forms/LoginForm.vue';
 import RecoveryPasswordForm from '@/components/forms/RecoveryPasswordForm.vue';
 import RegistrationForm from '@/components/forms/RegistrationForm.vue';
 import ResetPasswordForm from '@/components/forms/ResetPasswordForm.vue';
+import SocialAuthComponent from '@/components/user/auth/SocialAuthComponent.vue';
 
 const props = defineProps({
 	title: {
@@ -61,6 +62,13 @@ watch(() => props.actionType, () => {
 		<ResetPasswordForm
 				v-if="actionType === 'reset_password'"
 				description="Введите новый пароль"
+				@setActionType="setActionType"
+				@closeModal="emit('closeModal')"
+		/>
+		<SocialAuthComponent
+				v-if="actionType === 'auth_from_service'"
+				description="Авторизация через сервисы"
+				:registerOnEventBySlug="registerOnEventBySlug"
 				@setActionType="setActionType"
 				@closeModal="emit('closeModal')"
 		/>

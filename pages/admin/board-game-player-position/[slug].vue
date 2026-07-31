@@ -14,6 +14,12 @@ const { checkPermission } = roles();
 
 const form = ref(
 		{
+			bg_player_id: {
+				name: 'ID игрока',
+				type: 'text',
+				validateRules: 'required',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			user_id: {
 				name: 'ID пользователя',
 				value: '',

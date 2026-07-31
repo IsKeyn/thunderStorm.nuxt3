@@ -19,6 +19,11 @@ const titles = ref(
 				sortable: true,
 				type: 'rounded-box',
 			},
+			bg_player_id: {
+				name: 'ID игрока',
+				type: 'text',
+				sortable: true,
+			},
 			user_id: {
 				name: 'ID пользователя',
 				type: 'EntityList',

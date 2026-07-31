@@ -3,10 +3,12 @@ export default defineNuxtConfig({
   modules: [
       '@pinia/nuxt',
       '@nuxtjs/tailwindcss',
+      'floating-vue/nuxt',
   ],
   devtools: { enabled: true },
   css: [
-    '@fortawesome/fontawesome-svg-core/styles.css'
+    '@fortawesome/fontawesome-svg-core/styles.css',
+    'floating-vue/dist/style.css',
   ],
   ssr: true,
   build: {
@@ -22,6 +24,9 @@ export default defineNuxtConfig({
     apiSecret: '123',
     // Keys within public are also exposed client-side
     public: {
+      floatingVue: {
+        // Опциональные настройки
+      },
       theme: 'KeynTR',
       url: '', // .env NUXT_PUBLIC_API_URL
       apiUrl: '', // .env NUXT_PUBLIC_API_URL

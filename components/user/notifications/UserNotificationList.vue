@@ -96,33 +96,31 @@ onMounted(async () => {
 		const { unsubscribe: stop, subscriptionId } = subscribe(
 				`App.Models.User.${userId}`,
 				'NotificationCreated',
-				(e) => {
-			const newNotification = e?.notification || e?.data || e;
+				(e) =>
+				{
+					const newNotification = e?.notification || e?.data || e;
 
-			if (newNotification?.id) {
-				// Проверка на дубликаты
-				const exists = notifications.value.some(n => n.id === newNotification.id);
+					if (newNotification?.id) {
+						// Проверка на дубликаты
+						const exists = notifications.value.some(n => n.id === newNotification.id);
 
-				if (!exists) {
-					// Создаём новый массив: новый элемент + старые
-					const updatedList = [newNotification, ...notifications.value];
+						if (!exists) {
+							// Создаём новый массив: новый элемент + старые
+							const updatedList = [newNotification, ...notifications.value];
 
-					// Если превысили лимит — обрезаем последний элемент
-					if (updatedList.length > MAX_ITEMS) {
-						updatedList.pop(); // удаляем последний элемент (самый старый на странице)
-					}
+							// Если превысили лимит — обрезаем последний элемент
+							if (updatedList.length > MAX_ITEMS) {
+								updatedList.pop(); // удаляем последний элемент (самый старый на странице)
+							}
 
-					notifications.value = updatedList;
+							notifications.value = updatedList;
 
-					// Опционально: обновить пагинацию, если нужно
-					if (paginationData.value && page.value === 1) {
-						// Можно увеличить total, если сервер не шлёт актуальное значение
-						paginationData.value.total = Math.min(
-						  (paginationData.value.total || 0) + 1,
-						  MAX_ITEMS * totalPages
-						);
-					}
-				}
+							// Опционально: обновить пагинацию, если нужно
+							// Обновляем total только если мы на первой странице
+							if (paginationData.value && page.value === 1) {
+								paginationData.value.total = (paginationData.value.total || 0) + 1;
+							}
+						}
 			}
 		});
 	}
