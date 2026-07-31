@@ -3,7 +3,7 @@ import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
 
 const emit = defineEmits(['toggleSellModal', 'sellItemFromEmit']);
 
-import { bgItems } from '@/composables/boardGame/bgItems.js'
+import { bgItems } from '@/composables/BoardGame/bgItems.js'
 const { calcShopPrice } = bgItems();
 
 import { boardGame } from '@/composables/BoardGame/boardGame.js'

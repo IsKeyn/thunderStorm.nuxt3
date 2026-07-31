@@ -12,7 +12,7 @@ const { route, hasWebSocked } = helper();
 import { notifications } from '@/composables/notifications.js';
 const { choiceAlert, error, alert } = notifications();
 
-import { bgItems } from '@/composables/boardGame/bgItems.js'
+import { bgItems } from '@/composables/BoardGame/bgItems.js'
 const { calcShopPrice } = bgItems();
 
 import { api } from '@/composables/api.js';
