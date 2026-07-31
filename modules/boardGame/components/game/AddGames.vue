@@ -13,7 +13,7 @@ const { sendApiRequest } = api();
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
 const { getSettingValue } = boardGame();
 
-import { bgPlayer } from '@/composables/boardGame/bgPlayer.js'
+import { bgPlayer } from '@/composables/BoardGame/bgPlayer.js'
 const { player, isActivePlayer } = bgPlayer();
 
 import { userFunctions } from '@/composables/userFunctions.js';
