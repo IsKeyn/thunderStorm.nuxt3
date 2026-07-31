@@ -5,7 +5,7 @@ import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
-const { getSettingValue } = boardGame();
+const { getSettingValue, boardGameStore } = boardGame();
 
 const props = defineProps({
 	showHeader: {
@@ -136,7 +136,9 @@ const sortOptions = [
 ];
 
 const defaultFilters = {
-	events: [4],
+	events: [
+		boardGameStore.boardGameInfo.id
+	],
 };
 </script>
 

@@ -76,7 +76,7 @@ const lastFieldIndex = computed(() => {
 
 /* Игроки */
 const currentPlayer = computed(() => {
-	return fetchedData.value.players.filter((item) => item.user_id === userStore.user.id)[0];
+	return fetchedData.value?.players ? fetchedData.value.players.filter((item) => item.user_id === userStore.user.id)[0] : null;
 });
 
 const playersOnCols = computed(() => {
@@ -370,7 +370,7 @@ onMounted(() => {
 		<div class="board-wrapper">
 			<table class="theme-4">
 			<tr
-					v-for="(row, rowNumber) in JSON.parse(fetchedData.board.columns)"
+					v-for="(row, rowNumber) in JSON.parse(fetchedData?.board?.columns)"
 					:key="rowNumber"
 			>
 				<td

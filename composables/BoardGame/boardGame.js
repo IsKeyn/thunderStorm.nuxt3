@@ -74,6 +74,7 @@ export function boardGame() {
     }
 
     return {
+        boardGameStore,
         getStatusName,
         getDateString,
         addTextToPoints,

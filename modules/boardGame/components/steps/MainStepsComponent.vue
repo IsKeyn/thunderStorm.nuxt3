@@ -86,7 +86,7 @@ const scrollToJoinButton = () => {
 							@setPageName="setPageNameFunc($event)"
 					/>
 					<div v-else id="eventJoinBox">
-						<JoinTheGame />
+						<JoinTheGame class="mt-4" />
 					</div>
 				</template>
 				<div v-else id="eventJoinBox">
@@ -110,7 +110,7 @@ const scrollToJoinButton = () => {
 						</template>
 					</div>
 					<div v-else id="eventJoinBox">
-						<JoinTheGame />
+						<JoinTheGame class="mt-4" />
 					</div>
 				</template>
 				<div v-else id="eventJoinBox">
