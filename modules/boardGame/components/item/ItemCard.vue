@@ -4,7 +4,7 @@ const emit = defineEmits(['useItem', 'sellItem', 'buyItem', 'withdrawnItem']);
 import { useSoundStore } from '@/stores/sound';
 const soundStore = useSoundStore();
 
-import { bgPlayer } from '@/composables/boardGame/bgPlayer.js'
+import { bgPlayer } from '@/composables/BoardGame/bgPlayer.js'
 const { player, isActivePlayer } = bgPlayer();
 
 import { media } from '@/composables/media.js'
