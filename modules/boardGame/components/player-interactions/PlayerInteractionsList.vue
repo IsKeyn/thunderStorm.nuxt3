@@ -12,6 +12,9 @@ const { route, hasWebSocked } = helper();
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
 
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth, userStore } = userFunctions();
+
 const props = defineProps({
 	user_id: {
 		type: Number,

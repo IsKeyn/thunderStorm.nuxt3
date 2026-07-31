@@ -4,10 +4,6 @@ import type { NuxtError } from '#app'
 import { api } from '@/composables/api.js'
 const { publicUrl } = api();
 
-definePageMeta({
-	layout: 'errors',
-})
-
 const props = defineProps({
 	error: Object as () => NuxtError
 })

@@ -62,7 +62,7 @@ const platformDifficult = computed(() => {
 	if (props?.element?.game?.platform.id) {
 		const platforms = JSON.parse(getSettingValue('eventGamePlatforms'));
 
-		const platform = findElementById(platforms, props.element.game.platform.id);
+		const platform = (platforms && typeof platforms === 'object') ? findElementById(platforms, props.element.game.platform.id) : [];
 
 		return getDifficultName(platform.difficult);
 	}
