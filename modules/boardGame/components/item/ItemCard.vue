@@ -13,7 +13,7 @@ const { getResizeImg } = media();
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
-import { bgItems } from '@/composables/boardGame/bgItems.js'
+import { bgItems } from '@/composables/BoardGame/bgItems.js'
 const { calcShopPrice } = bgItems();
 
 const props = defineProps({
