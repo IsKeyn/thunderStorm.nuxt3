@@ -30,6 +30,15 @@ const { getSettingFirstValue } = settings();
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
+import { roles } from '@/composables/roles.js';
+const { hasRole, hasPermission } = roles();
+
+import { userFunctions } from '@/composables/userFunctions.js';
+const {
+	isAuth,
+	userStore,
+} = userFunctions();
+
 import { lightBox } from '@/composables/lightBox.js';
 const {
 	openedImage,
@@ -45,7 +54,7 @@ provide('layoutMethods', {
 <template>
 	<CookieAccept />
 
-	<div v-if="!Boolean(Number(getSettingFirstValue('disable-events')))">
+	<div v-if="!Boolean(Number(getSettingFirstValue('disable-events'))) || (isAuth && hasRole('admin', userStore.user))">
 		<SystemComponents />
 		<ReceiveMainData />
 		<ImportantLogsListener />
