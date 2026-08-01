@@ -135,15 +135,20 @@ const sortOptions = [
 	},
 ];
 
-const defaultFilters = {
-	events: [
-		boardGameStore.boardGameInfo.id
-	],
-};
+const defaultFilters = computed(() => {
+	if (boardGameStore.boardGameInfo.id) {
+		return {
+			events: [
+				boardGameStore.boardGameInfo.id
+			],
+		};
+	}
+});
 </script>
 
 <template>
 	<List
+			v-if="boardGameStore.boardGameInfo.id"
 			:showHeader="showHeader"
 			entity="game"
 			:pathToDetail="`e/${route.params.slug}/game`"
