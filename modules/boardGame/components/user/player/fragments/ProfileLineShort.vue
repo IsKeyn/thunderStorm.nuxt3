@@ -25,6 +25,9 @@ const { getFormattedDate } = date();
 import { media } from '@/composables/media.js'
 const { getResizeImg } = media();
 
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { getSettingValue } = boardGame();
+
 const props = defineProps({
 	element: {
 		type: Object,
@@ -77,6 +80,10 @@ const otherStreamPlatform = computed(() => {
 	}
 
 	return false;
+});
+
+const eventType = computed(() => {
+	return getSettingValue('event_type');
 });
 </script>
 
@@ -143,7 +150,7 @@ const otherStreamPlatform = computed(() => {
 					<span v-if="element?.full_points" class="wrapper default">
 						Результат: {{ element.full_points }}
 					</span>
-						<span class="wrapper default">Очков в час: {{ element.points_per_hour ?? 0 }}</span>
+						<span v-if="eventType !== 'board-last-cell'" class="wrapper default">Очков в час: {{ element.points_per_hour ?? 0 }}</span>
 						<span class="wrapper default">На поле: {{ element.position ? element.position : 'Не ходил' }}</span>
 						<span class="wrapper default">Стрик: x{{ element.streak }}</span>
 						<span

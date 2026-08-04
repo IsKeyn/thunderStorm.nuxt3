@@ -9,6 +9,10 @@ const boardGameStore = useBoardGameStore();
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+import {computed} from "vue";
+const { getSettingValue } = boardGame();
+
 const props = defineProps({
 	filterNamePostfix: {
 		type: String,
@@ -75,36 +79,51 @@ const usedFilters = [
 	},
 ];
 
-const sortOptions = [
-	{
+const eventType = computed(() => {
+	return getSettingValue('event_type');
+});
+
+const sortOptions = computed(() => {
+	const returnData = [];
+
+	returnData.push(	{
 		name: 'По месту',
 		value: 'place',
-	},
+	});
+
 	// {
 	// 	name: 'По количеству очков',
 	// 	value: 'full_points',
 	// },
-	{
-		name: 'По соотношению очки/время',
-		value: 'points_per_hour',
-	},
-	{
-		name: 'По позиции на поле',
-		value: 'position',
-	},
-	{
-		name: 'Никнейму',
-		value: 'name',
-	},
-	{
-		name: 'Дата регистрации',
-		value: 'created_at',
-	},
-	{
-		name: 'Последней активности',
-		value: 'updated_at',
-	},
-];
+
+	if (eventType.value !== 'board-last-cell') {
+		returnData.push({
+			name: 'По соотношению очки/время',
+			value: 'points_per_hour',
+		});
+	}
+
+	returnData.push(
+			{
+				name: 'По позиции на поле',
+				value: 'position',
+			},
+			{
+				name: 'Никнейму',
+				value: 'name',
+			},
+			{
+				name: 'Дата регистрации',
+				value: 'created_at',
+			},
+			{
+				name: 'Последней активности',
+				value: 'updated_at',
+			}
+		);
+
+	return returnData;
+});
 
 const defaultFilters = {
 	sort: {

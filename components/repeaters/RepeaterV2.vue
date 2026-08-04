@@ -57,12 +57,14 @@ const {
 	fillAdditionalData,
 	updateItems,
 	addRepeaterItem,
+	copyRepeaterItem,
 	deleteRepeaterItem,
 	setValue,
 } = repeater();
 
 defineExpose({
 	addRepeaterItem,
+	copyRepeaterItem,
 	deleteRepeaterItem,
 	updateItems,
 });
@@ -165,6 +167,18 @@ function repeater() {
 		}
 	}
 
+	const copyRepeaterItem = (index) => {
+		repeaterItems.value.push(structuredClone(toRaw(repeaterItems.value[index])));
+
+		if (props.setSort) {
+			repeaterItems.value[repeaterItems.value.length - 1].sort = repeaterItems.value.length - 1;
+		}
+
+		if (props.parentComponentUpdateData) {
+			setValue();
+		}
+	}
+
 	const deleteRepeaterItem = (index) => {
 		if (repeaterItems.value.length > 1) {
 
@@ -208,6 +222,7 @@ function repeater() {
 		fillAdditionalData,
 		updateItems,
 		addRepeaterItem,
+		copyRepeaterItem,
 		deleteRepeaterItem,
 		setValue,
 	};

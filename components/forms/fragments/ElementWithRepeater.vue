@@ -113,6 +113,14 @@ watch(() => value.value, (newValue) => {
 					>
 						<font-awesome-icon :icon="['fas', 'xmark']" />
 					</button>
+
+					<button
+							v-if="repeaterItems.length > 1"
+							class="btn btn-primary"
+							@click="repeaterComponent.copyRepeaterItem(index)"
+					>
+						<font-awesome-icon icon="fa-solid fa-clone" />
+					</button>
 				</div>
 			</div>
 			<button
