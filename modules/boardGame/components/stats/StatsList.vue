@@ -220,9 +220,12 @@ const activityChartOptions = {
 <template>
 	<ui-BigPreloader
 			v-if="requestInProgress"
+			class="h-full"
+			theme="image"
+			:themeType="9"
 			description="Формирование статистики может потребовать времени, пожалуйста ожидайте"
 	/>
-	<template v-else-if="fetchedData">
+	<template v-else-if="fetchedData && fetchedData.length">
 		<div
 				v-for="(data, key) in fetchedData"
 				:key="key"
@@ -328,9 +331,11 @@ const activityChartOptions = {
 			</div>
 		</div>
 	</template>
-	<template v-else>
-		Данные отсутствуют
-	</template>
+	<ui-itemBox
+			v-else
+			classes="red"
+			message="Статистика ещё не сформирована, она формируется за первые 24 часа после начала ивента"
+	/>
 </template>
 
 <style lang="scss" scoped>

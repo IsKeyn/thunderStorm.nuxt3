@@ -9,7 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "serve": "(export $(cat .env | egrep -v '#|^$' | xargs) && node .output/server/index.mjs)",
-    "inshprod": "NUXT_PUBLIC_THEME=InSilentHill NUXT_PUBLIC_URL=insilenthill.ru NUXT_PUBLIC_API_URL=https://backend.insilenthill.ru NUXT_PUBLIC_SESSION_COOKIE_NAME=insilenthill_session NUXT_HAS_WEB_SOCKED_SERVER=true NUXT_PUBLIC_REVERB_KEY=jsgmx2bq1web3rckobkl NUXT_PUBLIC_REVERB_HOST=backend.insilenthill.ru NUXT_PUBLIC_REVERB_PORT=443 NUXT_PUBLIC_REVERB_SCHEME=https NUXT_CRYPTO_PASS=ddDD-fT23 NUXT_YM_COUNTER_ID=53288371 node .output/server/index.mjs"
+    "inshprod": "NUXT_PUBLIC_THEME=InSilentHill NUXT_PUBLIC_URL=insilenthill.ru NUXT_PUBLIC_API_URL=https://backend.insilenthill.ru NUXT_PUBLIC_SESSION_COOKIE_NAME=insilenthill_session NUXT_HAS_WEB_SOCKED_SERVER=true NUXT_HAS_WEB_SOCKED_SERVER=true NUXT_PUBLIC_REVERB_KEY=jsgmx2bq1web3rckobkl NUXT_PUBLIC_REVERB_HOST=backend.insilenthill.ru NUXT_PUBLIC_REVERB_PORT=443 NUXT_PUBLIC_REVERB_SCHEME=https NUXT_CRYPTO_PASS=ddDD-fT23 NUXT_YM_COUNTER_ID=53288371 node .output/server/index.mjs"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.10.4",

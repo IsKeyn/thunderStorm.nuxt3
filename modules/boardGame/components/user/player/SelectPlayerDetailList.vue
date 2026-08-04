@@ -58,7 +58,9 @@ const defaultFiltersProp = computed(() => {
 	const returnData = {};
 
 	if (props.expectedPlayers) {
-		returnData.exceptPlayer = props.expectedPlayers;
+		if (props.target !== 'oneOfAll') {
+			returnData.exceptPlayer = props.expectedPlayers;
+		}
 	}
 
 	if (props.target === 'nearestPlayer') {

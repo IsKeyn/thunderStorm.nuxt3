@@ -7,6 +7,8 @@ import OtherPlayersActionsWithGame from '@/modules/boardGame/components/game/oth
 
 const emit = defineEmits(['toggleFormVisible', 'updateData']);
 
+import { computed } from "vue";
+
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
@@ -15,6 +17,9 @@ const { getResizeImg } = media();
 
 import { date } from '@/composables/date.js';
 const { getFormattedDate } = date();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { getSettingValue } = boardGame();
 
 const props = defineProps({
 	currentGame: {
@@ -58,10 +63,14 @@ const toggleFormVisible = (typeValue = null) => {
 	}
 }
 
+const eventType = computed(() => {
+	return getSettingValue('event_type');
+});
+
 const showTimer = computed(() => {
 	let showTimer = true;
 
-	if (props.currentGame.type === 0) {
+	if (eventType.value !== 'board-last-cell' && props.currentGame.type === 0) {
 		showTimer = false;
 	}
 

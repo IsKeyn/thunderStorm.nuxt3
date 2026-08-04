@@ -1,6 +1,6 @@
 <script setup>
 import ListCard from '@/components/entity/card/ListCard.vue';
-import {computed} from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
 	entity: {
@@ -67,6 +67,7 @@ const dataByGroups = computed(() => {
 						:key="index"
 						:data="data"
 						entity="game"
+						pathToDetail="game"
 				/>
 			</div>
 		</div>
