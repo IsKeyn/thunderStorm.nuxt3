@@ -1,5 +1,5 @@
 <script setup>
-const emit = defineEmits(['updateList']);
+const emit = defineEmits(['updateList', 'debugSetStatusEffect']);
 
 import { helper } from '@/composables/helper.js'
 const { route, hasWebSocked } = helper();
@@ -26,6 +26,10 @@ const props = defineProps({
 		default: '',
 	},
 	showControlPanel: {
+		type: Boolean,
+		default: false,
+	},
+	showDebugControlPanel: {
 		type: Boolean,
 		default: false,
 	},
@@ -213,6 +217,12 @@ const sendActivateSeRequest = async (type) => {
 							@click="activateSe('accept')"
 					>Выполнен</button>
 				</template>
+			</div>
+			<div v-if="showDebugControlPanel">
+				<button
+						class="btn btn-simple mr-2"
+						@click="emit('debugSetStatusEffect', element)"
+				>Наложить на себя статус эффект</button>
 			</div>
 		</div>
 		<div

@@ -1,8 +1,8 @@
 <script setup>
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
-import ItemCard from '@/modules/boardGame/components/item/ItemCard.vue';
+import StatusEffectCard from '@/modules/boardGame/components/statusEffect/StatusEffectCard.vue';
 
-const emit = defineEmits(['debugAddItemToInventory']);
+const emit = defineEmits(['debugSetStatusEffect']);
 
 import { computed, ref } from "vue";
 
@@ -26,7 +26,7 @@ const form = ref(
 				name: 'Поиск',
 				value: '',
 				type: 'text',
-				placeholder: 'Начните вводить название предмета, для поиска',
+				placeholder: 'Начните вводить название статус эффекта, для поиска',
 				validateRules: 'required, minLength_2, maxLength_50',
 				classes: 'w-full',
 			},
@@ -34,7 +34,7 @@ const form = ref(
 );
 
 const route = useRoute();
-const requestName = 'getBoardGameItemList';
+const requestName = 'getBoardGameSeList';
 
 const {
 	data: requestData,
@@ -44,7 +44,7 @@ const {
 		requestName,
 		async () => {
 			const response = await Promise.resolve(
-					sendApiRequest(`board-game/v2/item/list/${route.params.slug}/`, 'GET', {}, requestName, '')
+					sendApiRequest(`board-game/v2/status-effect/list/${route.params.slug}/`, 'GET', {}, requestName, '')
 			);
 
 			return response || null;
@@ -55,11 +55,11 @@ const {
 		}
 );
 
-const itemList = computed(() => requestData.value?.data || null);
+const seList = computed(() => requestData.value?.data || null);
 
-const filteredItems = computed(() => {
-	return itemList.value.filter((item) => {
-		return item.item.name.toLowerCase().includes(form.value.searchLine.value ? form.value.searchLine.value.toLowerCase() : '');
+const filteredSe = computed(() => {
+	return seList.value.filter((item) => {
+		return item.statusEffect.name.toLowerCase().includes(form.value.searchLine.value ? form.value.searchLine.value.toLowerCase() : '');
 	});
 });
 </script>
@@ -83,16 +83,16 @@ const filteredItems = computed(() => {
 				labelClasses="mr-4 mt-[10px] mb-[10px]"
 				:fieldClasses="form.searchLine.classes"
 		/>
-		<ItemCard
-				v-if="itemList && itemList.length > 0"
-				v-for="(element, key) in filteredItems"
+		<StatusEffectCard
+				v-if="seList && seList.length > 0"
+				v-for="(element, key) in filteredSe"
 				:key="key"
-				:element="element"
+				:element="{statusEffectBind: element}"
 				:useLightBox="true"
 				:showDropChance="false"
 				:showControlPanel="showControlPanel"
 				:showDebugControlPanel="showDebugControlPanel"
-				@debugAddItemToInventory="$emit('debugAddItemToInventory', $event)"
+				@debugSetStatusEffect="$emit('debugSetStatusEffect', $event)"
 		/>
 		<ui-itemBox
 				v-else
