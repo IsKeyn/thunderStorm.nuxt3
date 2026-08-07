@@ -3,7 +3,7 @@ import CookieAccept from '@/components/actions/CookieAccept.vue';
 import SystemComponents from '@/components/system/SystemComponents.vue';
 import ReceiveMainData from '@/modules/boardGame/components/boardGame/ReceiveMainData.vue';
 import ImportantLogsListener from '@/modules/boardGame/components/log-list/ImportantLogsListener.vue';
-
+import ControlPanel from '@/modules/boardGame/components/ui/ControlPanel.vue';
 
 
 import Seo from '@/modules/boardGame/components/boardGame/Seo.vue';
@@ -68,6 +68,7 @@ provide('layoutMethods', {
 				<article>
 					<div class="flex">
 						<MainMenu />
+						<ControlPanel />
 						<div class="content-box">
 							<slot />
 						</div>

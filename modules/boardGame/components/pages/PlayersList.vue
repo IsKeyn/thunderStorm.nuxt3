@@ -3,6 +3,8 @@ import PlayersList from '@/modules/boardGame/components/user/player/PlayersList.
 
 const emit = defineEmits(['onClickFunc']);
 
+import { computed } from "vue";
+
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
@@ -10,7 +12,6 @@ import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
-import {computed} from "vue";
 const { getSettingValue } = boardGame();
 
 const props = defineProps({

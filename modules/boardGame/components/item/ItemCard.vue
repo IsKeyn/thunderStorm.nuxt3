@@ -1,5 +1,5 @@
 <script setup>
-const emit = defineEmits(['useItem', 'sellItem', 'buyItem', 'withdrawnItem']);
+const emit = defineEmits(['useItem', 'sellItem', 'buyItem', 'withdrawnItem', 'debugAddItemToInventory']);
 
 import { useSoundStore } from '@/stores/sound';
 const soundStore = useSoundStore();
@@ -34,6 +34,10 @@ const props = defineProps({
 		default: '',
 	},
 	showControlPanel: {
+		type: Boolean,
+		default: false,
+	},
+	showDebugControlPanel: {
 		type: Boolean,
 		default: false,
 	},
@@ -191,6 +195,12 @@ const getItemQuality = (dropChance) => {
 							class="btn btn-simple mr-2"
 							@click="emit('sellItem', inventoryItem)"
 					><font-awesome-icon icon="fa-solid fa-cart-shopping" /> Продать</button>
+				</div>
+				<div v-if="showDebugControlPanel">
+					<button
+							class="btn btn-simple mr-2"
+							@click="emit('debugAddItemToInventory', element)"
+					>Добавить в инвентарь</button>
 				</div>
 				<div
 						v-if="theme === 'shopItem'"
