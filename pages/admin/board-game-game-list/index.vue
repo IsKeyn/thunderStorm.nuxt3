@@ -22,7 +22,7 @@ const titles = ref(
 			game_id: {
 				name: 'Игра',
 				type: 'EntityList',
-				apiUrl: 'game/list?fullList=true',
+				apiUrl: 'game/getShortList?fullList=true',
 				sortable: true,
 			},
 			gaming_platform_id: {

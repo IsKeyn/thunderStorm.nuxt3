@@ -18,7 +18,7 @@ const form = ref(
 				name: 'Игра',
 				value: '',
 				type: 'EntityList',
-				apiUrl: 'game/list?fullList=true',
+				apiUrl: 'game/getShortList?fullList=true',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
