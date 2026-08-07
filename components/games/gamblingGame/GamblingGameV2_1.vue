@@ -182,7 +182,7 @@ function rollFunctions() {
 						error(response.status_message);
 					} else {
 						/* Находим выпавший элемент в списке элементов */
-						for (let i = 0; items.value.length > 0; i++) {
+						for (let i = 0; items.value.length >= i; i++) {
 							if (items.value[i].id === response.data.id) {
 								randomIndex = i;
 								break;

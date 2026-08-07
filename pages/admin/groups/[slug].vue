@@ -39,6 +39,23 @@ const form = ref(
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]'],
 			},
+			type: {
+				name: 'Тип',
+				value: null,
+				type: 'select',
+				options: [
+					{
+						name: 'Не выбрано',
+						value: null,
+					},
+					{
+						name: 'Группа 1 (Для App\\Models\\Game - Группы)',
+						value: 1,
+					},
+				],
+				validateRules: 'maxLength_255',
+				classes: ['w-full', 'mt-[5px]'],
+			},
 			description: {
 				name: 'Описание',
 				value: '',

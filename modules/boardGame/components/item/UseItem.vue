@@ -125,6 +125,9 @@ const actions = {
 		all: {
 			name: 'на всех',
 		},
+		oneOfAll: {
+			name: 'на другого игрока или меня',
+		},
 		allExpectMe: {
 			name: 'на всех, кроме меня',
 		},
@@ -439,6 +442,7 @@ const effectFor = (action) => {
 					<template
 							v-if="
 								action.target === 'other'
+								|| action.target === 'oneOfAll'
 								|| action.target === 'fromTo'
 								|| action.target === 'nearestPlayer'
 								|| action.target.includes('noFurther')

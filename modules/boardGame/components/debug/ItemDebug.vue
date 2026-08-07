@@ -21,7 +21,7 @@ const debugAddItemToInventory = async (item) => {
 			itemId: item.id,
 		};
 
-		const response = await sendApiRequest('board-game/v2/debug/add-item-to-inventory', 'POST', body);
+		const response = await sendApiRequest('board-game/v2/debug/add-item-to-inventory', 'POST', body, `addItemToInventory`, 'fullscreenTransparent');
 		requestInProgress.value = false;
 
 		if (response) {
