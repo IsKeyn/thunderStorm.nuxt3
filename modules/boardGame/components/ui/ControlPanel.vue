@@ -20,6 +20,9 @@ const props = defineProps({
 
 const hideButton = ref(false);
 
+import { userFunctions } from '@/composables/userFunctions.js';
+const { isAuth } = userFunctions();
+
 const enableDebug = computed(() => {
 	return getSettingValue('debug_mode');
 });
@@ -47,7 +50,7 @@ const openCloseDebugModalOpen = () => {
 		</button>
 
 		<button
-				v-if="!hideButton && enableDebug"
+				v-if="!hideButton && isAuth && enableDebug"
 				class="btn btn-simple btn-control"
 				title="Дебаг меню"
 				@click="openCloseDebugModalOpen"

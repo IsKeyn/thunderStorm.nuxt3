@@ -1,7 +1,8 @@
 <script setup>
 import SelectPlayerDetailList from '@/modules/boardGame/components/user/player/SelectPlayerDetailList.vue';
+
 import TheCunningElf from '@/modules/boardGame/components/board/cellGames/TheCunningElf.vue';
-import UnusefulButton from '@/modules/boardGame/components/board/cellGames/UnusefulButton.vue';
+import MysteryButton from '@/modules/boardGame/components/board/cellGames/MysteryButton.vue';
 
 import { ref } from "vue";
 
@@ -156,7 +157,7 @@ const setRequest = async (type) => {
 const getGameInitComponent = (name) => {
 	switch (name) {
 		case 'TheCunningElf': return TheCunningElf;
-		case 'UnusefulButton': return UnusefulButton;
+		case 'MysteryButton': return MysteryButton;
 	}
 }
 </script>
@@ -236,6 +237,9 @@ const getGameInitComponent = (name) => {
 			</button>
 		</template>
 		<template v-if="showControlPanel && action && action.type === 'game'">
+			{{ action }}
+			{{ action.gameName }}
+			{{ getGameInitComponent(action.gameName) }}
 			<component
 					:is="getGameInitComponent(action.gameName)"
 					:element="element"

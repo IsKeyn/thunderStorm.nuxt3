@@ -33,6 +33,9 @@ const boardGameStore = useBoardGameStore();
 import { roles } from '@/composables/roles.js';
 const { hasRole, hasPermission } = roles();
 
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { getSettingValue } = boardGame();
+
 import { userFunctions } from '@/composables/userFunctions.js';
 const {
 	isAuth,
@@ -40,10 +43,15 @@ const {
 } = userFunctions();
 
 import { lightBox } from '@/composables/lightBox.js';
+import {computed} from "vue";
 const {
 	openedImage,
 	setOpenedImage
 } = lightBox();
+
+const enableDebug = computed(() => {
+	return getSettingValue('debug_mode');
+});
 
 /* Предоставляем данные через provide */
 provide('layoutMethods', {
@@ -68,7 +76,7 @@ provide('layoutMethods', {
 				<article>
 					<div class="flex">
 						<MainMenu />
-						<ControlPanel />
+						<ControlPanel v-if="isAuth && enableDebug" />
 						<div class="content-box">
 							<slot />
 						</div>
