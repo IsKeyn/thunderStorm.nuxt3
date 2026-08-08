@@ -25,6 +25,10 @@ const {
 } = filters();
 
 const props = defineProps({
+	filterNamePostfix: {
+		type: String,
+		default: 'default',
+	},
 	showHeader: {
 		type: Boolean,
 		default: true,
@@ -97,7 +101,7 @@ const {
 	setPerPage
 } = pagination(props.perPage);
 
-const filterName = setFilterName([ 'list', props.entity ]);
+const filterName = setFilterName([ 'list', props.filterNamePostfix, props.entity ]);
 
 /* Устанавливаем фильтры их get параметров */
 setQueryFilters(filterName, props.usedFilters, props.defaultFilters);

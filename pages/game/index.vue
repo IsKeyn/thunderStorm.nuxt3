@@ -73,6 +73,15 @@ const sortOptions = [
 		value: 'created_at',
 	},
 ];
+
+const defaultFilters = computed(() => {
+	return {
+		sort: {
+			field: "date",
+			sort: "desc"
+		},
+	};
+});
 </script>
 
 <template>
@@ -82,5 +91,6 @@ const sortOptions = [
 		title="Игры"
 		:usedFilters="usedFilters"
 		:sortOptions="sortOptions"
+		:defaultFilters="defaultFilters"
 	/>
 </template>
