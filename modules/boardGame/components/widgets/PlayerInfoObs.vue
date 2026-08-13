@@ -110,12 +110,12 @@ watchEffect(() => {
 			class="wrapper"
 			v-else-if="fetchedData && Object.keys(fetchedData).length"
 	>
-		<h2 v-if="fetchedData?.settings?.widgetSettings?.show_name && fetchedData?.user?.name"
+		<h2 v-if="fetchedData?.settings?.widgetSettings?.show_name !== false && fetchedData?.user?.name"
 				class="block title title-line"
 		>{{ fetchedData.user.public_name ? fetchedData.user.public_name : fetchedData.user.name }}</h2>
 
 		<div
-				v-if="fetchedData?.settings?.widgetSettings?.show_data"
+				v-if="fetchedData?.settings?.widgetSettings?.show_data !== false"
 				class="main-info-line"
 		>
 			<span v-if="fetchedData.full_points">
@@ -130,7 +130,7 @@ watchEffect(() => {
 		</div>
 
 		<GameGamblingCard
-				v-if="fetchedData?.settings?.widgetSettings?.show_game && fetchedData?.current_game?.game"
+				v-if="fetchedData?.settings?.widgetSettings?.show_game !== false && fetchedData?.current_game?.game"
 				:element="fetchedData.current_game.game"
 				:itemHeight="100"
 				classes="min-h-[100px]"
@@ -138,7 +138,7 @@ watchEffect(() => {
 		/>
 
 		<div
-				v-if="fetchedData?.settings?.widgetSettings?.show_items_and_se"
+				v-if="fetchedData?.settings?.widgetSettings?.show_items_and_se !== false"
 				class="grid grid-cols-2"
 		>
 			<div class="flex flex-col">
