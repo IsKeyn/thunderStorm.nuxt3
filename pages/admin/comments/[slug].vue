@@ -15,14 +15,14 @@ const form = ref(
 				name: 'Имя автора',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, minLength_2, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			email: {
 				name: 'e-mail',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, minLength_2, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			message: {

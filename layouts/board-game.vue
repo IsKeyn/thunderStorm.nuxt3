@@ -33,6 +33,9 @@ const boardGameStore = useBoardGameStore();
 import { roles } from '@/composables/roles.js';
 const { hasRole, hasPermission } = roles();
 
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { getSettingValue } = boardGame();
+
 import { userFunctions } from '@/composables/userFunctions.js';
 const {
 	isAuth,
@@ -40,10 +43,15 @@ const {
 } = userFunctions();
 
 import { lightBox } from '@/composables/lightBox.js';
+import {computed} from "vue";
 const {
 	openedImage,
 	setOpenedImage
 } = lightBox();
+
+const enableDebug = computed(() => {
+	return getSettingValue('debug_mode');
+});
 
 /* Предоставляем данные через provide */
 provide('layoutMethods', {
@@ -53,8 +61,22 @@ provide('layoutMethods', {
 
 <template>
 	<CookieAccept />
-
-	<div v-if="!Boolean(Number(getSettingFirstValue('disable-events'))) || (isAuth && hasRole('admin', userStore.user))">
+	<ui-itemBox
+			v-if="Boolean(Number(getSettingFirstValue('disable-events')))
+			&& !(
+					isAuth
+					&& (hasRole('admin', userStore.user) || hasRole('event.tester', userStore.user))
+			)"
+			classes="red"
+			message="В данный момент ивенты отключены"
+	/>
+	<div v-if="
+			!Boolean(Number(getSettingFirstValue('disable-events')))
+			|| (
+					isAuth
+					&& (hasRole('admin', userStore.user) || hasRole('event.tester', userStore.user))
+			)
+	">
 		<SystemComponents />
 		<ReceiveMainData />
 		<ImportantLogsListener />
@@ -68,7 +90,7 @@ provide('layoutMethods', {
 				<article>
 					<div class="flex">
 						<MainMenu />
-						<ControlPanel />
+						<ControlPanel v-if="isAuth && enableDebug" />
 						<div class="content-box">
 							<slot />
 						</div>
@@ -88,11 +110,7 @@ provide('layoutMethods', {
 		/>
 		<Sound />
 	</div>
-	<ui-itemBox
-			v-else
-			classes="red"
-			message="В данный момент ивенты отключены"
-	/>
+
 </template>
 
 <style lang="scss">

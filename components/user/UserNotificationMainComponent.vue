@@ -23,6 +23,8 @@ onMounted(async () => {
 	if (Object.keys(userStore.user).length) {
 		getAllNotifications();
 
+		console.log('UserNotificationMainComponent runtimeConfig.public.hasWebSockedServer', runtimeConfig.public.hasWebSockedServer);
+
 		if (runtimeConfig.public.hasWebSockedServer) {
 			const userId = userStore.user?.id;
 

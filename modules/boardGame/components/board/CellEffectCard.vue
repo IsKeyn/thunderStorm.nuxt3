@@ -1,7 +1,9 @@
 <script setup>
 import SelectPlayerDetailList from '@/modules/boardGame/components/user/player/SelectPlayerDetailList.vue';
+
 import TheCunningElf from '@/modules/boardGame/components/board/cellGames/TheCunningElf.vue';
-import UnusefulButton from '@/modules/boardGame/components/board/cellGames/UnusefulButton.vue';
+import MysteryButton from '@/modules/boardGame/components/board/cellGames/MysteryButton.vue';
+import ThreeOfNine from '@/modules/boardGame/components/board/cellGames/ThreeOfNine.vue';
 
 import { ref } from "vue";
 
@@ -156,7 +158,8 @@ const setRequest = async (type) => {
 const getGameInitComponent = (name) => {
 	switch (name) {
 		case 'TheCunningElf': return TheCunningElf;
-		case 'UnusefulButton': return UnusefulButton;
+		case 'MysteryButton': return MysteryButton;
+		case 'ThreeOfNine': return ThreeOfNine;
 	}
 }
 </script>

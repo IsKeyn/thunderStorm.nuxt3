@@ -96,6 +96,13 @@ const usedFilters = [
 		parse: true,
 	},
 	{
+		name: 'addedBy',
+		langName: 'Кем добавлен',
+		type: 'multiselect',
+		requestData: true,
+		parse: true,
+	},
+	{
 		name: 'onlyGold',
 		langName: 'Только золотая коллекция',
 		type: 'checkbox',
@@ -136,13 +143,20 @@ const sortOptions = [
 ];
 
 const defaultFilters = computed(() => {
+	let filters = {
+		sort: {
+			field: "name",
+			sort: "asc"
+		},
+	};
+
 	if (boardGameStore.boardGameInfo.id) {
-		return {
-			events: [
+		filters.events = [
 				boardGameStore.boardGameInfo.id
-			],
-		};
+		];
 	}
+
+	return filters;
 });
 </script>
 

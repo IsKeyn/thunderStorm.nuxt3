@@ -446,6 +446,7 @@ const effectFor = (action) => {
 								|| action.target === 'fromTo'
 								|| action.target === 'nearestPlayer'
 								|| action.target.includes('noFurther')
+								|| action.target.includes('moreThenOrEquals')
 							"
 					>
 						<span class="inv-title">Данный предмет требует выбора игрока:</span>

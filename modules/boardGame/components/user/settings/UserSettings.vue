@@ -2,7 +2,7 @@
 import ThemeSettings from '@/modules/boardGame/components/user/settings/ThemeSettings.vue';
 import SoundSettings from '@/modules/boardGame/components/user/settings/SoundSettings.vue';
 
-import { onMounted, ref, watch } from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
@@ -21,6 +21,9 @@ const loadState = useLoadStateStore();
 
 import { userFunctions } from '@/composables/userFunctions.js';
 const { isAuth } = userFunctions();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { getSettingValue } = boardGame();
 
 const showSettingsBlock = ref(false);
 
@@ -110,6 +113,12 @@ onMounted(() => {
 		dontSendSettingRequest.value = false;
 	}, delayTime + 50);
 });
+
+const designTheme = computed(() => {
+	const theme = getSettingValue('design_theme');
+
+	return theme ? theme : 'street-light';
+});
 </script>
 
 <template>
@@ -124,7 +133,7 @@ onMounted(() => {
 		</div>
 		<div v-show="showSettingsBlock" class="settings-block">
 			<ThemeSettings
-					defaultTheme="street-light"
+					:defaultTheme="designTheme"
 					class="mb-[1rem]"
 					v-model="theme"
 			/>

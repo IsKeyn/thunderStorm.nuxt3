@@ -95,6 +95,19 @@ const defaultFiltersProp = computed(() => {
 		};
 	}
 
+	if (props.target.includes('moreThenOrEquals')) {
+		const splitData = props.target.split('_');
+
+		const value = Number(splitData[1]);
+
+		if (value) {
+			returnData.streak = {
+				type: splitData[0],
+				value: splitData[1],
+			};
+		}
+	}
+
 	return returnData;
 });
 
@@ -112,6 +125,11 @@ const usedFiltersProp = [
 	{
 		name: 'distance',
 		langName: 'Лимит',
+		type: 'hidden',
+	},
+	{
+		name: 'streak',
+		langName: 'Стрик',
 		type: 'hidden',
 	},
 	{
