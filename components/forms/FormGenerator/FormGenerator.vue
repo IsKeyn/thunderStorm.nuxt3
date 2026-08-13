@@ -272,7 +272,7 @@ const copyValue = () => {
 const wrapperTag = computed(() => {
 	let name = props.wrapperTagName;
 
-	if (props.element.type === 'json') {
+	if (props.element.type === 'json' || props.element.type === 'wysiwyg') {
 		name = 'div';
 	}
 
@@ -532,6 +532,9 @@ const wrapperTag = computed(() => {
 			<JsonEditor
 					v-model="element.value"
 			/>
+		</template>
+		<template v-else-if="element.type === 'wysiwyg'">
+			<ui-WangWysiwyg v-model="element.value" theme="dark" />
 		</template>
 		<template v-else-if="element.type === 'fileFromGallery'">
 			<FileFromGallery

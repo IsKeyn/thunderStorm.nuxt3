@@ -22,7 +22,7 @@ const form = ref(
 				name: 'Вес голоса',
 				value: '',
 				type: 'text',
-				validateRules: 'required, maxLength_40', // TODOВ алидация, только цифры
+				validateRules: 'required, maxLength_40', // TODO Валидация, только цифры
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			entity_type: {

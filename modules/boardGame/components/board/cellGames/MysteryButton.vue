@@ -1,9 +1,33 @@
 <script setup>
+import { computed, ref } from "vue";
+
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
+
+import { helper } from '@/composables/helper.js'
+const { route, hasWebSocked } = helper();
+
+import { api } from '@/composables/api.js';
+const { sendApiRequest } = api();
+
+import { notifications } from '@/composables/notifications.js';
+const { choiceAlert, error, alert } = notifications();
+
+const props = defineProps({
+	element: {
+		type: Object,
+		default: {},
+	},
+});
+
+const gameIsFinished = ref(false);
+
+// Смена кнопка при наведении и нажатии
 const isHovered = ref(false);
 const isPressed = ref(false);
 
 const imageNumber = computed(() => {
-	if (isPressed.value) return 3;
+	if (isPressed.value) return 2;
 	if (isHovered.value) return 2;
 	return 1;
 });
@@ -12,78 +36,193 @@ const imagePath = computed(
 		() => `/images/board-games/games/mystery-button/${imageNumber.value}.png`
 );
 
-function onMouseEnter() {
+const onMouseEnter = () => {
 	isHovered.value = true;
 }
 
-function onMouseLeave() {
+const onMouseLeave = () => {
 	isHovered.value = false;
 	isPressed.value = false;
 }
 
-function onMouseDown() {
-	isPressed.value = true;
+// function onMouseDown() {
+// 	isPressed.value = true;
+// }
+//
+// function onMouseUp() {
+// 	isPressed.value = false;
+// }
+
+const onMouseClick = () => {
+	if (gameIsFinished.value === true) {
+		alert('Игра звершена');
+		return;
+	}
+
+	buttonRequest();
 }
 
-function onMouseUp() {
-	isPressed.value = false;
+// Получение State
+const requestName = 'MysteryButtonGetState';
+
+const {
+	data: requestData,
+	pending: requestInProgress,
+	refresh
+} = await useAsyncData(
+		requestName,
+		async () => {
+			if (!userStore.player.id) {
+				return false;
+			}
+
+			const body = {
+				playerId: userStore.player.id,
+				entityType: 'App\\Models\\BoardGame\\BoardGamePlayerPosition',
+			};
+
+			const response = await Promise.resolve(
+					sendApiRequest(`save-state/get-by-bg-player/`, 'GET', body, 'MysteryButtonGetState', '')
+			);
+
+			return response || null;
+		},
+		{
+			server: true,
+			lazy: true,
+		}
+);
+
+const fetchedData = computed(() => requestData.value || null);
+
+// Активация кнопки
+const resultMessage = ref('');
+
+const buttonRequest = async () => {
+	try {
+		requestInProgress.value = true;
+
+		const body = {
+			id: props.element.id,
+			slug: route.params.slug,
+			element: props.element,
+		}
+
+		const response = await sendApiRequest(
+				'board-game/v2/boardStatusEffect/use',
+				'POST',
+				body,
+				'bg_usePositionEffect',
+				'fullscreenTransparent',
+				'method'
+		);
+
+		requestInProgress.value = false;
+
+		if (!response) {
+			error('Ответ от сервера пуст');
+			return;
+		}
+
+		if (response.error) {
+			error(response.error);
+			return;
+		}
+
+		if (response[userStore.player.id]) {
+			resultMessage.value = response[userStore.player.id].message.replace('*value', response[userStore.player.id].value);
+
+			if (response[userStore.player.id]?.gameFinished === true) {
+				gameIsFinished.value = true;
+			}
+		}
+
+		if (resultMessage) {
+			alert(resultMessage.value, 10000);
+
+			if (!hasWebSocked()) refreshLayoutData();
+		}
+	} catch (e) {
+		error(e);
+		requestInProgress.value = false;
+	}
 }
 
-const activateState = () => {
-	console.log(111);
-}
+const historyMessage = computed(() => {
+	if (
+			fetchedData.value?.state?.currentState
+			&& userStore.player.id
+			&& fetchedData.value?.state?.result?.[fetchedData.value.state.currentState]?.[userStore.player.id]?.value
+			&& fetchedData.value?.state?.result?.[fetchedData.value.state.currentState]?.[userStore.player.id]?.message
+	) {
+		const value = fetchedData.value.state.result[fetchedData.value.state.currentState][userStore.player.id].value;
+		const message = fetchedData.value.state.result[fetchedData.value.state.currentState][userStore.player.id].message;
+
+		return message.replace('*value', value);
+	}
+});
 </script>
 
 <template>
 	<div
-			class="image-box"
-			@mouseenter="onMouseEnter"
-			@mouseleave="onMouseLeave"
-			@mousedown="onMouseDown"
-			@mouseup="onMouseUp"
-			@click="activateState"
+			:class="['button-block', `${gameIsFinished ? 'game-is-finished' : ''}`]"
 	>
-
-			<img
-					:key="imagePath"
-					:src="imagePath"
-					class="article-image"
-					alt="Mystery button"
-			>
-
-
-		<div class="quote-box">
-			<Transition name="fade" mode="out-in">
-        <span>
-          Эльфийка предлагает вам выбрать одну из 3-х карт на выбор.
-          Но предупреждает, что вы можете выбрать только 1 карту и эффект может быть
-          как положительным, так и отрицательным.
-          В принципе, ты можешь уйти, не переворачивая карт, но ведь любопытно,
-          чего тебе уготовила судьба?
-        </span>
-			</Transition>
+		<img
+				@mouseenter="onMouseEnter"
+				@mouseleave="onMouseLeave"
+				@mousedown="onMouseDown"
+				@mouseup="onMouseUp"
+				@click="onMouseClick"
+				:key="imagePath"
+				:src="imagePath"
+				class="article-image"
+				alt="Mystery button"
+		>
+		<div
+				class="background-block"
+				:style="`
+					background-image: url('/images/board-games/games/mystery-button/background.png');
+					background-size: cover;
+					background-position: center;
+					background-repeat: no-repeat;
+				`"
+		>
+			<span class="block">{{ resultMessage ? resultMessage : (historyMessage ? historyMessage : 'Результат') }}</span>
+			<span v-if="gameIsFinished" class="block">
+				Игра завершена
+			</span>
 		</div>
 	</div>
 </template>
 
-<style scoped>
-.image-box {
-	cursor: pointer;
-}
+<style lang="scss" scoped>
+.button-block {
+	@apply mx-auto block lg:flex items-center justify-center;
 
-.article-image {
-	display: block;
-	max-width: 100%;
-	height: auto;
-}
+	&.game-is-finished {
+		.article-image {
+			filter: grayscale(100%);
+		}
 
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity 0.25s ease;
-}
+		.background-block {
+			filter: grayscale(100%);
+		}
+	}
 
-.fade-enter-from,
-.fade-leave-to {
-	opacity: 0;
+	.article-image {
+		@apply
+			block mx-auto lg:mx-0
+			max-w-[100%] h-full
+			cursor-pointer
+		;
+	}
+
+	.background-block {
+		@apply
+			mx-auto lg:mx-0 flex items-center justify-center flex-col
+			min-h-[15rem] min-w-[20rem]
+			text-[2rem]
+		;
+	}
 }
 </style>

@@ -35,7 +35,7 @@ const form = ref(
 			description: {
 				name: 'Описание',
 				value: '',
-				type: 'textarea',
+				type: 'wysiwyg',
 				validateRules: null,
 				classes: ['w-full', 'mt-[5px]', 'resize-y', 'min-h-[400px]'],
 			},

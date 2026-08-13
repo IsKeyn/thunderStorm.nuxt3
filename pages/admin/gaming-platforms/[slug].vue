@@ -32,7 +32,7 @@ const form = ref(
 				name: 'Короткое название',
 				value: '',
 				type: 'text',
-				validateRules: 'required, minLength_2, maxLength_40',
+				validateRules: 'required, minLength_2, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 				showMaxLength: true,
 			},

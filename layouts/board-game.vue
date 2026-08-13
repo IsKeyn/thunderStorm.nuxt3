@@ -61,8 +61,22 @@ provide('layoutMethods', {
 
 <template>
 	<CookieAccept />
-
-	<div v-if="!Boolean(Number(getSettingFirstValue('disable-events'))) || (isAuth && hasRole('admin', userStore.user))">
+	<ui-itemBox
+			v-if="Boolean(Number(getSettingFirstValue('disable-events')))
+			&& !(
+					isAuth
+					&& (hasRole('admin', userStore.user) || hasRole('event.tester', userStore.user))
+			)"
+			classes="red"
+			message="В данный момент ивенты отключены"
+	/>
+	<div v-if="
+			!Boolean(Number(getSettingFirstValue('disable-events')))
+			|| (
+					isAuth
+					&& (hasRole('admin', userStore.user) || hasRole('event.tester', userStore.user))
+			)
+	">
 		<SystemComponents />
 		<ReceiveMainData />
 		<ImportantLogsListener />
@@ -96,11 +110,7 @@ provide('layoutMethods', {
 		/>
 		<Sound />
 	</div>
-	<ui-itemBox
-			v-else
-			classes="red"
-			message="В данный момент ивенты отключены"
-	/>
+
 </template>
 
 <style lang="scss">
