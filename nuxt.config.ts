@@ -21,23 +21,21 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     // The private keys which are only available server-side
-    apiSecret: '123',
+    apiSecret: '123', // Приватный ключ (сюда попадет NUXT_API_SECRET)
+
     // Keys within public are also exposed client-side
     public: {
-      floatingVue: {
-        // Опциональные настройки
-      },
       theme: 'KeynTR',
-      url: '', // .env NUXT_PUBLIC_API_URL
-      apiUrl: '', // .env NUXT_PUBLIC_API_URL
-      sessionCookieName: '', // .env NUXT_PUBLIC_SESSION_COOKIE_NAME
-      hasWebSockedServer: process.env.NUXT_HAS_WEB_SOCKED_SERVER,
-      reverbKey: process.env.NUXT_PUBLIC_REVERB_KEY,
-      reverbHost: process.env.NUXT_PUBLIC_REVERB_HOST,
-      reverbPort: process.env.NUXT_PUBLIC_REVERB_PORT,
-      reverbScheme: process.env.NUXT_PUBLIC_REVERB_SCHEME,
-      cryptoPass: process.env.NUXT_CRYPTO_PASS,
-      ymCounterId: process.env.NUXT_YM_COUNTER_ID,
+      url: '', // NUXT_PUBLIC_API_URL
+      apiUrl: '', // NUXT_PUBLIC_API_URL
+      sessionCookieName: '', // NUXT_PUBLIC_SESSION_COOKIE_NAME
+      hasWebSockedServer: '', // NUXT_HAS_WEB_SOCKED_SERVER
+      reverbKey: '', // NUXT_PUBLIC_REVERB_KEY,
+      reverbHost: '', // NUXT_PUBLIC_REVERB_HOST,
+      reverbPort: '', // NUXT_PUBLIC_REVERB_PORT,
+      reverbScheme: '', // NUXT_PUBLIC_REVERB_SCHEME,
+      cryptoPass: '', // NUXT_CRYPTO_PASS,
+      ymCounterId: '', // NUXT_YM_COUNTER_ID,
     }
   },
 })
