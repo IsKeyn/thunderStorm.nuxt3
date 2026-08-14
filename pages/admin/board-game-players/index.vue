@@ -149,6 +149,16 @@ const usedFilters = [
 		type: 'curtained',
 		requestData: true,
 	},
+	{
+		name: 'twitchStreamOnline',
+		langName: 'Стрим онлайн',
+		type: 'checkbox',
+	},
+	{
+		name: 'only_inactive',
+		langName: 'Показать не активных',
+		type: 'checkbox',
+	},
 ];
 </script>
 
