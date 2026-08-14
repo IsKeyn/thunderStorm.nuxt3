@@ -90,7 +90,7 @@ provide('layoutMethods', {
 				<article>
 					<div class="flex">
 						<MainMenu />
-						<ControlPanel v-if="isAuth && enableDebug" />
+						<ControlPanel v-if="isAuth && enableDebug && userStore.player" />
 						<div class="content-box">
 							<slot />
 						</div>
