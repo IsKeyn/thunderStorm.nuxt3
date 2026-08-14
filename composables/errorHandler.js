@@ -1,4 +1,4 @@
-const notificationsModule = await import("@/composables/notifications.js");
+const notificationsModule = import("@/composables/notifications.js");
 
 export function errorHandler() {
     const { alert, error } = notificationsModule.notifications();
