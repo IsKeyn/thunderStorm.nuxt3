@@ -42,6 +42,8 @@ const props = defineProps({
 			</ul>
 			<br />
 			Премиум доступ действует до окончания текущего ивента.
+			<br />
+			Премиум выдается вручную, если вам не выдали премиум, свяжитесь с администрацией
 		</div>
 		<nuxt-link target="_blank" to="https://www.donationalerts.com/r/keyntr" class="btn btn-simple">Ссылка на донат</nuxt-link>
 	</template>

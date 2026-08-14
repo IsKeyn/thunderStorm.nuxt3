@@ -14,6 +14,9 @@ const { sendApiRequest, preparedRequestBody } = api();
 import { notifications } from '@/composables/notifications.js';
 const { error, alert } = notifications();
 
+import { errorHandler } from '@/composables/errorHandler.js';
+const { show } = errorHandler();
+
 import { ref } from "vue";
 
 const form = ref(
@@ -83,20 +86,7 @@ const saveSettings = async () => {
 
 		requestInProgress.value = false;
 
-		if (!response) {
-			error('Ответ от сервера пуст');
-			return;
-		}
-
-		if (response.error) {
-			error(response.error);
-			return;
-		}
-
-		if (response.message) {
-			alert(response.message);
-			return;
-		}
+		return show(response);
 	} catch (e) {
 		requestInProgress.value = false;
 		error(e);

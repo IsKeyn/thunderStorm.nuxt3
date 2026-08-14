@@ -198,8 +198,8 @@ watch(() => value.value, () => {
 	<div v-else-if="isAuth && checkResult">
 		<template v-if="checkResult.status === 1">
 			<div class="item-box">
-				Правила добавления игр
-
+				Ознакомтесь с правилами добавления игр на странице <a :href="`/e/${route.params.slug}/rules/`" target="_blank" title="Правила и описания">Правила и описания</a>
+				<br />
 				Вам необходимо выбрать {{ addingGamesConditions.maxGames }} игр
 			</div>
 			<AddGameForm
