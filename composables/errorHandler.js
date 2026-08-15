@@ -1,7 +1,7 @@
-const notificationsModule = import("@/composables/notifications.js");
+import { notifications } from '@/composables/notifications.js';
 
 export function errorHandler() {
-    const { alert, error } = notificationsModule.notifications();
+    const { alert, error } = notifications();
 
     const show = (response) => {
         if (!response) {

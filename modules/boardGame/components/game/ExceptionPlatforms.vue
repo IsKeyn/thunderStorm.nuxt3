@@ -216,6 +216,7 @@ const sendRequest = async (platforms) => {
 						:defaultValues="defaultValues"
 						:maxElements="3"
 						fieldClasses="col-span-11"
+						:hideCopyButton="true"
 				/>
 				<ui-itemBox
 						classes="green"

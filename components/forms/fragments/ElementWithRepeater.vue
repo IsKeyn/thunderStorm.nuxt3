@@ -63,6 +63,11 @@ const props = defineProps({
 		type: Number,
 		default: null,
 	},
+	// Скрыть кнопку копирования элемента репитора
+	hideCopyButton: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const value = ref([ ...props.modelValue ]);
@@ -115,7 +120,7 @@ watch(() => value.value, (newValue) => {
 					</button>
 
 					<button
-							v-if="repeaterItems.length > 1"
+							v-if="!hideCopyButton"
 							class="btn btn-primary"
 							@click="repeaterComponent.copyRepeaterItem(index)"
 					>
