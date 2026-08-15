@@ -7,6 +7,7 @@ import Board from '@/modules/boardGame/components/board/Board.vue';
 import GameProfile from '@/modules/boardGame/components/game/GameProfile.vue';
 import GameListWithPagination from '@/modules/boardGame/components/game/GameListWithPagination.vue';
 import AddGames from '@/modules/boardGame/components/game/AddGames.vue';
+import NegativePointsMessage from '@/modules/boardGame/components/user/player/NegativePointsMessage.vue';
 
 const emit = defineEmits(['setPageName']);
 
@@ -165,6 +166,8 @@ const tabsGameElements = [
 			:text="steps[currentStep].description"
 			classes="!mb-[1.5rem] mt-[1rem]"
 	/>
+
+	<NegativePointsMessage/>
 
 	<div v-if="currentStep === 1">
 		<Tabs
