@@ -71,7 +71,7 @@ const sendRequest = async () => {
 
 		if (response) {
 			form.value.message.value = '';
-			alert('Ваше сообщение добавлен');
+			alert('Ваше сообщение добавлено');
 			emit('fetchMessage', body);
 		}
 	} catch (e) {

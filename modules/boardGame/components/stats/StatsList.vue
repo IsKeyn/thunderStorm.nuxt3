@@ -225,7 +225,7 @@ const activityChartOptions = {
 			:themeType="9"
 			description="Формирование статистики может потребовать времени, пожалуйста ожидайте"
 	/>
-	<template v-else-if="fetchedData && fetchedData.length">
+	<template v-else-if="fetchedData && Object.keys(fetchedData).length">
 		<div
 				v-for="(data, key) in fetchedData"
 				:key="key"
