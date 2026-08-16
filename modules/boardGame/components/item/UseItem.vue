@@ -287,10 +287,10 @@ const getItemByFilter = (type = null) => {
 
 const getEffectByFilter = (type = null) => {
 	if (Object.keys(selectedPlayer.value).length > 0) {
-		let filterEffects = selectedPlayer.value.status_effects.filter((item) => item.active);
+		let filterEffects = selectedPlayer.value.statusEffects.filter((item) => item.active);
 
 		if (type === 'removeNegativeEffect') {
-			filterEffects = filterEffects.filter((item) => item?.statusEffect?.debuff === true);
+			filterEffects = filterEffects.filter((item) => item?.statusEffectBind?.statusEffect?.debuff === true);
 		}
 
 		return filterEffects;
@@ -374,7 +374,7 @@ const setMessages = () => {
 			message = `${defaultNotificationMessage}`;
 		}
 
-		message += ` выбрал эффект "${selectedEffect.value.statusEffect.name}"`;
+		message += ` выбрал эффект "${selectedEffect.value.statusEffectBind.statusEffect.name}"`;
 	}
 
 	/* Дополнение сообщений информацией о игре */

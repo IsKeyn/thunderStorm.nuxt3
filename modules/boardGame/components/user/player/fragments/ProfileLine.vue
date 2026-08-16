@@ -115,7 +115,7 @@ const eventType = computed(() => {
 					? 'background-image: url(' + getResizeImg(element.backgroundImage, 1500) + ');'
 					: ''}`,
 					`background-size: ${element?.settings?.pave ? 'contain' : 'cover'}`,
-					`background-position: ${element?.settings?.backgroundPosition ? element.settings.backgroundPosition : ''}`,
+					`background-position: ${element?.settings?.backgroundPosition ? element.settings.backgroundPosition : 'center'}`,
 					`background-repeat: ${element?.settings?.pave ? 'repeat' : 'no-repeat'}`,
 				]"
 		>
