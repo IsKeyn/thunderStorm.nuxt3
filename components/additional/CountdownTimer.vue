@@ -17,26 +17,43 @@ const props = defineProps({
 		default: 'Время истекло!'
 	},
 	showColumns: {
-		type: Array,
-		default: {
+		type: Object,
+		default: () => ({
 			days: true,
 			hours: true,
 			minutes: true,
 			seconds: true,
-		},
+		}),
 	},
 })
 
 const timeRemaining = ref(0);
 let timerInterval = null;
 
+// Вспомогательная функция для парсинга даты
+const getTargetTimestamp = () => {
+	// Проверяем, указан ли уже часовой пояс в строке (Z, +HH:mm или -HH:mm)
+	const hasTimezone = props.targetDate.endsWith('Z') ||
+			props.targetDate.includes('+') ||
+			/-\d{2}:\d{2}$/.test(props.targetDate);
+
+	if (hasTimezone) {
+		// Если пояс уже есть, парсим как есть
+		return new Date(props.targetDate).getTime();
+	}
+
+	// Если пояса нет, принудительно добавляем московский часовой пояс (UTC+3)
+	return new Date(`${props.targetDate}+03:00`).getTime();
+};
+
 // Вычисляем оставшееся время
 const calculateTimeRemaining = () => {
-	const target = new Date(props.targetDate).getTime();
-	const now = new Date().getTime();
+	const target = getTargetTimestamp();
+	const now = new Date().getTime(); // now всегда возвращает абсолютное время (UTC)
 	timeRemaining.value = Math.max(0, target - now);
 
 	if (timeRemaining.value === 0) {
+		stopTimer();
 		emit('activeParentFunc');
 	}
 }
