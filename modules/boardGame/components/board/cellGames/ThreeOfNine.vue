@@ -55,6 +55,7 @@ const {
 );
 
 const gameStatus = ref(0);
+const gameFinished = ref(false);
 
 const setStateData = (data) => {
 	if (data.result) {
@@ -65,6 +66,12 @@ const setStateData = (data) => {
 
 		if (typeof data?.status === 'number') {
 			gameStatus.value = data.status;
+
+			if (gameStatus.value !== 0) {
+				setTimeout(() => {
+					gameFinished.value = true;
+				}, 10000);
+			}
 		}
 	}
 }
@@ -78,7 +85,7 @@ watch(() => requestData.value, () => {
 const flippedCardIndex = ref(null);
 
 const flipCard = async (index) => {
-	if (gameStatus.value !== 0) return;
+	if (requestInProgress.value || gameStatus.value !== 0) return;
 
 	flippedCardIndex.value = index;
 
@@ -140,7 +147,7 @@ const choiceCardRequest = async (index) => {
 
 <template>
 	<div class="flex justify-center items-center">
-		<div :class="['card-wrapper', gameStatus !== 0 ? 'game-over' : '']">
+		<div :class="['card-wrapper', gameFinished ? 'game-over' : '']">
 			<div
 					v-for="(flipped, index) in flippedCards"
 					:key="index"

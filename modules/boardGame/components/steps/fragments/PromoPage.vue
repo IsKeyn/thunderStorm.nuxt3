@@ -7,6 +7,14 @@ const boardGameStore = useBoardGameStore();
 
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { refreshLayoutData } = boardGame();
+
+const startEventFunction = () => {
+
+	setTimeout(() => refreshLayoutData(), 1500);
+}
 </script>
 
 <template>
@@ -21,6 +29,7 @@ const { route } = helper();
 				:targetDate="boardGameStore.boardGameInfo.started_at"
 				title="До начала ивента"
 				endTitle="Ивент начался"
+				@activeParentFunc="startEventFunction"
 		/>
 		<span class="user-interface-title">Дополнительная информация</span>
 		<div class="add-info-box">
