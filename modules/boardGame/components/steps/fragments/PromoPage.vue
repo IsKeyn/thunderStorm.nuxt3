@@ -2,6 +2,8 @@
 import BlockWrapper from '@/components/blockEditor/editor/BlockWrapper.vue';
 import CountdownTimer from '@/components/additional/CountdownTimer.vue';
 
+const { sideCannons } = useConfetti()
+
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
@@ -12,7 +14,7 @@ import { boardGame } from '@/composables/BoardGame/boardGame.js'
 const { refreshLayoutData } = boardGame();
 
 const startEventFunction = () => {
-
+	sideCannons();
 	setTimeout(() => refreshLayoutData(), 1500);
 }
 </script>

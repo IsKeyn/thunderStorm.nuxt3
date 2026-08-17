@@ -141,6 +141,11 @@ const onClickHandler = (item) => {
 				<template v-if="typeof(error.saveErrorResult) === 'boolean'">
 					<div class="mt-2 font-bold">{{ getSaveErrorMessage(error.saveErrorResult) }}</div>
 				</template>
+				<font-awesome-icon
+						:icon="['fass', 'xmark']"
+						class="close-button"
+						@click.stop.prevent="hideNotification(error.id)"
+				/>
 			</div>
 		</div>
 

@@ -7,6 +7,8 @@ import { watch } from "vue";
 
 const emit = defineEmits(['toggleFormVisible', 'updateData']);
 
+const { burstFromCenter } = useConfetti()
+
 import { userFunctions } from '@/composables/userFunctions.js';
 const { isAuth, userStore } = userFunctions();
 
@@ -196,6 +198,7 @@ const sendRequest = async () => {
 					alert(`Игра "${props.game.name}" успешно отмечена как рерольнутая`, 10000);
 				} else if (props.type === 2) {
 					alert(`Игра "${props.game.name}" успешно отмечена как пройденная`, 10000);
+					burstFromCenter();
 				}
 			} else if (props.doType === 'add') {
 				alert(`Игра "${props.game.name}" успешно удалена из списка`, 10000);

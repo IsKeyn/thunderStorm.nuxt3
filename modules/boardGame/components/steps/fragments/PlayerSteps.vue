@@ -129,6 +129,7 @@ const tabsGameElements = [
 </script>
 
 <template>
+	<NegativePointsMessage/>
 	<div class="buttons">
 		<div class="left">
 			<button
@@ -166,8 +167,6 @@ const tabsGameElements = [
 			:text="steps[currentStep].description"
 			classes="!mb-[1.5rem] mt-[1rem]"
 	/>
-
-	<NegativePointsMessage/>
 
 	<div v-if="currentStep === 1">
 		<Tabs

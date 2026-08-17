@@ -38,10 +38,10 @@
 
   .wrap {
     @apply
-    relative
-    bg-[var(--not-error-bg-color)]
-    cursor-pointer
-    mt-5 p-5 pl-16;
+      relative
+      bg-[var(--not-error-bg-color)]
+      cursor-pointer
+      mt-5 p-5 pl-16;
 
     @media (min-width: 640px) and (max-width: 768px) {
       width: 500px;
@@ -52,6 +52,10 @@
     svg.fa-circle-exclamation {
       @apply absolute left-4;
       top: calc(50% - 16px);
+    }
+
+    .close-button {
+      @apply absolute right-3 top-3;
     }
   }
 }
