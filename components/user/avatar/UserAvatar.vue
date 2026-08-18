@@ -51,6 +51,10 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	altImage: {
+		type: String,
+		default: null,
+	},
 });
 
 const isCurrentUser = computed(() => {
@@ -186,6 +190,11 @@ const wrapperClasses = computed(() => {
 					:title="user.name"
 			>
 		</template>
+		<img
+				v-else-if="altImage"
+				:class="classes"
+				:src="altImage"
+		>
 		<img
 				v-else
 				:class="classes"
