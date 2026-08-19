@@ -6,6 +6,7 @@ export const useConfetti = () => {
     let celebrationInterval: ReturnType<typeof setInterval> | null = null
     let snowfallAnimation: number | null = null
     let sideCannonsAnimation: number | null = null
+    let starsTimeouts: ReturnType<typeof setTimeout>[] = []
 
     const loadConfetti = async () => {
         if (!import.meta.client) return null
@@ -202,7 +203,7 @@ export const useConfetti = () => {
         }
     }
 
-    // === Пулемёт из боков (красный и белый) ===
+    // === Пулемёт из боков ===
     const sideCannons = async (
         duration: number = 15 * 1000,
         colors: string[] = ['#bb0000', '#ffffff']
@@ -248,11 +249,59 @@ export const useConfetti = () => {
         }
     }
 
+    // === Звёзды из центра ===
+    const stars = async (
+        origin: { x: number; y: number } = { x: 0.5, y: 0.5 },
+        colors: string[] = ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
+    ) => {
+        const fire = await loadConfetti()
+        if (!fire) return
+
+        stopStars()
+
+        const defaults = {
+            spread: 360,
+            ticks: 50,
+            gravity: 0,
+            decay: 0.94,
+            startVelocity: 30,
+            colors: colors,
+            origin: origin,
+            disableForReducedMotion: true,
+        }
+
+        const shoot = () => {
+            fire({
+                ...defaults,
+                particleCount: 40,
+                scalar: 1.2,
+                shapes: ['star'],
+            })
+
+            fire({
+                ...defaults,
+                particleCount: 10,
+                scalar: 0.75,
+                shapes: ['circle'],
+            })
+        }
+
+        starsTimeouts.push(setTimeout(shoot, 0))
+        starsTimeouts.push(setTimeout(shoot, 100))
+        starsTimeouts.push(setTimeout(shoot, 200))
+    }
+
+    const stopStars = () => {
+        starsTimeouts.forEach(timeout => clearTimeout(timeout))
+        starsTimeouts = []
+    }
+
     // Автоматическая очистка всех анимаций при размонтировании
     onScopeDispose(() => {
         stopCelebration()
         stopSnowfall()
         stopSideCannons()
+        stopStars()
     })
 
     return {
@@ -264,5 +313,7 @@ export const useConfetti = () => {
         stopSnowfall,
         sideCannons,
         stopSideCannons,
+        stars,
+        stopStars,
     }
 }

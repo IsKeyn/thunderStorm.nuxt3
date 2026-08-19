@@ -58,31 +58,33 @@ const breadCrumbsArray = computed(() => {
 </script>
 
 <template>
-	<layout-PageHeader
-			:title="pageName"
-			:breadCrumbs="breadCrumbsArray"
-	/>
-	<ui-BigPreloader
-			v-if="requestInProgress"
-			class="h-full"
-			theme="image"
-			:themeType="9"
-	/>
-	<div v-else-if="fetchedData">
-		<GameCard
-				:element="{ game: fetchedData }"
-				theme="CurrentGame"
-				:showStatusBar="false"
+	<div>
+		<layout-PageHeader
+				:title="pageName"
+				:breadCrumbs="breadCrumbsArray"
+		/>
+		<ui-BigPreloader
+				v-if="requestInProgress"
+				class="h-full"
+				theme="image"
+				:themeType="9"
+		/>
+		<div v-else-if="fetchedData">
+			<GameCard
+					:element="{ game: fetchedData }"
+					theme="CurrentGame"
+					:showStatusBar="false"
+			/>
+		</div>
+		<ui-itemBox
+				v-else
+				classes="red"
+				message="Данные не получены"
+		/>
+
+		<OtherPlayersActionsWithGame
+				:eventSlug="route.params.slug"
+				:gameSlug="route.params.gameslug"
 		/>
 	</div>
-	<ui-itemBox
-			v-else
-			classes="red"
-			message="Данные не получены"
-	/>
-
-	<OtherPlayersActionsWithGame
-			:eventSlug="route.params.slug"
-			:gameSlug="route.params.gameslug"
-	/>
 </template>
