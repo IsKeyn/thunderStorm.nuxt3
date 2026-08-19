@@ -15,18 +15,24 @@ const props = defineProps({
 </script>
 
 <template>
-	<div class="grid grid-cols-12 gap-4">
-		<div class="col-span-4">
+	<div class="wrapper">
+		<div class="element">
 			<Timer
 					:userId="element.user_id"
 			/>
 		</div>
-		<div class="col-span-4">
+		<div class="element">
 			<PlayerInfoWidget />
 		</div>
 	</div>
 </template>
 
 <style lang="scss" scoped>
+.wrapper {
+	@apply grid grid-cols-12 gap-4;
 
+	.element {
+		@apply col-span-12 lg:col-span-6 	min-[1800px]:col-span-4;
+	}
+}
 </style>

@@ -3,6 +3,8 @@ import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 
 import { ref } from "vue";
 
+const { stars } = useConfetti();
+
 import { helper } from '@/composables/helper.js'
 const { route, hasWebSocked } = helper();
 
@@ -51,6 +53,7 @@ const buttonClickHandler = async () => {
 	}
 
 	if (!formError.value) {
+		stars();
 		await goIn();
 	}
 }

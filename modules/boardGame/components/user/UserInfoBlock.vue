@@ -80,19 +80,19 @@ const pointsWithText = computed(() => {
 	return addTextToPoints(userStore.player.full_points);
 });
 
-const showMessageCount = ref(false);
-let messageInterval = null;
+let interval = null;
 
+const showCount = ref(false);
 const startMessageToggle = () => {
-	if (messageInterval) clearInterval(messageInterval);
+	if (interval) clearInterval(interval);
 
-	messageInterval = setInterval(() => {
-		showMessageCount.value = !showMessageCount.value;
+	interval = setInterval(() => {
+		showCount.value = !showCount.value;
 	}, 3000);
 };
 
 onUnmounted(() => {
-	if (messageInterval) clearInterval(messageInterval);
+	if (interval) clearInterval(interval);
 });
 
 onMounted(() => {
@@ -144,29 +144,39 @@ const userName = computed(() => {
 				/>
 
 				<span
-						v-if="useNotifications && useNotifications.currentUserNotificationCount && useNotifications.currentUserNotificationCount > 0"
-						class="notifications"
-						@click="showNotificationModal"
-				>
-					<span>{{ useNotifications.currentUserNotificationCount > 99 ? '99+' : useNotifications.currentUserNotificationCount }}</span>
-				</span>
-
-				<span
 						v-if="useNotifications && useNotifications.currentUserMessagesCount && useNotifications.currentUserMessagesCount > 0"
 						class="unread-messages"
 						@click="showUserMessagesModal(null)"
 				>
             <Transition name="fade-switch" mode="out-in">
-                <div :key="showMessageCount ? 'count' : 'icon'" class="switch-content">
-                    <template v-if="showMessageCount">
+                <div :key="showCount ? 'count' : 'icon'" class="switch-content">
+                    <template v-if="showCount">
                         <span class="msg-count">{{ useNotifications.currentUserMessagesCount > 99 ? '99+' : useNotifications.currentUserMessagesCount }}</span>
                     </template>
                     <template v-else>
-                        <font-awesome-icon icon="fa-solid fa-envelope" class="msg-icon" />
+                        <font-awesome-icon icon="fa-solid fa-envelope" class="interva-icon" />
                     </template>
                 </div>
             </Transition>
         </span>
+
+				<span
+						v-if="useNotifications && useNotifications.currentUserNotificationCount && useNotifications.currentUserNotificationCount > 0"
+						class="notifications"
+						@click="showNotificationModal"
+				>
+					<Transition name="fade-switch" mode="out-in">
+						<div :key="showCount ? 'count' : 'icon'" class="switch-content">
+								<template v-if="showCount">
+									<span>{{ useNotifications.currentUserNotificationCount > 99 ? '99+' : useNotifications.currentUserNotificationCount }}</span>
+								</template>
+								<template v-else>
+									<font-awesome-icon icon="fa-solid fa-bell" class="interva-icon" />
+								</template>
+						</div>
+					</Transition>
+				</span>
+
 				<div
 						class="user-menu"
 						v-show="showUserMenu"
@@ -297,7 +307,7 @@ const userName = computed(() => {
 					@apply w-full h-full flex justify-center items-center;
 				}
 
-				.msg-icon {
+				.interva-icon {
 					@apply text-[0.8rem]; // Немного уменьшим иконку для лучшего вида
 				}
 

@@ -6,7 +6,7 @@ const emit = defineEmits(['activeParentFunc']);
 const props = defineProps({
 	targetDate: {
 		type: String,
-		default: '2077-12-31T23:59:59'
+		default: null
 	},
 	title: {
 		type: String,
@@ -32,6 +32,10 @@ let timerInterval = null;
 
 // Вспомогательная функция для парсинга даты
 const getTargetTimestamp = () => {
+	if (!props.targetDate) {
+		return;
+	}
+
 	// Проверяем, указан ли уже часовой пояс в строке (Z, +HH:mm или -HH:mm)
 	const hasTimezone = props.targetDate.endsWith('Z') ||
 			props.targetDate.includes('+') ||
@@ -106,7 +110,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-	<div class="countdown-timer">
+	<div
+			v-if="props.targetDate"
+			class="countdown-timer"
+	>
 		<template v-if="timeRemaining > 0">
 			<h2 v-if="title">{{ title }}</h2>
 			<div class="timer-display">

@@ -215,6 +215,20 @@ const activityChartOptions = {
 	responsive: true,
 	maintainAspectRatio: false
 }
+
+const showStats = computed(() => {
+	if (!fetchedData.value || !Object.keys(fetchedData.value).length) {
+		return false;
+	}
+
+	for (let key in fetchedData.value) {
+		if (fetchedData.value[key]?.data?.length) {
+			return true;
+		}
+	}
+
+	return false;
+});
 </script>
 
 <template>
@@ -225,7 +239,7 @@ const activityChartOptions = {
 			:themeType="9"
 			description="Формирование статистики может потребовать времени, пожалуйста ожидайте"
 	/>
-	<template v-else-if="fetchedData && Object.keys(fetchedData).length">
+	<template v-else-if="showStats">
 		<div
 				v-for="(data, key) in fetchedData"
 				:key="key"
