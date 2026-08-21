@@ -16,8 +16,6 @@ const debugSetStatusEffect = async (item) => {
 	requestInProgress.value = true;
 
 	try {
-		console.log(111, item.statusEffectBind.id);
-
 		const body = {
 			slug: route.params.slug,
 			itemId: item.statusEffectBind.id,
