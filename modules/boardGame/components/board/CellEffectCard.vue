@@ -64,7 +64,7 @@ const selectedPlayer = ref({});
 
 const sendInvitation = async () => {
 	try {
-		const elementAction = JSON.parse(props.element.boardPositionEffect.actions);
+		const elementAction = props.element.boardPositionEffect.actions;
 
 		const additionalParams = {};
 		additionalParams.player = selectedPlayer.value.id;
