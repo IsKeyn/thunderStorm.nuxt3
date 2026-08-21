@@ -188,11 +188,11 @@ const sendRequest = async () => {
 
 		const response = await sendApiRequest(`board-game/v2/player-game/${props.doType}`, 'POST', body, 'sendFinishGameRequest', '');
 
+		requestInProgress.value = false;
+
 		if (response.error) {
 			error(response.error);
 		} else if (response) {
-			requestInProgress.value = false;
-
 			if (props.doType === 'update') {
 				if (props.type === 1) {
 					alert(`Игра "${props.game.name}" успешно отмечена как рерольнутая`, 10000);
