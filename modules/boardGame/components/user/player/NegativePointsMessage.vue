@@ -35,11 +35,11 @@ const message = computed(() => {
 
 	if (points < 0 && maxNegativePoints) {
 		if (points === maxNegativePoints) {
-			return `Вы достигли минимального доступного значения пойтов (${maxNegativePoints}) и не можете ролить игру`;
+			return `Вы достигли минимального доступного значения очков (${maxNegativePoints}) и не можете ролить игру`;
 		} else if (points < maxNegativePoints) {
-			return `Вы превысили минимального доступного значения пойтов (${maxNegativePoints}) и не можете ролить игру`;
+			return `Вы превысили минимального доступного значения очков (${maxNegativePoints}) и не можете ролить игру`;
 		} else if (points > maxNegativePoints) {
-			return `Если вы достигните или превысите минимальное доступного значения пойтов (${maxNegativePoints}), то вы не сможете ролить игру`;
+			return `Если вы достигните или превысите минимальное доступного значения очков (${maxNegativePoints}), то вы не сможете ролить игру`;
 		}
 	}
 
