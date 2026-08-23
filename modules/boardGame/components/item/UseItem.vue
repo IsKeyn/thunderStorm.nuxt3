@@ -217,7 +217,13 @@ const validate = () => {
 			const regex = /^noFurther_\d+$/
 
 			if (
-					(item.target === 'other' || item.target === 'fromTo' || item.target === 'nearestPlayer' || regex.test(item.target))
+					(
+							item.target === 'other'
+							|| item.target === 'fromTo'
+							|| item.target === 'nearestPlayer'
+							|| item.target === 'oneOfAll'
+							|| regex.test(item.target)
+					)
 					&& Object.keys(selectedPlayer.value).length === 0
 			) { // Проверка, если предмет требует выбора игрока
 				const errorMessage = 'Данный предмет требует выбора игрока';
@@ -227,7 +233,11 @@ const validate = () => {
 				}
 				validateResult = false;
 			} else if (
-					(item.type === 'removeNegativeItem' || item.type === 'stealItem' || item.type === 'changeUserOwner')
+					(
+							item.type === 'removeNegativeItem'
+							|| item.type === 'stealItem'
+							|| item.type === 'changeUserOwner'
+					)
 					&& Object.keys(selectedItem.value).length === 0
 			) { // Проверка, если предмет требует выбора предмета
 				const errorMessage = 'Данный предмет требует выбора предмета';

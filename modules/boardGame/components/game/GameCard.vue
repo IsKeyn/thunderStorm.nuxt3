@@ -119,7 +119,7 @@ const platformDifficult = computed(() => {
 								:to="`/e/${route.params.slug}/player/${element.game.added_by_user.name}`"
 								class="hover-line"
 								title="Открыть профайл"
-						>{{ element.game.added_by_user.name }}</router-link>
+						>{{ element.game.added_by_user.public_name ? element.game.added_by_user.public_name : element.game.added_by_user.name }}</router-link>
 						</span>
 						<span class="line-info" v-if="element?.game?.source">Источник: {{ element.game.source }}</span>
 						<span

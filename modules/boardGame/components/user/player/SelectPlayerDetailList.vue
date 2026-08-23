@@ -156,14 +156,15 @@ const usedFiltersProp = [
 				:class="['selected']"
 				@click="toggleOptions"
 		>
-			<PlayerCardV2
-					v-if="selectedOption"
-					:element="selectedOption"
-					:theme="selectedPlayerTheme"
-					:bgClasses="bgClasses"
-					:hideStatusEffect="true"
-					:openProfile="false"
-			/>
+			<div v-if="selectedOption" class="mb-10">
+				<PlayerCardV2
+						:element="selectedOption"
+						:theme="selectedPlayerTheme"
+						:bgClasses="bgClasses"
+						:hideStatusEffect="true"
+						:openProfile="false"
+				/>
+			</div>
 			<span
 					v-else
 					:class="['choice-player', bgClasses]"

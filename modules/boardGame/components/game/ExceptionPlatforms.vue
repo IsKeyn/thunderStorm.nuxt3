@@ -84,7 +84,6 @@ const setValue = () => {
 setValue ();
 
 watch(() => value.value, () => {
-	console.log(value.value);
 	checkPlatforms();
 }, { deep: true });
 

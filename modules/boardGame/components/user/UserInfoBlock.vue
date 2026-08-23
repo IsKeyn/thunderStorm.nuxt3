@@ -5,6 +5,7 @@
 import UserMessagesModal from '@/components/user/message/UserMessagesModal.vue';
 import UserNotificationModal from '@/components/user/notifications/UserNotificationModal.vue';
 import UserSettings from '@/modules/boardGame/components/user/settings/UserSettings.vue';
+import PlayerResultMessage from '@/modules/boardGame/components/user/userInfoBlockFragments/PlayerResultMessage.vue';
 
 const emit = defineEmits(['updateBoardGameInfo', 'showPlayer', 'showInventory', 'showGame', 'showTimer']);
 
@@ -38,11 +39,6 @@ const {
 	getResizeImg,
 } = media();
 
-import { boardGame } from '@/composables/BoardGame/boardGame.js'
-const {
-	addTextToPoints
-} = boardGame();
-
 const boxOpen = ref(false);
 const openCloseBoxFunc = () => {
 	boxOpen.value = !boxOpen.value;
@@ -75,10 +71,6 @@ const userMenuFunc = (type) => {
 			break;
 	}
 }
-
-const pointsWithText = computed(() => {
-	return addTextToPoints(userStore.player.full_points);
-});
 
 let interval = null;
 
@@ -117,20 +109,7 @@ const userName = computed(() => {
 		<template v-if="isAuth">
 			<div class="info-block">
 				<span class="nickname">{{ userName }}</span>
-				<template v-if="userStore.player && Object.keys(userStore.player).length > 0">
-					<span v-if="userStore.player.active" class="points">{{ pointsWithText }} (<font-awesome-icon icon="fa-solid fa-bolt" />x{{ userStore.player.streak }})</span>
-					<span v-else>
-						<template v-if="userStore.player.not_active_reason">
-							{{ userStore.player.not_active_reason }}
-						</template>
-						<template>
-							Ваш профиль игрока не активен
-						</template>
-					</span>
-				</template>
-				<template v-else>
-					<span>Вы не участник ивента, примите участие через страницу действия</span>
-				</template>
+				<PlayerResultMessage />
 			</div>
 			<div class="avatar">
 				<UserAvatar

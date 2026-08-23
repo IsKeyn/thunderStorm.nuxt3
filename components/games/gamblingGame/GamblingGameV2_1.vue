@@ -152,10 +152,13 @@ function rollFunctions() {
 		const repeatItemCount = itemCount >= 200 ? 2 : Math.round(100 / itemCount) * 2;
 
 		// Создаем массив повторений, избегая проблемы с общими ссылками
-		repeatedItems.value = Array.from(
-				{ length: repeatItemCount },
-				() => [...Object.values(items.value)]
-		).flat();
+		// Массив не может быть бесконечным
+		if (repeatItemCount !== Infinity) {
+			repeatedItems.value = Array.from(
+					{ length: repeatItemCount },
+					() => [...Object.values(items.value)]
+			).flat();
+		}
 	}
 
 	const getRandomItem = async () => {

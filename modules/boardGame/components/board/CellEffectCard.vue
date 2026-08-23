@@ -224,7 +224,7 @@ const getGameInitComponent = (name) => {
 			<span class="block mt-2 mb-2">Выберите игрока для приглашения</span>
 			<SelectPlayerDetailList
 					v-model="selectedPlayer"
-					bgClasses="!bg-[var(&#45;&#45;main-hover-color)]"
+					bgClasses="!bg-[var(--main-hover-color)]"
 					:target="action.target"
 					:expectedPlayers="[userStore.player.id]"
 					:currentPlayer="userStore.player"

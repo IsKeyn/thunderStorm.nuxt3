@@ -1,4 +1,9 @@
 /* НАЧАЛО основные стили */
+html {
+  scrollbar-width: thin; /* auto | thin | none */
+  scrollbar-color: var(--main-title-color) var(--main-bg-color); /* цвет ползунка | цвет дорожки */
+}
+
 body {
   @apply
     text-[var(--main-text-color)]

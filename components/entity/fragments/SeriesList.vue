@@ -90,7 +90,7 @@ const carouselConfig = {
 						:key="key"
 				>
 					<div
-							v-if="key < 1"
+							v-if="key < 1 && preparationData(element[dataKey]).length"
 							class="mb-6"
 					>
 						<nuxt-link
