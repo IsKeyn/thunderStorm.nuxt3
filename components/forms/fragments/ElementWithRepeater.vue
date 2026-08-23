@@ -112,7 +112,6 @@ watch(() => value.value, (newValue) => {
 				</div>
 				<div class="buttons-box">
 					<button
-							v-if="repeaterItems.length > 1"
 							class="btn btn-primary"
 							@click="repeaterComponent.deleteRepeaterItem(index)"
 					>

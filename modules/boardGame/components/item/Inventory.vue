@@ -5,6 +5,8 @@ import InventoryItems from '@/modules/boardGame/components/item/InventoryItems.v
 
 import { computed, ref } from "vue";
 
+const { stars } = useConfetti();
+
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
 
@@ -54,6 +56,11 @@ const hiddenUpdate = () => {
 
 const showItem = (item) => {
 	droppedItem.value = item;
+
+	if (item.item.drop_chance <= 2) {
+		stars();
+	}
+
 	hiddenUpdate();
 
 	if (!hasWebSocked()) refreshLayoutData();

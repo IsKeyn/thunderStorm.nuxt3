@@ -262,7 +262,7 @@ const showStats = computed(() => {
 									|| key === 'longestGames'
 							">
 								{{ gameKey + 1 }}. <a
-									:href="`/game/${element.game.game.slug}`"
+									:href="`/e/${route.params.slug}/game/${element.game.game.slug}`"
 									target="_blank"
 							>
 								{{ element.game.game.name }}

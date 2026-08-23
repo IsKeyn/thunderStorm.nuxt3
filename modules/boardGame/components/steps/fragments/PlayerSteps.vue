@@ -98,14 +98,17 @@ const tabsItemElements = [
 	{
 		id: 'inventory',
 		title: 'Инвентарь',
+		icon: ['fa-solid', 'fa-hat-wizard'],
 	},
 	{
 		id: 'shop-items',
 		title: 'Магазин Ксырстыка',
+		icon: ['fa-solid', 'fa-cart-shopping'],
 	},
 	{
 		id: 'item-list',
 		title: 'Список предметов',
+		icon: ['fa-solid', 'fa-list'],
 	},
 ];
 
@@ -116,14 +119,17 @@ const tabsGameElements = [
 	{
 		id: 'game',
 		title: 'Профиль игры',
+		icon: ['fa-solid', 'fa-gamepad'],
 	},
 	{
 		id: 'game-list',
 		title: 'Список игр',
+		icon: ['fa-solid', 'fa-list'],
 	},
 	{
 		id: 'add-games',
 		title: 'Добавление игр',
+		icon: ['fa-solid', 'fa-folder-plus'],
 	},
 ];
 </script>
@@ -214,11 +220,11 @@ const tabsGameElements = [
 	@apply w-full block grid grid-cols-12 text-[1.2rem];
 
 	.left {
-		@apply col-span-3 lg:col-span-4 flex justify-start;
+		@apply col-span-3 flex justify-start;
 	}
 
 	.center {
-		@apply col-span-6 lg:col-span-4 flex justify-center;
+		@apply col-span-6 flex justify-center;
 
 		button {
 			@apply mr-1;
@@ -238,7 +244,7 @@ const tabsGameElements = [
 	}
 
 	.right {
-		@apply col-span-3 lg:col-span-4 flex justify-end;
+		@apply col-span-3 flex justify-end;
 	}
 
 	.nav-button {

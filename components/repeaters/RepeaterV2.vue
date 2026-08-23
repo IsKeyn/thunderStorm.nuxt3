@@ -189,6 +189,8 @@ function repeater() {
 			});
 
 			setValue();
+		} else {
+			repeaterItems.value[0] = structuredClone(props.repeaterItem);
 		}
 	}
 

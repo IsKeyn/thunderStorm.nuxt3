@@ -89,7 +89,7 @@ const elementsForShow = computed(() => {
 				v-if="groupedElements.length > 4"
 				class="element-small-card-count"
 				title="Показать все"
-				@click.prevent="toggle()"
+				@click.stop.prevent="toggle()"
 		>
 			<template v-if="showAll">
 				<font-awesome-icon icon="fa-solid fa-angles-right" />
@@ -107,7 +107,13 @@ const elementsForShow = computed(() => {
 }
 
 .element-small-card-count {
-	@apply relative w-[60px] h-[60px] bg-[var(--third-block-color)] text-[1.5rem] text-[var(--main-dark-text-color)] flex items-center justify-center;
+	@apply
+		relative
+		w-[60px] h-[60px]
+		bg-[var(--third-block-color)] text-[1.5rem] text-[var(--main-dark-text-color)]
+		flex items-center justify-center
+		cursor-pointer
+	;
 
 	border: 2px solid var(--third-block-color);
 }

@@ -10,14 +10,17 @@ const props = defineProps({
 			{
 				id: 1,
 				title: 'Таб 1',
+				icon: null,
 			},
 			{
 				id: 2,
 				title: 'Таб 2',
+				icon: null,
 			},
 			{
 				id: 3,
 				title: 'Таб 3',
+				icon: null,
 			},
 		],
 	},
@@ -190,7 +193,7 @@ const stopPropagation = (event) => {
 					class="tab-item"
 			>
 				<div :class="['tab-button', currentTab === tab.id ? 'active' : '']">
-					{{ tab.title }}
+					<font-awesome-icon v-if="tab.icon" :icon="tab.icon" class="mr-1" /> {{ tab.title }}
 				</div>
 			</li>
 

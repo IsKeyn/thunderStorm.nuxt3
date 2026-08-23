@@ -124,7 +124,7 @@ function rollDice(type) {
 		}
 
 		if (props.type === 'server') {
-			d6Result.value = '?';
+			d6animateResult();
 			rollDiceRequest(6);
 		}
 	} else if (type === 'd20') {
@@ -157,6 +157,7 @@ const rollDiceRequest = async (dice) => {
 		}
 
 		const response = await sendApiRequest(`board-game/v2/dice/roll`, 'POST', body, 'boardGameRollDice', '');
+		clearInterval(d6animateInterval.value);
 
 		if (response) {
 			if (response.error) {
@@ -216,6 +217,26 @@ const getD20SizeClasses = () => {
 
 const getDotSizeClasses = () => {
 
+}
+
+const d6animateInterval = ref(null);
+const lastD6animateValue = ref(null);
+
+const randNumber = (number) => {
+	const randNumberResult = Math.floor(Math.random() * number) + 1;
+
+	if (lastD6animateValue.value && randNumberResult === lastD6animateValue.value) {
+		return randNumber(number);
+	}
+
+	lastD6animateValue.value = randNumberResult;
+	return randNumberResult;
+}
+
+const d6animateResult = () => {
+	d6animateInterval.value = setInterval(() => {
+		d6Result.value = randNumber(6);
+	}, 150);
 }
 </script>
 
