@@ -66,6 +66,9 @@ const userMenuFunc = (type) => {
 		case 'notifications':
 			showNotificationModal();
 			break;
+		case 'interactions':
+			router.push({ path: `/e/${route.params.slug}/player-interactions/` });
+			break;
 		case 'logout':
 			logout();
 			break;
@@ -182,6 +185,9 @@ const userName = computed(() => {
 						>
 							({{ useNotifications.currentUserNotificationCount }})
 						</span>
+					</div>
+					<div @click="userMenuFunc('interactions');">
+						<font-awesome-icon icon="fa-solid fa-bell" class="mr-2" /> Взаимодействия
 					</div>
 					<div @click="userMenuFunc('logout');">
 						<font-awesome-icon :icon="['fas', 'right-from-bracket']" class="mr-2" /> Выйти
