@@ -146,8 +146,11 @@ const setRequest = async (type) => {
 					alert(`Успешно выполнено`);
 				}
 
-				await refreshNuxtData('getBoardGameBoard');
-				if (!hasWebSocked()) refreshLayoutData();
+
+				if (!hasWebSocked()) {
+					await refreshNuxtData('getBoardGameBoard');
+					refreshLayoutData();
+				}
 			}
 		}
 	} catch (e) {
