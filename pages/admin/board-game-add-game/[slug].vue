@@ -39,7 +39,7 @@ const form = ref(
 				name: 'Ивент',
 				value: '',
 				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
+				apiUrl: 'board-game/getShortList?fullList=true',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
@@ -69,7 +69,7 @@ const form = ref(
 			game_completion_time: {
 				name: 'Время на прохождение (в минутах)',
 				value: '',
-				type: 'number',
+				type: 'text',
 				validateRules: 'maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},

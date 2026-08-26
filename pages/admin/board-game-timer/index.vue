@@ -50,7 +50,7 @@ const titles = ref(
 				name: 'ID настолькой игры',
 				sortable: true,
 				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
+				apiUrl: 'board-game/getShortList?fullList=true',
 			},
 			created_by: {
 				name: 'Создан кем',

@@ -31,7 +31,7 @@ const titles = ref(
 			board_game_id: {
 				name: 'Настольная игра',
 				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
+				apiUrl: 'board-game/getShortList?fullList=true',
 				sortable: true,
 			},
 			position: {

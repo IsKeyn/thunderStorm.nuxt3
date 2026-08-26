@@ -465,6 +465,7 @@ const effectFor = (action) => {
 								:target="action.target"
 								:expectedPlayers="[userStore.player.id]"
 								:currentPlayer="userStore.player"
+								:showRandomPlayer="action.hasOwnProperty('showRandomPlayer') ? action.showRandomPlayer : true"
 						/>
 					</template>
 
@@ -503,6 +504,7 @@ const effectFor = (action) => {
 								:expectedPlayers="[userStore.player.id, selectedPlayer.id]"
 								:target="action.target"
 								:currentPlayer="userStore.player"
+								:showRandomPlayer="action.hasOwnProperty('showRandomPlayer') ? action.showRandomPlayer : true"
 						/>
 					</template>
 

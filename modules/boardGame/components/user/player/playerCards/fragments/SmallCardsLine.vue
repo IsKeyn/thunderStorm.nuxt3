@@ -92,7 +92,7 @@ const elementsForShow = computed(() => {
 				@click.stop.prevent="toggle()"
 		>
 			<template v-if="showAll">
-				<font-awesome-icon icon="fa-solid fa-angles-right" />
+				<font-awesome-icon icon="fa-solid fa-angles-left" />
 			</template>
 			<template v-else>
 				+{{ groupedElements.length - 3 }}

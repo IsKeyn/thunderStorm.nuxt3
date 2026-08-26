@@ -67,7 +67,9 @@ const sendInvitation = async () => {
 		const elementAction = props.element.boardPositionEffect.actions;
 
 		const additionalParams = {};
-		additionalParams.player = selectedPlayer.value.id;
+		additionalParams.player = selectedPlayer.value.type === "randomPlayer"
+				? selectedPlayer.value.type
+				: selectedPlayer.value?.id;
 
 		if (elementAction[0]) {
 			additionalParams.message = `приглашает тебя посоревноваться за очки в игре ${elementAction[0].name}, победитель получит ${elementAction[0].pointsForWin} очков`;

@@ -22,6 +22,9 @@ const { isAuth, userStore } = userFunctions();
 import { notifications } from '@/composables/notifications.js';
 const { alert, error } = notifications();
 
+import { errorHandler } from '@/composables/errorHandler.js';
+const { show } = errorHandler();
+
 const requestName = 'addGameCheck';
 
 const {
@@ -69,23 +72,7 @@ const saveData = async () => {
 		}
 
 		const response = await sendApiRequest(`board-game/v2/add-game/save/${route.params.slug}`, 'POST', body, 'bg_add-game-save', 'small', 'method');
-
-		if (!response) {
-			error('Ответ от сервера пуст');
-			return;
-		}
-
-		if (response.error) {
-			error(response.error);
-			return;
-		}
-
-		alert(
-				response.message ? response.message : 'Сохранено',
-				10000
-		);
-
-		refresh();
+		show(response, 'Сохранено', refresh);
 	} catch (e) {
 		error(e);
 	}
@@ -259,6 +246,11 @@ watch(() => value.value, () => {
 				</div>
 			</div>
 		</div>
+		<ui-itemBox
+				v-if="checkResult.status === 3"
+				classes="green"
+				:message="checkResult.message"
+		/>
 	</div>
 	<ui-itemBox
 			v-else
