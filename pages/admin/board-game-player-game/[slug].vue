@@ -80,7 +80,7 @@ const form = ref(
 				name: 'Ивент',
 				value: '',
 				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
+				apiUrl: 'board-game/getShortList?fullList=true',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},

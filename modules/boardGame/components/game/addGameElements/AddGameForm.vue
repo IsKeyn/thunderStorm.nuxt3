@@ -82,7 +82,7 @@ const repeaterItem = {
 		value: '',
 		type: 'text',
 		placeholder: 'Введите название игры',
-		validateRules: 'required, minLength_1, maxLength_100',
+		validateRules: 'required, minLength_1, maxLength_1000',
 		parentClasses: 'col-span-12 lg:col-span-4',
 		classes: 'w-full',
 		description: 'Введите полное название игры',

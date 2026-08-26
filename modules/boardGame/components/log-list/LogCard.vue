@@ -37,7 +37,7 @@ const props = defineProps({
 				<span v-if="element?.user?.name" class="name">
 					<Nuxt-link
 							:to="`/e/${route.params.slug}/player/${element.user.name}`"
-					>{{ element.user.name }}</Nuxt-link> - {{ getFormattedDate('d ru_mouths_name Y в H:i', element.created_at) }}
+					>{{ element.user.public_name ? element.user.public_name : element.user.name }}</Nuxt-link> - {{ getFormattedDate('d ru_mouths_name Y в H:i', element.created_at) }}
 				</span>
 				<span class="description">{{ element.message }}</span>
 			</template>

@@ -35,6 +35,10 @@ const props = defineProps({
 		type: String,
 		default: 'default',
 	},
+	showRandomPlayer: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const selectedOption = ref(null);
@@ -188,7 +192,7 @@ const usedFiltersProp = [
 							:showPagination="showPagination"
 							:showFilters="showFilters"
 							clickDoType="emit"
-							:showSelectRandomPlayer="true"
+							:showSelectRandomPlayer="showRandomPlayer"
 							@onClickFunc="selectOption($event)"
 					/>
 				</div>

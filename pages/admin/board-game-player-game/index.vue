@@ -43,7 +43,7 @@ const titles = ref(
 			board_game_id: {
 				name: 'Ивент',
 				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
+				apiUrl: 'board-game/getShortList?fullList=true',
 				sortable: true,
 			},
 			type: {

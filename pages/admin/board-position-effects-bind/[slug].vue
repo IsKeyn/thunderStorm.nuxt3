@@ -29,7 +29,7 @@ const form = ref(
 				name: 'Настольная игра',
 				value: '',
 				type: 'EntityList',
-				apiUrl: 'board-game/get-list',
+				apiUrl: 'board-game/getShortList?fullList=true',
 				validateRules: 'required, minLength_3, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
