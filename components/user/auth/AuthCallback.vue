@@ -43,6 +43,10 @@ const initLogin = async () => {
 
 			requestInProgress.value = false;
 
+			if (response === 'throwError') {
+				return;
+			}
+
 			if (!response) {
 				error('Пустой ответ');
 				return;
