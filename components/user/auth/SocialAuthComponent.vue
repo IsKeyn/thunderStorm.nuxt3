@@ -123,7 +123,7 @@ onMounted(() => {
 
 			<button
 					class="vkontakte"
-					@click="authWithSocial('vkontakte')"
+					@click="authWithSocial('vkid')"
 			>
 				<font-awesome-icon
 						v-if="requestInProgress"
