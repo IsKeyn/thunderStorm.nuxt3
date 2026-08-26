@@ -31,6 +31,9 @@ const initLogin = async () => {
 				code: route.query.code,
 				state: route.query?.state,
 				device_id: route.query?.device_id,
+				expires_in: route.query?.expires_in,
+				ext_id: route.query?.ext_id,
+				type: route.query?.type,
 			};
 
 			const registerOnEventBySlug = sessionStorage.getItem('registerOnEventBySlug');
