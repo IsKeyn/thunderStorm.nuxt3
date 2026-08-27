@@ -26,6 +26,9 @@ const { setLog } = boardGameLog();
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
+import { errorHandler } from '@/composables/errorHandler.js';
+const { show } = errorHandler();
+
 const props = defineProps({
 	userId: {
 		type: Number,
@@ -341,21 +344,9 @@ const editTimeRequest = async (secondsValue) => {
 
 		const response = await sendApiRequest('board-game/timer/edit', 'POST', body);
 
-		if (response) {
-			requestInProgress.value = false;
+		requestInProgress.value = false;
 
-			if (response.error) {
-				error(response.error);
-			} else {
-				seconds.value = secondsValue;
-				alert('Таймер обновлен');
-			}
-
-			// emit('fetchLogs');
-		} else {
-			error('Произошла ошибка');
-			requestInProgress.value = false;
-		}
+		show(response, 'Таймер обновлен', () => { seconds.value = secondsValue });
 	} catch (e) {
 		error(e);
 		requestInProgress.value = false;
