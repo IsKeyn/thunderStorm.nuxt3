@@ -24,6 +24,8 @@ import MainMenu from '@/modules/boardGame/components/menu/MainMenu.vue';
 
 import Sound from '@/components/audio/Sound.vue';
 
+import { computed } from "vue";
+
 import { settings } from '@/composables/settings.js'
 const { getSettingFirstValue } = settings();
 
@@ -42,8 +44,10 @@ const {
 	userStore,
 } = userFunctions();
 
+import { helper } from '@/composables/helper.js'
+const { route } = helper();
+
 import { lightBox } from '@/composables/lightBox.js';
-import {computed} from "vue";
 const {
 	openedImage,
 	setOpenedImage
@@ -77,38 +81,45 @@ provide('layoutMethods', {
 					&& (hasRole('admin', userStore.user) || hasRole('event.tester', userStore.user))
 			)
 	">
-		<SystemComponents />
-		<ReceiveMainData />
-		<ImportantLogsListener />
+<!--		<div v-if="route.params.slug">-->
+			<SystemComponents />
+			<ReceiveMainData />
+			<ImportantLogsListener />
 
-		<Seo />
+			<Seo />
 
-		<div class="board-game-main">
-			<div id="modals" />
-			<template v-if="boardGameStore.boardGameInfo">
-				<Header />
-				<article>
-					<div class="flex">
-						<MainMenu />
-						<ControlPanel v-if="isAuth && enableDebug && userStore.player" />
-						<div class="content-box">
-							<slot />
+			<div class="board-game-main">
+				<div id="modals" />
+				<template v-if="boardGameStore.boardGameInfo">
+					<Header />
+					<article>
+						<div class="flex">
+							<MainMenu />
+							<ControlPanel v-if="isAuth && enableDebug && userStore.player" />
+							<div class="content-box">
+								<slot />
+							</div>
 						</div>
-					</div>
-				</article>
-				<Notifications />
-				<MediaById />
-				<Footer />
-			</template>
-		</div>
+					</article>
+					<Notifications />
+					<MediaById />
+					<Footer />
+				</template>
+			</div>
 
-		<media-LightBox
-				v-if="openedImage"
-				:image="openedImage"
-				:setViewsLog="true"
-				@setCurrentElement="setOpenedImage"
-		/>
-		<Sound />
+			<media-LightBox
+					v-if="openedImage"
+					:image="openedImage"
+					:setViewsLog="true"
+					@setCurrentElement="setOpenedImage"
+			/>
+			<Sound />
+<!--		</div>-->
+<!--		<ui-itemBox-->
+<!--				v-else-->
+<!--				classes="red"-->
+<!--				message="Не получен slug ивента"-->
+<!--		/>-->
 	</div>
 
 </template>
