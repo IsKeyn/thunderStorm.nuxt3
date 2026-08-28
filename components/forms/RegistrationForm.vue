@@ -128,27 +128,43 @@ const sendRequest = async () => {
 			body.registerOnEventBySlug = props.registerOnEventBySlug;
 		}
 
-		const response = await $fetch(
-				`${apiUrl.value}auth/register`,
-				{
-					method: 'POST',
-					credentials: 'include',
-					headers: {
-						Accept: 'application/json',
-						'X-XSRF-TOKEN': csrfCookie.value,
-					},
-					body,
-				},
-		);
+		try {
+			const response = await sendApiRequest('auth/register', 'POST', body, 'register', '');
 
-		if (response) {
-			Authorization.value = `${response.token_type} ${response.token}`;
-			Authorization.expires = response.expires;
-			Authorization.path = '/';
+			if (response) {
+				Authorization.value = `${response.token_type} ${response.token}`;
+				Authorization.expires = response.expires;
+				Authorization.path = '/';
 
+				requestInProgress.value = false;
+				getUserData();
+			}
+		} catch (e) {
+			error(e);
 			requestInProgress.value = false;
-			getUserData();
 		}
+
+		// const response = await $fetch(
+		// 		`${apiUrl.value}auth/register`,
+		// 		{
+		// 			method: 'POST',
+		// 			credentials: 'include',
+		// 			headers: {
+		// 				Accept: 'application/json',
+		// 				'X-XSRF-TOKEN': csrfCookie.value,
+		// 			},
+		// 			body,
+		// 		},
+		// );
+		//
+		// if (response) {
+		// 	Authorization.value = `${response.token_type} ${response.token}`;
+		// 	Authorization.expires = response.expires;
+		// 	Authorization.path = '/';
+		//
+		// 	requestInProgress.value = false;
+		// 	getUserData();
+		// }
 	} catch (e) {
 		const errorsPromise = errorHandler(e);
 
