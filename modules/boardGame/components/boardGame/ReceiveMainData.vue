@@ -27,17 +27,19 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			const query = {
-				slug: route.params.slug,
-			};
+			if (route.params.slug) {
+				const query = {
+					slug: route.params.slug,
+				};
 
-			const requestUrl = 'board-game/v2/layout/get';
+				const requestUrl = 'board-game/v2/layout/get';
 
-			const response = await Promise.resolve(
-					sendApiRequest(requestUrl, 'GET', query, requestName, '')
-			);
+				const response = await Promise.resolve(
+						sendApiRequest(requestUrl, 'GET', query, requestName, '')
+				);
 
-			return response || null;
+				return response || null;
+			}
 		},
 		{
 			server: true,
