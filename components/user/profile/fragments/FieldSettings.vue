@@ -68,7 +68,7 @@ onMounted(() => {
 
 const setValue = () => {
 	form.value.public_name.value = userStore.user.public_name ?? userStore.user.name;
-	form.value.twitch.value = `https://www.twitch.tv/${twitch.value.value}`;
+	form.value.twitch.value = twitch?.value?.value ? `https://www.twitch.tv/${twitch.value.value}` : '';
 	form.value.other_stream_platform.value = otherStreamPlatform.value.value;
 	form.value.messenger.value = messenger.value.value;
 }

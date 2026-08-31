@@ -185,7 +185,7 @@ const useItemRequest = async (
 
 		alert(
 				response.message ? response.message : `Предмет "${name}" был использован`,
-				10000
+				60000
 		);
 
 		if (!hasWebSocked()) refreshLayoutData();

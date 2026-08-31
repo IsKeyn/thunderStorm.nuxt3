@@ -179,55 +179,58 @@ const pageUrl = computed(() => {
 </script>
 
 <template>
-	<table>
-		<thead>
-		<tr>
-			<th
-					v-for="(title, key) in titles"
-					:key="key"
-					:class="[(title?.sortable ? 'sortable' : ''), title?.classes]"
-					@click="title?.sortable ? sortByField(key) : null"
-			>
-				{{ title.name }}
-				<div
-						v-if="sort === key"
-						class="icon-box"
+	<div class="overflow-x-auto w-full">
+		<table>
+			<thead>
+			<tr>
+				<th
+						v-for="(title, key) in titles"
+						:key="key"
+						:class="[(title?.sortable ? 'sortable' : ''), title?.classes]"
+						@click="title?.sortable ? sortByField(key) : null"
 				>
-					<font-awesome-icon v-if="sortDirection === 'asc'" :icon="['fas', 'angle-up']" />
-					<font-awesome-icon v-if="sortDirection === 'desc'" :icon="['fas', 'angle-down']" />
-				</div>
-			</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr v-for="item in data">
-			<td v-for="(titleEl, key) in titles">
-				<TdElementCard
-						:item="item"
-						:titleEl="titleEl"
-						:keyName="key"
-						:pageUrl="pageUrl"
-						:entities="entities"
-						:entityId="entityId"
-						:doTypes="doTypes"
-						:previewUrl="previewUrl"
-						@deleteElement="$emit('deleteElement', $event)"
-						@recoveryElement="$emit('recoveryElement', $event)"
-						@forceDeleteElement="$emit('forceDeleteElement', $event)"
-				>
-					<template v-if="key === 'doTypes'" #doTypes>
-						<slot name="doTypes"/>
-					</template>
-				</TdElementCard>
-			</td>
-		</tr>
-		</tbody>
-	</table>
+					{{ title.name }}
+					<div
+							v-if="sort === key"
+							class="icon-box"
+					>
+						<font-awesome-icon v-if="sortDirection === 'asc'" :icon="['fas', 'angle-up']" />
+						<font-awesome-icon v-if="sortDirection === 'desc'" :icon="['fas', 'angle-down']" />
+					</div>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr v-for="item in data" :key="item.id"> <!-- Рекомендуется добавить :key -->
+				<td v-for="(titleEl, key) in titles" :key="key">
+					<TdElementCard
+							:item="item"
+							:titleEl="titleEl"
+							:keyName="key"
+							:pageUrl="pageUrl"
+							:entities="entities"
+							:entityId="entityId"
+							:doTypes="doTypes"
+							:previewUrl="previewUrl"
+							@deleteElement="$emit('deleteElement', $event)"
+							@recoveryElement="$emit('recoveryElement', $event)"
+							@forceDeleteElement="$emit('forceDeleteElement', $event)"
+					>
+						<template v-if="key === 'doTypes'" #doTypes>
+							<slot name="doTypes"/>
+						</template>
+					</TdElementCard>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
 </template>
 
 <style lang="scss" scoped>
 table {
 	@apply w-full;
+	table-layout: fixed; /* КЛЮЧЕВОЕ ДОБАВЛЕНИЕ: заставляет таблицу слушаться ширины родителя */
 	border-collapse: separate;
 	border-spacing: 2px 0;
 
@@ -236,7 +239,7 @@ table {
 
 		tr {
 			th {
-				@apply text-left p-[5px] cursor-pointer relative pr-8;
+				@apply text-left p-[5px] cursor-pointer relative pr-8 break-words; /* break-words на случай длинных заголовков */
 
 				&.sortable {
 					&:hover {
@@ -254,7 +257,8 @@ table {
 	tbody {
 		tr {
 			td {
-				@apply p-[5px];
+				@apply p-[5px] break-words; /* КЛЮЧЕВОЕ ДОБАВЛЕНИЕ: переносит длинные слова без пробелов */
+				word-wrap: break-word; /* Дополнительная страховка для старых браузеров */
 
 				.svg-inline--fa {
 					@apply mr-[5px] text-[18px];

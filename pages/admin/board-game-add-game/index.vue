@@ -43,7 +43,7 @@ const titles = ref(
 			gaming_platform_id: {
 				name: 'Платформа',
 				type: 'EntityList',
-				apiUrl: 'admin/entity/GamingPlatform',
+				apiUrl: 'gaming-platform/getShortList?fullList=true',
 				sortable: true,
 			},
 			coop: {

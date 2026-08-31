@@ -83,8 +83,8 @@ const otherStreamPlatform = computed(() => {
 });
 
 const messenger = computed(() => {
-	if (userStore && userStore.user && userStore.user.additional_fields) {
-		const field = userStore.user.additional_fields.filter((item) => item.slug === 'messenger');
+	if (props.element?.user?.additional_fields) {
+		const field = props.element.user.additional_fields.filter((item) => item.slug === 'messenger');
 
 		if (field.length > 0 && field[0]) {
 			return field[0];

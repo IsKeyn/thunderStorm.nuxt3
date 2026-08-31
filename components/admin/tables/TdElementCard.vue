@@ -248,13 +248,15 @@ const viewResult = () => {
 img {
 	@apply
 		inline-block
-		max-w-[220px] max-h-[220px]
+		max-w-full /* ИЗМЕНЕНО: было max-w-[220px]. Теперь картинка никогда не будет шире самой ячейки */
+		h-auto     /* ДОБАВЛЕНО: сохраняет пропорции изображения при уменьшении */
+		max-h-[220px]
 		cursor-pointer
 	;
 }
 
 .text-rounded-box {
-	@apply block w-full p-1 text-center;
+	@apply block w-full p-1 text-center break-words; /* ДОБАВЛЕНО break-words, чтобы текст в цветных плашках переносился */
 
 	&.simple {
 		@apply bg-[var(--epic-color-2)];
