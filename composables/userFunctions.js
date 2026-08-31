@@ -67,6 +67,10 @@ export function userFunctions() {
         }
     }
 
+    const getPublicName = (user) => {
+        return user.public_name ?? user.name
+    }
+
     return {
         sendLogoutRequest,
         isAuth,
@@ -74,5 +78,6 @@ export function userFunctions() {
         isAuthAndVerified,
         logout,
         userStore,
+        getPublicName,
     };
 }

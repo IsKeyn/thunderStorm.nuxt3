@@ -33,6 +33,7 @@ const props = defineProps({
 					v-for="(player, key) in playersOnCols[position]"
 					:key="key"
 					:user="player.user"
+					:player="player"
 					theme="vertical"
 			/>
 		</div>

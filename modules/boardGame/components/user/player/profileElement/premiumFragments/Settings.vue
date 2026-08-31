@@ -20,6 +20,9 @@ const { sendApiRequest } = api();
 import { system } from '@/composables/system.js'
 const { funcDelay } = system();
 
+import { errorHandler } from '@/composables/errorHandler.js';
+const { show } = errorHandler();
+
 const props = defineProps({
 	element: {
 		type: Object,
@@ -173,15 +176,7 @@ const sendSetSettingRequest = async (name) => {
 		const response = await sendApiRequest(`board-game/v2/player/setPlayerSettings/${route.params.slug}`, 'POST', query, 'setPlayerSettings', 'small');
 		requestInProgress.value = false;
 
-		if (!response) {
-			error('Ответ от сервера пуст');
-			return;
-		}
-
-		if (response.error) {
-			error(response.error);
-			return;
-		}
+		show(response);
 	} catch (e) {
 		requestInProgress.value = false;
 		error(e);
@@ -213,15 +208,7 @@ const sendSetPlayerBgRequest = async () => {
 		const response = await sendApiRequest(`board-game/v2/player/setPlayerBackground/${route.params.slug}`, 'POST', formData, 'setPlayerBgImage', 'small');
 		requestInProgress.value = false;
 
-		if (!response) {
-			error('Ответ от сервера пуст');
-			return;
-		}
-
-		if (response.error) {
-			error(response.error);
-			return;
-		}
+		return show(response);
 	} catch (e) {
 		requestInProgress.value = false;
 		error(e);

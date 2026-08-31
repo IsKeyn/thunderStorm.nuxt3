@@ -26,7 +26,7 @@ const form = ref(
 				name: 'Платформа',
 				value: '',
 				type: 'EntityList',
-				apiUrl: 'admin/entity/GamingPlatform',
+				apiUrl: 'gaming-platform/getShortList?fullList=true',
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},

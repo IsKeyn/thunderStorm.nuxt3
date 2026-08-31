@@ -15,8 +15,17 @@ export function bgPlayer() {
         return truel;
     };
 
+    const avatarBorder = (player) => {
+        if (!player) {
+            return;
+        }
+
+        return player?.premium && player?.settings?.avatarBorder ? player.settings.avatarBorder : '';
+    }
+
     return {
         player,
         isActivePlayer,
+        avatarBorder,
     };
 }

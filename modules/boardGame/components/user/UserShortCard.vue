@@ -4,11 +4,21 @@ import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
 import { useBoardGameStore } from '@/stores/boardGame';
 const boardGameStore = useBoardGameStore();
 
-const route = useRoute();
-const router = useRouter();
+import { helper } from '@/composables/helper.js'
+const { route, router } = helper();
+
+import { userFunctions } from '@/composables/userFunctions.js'
+const { getPublicName } = userFunctions();
+
+import { bgPlayer } from '@/composables/BoardGame/bgPlayer.js'
+const { avatarBorder } = bgPlayer();
 
 const props = defineProps({
 	user: {
+		type: Object,
+		default: {},
+	},
+	player: {
 		type: Object,
 		default: {},
 	},
@@ -23,24 +33,39 @@ const props = defineProps({
 	openProfile: {
 		type: Boolean,
 		default: true,
-	}
+	},
 });
 </script>
 
 <template>
+	<div v-if="openProfile">
+		<PublicAvatar
+				:user="user"
+				:useLightBox="useLightBox"
+				classes="w-[50px] h-[50px]"
+				:borderType="avatarBorder(player)"
+		/>
+		<div class="info">
+			<span class="field name">
+				{{ getPublicName(user) }}
+			</span>
+		</div>
+	</div>
 	<Nuxt-link
+			v-else
 			:class="['user-box', theme]"
-			:to="openProfile ? `/e/${route.params.slug}/player/${user.name}` : null"
+			:to="`/e/${route.params.slug}/player/${user.name}`"
 			target="_blank"
 	>
 		<PublicAvatar
 				:user="user"
 				:useLightBox="useLightBox"
 				classes="w-[50px] h-[50px]"
+				:borderType="avatarBorder(player)"
 		/>
 		<div class="info">
 			<span class="field name">
-				{{ user.name }}
+				{{ getPublicName(user) }}
 			</span>
 		</div>
 	</Nuxt-link>

@@ -47,7 +47,7 @@ const titles = ref(
 				type: 'rounded-box',
 			},
 			item_roll_count: {
-				name: 'Доступное количество ролов игры',
+				name: 'Доступное количество ролов предметов',
 				sortable: true,
 				type: 'rounded-box',
 			},

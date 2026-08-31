@@ -50,7 +50,7 @@ const form = ref(
 				classes: ['w-full', 'mt-[5px]'],
 			},
 			item_roll_count: {
-				name: 'Доступное количество ролов игры',
+				name: 'Доступное количество ролов предметов',
 				value: '',
 				type: 'text',
 				validateRules: 'required, maxLength_255',
