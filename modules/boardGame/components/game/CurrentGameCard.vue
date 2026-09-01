@@ -103,9 +103,9 @@ const showTimer = computed(() => {
 	</div>
 
 	<div class="mt-5" v-if="showActionButtons && !showForm">
-		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(1)">Рерольнуть</button>
-		<button v-if="currentGame.game.coop && coopInteraction.length === 0" class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible('coop')">Пригласить в кооп</button>
-		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(2)">Игра пройдена</button>
+		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(1)"><font-awesome-icon icon="fa-solid fa-arrow-rotate-right" /> Рерольнуть</button>
+		<button v-if="currentGame.game.coop && coopInteraction.length === 0" class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible('coop')"><font-awesome-icon icon="fa-solid fa-user-group" /> Пригласить в кооп</button>
+		<button class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="toggleFormVisible(2)"><font-awesome-icon icon="fa-solid fa-flag-checkered" /> Игра пройдена</button>
 		<button v-if="editListAvailable" class="btn btn-simple-1 mr-[1rem] w-full lg:w-auto" @click="emit('showEditList')">Редактировать списки</button>
 	</div>
 	<PlayerInteractionCard

@@ -37,6 +37,10 @@ const form = ref({
 		type: 'select-with-search',
 		options: [
 			{
+				name: 'Не выбрано',
+				value: null,
+			},
+			{
 				name: 'Золотая',
 				value: 'gold',
 			},
