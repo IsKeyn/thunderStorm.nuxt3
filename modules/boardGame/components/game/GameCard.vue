@@ -110,7 +110,9 @@ const platformDifficult = computed(() => {
 
 						<span class="line-info" v-if="element.points">Получил очков за игру: {{ element.points }}</span>
 						<span class="line-info" v-else-if="element.game.computed_points || element.game.points">Очки за игру: {{ element.game.computed_points ? element.game.computed_points : element.game.points }}</span>
-
+						<span class="line-info">
+							Кооп: {{ element.game.coop ? 'Да' : 'Нет' }}
+						</span>
 						<span
 								v-if="element.game.added_by && element.game.added_by_user.name"
 								class="line-info"
