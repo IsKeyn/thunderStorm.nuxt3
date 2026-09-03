@@ -222,7 +222,7 @@ const getGameInitComponent = (name) => {
 					class="btn btn-simple"
 					@click="setAction('fightWithBoss-win')"
 			>
-				Я победил босса
+				{{ action.buttonName ? action.buttonName : 'Я победил босса' }}
 			</button>
 		</template>
 		<template v-if="showControlPanel && action && action.type === 'playerInteractions'">

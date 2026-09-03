@@ -56,6 +56,14 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	badgeName: {
+		type: String,
+		default: '',
+	},
+	badgeColor: {
+		type: String,
+		default: 'gold',
+	},
 });
 
 const platformDifficult = computed(() => {
@@ -88,11 +96,14 @@ const platformDifficult = computed(() => {
 					:user="element.user"
 					:useLightBox="true"
 			/>
-			<Slider
-					v-else-if="showCover && element.game.game.covers"
-					:items="element.game.game.covers"
-					class="slider"
-			/>
+			<div v-else-if="showCover && element.game.game.covers" class="relative overflow-clip">
+				<div v-if="badgeName" :class="[badgeColor, 'badge']">{{ badgeName }}}</div>
+				<div v-else-if="element.game.list_type === 1" class="gold badge">Gold</div>
+				<Slider
+						:items="element.game.game.covers"
+						class="slider flex justify-center"
+				/>
+			</div>
 			<div class="info">
 				<span
 						v-if="theme === 'default' || theme === 'CurrentGame'"
@@ -209,6 +220,8 @@ const platformDifficult = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+@import url('~/assets/scss/Fragments/badgets.scss');
+
 .item-box {
 	@apply
 		block p-0

@@ -52,7 +52,7 @@ const form = ref(
 				classes: 'w-full',
 			},
 			messenger: {
-				name: 'Ссылка на ваш профиль в мессенджере',
+				name: 'Ваш профиль в мессенджере (если указываете ссылку на мессенджер, указывайте полный путь, например: https://t.me/UserName)',
 				value: '',
 				type: 'text',
 				placeholder: 'Укажите ссылку',

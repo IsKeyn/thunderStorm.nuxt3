@@ -205,17 +205,17 @@ const sendActivateSeRequest = async (type) => {
 					<button
 							class="btn btn-simple mr-2"
 							@click="activateSe('accept')"
-					>Выполнен</button>
+					><font-awesome-icon icon="fa-solid fa-check" /> Выполнен</button>
 					<button
 							class="btn btn-simple"
 							@click="activateSe('denied')"
-					>Отказаться</button>
+					><font-awesome-icon icon="fa-solid fa-xmark" /> Отказаться</button>
 				</template>
 				<template v-if="showControlPanel && action && action.type === 'onlyAccept'">
 					<button
 							class="btn btn-simple mr-2"
 							@click="activateSe('accept')"
-					>Выполнен</button>
+					><font-awesome-icon icon="fa-solid fa-check" /> Выполнен</button>
 				</template>
 			</div>
 			<div v-if="showDebugControlPanel">

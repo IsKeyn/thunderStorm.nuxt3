@@ -12,6 +12,12 @@ const boardGameStore = useBoardGameStore();
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
+import { helper } from '@/composables/helper.js'
+const { isLink } = helper();
+
+import { notifications } from '@/composables/notifications.js';
+const { alert, error } = notifications();
+
 import { userFunctions } from '@/composables/userFunctions.js';
 const {
 	isAuth,
@@ -101,6 +107,16 @@ const sendMessage = (user) => {
 const eventType = computed(() => {
 	return getSettingValue('event_type');
 });
+
+const copy = (value) => {
+	navigator.clipboard.writeText(value)
+			.then(() => {
+				alert('Скопировано в буфер обмена');
+			})
+			.catch(err => {
+				alert('Ошибка копирования:', err);
+			});
+}
 </script>
 
 <template>
@@ -213,15 +229,31 @@ const eventType = computed(() => {
 						>
 							Платформа стрима <font-awesome-icon icon="fa-regular fa-circle-play" />
 						</NuxtLink>
-						<NuxtLink
-								v-if="messenger.value"
-								class="btn btn-simple-1 mr-2 inline-block"
-								:to="messenger.value"
-								target="_blank"
-								title="Мессенджер"
-						>
-							Мессенджер <font-awesome-icon icon="fa-brands fa-telegram" />
-						</NuxtLink>
+						<template v-if="messenger.value">
+							<NuxtLink
+									v-if="isLink(messenger.value)"
+									class="btn btn-simple-1 mr-2 inline-block"
+									:to="messenger.value"
+									target="_blank"
+									title="Мессенджер"
+							>
+								Мессенджер <font-awesome-icon icon="fa-brands fa-telegram" />
+							</NuxtLink>
+							<div v-else>
+								<div
+										class="btn btn-simple-1 mr-2 inline-block cursor-pointer"
+										title="Мессенджер"
+										@click="copy(messenger.value)"
+								>
+									<VTooltip>
+										<div>Мессенджер <font-awesome-icon icon="fa-brands fa-telegram" /></div>
+										<template #popper>
+											{{ messenger.value }}
+										</template>
+									</VTooltip>
+								</div>
+							</div>
+						</template>
 					</div>
 					<div class="box">
 						<template v-if="isCurrentUser">

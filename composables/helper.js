@@ -88,6 +88,12 @@ export function helper() {
         return !!runtimeConfig.public?.hasWebSockedServer;
     }
 
+    const isLink = (string) => {
+        // Проверяет http://, https://, ftp://, www., mailto:, tel:
+        const regex = /^(https?:\/\/|www\.|ftp:\/\/|mailto:|tel:)/i;
+        return regex.test(string);
+    }
+
     return {
         route,
         router,
@@ -98,5 +104,6 @@ export function helper() {
         setQueryParam,
         setQueryParams,
         hasWebSocked,
+        isLink,
     };
 }

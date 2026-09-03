@@ -153,8 +153,8 @@ const tabsGameElements = [
 					:class="['btn btn-simple', currentStep === Number(key) ? 'active' : null]"
 					@click="setStep(Number(key))"
 			>
-				<font-awesome-icon :icon="step.icon" />
-				<span class="name">{{ key }} - {{ step.buttonName }}</span>
+				<font-awesome-icon :icon="step.icon" class="mobile-icon" />
+				<span class="name">{{ key }} {{ step.buttonName }}</span>
 			</button>
 		</div>
 
@@ -233,7 +233,7 @@ const tabsGameElements = [
 				@apply bg-[var(--main-hover-color)];
 			}
 
-			svg {
+			svg.mobile-icon {
 				@apply xl:hidden;
 			}
 
