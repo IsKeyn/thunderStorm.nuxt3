@@ -36,31 +36,31 @@ const titles = ref(
 				sortable: true,
 				type: 'rounded-box',
 			},
-			points_per_hour: {
-				name: 'Очков в час',
-				sortable: true,
-				type: 'rounded-box',
-			},
+			// points_per_hour: {
+			// 	name: 'Очков в час',
+			// 	sortable: true,
+			// 	type: 'rounded-box',
+			// },
 			place: {
 				name: 'Место',
 				sortable: true,
 				type: 'rounded-box',
 			},
-			item_roll_count: {
-				name: 'Доступное количество ролов предметов',
-				sortable: true,
-				type: 'rounded-box',
-			},
-			step_count: {
-				name: 'Доступное количество ходов',
-				sortable: true,
-				type: 'rounded-box',
-			},
-			streak: {
-				name: 'Стрик',
-				sortable: true,
-				type: 'rounded-box',
-			},
+			// item_roll_count: {
+			// 	name: 'Доступное количество ролов предметов',
+			// 	sortable: true,
+			// 	type: 'rounded-box',
+			// },
+			// step_count: {
+			// 	name: 'Доступное количество ходов',
+			// 	sortable: true,
+			// 	type: 'rounded-box',
+			// },
+			// streak: {
+			// 	name: 'Стрик',
+			// 	sortable: true,
+			// 	type: 'rounded-box',
+			// },
 			rerolled_own_game_count: {
 				name: 'Рерольнуто своих игр',
 				sortable: true,
@@ -77,10 +77,10 @@ const titles = ref(
 				type: 'boolean',
 				sortable: true,
 			},
-			not_active_reason: {
-				name: 'Причина не активности',
-				sortable: true,
-			},
+			// not_active_reason: {
+			// 	name: 'Причина не активности',
+			// 	sortable: true,
+			// },
 			added_games: {
 				name: 'Добавил свои игры',
 				type: 'boolean',

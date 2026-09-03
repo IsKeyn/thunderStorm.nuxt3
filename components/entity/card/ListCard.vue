@@ -61,6 +61,8 @@ const gold = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+@import url('~/assets/scss/Fragments/badgets.scss');
+
 .entertainment-card {
 	@apply col-span-6 md:col-span-2 relative;
 
@@ -75,79 +77,6 @@ const gold = computed(() => {
 
 		img {
 			@apply max-h-full;
-		}
-
-		/* ====== Gold-лента в углу ====== */
-		.badge {
-			position: absolute;
-			top: 16px;
-			right: -34px;
-			z-index: 5;
-			transform: rotate(45deg);
-			color: #1a1a1a;
-			font-weight: 700;
-			font-size: 0.65rem;
-			text-transform: uppercase;
-			letter-spacing: 1.5px;
-			padding: 5px 40px;
-			text-align: center;
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-			pointer-events: none;
-			user-select: none;
-
-			// Золотой
-			&.gold {
-				background: linear-gradient(135deg, #ffd700, #e6a800);
-			}
-
-			// Фиолетовый
-			&.purple {
-				background: linear-gradient(135deg, #d8b4fe, #a855f7);
-			}
-
-			// Серебряный
-			&.silver {
-				background: linear-gradient(135deg, #f1f5f9, #94a3b8);
-			}
-
-			// Бронзовый
-			&.bronze {
-				background: linear-gradient(135deg, #fdba74, #b45309);
-			}
-
-			// Рубиново-красный
-			&.ruby {
-				background: linear-gradient(135deg, #fda4af, #9f1239);
-			}
-
-			// Лазурно-синий
-			&.azure {
-				background: linear-gradient(135deg, #7dd3fc, #0284c7);
-			}
-
-			// Изумрудно-зеленый
-			&.emerald {
-				background: linear-gradient(135deg, #6ee7b7, #047857);
-			}
-
-			// Аметистово-желтый (цитрин/янтарь)
-			&.amethyst-yellow {
-				background: linear-gradient(135deg, #fde68a, #d97706);
-			}
-			// Сапфировый (глубокий синий с холодным блеском)
-			&.sapphire {
-				background: linear-gradient(135deg, #93c5fd, #1d4ed8);
-			}
-
-			// Обсидиановый (темный графит с серебристым переливом)
-			&.obsidian {
-				background: linear-gradient(135deg, #94a3b8, #0f172a);
-			}
-
-			// Розовое золото
-			&.rose-gold {
-				background: linear-gradient(135deg, #fda4af, #be123c);
-			}
 		}
 
 		.info-box {

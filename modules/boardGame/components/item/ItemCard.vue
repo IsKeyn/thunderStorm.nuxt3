@@ -189,7 +189,7 @@ const getItemQuality = (dropChance) => {
 					<button
 							class="btn btn-simple mr-2"
 							@click="emit('useItem', inventoryItem)"
-					>Использовать</button>
+					><font-awesome-icon icon="fa-solid fa-wand-magic-sparkles" /> Использовать</button>
 					<button
 							v-if="element.item.price"
 							class="btn btn-simple mr-2"

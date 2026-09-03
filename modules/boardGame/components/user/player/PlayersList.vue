@@ -25,6 +25,7 @@ const {
 	setFilterName,
 	setFilter,
 	setQueryFilters,
+	storeDefaultFilters,
 } = filters();
 
 const props = defineProps({
@@ -85,6 +86,8 @@ const filterName = setFilterName([ 'list', props.filterNamePostfix ]);
 
 // Устанавливаем фильтры их get параметров
 setQueryFilters(filterName, props.usedFilters, props.defaultFilters);
+/* Записываем дефолтные фильтры в store */
+storeDefaultFilters(filterName, props.defaultFilters);
 
 const requestName = 'getBoardGamePlayerList';
 
