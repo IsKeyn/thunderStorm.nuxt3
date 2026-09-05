@@ -23,6 +23,7 @@ import Footer from '@/modules/boardGame/components/layout/Footer.vue';
 import MainMenu from '@/modules/boardGame/components/menu/MainMenu.vue';
 
 import Sound from '@/components/audio/Sound.vue';
+import PublicRecommendation from '@/components/recommendation/PublicRecommendation.vue';
 
 import { computed } from "vue";
 
@@ -105,6 +106,15 @@ provide('layoutMethods', {
 					<MediaById />
 					<Footer />
 				</template>
+				<div v-else>
+					<div class="main">
+						<ui-itemBox
+							classes="red"
+							message="Ивент не найден"
+						/>
+						<PublicRecommendation />
+					</div>
+				</div>
 			</div>
 
 			<media-LightBox

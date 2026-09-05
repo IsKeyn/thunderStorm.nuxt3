@@ -77,12 +77,12 @@ const usedFilters = [
 		type: 'multiselect',
 		requestData: true,
 	},
-	{
-		name: 'companies',
-		langName: 'Компании',
-		type: 'multiselect',
-		requestData: true,
-	},
+	// {
+	// 	name: 'companies',
+	// 	langName: 'Компании',
+	// 	type: 'multiselect',
+	// 	requestData: true,
+	// },
 	{
 		name: 'series',
 		langName: 'Серия',
