@@ -2,7 +2,7 @@
 import LogCard from '@/modules/boardGame/components/log-list/LogCard.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
 
-import {computed, onMounted, onUnmounted, ref} from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest, preparedRequestBody } = api();
@@ -10,17 +10,25 @@ const { sendApiRequest, preparedRequestBody } = api();
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
+import { animate } from '@/composables/animate.js';
+const { scrollToElement } = animate();
+
 const props = defineProps({
 	perPage: {
 		type: Number,
 		default: 10,
 	},
+	contentBlockClass: {
+		type: String,
+		default: 'log-box',
+	}
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
 const {
 	page,
 	perPage,
+	scrollAfterLoad,
 	setRefresh,
 	changePage,
 	setPerPage
@@ -81,6 +89,22 @@ onUnmounted(() => {
 		clearInterval(interval.value);
 	}
 });
+
+watch(
+		() => [fetchedData.value, requestInProgress.value],
+		async ([newData, isPending]) => {
+			// Ждем, пока данные загрузятся И прелоадер исчезнет
+			if (scrollAfterLoad.value && newData && newData.length && !isPending) {
+				await nextTick();
+
+				setTimeout(() => {
+					scrollToElement(`.${props.contentBlockClass}`);
+					scrollAfterLoad.value = false;
+				}, 50);
+			}
+		},
+		{ deep: true }
+);
 </script>
 
 <template>
@@ -89,7 +113,7 @@ onUnmounted(() => {
 	/>
 	<div
 			v-else-if="fetchedData && fetchedData.length > 0"
-			class="log-box"
+			:class="[contentBlockClass]"
 	>
 		<LogCard
 				v-for="(log, key) in fetchedData"

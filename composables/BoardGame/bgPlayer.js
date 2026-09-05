@@ -12,7 +12,7 @@ export function bgPlayer() {
         if (!userStore.player) return false;
         if (!userStore.player.active) return false;
 
-        return truel;
+        return true;
     };
 
     const avatarBorder = (player) => {

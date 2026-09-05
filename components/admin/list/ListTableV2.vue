@@ -4,7 +4,7 @@ import SearchFilterSort from '@/components/filters/SearchFilterSort.vue';
 import EntityTable from '@/components/admin/tables/EntityTable.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
 
-import { computed } from "vue";
+import {computed, watch} from "vue";
 
 import { useFiltersStore } from '@/stores/filters';
 const filtersStore = useFiltersStore();
@@ -17,6 +17,9 @@ const { sendApiRequest, errorHandler } = api();
 
 import { helper } from '@/composables/helper.js'
 const { route, router } = helper();
+
+import { animate } from '@/composables/animate.js';
+const { scrollToElement } = animate();
 
 import { filters } from '@/composables/filters/filters.js';
 const {
@@ -130,12 +133,17 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	contentBlockClass: {
+		type: String,
+		default: 'table-list-content',
+	}
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
 const {
 	page,
 	perPage,
+	scrollAfterLoad,
 	setRefresh,
 	changePage,
 	setPerPage
@@ -390,6 +398,22 @@ const sendRequestForForceDeleteElement = async (id) => {
 		requestInProgress.value = false;
 	}
 }
+
+watch(
+		() => [fetchedData.value, requestInProgress.value],
+		async ([newData, isPending]) => {
+			// Ждем, пока данные загрузятся И прелоадер исчезнет
+			if (scrollAfterLoad.value && newData && newData.length && !isPending) {
+				await nextTick();
+
+				setTimeout(() => {
+					scrollToElement(`.${props.contentBlockClass}`);
+					scrollAfterLoad.value = false;
+				}, 50);
+			}
+		},
+		{ deep: true }
+);
 </script>
 
 <template>
@@ -403,7 +427,10 @@ const sendRequestForForceDeleteElement = async (id) => {
 				:sortOptions="sortOptions"
 				:filterRequestUrl="filterRequestUrl"
 		/>
-		<div v-if="fetchedData && fetchedData.length > 0">
+		<div
+				v-if="fetchedData && fetchedData.length > 0"
+				:class="[contentBlockClass]"
+		>
 			<div class="relative">
 				<ui-BigPreloader
 						v-if="requestInProgress"

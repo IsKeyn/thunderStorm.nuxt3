@@ -36,6 +36,10 @@ const props = defineProps({
 		type: String,
 		default: 'slider',
 	},
+	showRecommendationBlock: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const requestName =  props.entity + 'EntityDetail';
@@ -246,7 +250,7 @@ const getSlotName = (n) => `slot-${n + 1}`;
 			v-else
 			classes="red"
 	/>
-	<PublicRecommendation />
+	<PublicRecommendation :showRecommendationBlock="showRecommendationBlock" />
 </template>
 
 <style lang="scss" scoped>

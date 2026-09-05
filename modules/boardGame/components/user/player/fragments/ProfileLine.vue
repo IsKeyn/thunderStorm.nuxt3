@@ -126,14 +126,14 @@ const copy = (value) => {
 	>
 		<div
 				class="first-line"
-				:style="[
-					`${element.premium && element.backgroundImage
-					? 'background-image: url(' + getResizeImg(element.backgroundImage, 1500) + ');'
-					: ''}`,
-					`background-size: ${element?.settings?.pave ? 'contain' : 'cover'}`,
-					`background-position: ${element?.settings?.backgroundPosition ? element.settings.backgroundPosition : 'center'}`,
-					`background-repeat: ${element?.settings?.pave ? 'repeat' : 'no-repeat'}`,
-				]"
+				:style="{
+					backgroundImage: (element.premium && element.backgroundImage)
+							? `url('${encodeURI(getResizeImg(element.backgroundImage, 1500))}')`
+							: 'none',
+					backgroundSize: element?.settings?.pave ? 'contain' : 'cover',
+					backgroundPosition: element?.settings?.backgroundPosition || 'center',
+					backgroundRepeat: element?.settings?.pave ? 'repeat' : 'no-repeat'
+			}"
 		>
 			<div v-if="!element.premium || !element.backgroundImage" class="bg"/>
 			<div v-else class="vein" :style="`background: rgba(0, 0, 0, ${element?.settings?.vein ? element.settings.vein : '0.5'})`" />

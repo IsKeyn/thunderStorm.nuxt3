@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PublicRecommendation from '@/components/recommendation/PublicRecommendation.vue';
+
 import type { NuxtError } from '#app'
 
 import { api } from '@/composables/api.js'
@@ -342,6 +344,7 @@ const getLinkForOldSite = computed(() => {
 				<p class="mt-7 text-6xl" v-else>Произошла ошибка...</p>
 			</template>
 		</div>
+		<PublicRecommendation />
 	</NuxtLayout>
 </template>
 

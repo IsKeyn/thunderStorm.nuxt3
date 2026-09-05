@@ -48,7 +48,7 @@ const { refresh } = await useAsyncData(
 						},
 						onResponse({response}) {
 							if (response.status === 200) {
-								fetchedData.value = response._data.data;
+								fetchedData.value = response._data;
 
 								if (process.client && !sessionStorage.getItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`)) {
 									sessionStorage.setItem(`view_${fetchedData.value.entity_type}_${fetchedData.value.id}`, true);

@@ -1,6 +1,8 @@
 <script setup>
 import List from '@/components/entity/List.vue';
 
+import { computed } from "vue";
+
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
@@ -75,12 +77,12 @@ const usedFilters = [
 		type: 'multiselect',
 		requestData: true,
 	},
-	{
-		name: 'companies',
-		langName: 'Компании',
-		type: 'multiselect',
-		requestData: true,
-	},
+	// {
+	// 	name: 'companies',
+	// 	langName: 'Компании',
+	// 	type: 'multiselect',
+	// 	requestData: true,
+	// },
 	{
 		name: 'series',
 		langName: 'Серия',
@@ -158,6 +160,10 @@ const defaultFilters = computed(() => {
 
 	return filters;
 });
+
+const showRecommendationBlock = computed(() => {
+	return getSettingValue('show_recommendation_block');
+});
 </script>
 
 <template>
@@ -171,5 +177,6 @@ const defaultFilters = computed(() => {
 			:usedFilters="usedFilters"
 			:sortOptions="sortOptions"
 			:defaultFilters="defaultFilters"
+			:showRecommendationBlock="showRecommendationBlock"
 	/>
 </template>

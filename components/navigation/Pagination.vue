@@ -8,6 +8,9 @@ import { watch } from "vue";
 import { helper } from '@/composables/helper.js'
 const { route, router } = helper();
 
+import { animate } from '@/composables/animate.js';
+const { scrollToElement } = animate();
+
 const props = defineProps({
 	pagination: {
 		type: Object,
@@ -44,6 +47,10 @@ const props = defineProps({
 	setQueryParams: {
 		type: Boolean,
 		default: true,
+	},
+	blockSelectorForScroll: {
+		type: String,
+		default: null,
 	}
 });
 
@@ -114,6 +121,10 @@ const changePage = (page) => {
 
 			props.pagination.current_page = page;
 			emit('changePage', page);
+		}
+
+		if (props.blockSelectorForScroll) {
+			scrollToElement(props.blockSelectorForScroll);
 		}
 	}
 }
