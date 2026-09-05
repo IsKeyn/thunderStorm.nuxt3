@@ -3,13 +3,16 @@ import DoughnutChart from '@/components/ui/charts/DoughnutChart.vue';
 import Pagination from '@/components/navigation/Pagination.vue';
 import GameCard from '@/modules/boardGame/components/game/GameCard.vue';
 
-import { computed } from "vue";
+import { computed, watch } from "vue";
 
 import { api } from '@/composables/api.js';
 const { sendApiRequest } = api();
 
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
+
+import { animate } from '@/composables/animate.js';
+const { scrollToElement } = animate();
 
 const props = defineProps({
 	userName: {
@@ -20,12 +23,17 @@ const props = defineProps({
 		type: Number,
 		default: 10,
 	},
+	contentBlockClass: {
+		type: String,
+		default: 'game-history-list-content',
+	}
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
 const {
 	page,
 	perPage,
+	scrollAfterLoad,
 	setRefresh,
 	changePage,
 	setPerPage
@@ -104,6 +112,22 @@ const chartOptions = {
 		}
 	}
 }
+
+watch(
+		() => [fetchedData.value, requestInProgress.value],
+		async ([newData, isPending]) => {
+			// Ждем, пока данные загрузятся И прелоадер исчезнет
+			if (scrollAfterLoad.value && newData && newData.length && !isPending) {
+				await nextTick();
+
+				setTimeout(() => {
+					scrollToElement(`.${props.contentBlockClass}`);
+					scrollAfterLoad.value = false;
+				}, 50);
+			}
+		},
+		{ deep: true }
+);
 </script>
 
 <template>
@@ -117,11 +141,13 @@ const chartOptions = {
 		<div class="item-box game-count-line">
 			<DoughnutChart :chart-data="chartData" :chart-options="chartOptions" />
 		</div>
-		<GameCard
-				v-for="(element, key) in fetchedData"
-				:key="key"
-				:element="element"
-		/>
+		<div :class="[contentBlockClass]">
+			<GameCard
+					v-for="(element, key) in fetchedData"
+					:key="key"
+					:element="element"
+			/>
+		</div>
 	</div>
 	<ui-itemBox
 			v-else

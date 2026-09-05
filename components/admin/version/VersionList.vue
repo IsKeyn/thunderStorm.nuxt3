@@ -13,6 +13,9 @@ const { sendApiRequest } = api();
 import { helper } from '@/composables/helper.js'
 const { route, router } = helper();
 
+import { animate } from '@/composables/animate.js';
+const { scrollToElement } = animate();
+
 import { filters } from '@/composables/filters/filters.js';
 const {
 	setFilterName,
@@ -87,12 +90,17 @@ const props = defineProps({
 			},
 		}
 	},
+	contentBlockClass: {
+		type: String,
+		default: 'version-list-content',
+	}
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
 const {
 	page,
 	perPage,
+	scrollAfterLoad,
 	setRefresh,
 	changePage,
 	setPerPage
@@ -180,12 +188,27 @@ watch(() => filtersStore.filters?.[filterName], () => {
 }, { deep: true });
 
 /* КОНЕЦ: Фильтры */
+watch(
+		() => [fetchedData.value, requestInProgress.value],
+		async ([newData, isPending]) => {
+			// Ждем, пока данные загрузятся И прелоадер исчезнет
+			if (scrollAfterLoad.value && newData && newData.length && !isPending) {
+				await nextTick();
+
+				setTimeout(() => {
+					scrollToElement(`.${props.contentBlockClass}`);
+					scrollAfterLoad.value = false;
+				}, 50);
+			}
+		},
+		{ deep: true }
+);
 </script>
 
 <template>
 	<div v-if="fetchedData && fetchedData.length > 0">
 		<span class="sub-title">{{ title }}</span>
-		<div class="relative">
+		<div class="relative" :class="[contentBlockClass]">
 			<ui-BigPreloader
 					v-if="requestInProgress"
 					class="absolute w-full h-full bg-black/70"

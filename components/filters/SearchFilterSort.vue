@@ -61,11 +61,16 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
-	/* Кастомный URL для получения данных фильтра */
+	// Кастомный URL для получения данных фильтра
 	filterRequestUrl: {
 		type: String,
 		default: null,
 	},
+	// Использовать открывающийся блок
+	showOpeningBox: {
+		type: Boolean,
+		default: true,
+	}
 });
 
 import { filters } from '@/composables/filters/filters.js';
@@ -84,13 +89,25 @@ const { checkHasFilters } = filters();
 				:filterName="filterName"
 		/>
 
-		<OpeningBox
-				v-if="usedFilters.length"
-				title="Фильтры"
-				:useHardDisable="true"
-				:defaultContentStatus="checkHasFilters(filterName, usedFilters)"
-		>
+		<template v-if="usedFilters.length">
+			<OpeningBox
+					v-if="showOpeningBox"
+					title="Фильтры"
+					:useHardDisable="true"
+					:defaultContentStatus="checkHasFilters(filterName, usedFilters)"
+			>
+				<Filter
+						:entity="entity"
+						:filterName="filterName"
+						:showByFirstDateCheckbox="true"
+						:type="type"
+						:usedFilters="usedFilters"
+						:sortOptions="sortOptions"
+						:filterRequestUrl="filterRequestUrl"
+				/>
+			</OpeningBox>
 			<Filter
+					v-else
 					:entity="entity"
 					:filterName="filterName"
 					:showByFirstDateCheckbox="true"
@@ -99,7 +116,7 @@ const { checkHasFilters } = filters();
 					:sortOptions="sortOptions"
 					:filterRequestUrl="filterRequestUrl"
 			/>
-		</OpeningBox>
+		</template>
 
 		<Sort
 				v-if="showSort"

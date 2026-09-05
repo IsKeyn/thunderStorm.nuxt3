@@ -9,17 +9,21 @@ export function pagination(perPageProps) {
     // Создаем ref для хранения функции refresh
     const refreshFn = ref(null);
 
+    const scrollAfterLoad = ref(false);
+
     const setRefresh = (fn) => {
         refreshFn.value = fn;
     }
 
     const changePage = (p) => {
         page.value = p;
+        scrollAfterLoad.value = true;
         refreshFn.value();
     }
 
     const setPerPage = (count) => {
         perPage.value = count;
+        scrollAfterLoad.value = true;
         refreshFn.value();
     }
 
@@ -29,5 +33,6 @@ export function pagination(perPageProps) {
         setRefresh,
         changePage,
         setPerPage,
+        scrollAfterLoad,
     };
 }

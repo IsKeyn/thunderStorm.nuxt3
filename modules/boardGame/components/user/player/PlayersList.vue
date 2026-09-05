@@ -20,6 +20,12 @@ const { sendApiRequest, responseErrors } = api();
 import { helper } from '@/composables/helper.js'
 const { route, router } = helper();
 
+import { animate } from '@/composables/animate.js';
+const { scrollToElement } = animate();
+
+import { boardGame } from '@/composables/BoardGame/boardGame.js'
+const { getSettingValue } = boardGame();
+
 import { filters } from '@/composables/filters/filters.js';
 const {
 	setFilterName,
@@ -71,12 +77,17 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	contentBlockClass: {
+		type: String,
+		default: 'player-list-content',
+	}
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
 const {
 	page,
 	perPage,
+	scrollAfterLoad,
 	setRefresh,
 	changePage,
 	setPerPage
@@ -176,6 +187,26 @@ const dataForRandomPlayer = {
 	position: '??',
 	place: '?',
 };
+
+const showRecommendationBlock = computed(() => {
+	return getSettingValue('show_recommendation_block');
+});
+
+watch(
+		() => [fetchedData.value, requestInProgress.value],
+		async ([newData, isPending]) => {
+			// Ждем, пока данные загрузятся И прелоадер исчезнет
+			if (scrollAfterLoad.value && newData && newData.length && !isPending) {
+				await nextTick();
+
+				setTimeout(() => {
+					scrollToElement(`.${props.contentBlockClass}`);
+					scrollAfterLoad.value = false;
+				}, 50);
+			}
+		},
+		{ deep: true }
+);
 </script>
 
 <template>
@@ -189,6 +220,7 @@ const dataForRandomPlayer = {
 				type="public"
 				:usedFilters="usedFilters"
 				:sortOptions="sortOptions"
+				:showOpeningBox="false"
 		/>
 		<ui-BigPreloader
 				v-if="requestInProgress"
@@ -196,7 +228,10 @@ const dataForRandomPlayer = {
 				theme="image"
 				:themeType="9"
 		/>
-		<div v-else-if="fetchedData && fetchedData.length">
+		<div
+				v-else-if="fetchedData && fetchedData.length"
+				:class="[contentBlockClass]"
+		>
 			<div v-if="showSelectRandomPlayer">
 				<PlayerCardV2
 						:element="dataForRandomPlayer"
@@ -227,7 +262,7 @@ const dataForRandomPlayer = {
 				@changePage="changePage"
 				@setPerPage="setPerPage"
 		/>
-		<PublicRecommendation />
+		<PublicRecommendation v-if="showRecommendationBlock" />
 	</div>
 </template>
 

@@ -28,7 +28,12 @@ const { scrollToElement } = animate();
 import { userFunctions } from '@/composables/userFunctions.js';
 const { isAuth, userStore } = userFunctions();
 
-const props = defineProps({});
+const props = defineProps({
+	showControlPanel: {
+		type: Boolean,
+		default: true,
+	}
+});
 
 const requestName = 'getBoardGameBoard';
 
@@ -347,7 +352,7 @@ onMounted(() => {
 <template>
 	<div v-if="fetchedData">
 		<div
-				v-if="isAuth && currentPlayer"
+				v-if="showControlPanel && isAuth && currentPlayer"
 				class="dice-and-info-block"
 		>
 			<Dices

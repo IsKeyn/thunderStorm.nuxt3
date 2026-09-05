@@ -29,7 +29,7 @@ const breadCrumbsArray = computed(() => {
 			:title="pageName"
 			:breadCrumbs="breadCrumbsArray"
 	/>
-	<Board />
+	<Board :showControlPanel="false" />
 </template>
 
 <style lang="scss" scoped></style>

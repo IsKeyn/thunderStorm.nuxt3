@@ -16,6 +16,9 @@ const { route, router } = helper();
 import { api } from '@/composables/api.js'
 const { sendApiRequest } = api();
 
+import { animate } from '@/composables/animate.js';
+const { scrollToElement } = animate();
+
 import { filters } from '@/composables/filters/filters.js';
 const {
 	setFilterName,
@@ -89,6 +92,14 @@ const props = defineProps({
 				value: 'created_at',
 			},
 		],
+	},
+	showRecommendationBlock: {
+		type: Boolean,
+		default: true,
+	},
+	contentBlockClass: {
+		type: String,
+		default: 'entity-list-content',
 	}
 });
 
@@ -96,6 +107,7 @@ import { pagination } from '@/composables/ui/pagination.js'
 const {
 	page,
 	perPage,
+	scrollAfterLoad,
 	setRefresh,
 	changePage,
 	setPerPage
@@ -229,6 +241,22 @@ const dataByGroups = computed(() => {
 
 	return returnData;
 });
+
+watch(
+		() => [fetchedData.value, requestInProgress.value],
+		async ([newData, isPending]) => {
+			// Ждем, пока данные загрузятся И прелоадер исчезнет
+			if (scrollAfterLoad.value && newData && newData.length && !isPending) {
+				await nextTick();
+
+				setTimeout(() => {
+					scrollToElement(`.${props.contentBlockClass}`);
+					scrollAfterLoad.value = false;
+				}, 50);
+			}
+		},
+		{ deep: true }
+);
 </script>
 
 <template>
@@ -251,7 +279,10 @@ const dataByGroups = computed(() => {
 			theme="image"
 			:themeType="9"
 	/>
-	<div v-else-if="fetchedData && fetchedData.length">
+	<div
+			v-else-if="fetchedData && fetchedData.length"
+			:class="[contentBlockClass]"
+	>
 		<template v-if="useGroups">
 			<div v-if="dataByGroups">
 					<div class="group" v-for="(group) in dataByGroups">
@@ -290,7 +321,7 @@ const dataByGroups = computed(() => {
 			@changePage="changePage"
 			@setPerPage="setPerPage"
 	/>
-	<PublicRecommendation />
+	<PublicRecommendation v-if="showRecommendationBlock" />
 </template>
 
 <style scoped lang="scss">

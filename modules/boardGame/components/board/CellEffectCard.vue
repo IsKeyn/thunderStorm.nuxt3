@@ -1,5 +1,7 @@
 <script setup>
 import SelectPlayerDetailList from '@/modules/boardGame/components/user/player/SelectPlayerDetailList.vue';
+import Modal from '@/components/modals/Modal.vue';
+import CellReviewComponent from '@/modules/boardGame/components/board/cellReview/CellReviewComponent.vue';
 
 import TheCunningElf from '@/modules/boardGame/components/board/cellGames/TheCunningElf.vue';
 import MysteryButton from '@/modules/boardGame/components/board/cellGames/MysteryButton.vue';
@@ -167,6 +169,11 @@ const getGameInitComponent = (name) => {
 		case 'ThreeOfNine': return ThreeOfNine;
 	}
 }
+
+const reviewModalOpen = ref(false);
+const openCloseReviewModalOpen = () => {
+	reviewModalOpen.value = !reviewModalOpen.value;
+};
 </script>
 
 <template>
@@ -250,6 +257,25 @@ const getGameInitComponent = (name) => {
 			/>
 		</template>
 	</div>
+<!--	<button-->
+<!--			class="btn btn-simple"-->
+<!--			@click="openCloseReviewModalOpen()"-->
+<!--	>-->
+<!--		Отзывы о ячейке-->
+<!--	</button>-->
+
+	<Modal
+			:showOpenModal="reviewModalOpen"
+			size="full-width"
+			@toggleModal="openCloseReviewModalOpen"
+	>
+		<div class="modal-parent">
+			<h3 class="modal-title">Отзывы о ячейки</h3>
+			<div class="link-parent-box">
+				<CellReviewComponent />
+			</div>
+		</div>
+	</Modal>
 </template>
 
 <style lang="scss" scoped>

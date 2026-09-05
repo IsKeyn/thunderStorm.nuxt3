@@ -4,7 +4,7 @@ import Pagination from '@/components/navigation/Pagination.vue';
 
 const emit = defineEmits(['loadingToggle', 'toggleModal']);
 
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -16,17 +16,25 @@ const { sendApiRequest } = api();
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
+import { animate } from '@/composables/animate.js';
+const { scrollToElement } = animate();
+
 const props = defineProps({
 	perPage: {
 		type: Number,
 		default: 10,
 	},
+	contentBlockClass: {
+		type: String,
+		default: 'notification-list-content',
+	}
 });
 
 import { pagination } from '@/composables/ui/pagination.js'
 const {
 	page,
 	perPage,
+	scrollAfterLoad,
 	setRefresh,
 	changePage,
 	setPerPage
@@ -125,6 +133,22 @@ onMounted(async () => {
 		});
 	}
 });
+
+watch(
+		() => [fetchedData.value, requestInProgress.value],
+		async ([newData, isPending]) => {
+			// Ждем, пока данные загрузятся И прелоадер исчезнет
+			if (scrollAfterLoad.value && newData && newData.length && !isPending) {
+				await nextTick();
+
+				setTimeout(() => {
+					scrollToElement(`.${props.contentBlockClass}`);
+					scrollAfterLoad.value = false;
+				}, 50);
+			}
+		},
+		{ deep: true }
+);
 </script>
 
 <template>
@@ -139,13 +163,15 @@ onMounted(async () => {
 				class="btn btn-simple"
 				@click="setAllLikeViewed"
 		>Отметить все как прочитанные <font-awesome-icon  class="ml-2" icon="fa-solid fa-check-double" /></button>
-		<UserNotificationCard
-				v-for="(item, key) in fetchedData"
-				:key="key"
-				:notification="item"
-				@updateData="updateData"
-				@toggleModal="emit('toggleModal')"
-		/>
+		<div :class="[contentBlockClass]">
+			<UserNotificationCard
+					v-for="(item, key) in fetchedData"
+					:key="key"
+					:notification="item"
+					@updateData="updateData"
+					@toggleModal="emit('toggleModal')"
+			/>
+		</div>
 		<Pagination
 				v-if="paginationData"
 				:pagination="paginationData"
