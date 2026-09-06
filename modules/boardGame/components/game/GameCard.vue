@@ -3,6 +3,8 @@ import Slider from '@/components/sliders/vueSlider/Slider.vue';
 import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
 import Timer from '@/modules/boardGame/components/timer/Timer.vue';
 
+import { computed } from "vue";
+
 import { helper } from '@/composables/helper.js'
 const { route, findElementById } = helper();
 
@@ -75,6 +77,10 @@ const platformDifficult = computed(() => {
 		return getDifficultName(platform.difficult);
 	}
 });
+
+const eventType = computed(() => {
+	return getSettingValue('event_type');
+});
 </script>
 
 <template>
@@ -121,6 +127,7 @@ const platformDifficult = computed(() => {
 
 						<span class="line-info" v-if="element.points">Получил очков за игру: {{ element.points }}</span>
 						<span class="line-info" v-else-if="element.game.computed_points || element.game.points">Очки за игру: {{ element.game.computed_points ? element.game.computed_points : element.game.points }}</span>
+						<span class="line-info" v-if="eventType === 'board-last-cell' && element.game.actionCount">Количество ролов предметов и ходов за игру: {{ element.game.actionCount }}</span>
 						<span class="line-info">
 							Кооп: {{ element.game.coop ? 'Да' : 'Нет' }}
 						</span>

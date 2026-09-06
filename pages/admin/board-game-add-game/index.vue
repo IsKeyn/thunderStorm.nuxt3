@@ -19,11 +19,11 @@ const titles = ref(
 				sortable: true,
 				type: 'rounded-box',
 			},
-			bg_player_id: {
-				name: 'ID игрока',
-				type: 'text',
-				sortable: true,
-			},
+			// bg_player_id: {
+			// 	name: 'ID игрока',
+			// 	type: 'text',
+			// 	sortable: true,
+			// },
 			user_id: {
 				name: 'ID пользователя',
 				type: 'EntityList',
@@ -61,19 +61,45 @@ const titles = ref(
 				sortable: true,
 				type: 'rounded-box',
 			},
-			description: {
-				name: 'Описание',
-				type: 'cutText',
-			},
+			// description: {
+			// 	name: 'Описание',
+			// 	type: 'cutText',
+			// },
 			status: {
 				name: 'Текущий статус',
 				sortable: true,
-				type: 'rounded-box',
+				type: 'select',
+				options: [
+					{
+						name: 'Черновик',
+						value: 0,
+					},
+					{
+						name: 'Отправлен на рассмотрение',
+						value: 1,
+					},
+					{
+						name: 'Рассматривается',
+						value: 2,
+					},
+					{
+						name: 'Добавлена',
+						value: 3,
+					},
+					{
+						name: 'Отказана',
+						value: 4,
+					},
+					{
+						name: 'Возвращена',
+						value: 5,
+					},
+				],
 			},
-			sort: {
-				name: 'Сортировка',
-				sortable: true,
-			},
+			// sort: {
+			// 	name: 'Сортировка',
+			// 	sortable: true,
+			// },
 			active: {
 				name: 'Активность',
 				type: 'boolean',

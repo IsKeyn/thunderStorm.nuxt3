@@ -253,8 +253,8 @@ watch(() => form.value.pave.value, () => sendUpdateFormField('pave'), { deep: tr
 	<div class="setting-box">
 		<h2 class="title">Статус сообщение</h2>
 		<div class="item-box">
-			Вы можете установить статус сообщение профиля. Выше сообщение будет видно другим участникам ивента в вашем профиле.
-			Сообщение е должно нарушать&nbsp;<nuxt-link target="_blank" to="/article/rule-for-use-site/">правила сайта</nuxt-link>
+			Вы можете установить статус сообщение профиля. Ваше сообщение будет видно другим участникам ивента в вашем профиле.
+			Сообщение не должно нарушать&nbsp;<nuxt-link target="_blank" to="/article/rule-for-use-site/">правила сайта</nuxt-link>
 		</div>
 		<FormGenerator
 				:name="form.premiumMessage.name"
