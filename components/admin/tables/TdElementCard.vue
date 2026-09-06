@@ -8,7 +8,7 @@ import { file } from '@/composables/file.js'
 const { getFileType } = file();
 
 import { helper } from '@/composables/helper.js'
-const { cutText } = helper();
+const { cutText, filterByPairFieldValue } = helper();
 
 import { media } from '@/composables/media.js'
 const { getResizeImg } = media();
@@ -116,6 +116,18 @@ const viewResult = () => {
 
 		return true;
 }
+
+const getSelectValue = computed(() => {
+	if (!props.titleEl.options) {
+		return props.item[props.keyName];
+	}
+
+	const foundElement = filterByPairFieldValue(props.titleEl.options, 'value', props.item[props.keyName], true);
+
+	if (foundElement) {
+		return foundElement.name;
+	}
+});
 </script>
 
 <template>
@@ -233,6 +245,13 @@ const viewResult = () => {
 				v-else-if="titleEl.type && titleEl.type === 'rounded-box' && (item[keyName] || item[keyName] === 0)"
 		>
 			<span :class="[titleEl.classes ? titleEl.classes : 'simple', 'text-rounded-box']">{{ item[keyName] }}</span>
+		</template>
+		<template
+				v-else-if="
+					titleEl.type === 'select'
+					&& item[keyName] != null"
+		>
+			<span class="simple text-rounded-box">{{ getSelectValue }}</span>
 		</template>
 		<template v-else>
 			{{ item[keyName] }}
