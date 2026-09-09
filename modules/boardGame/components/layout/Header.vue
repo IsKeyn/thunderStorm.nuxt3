@@ -38,10 +38,7 @@ const titleName = computed(() => {
 
 <template>
 	<header>
-		<div
-				v-if="titleName"
-				class="left-block"
-		>
+		<div class="left-block">
 			<span class="title">
 				<template
 						v-if="!isMainPage"
@@ -49,11 +46,11 @@ const titleName = computed(() => {
 					<nuxt-link
 							:to="`/e/${route.params.slug}/`"
 					>
-						{{ titleName }}
+						{{ titleName ?? 'Не найдено' }}
 					</nuxt-link>
 				</template>
 				<template v-else>
-					{{ titleName }}
+					{{ titleName ?? 'Не найдено' }}
 				</template>
 			</span>
 
@@ -73,6 +70,7 @@ const titleName = computed(() => {
 				/>
 
 				<ui-IconButton
+						v-if="Object.keys(boardGameStore.boardGameInfo).length"
 						iconType="text"
 						:iconText="getStatusName(boardGameStore.boardGameInfo)"
 						:buttonText="getDateString(boardGameStore.boardGameInfo)"
