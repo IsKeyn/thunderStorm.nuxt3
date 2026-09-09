@@ -53,20 +53,22 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			const response = await Promise.resolve(
-					sendApiRequest(
-							`board-game/v2/board-cell/get-current-player-review/`,
-							'GET',
-							{
-								slug: route.params.slug,
-								board_position_effects_id: props.element.boardPositionEffect.id,
-							},
-							requestName,
-							''
-					)
-			);
+			if (pageState.value === 'ready') {
+				const response = await Promise.resolve(
+						sendApiRequest(
+								`board-game/v2/board-cell/get-current-player-review/`,
+								'GET',
+								{
+									slug: route.params.slug,
+									board_position_effects_id: props.element.boardPositionEffect.id,
+								},
+								requestName,
+								''
+						)
+				);
 
-			return response || null;
+				return response || null;
+			}
 		},
 		{
 			server: true,
