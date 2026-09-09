@@ -18,14 +18,14 @@ const { sendApiRequest } = api();
 import { helper } from '@/composables/helper.js'
 const { route, hasWebSocked } = helper();
 
-const requestName = 'get_bg_layout_data_' + route.params.slug;
+const requestName = computed(() => 'get_bg_layout_data_' + route.params.slug)
 
 const {
 	data: requestData,
 	pending: requestInProgress,
 	refresh
 } = await useAsyncData(
-		requestName,
+		requestName.value,
 		async () => {
 			if (route.params.slug) {
 				const query = {
@@ -35,7 +35,7 @@ const {
 				const requestUrl = 'board-game/v2/layout/get';
 
 				const response = await Promise.resolve(
-						sendApiRequest(requestUrl, 'GET', query, requestName, '')
+						sendApiRequest(requestUrl, 'GET', query, requestName.value, '')
 				);
 
 				return response || null;

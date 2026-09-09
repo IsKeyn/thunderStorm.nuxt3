@@ -91,7 +91,7 @@ provide('layoutMethods', {
 
 			<div class="board-game-main">
 				<div id="modals" />
-				<template v-if="boardGameStore.boardGameInfo">
+<!--				<template v-if="Object.keys(boardGameStore.boardGameInfo).length">-->
 					<Header />
 					<article>
 						<div class="flex">
@@ -105,16 +105,16 @@ provide('layoutMethods', {
 					<Notifications />
 					<MediaById />
 					<Footer />
-				</template>
-				<div v-else>
-					<div class="main">
-						<ui-itemBox
-							classes="red"
-							message="Ивент не найден"
-						/>
-						<PublicRecommendation />
-					</div>
-				</div>
+<!--				</template>-->
+<!--				<div v-else>-->
+<!--					<div class="main">-->
+<!--						<ui-itemBox-->
+<!--							classes="red"-->
+<!--							message="Ивент не найден"-->
+<!--						/>-->
+<!--						<PublicRecommendation />-->
+<!--					</div>-->
+<!--				</div>-->
 			</div>
 
 			<media-LightBox
