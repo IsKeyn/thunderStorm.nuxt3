@@ -495,6 +495,7 @@ onMounted(() => {
 	<Modal
 			:showOpenModal="boxOpen"
 			size="small"
+			:fullCloseModal="true"
 			@toggleModal="openCloseBoxFunc"
 	>
 		<div class="modal-parent">
