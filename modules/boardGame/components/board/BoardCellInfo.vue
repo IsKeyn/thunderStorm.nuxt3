@@ -5,7 +5,7 @@ import CellEffectCard from '@/modules/boardGame/components/board/CellEffectCard.
 const props = defineProps({
 	position: {
 		type: Number,
-		required: true,
+		default: null,
 	},
 	playersOnCols: {
 		type: Object,
@@ -19,12 +19,16 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	showReviewButton: {
+		type: Boolean,
+		default: false,
+	},
 });
 </script>
 
 <template>
 	<div
-			v-if="playersOnCols[position]"
+			v-if="position && Object.keys(playersOnCols).length && playersOnCols[position]"
 			class="players mb-4"
 	>
 		<span class="title">Игроки на этой клетке</span>
@@ -39,7 +43,7 @@ const props = defineProps({
 		</div>
 	</div>
 	<div
-			v-if="effects.length > 0"
+			v-if="effects.length"
 			class="mb-4"
 	>
 		<span class="title">Эффекты клетки</span>
@@ -49,6 +53,7 @@ const props = defineProps({
 				:name="name"
 				:element="element"
 				:useLightBox="true"
+				:showReviewButton="showReviewButton"
 		/>
 	</div>
 </template>

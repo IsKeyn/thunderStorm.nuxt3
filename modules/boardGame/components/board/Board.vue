@@ -504,6 +504,7 @@ onMounted(() => {
 						:position="selectedPositionNumber"
 						:playersOnCols="playersOnCols"
 						:effects="getEffectsByPosition(selectedPositionNumber)"
+						:showReviewButton="true"
 				/>
 			</div>
 		</div>
