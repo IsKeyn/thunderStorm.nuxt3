@@ -2,6 +2,9 @@
 import AlertBox from '@/components/notifications/AlertBlock.vue';
 import FormGenerator from '@/components/forms/FormGenerator/FormGenerator.vue';
 import ActionButton from '@/components/layout/buttons/ActionButton.vue';
+import BoardCellInfo from '@/modules/boardGame/components/board/BoardCellInfo.vue';
+
+const emit = defineEmits(['refreshData']);
 
 import { computed } from "vue";
 
@@ -11,11 +14,35 @@ const boardGameStore = useBoardGameStore();
 import { helper } from '@/composables/helper.js'
 const { route } = helper();
 
+import { notifications } from '@/composables/notifications.js';
+const { alert, error } = notifications();
+
 import { userFunctions } from '@/composables/userFunctions.js';
 const { isAuth } = userFunctions();
 
 import { bgPlayer } from '@/composables/BoardGame/bgPlayer.js'
-const { isActivePlayer } = bgPlayer();
+const { isActivePlayer, player } = bgPlayer();
+
+import { validate } from '@/composables/validate.js';
+const { validateForm } = validate();
+
+import { api } from '@/composables/api.js'
+const { sendApiRequest } = api();
+
+import { errorHandler } from '@/composables/errorHandler.js';
+const { show } = errorHandler();
+
+const props = defineProps({
+	eventSlug: {
+		type: String,
+		default: null,
+	},
+	element: {
+		type: Object,
+		default: {},
+		required: true,
+	},
+});
 
 const requestName = 'getBoardCellReviewByCurrentUser';
 
@@ -26,11 +53,18 @@ const {
 } = await useAsyncData(
 		requestName,
 		async () => {
-			if (pageState.value === 'ready') {
-				// const response = await Promise.resolve(
-				// 		sendApiRequest(`board-game/v2/board-cell/get-current-user-review/${route.params.slug}/`, 'GET', {}, requestName, '')
-				// );
-			}
+			const response = await Promise.resolve(
+					sendApiRequest(
+							`board-game/v2/board-cell/get-current-player-review/`,
+							'GET',
+							{
+								slug: route.params.slug,
+								board_position_effects_id: props.element.boardPositionEffect.id,
+							},
+							requestName,
+							''
+					)
+			);
 
 			return response || null;
 		},
@@ -41,59 +75,53 @@ const {
 );
 
 const review = computed(() => requestData.value?.data || null);
+const requestNameForRefresh = 'player_reviews_in_event_' + props.eventSlug + '_' + props.element.boardPositionEffect.id;
 
+const errorsMessages = ref([]);
+
+const sendForm = async () => {
+	for (const formKey in form.value) {
+		form.value[formKey].validateResult = '';
+	}
+
+	const { status, key, validateResult } = validateForm(form.value);
+
+	if (status) {
+		await sendRequest();
+	} else {
+		form.value[key].validateResult = validateResult;
+		errorsMessages.value = [validateResult];
+	}
+}
 
 const sendRequest = async () => {
 	requestInProgress.value = true;
 
+	if (
+			!props.element?.boardPositionEffect?.id
+			|| !props.element?.boardPositionEffect?.model
+	) {
+		return;
+	}
+
 	try {
 		const body = {};
 
-		body.board_game_id = props.boardGameId;
-		body.type = props.type;
-		body.entity_type = "App\\Models\\Game";
-		body.entity_id = props.game.id;
-		body.board_game_game_list_id = props.board_game_game_list_id;
+		body.slug = route.params.slug;
 
-		body.time = (form.value.hours.value * 60 + form.value.minuts.value) * 60 + form.value.seconds.value;
+		body.entity_type = props.element.boardPositionEffect.model;
+		body.entity_id = props.element.boardPositionEffect.id;
+		body.completion_time_seconds = (form.value.hours.value * 60 + form.value.minuts.value) * 60 + form.value.seconds.value;
 
 		body.comment = form.value.comment.value;
-		//
-		// const response = await sendApiRequest(`board-game/player-game/${props.doType}`, 'POST', body);
-		//
-		// if (response) {
-		// 	requestInProgress.value = false;
-		//
-		// 	if (props.doType === 'update') {
-		// 		alert('Теперь мы можете крутить рулетку, для новой игры');
-		// 	} else if (props.doType === 'add') {
-		// 		alert(`Игра "${props.game.name}" успешно удалена из списка`);
-		// 	}
-		//
-		// 	const logBody = {
-		// 		board_game_id: props.boardGameId,
-		// 		message: writeLogMessage(),
-		// 	};
-		//
-		// 	setLog(logBody);
-		//
-		// 	if (props.type === 2) {
-		// 		form.value.hours.value = null;
-		// 		form.value.minuts.value = null;
-		// 		form.value.seconds.value = null;
-		// 	}
-		//
-		// 	form.value.comment.value = null;
-		//
-		// 	emit('fetchLogs');
-		// 	emit('updateBoardGameInfo');
-		// 	emit('refreshGameList');
-		// 	emit('toggleFormVisible');
-		// }
+
+		const response = await sendApiRequest(`board-game/v2/board-cell/set-review/`, 'PUT', body);
+		show(response, 'Отправлено', async () => { refresh(); await refreshNuxtData(requestNameForRefresh); });
 	} catch (e) {
 		error(e);
-		requestInProgress.value = false;
 	}
+
+	requestInProgress.value = false;
 }
 
 const form = ref({
@@ -126,26 +154,43 @@ const form = ref({
 		value: null,
 		type: 'textarea',
 		placeholder: '',
-		validateRules: 'minLength_2, maxLength_5000',
+		validateRules: 'required, minLength_2, maxLength_5000',
 		classes: 'w-full mt-1 mb-1 resize-y',
 	}
 });
 
 const pageState = computed(() => {
+	if (
+			!props.element?.boardPositionEffect?.id
+			|| !props.element?.boardPositionEffect?.model
+	) {
+		return 'not-enough-data';
+	}
 	if (requestInProgress.value) return 'loading';
 	if (!isAuth.value) return 'no-auth';
 	if (!isActivePlayer) return 'not-active';
+	if (props.element.position !== player.value.position.position) return 'not-same-position';
+
 	if (boardGameStore.boardGameInfo.status !== 1) return 'event-closed';
 	return 'ready';
 });
 </script>
 
 <template>
+	<BoardCellInfo
+			v-if="element"
+			:effects="[element]"
+	/>
 	<ui-BigPreloader
 			v-if="pageState === 'loading'"
 			class="h-full"
 			theme="image"
 			:themeType="9"
+	/>
+	<ui-itemBox
+			v-else-if="pageState === 'not-enough-data'"
+			classes="red"
+			message="Не получены данные об элементе"
 	/>
 	<ui-itemBox
 			v-else-if="pageState === 'no-auth'"
@@ -158,18 +203,30 @@ const pageState = computed(() => {
 			message="Только активные участники ивента могут оставлять отзывы"
 	/>
 	<ui-itemBox
+			v-else-if="pageState === 'not-same-position'"
+			classes="red"
+			message="Вы можете оставлять отзыв только о клетке, на которой вы стоите"
+	/>
+	<ui-itemBox
 			v-else-if="pageState === 'event-closed'"
 			classes="red"
 			message="Отзывы можно оставлять только во время проведения ивента"
 	/>
 	<div v-else class="review-section">
-		<div v-if="review">текущее сообщение</div>
+		<ui-itemBox
+				v-if="review"
+				classes="green"
+				message="Вы уже оставили отзыв о данной клетке игрового поля"
+		/>
 		<div v-else>
-<!--			<AlertBox-->
-<!--					:errorsMessages="errorsMessages"-->
-<!--					class="mb-2"-->
-<!--			/>-->
-
+			<ui-itemBox
+					classes="green"
+					message="Вы можете оставить отзыв о данной клетке игрового поля, его увидят другие участники ивента"
+			/>
+			<AlertBox
+					:errorsMessages="errorsMessages"
+					class="mb-2"
+			/>
 			<div class="flex">
 				<FormGenerator
 						name="hours"

@@ -60,6 +60,10 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	showReviewButton: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const selectedPlayer = ref({});
@@ -257,12 +261,13 @@ const openCloseReviewModalOpen = () => {
 			/>
 		</template>
 	</div>
-<!--	<button-->
-<!--			class="btn btn-simple"-->
-<!--			@click="openCloseReviewModalOpen()"-->
-<!--	>-->
-<!--		Отзывы о ячейке-->
-<!--	</button>-->
+	<button
+			v-if="showReviewButton"
+			class="btn btn-simple"
+			@click="openCloseReviewModalOpen()"
+	>
+		Отзывы о ячейке
+	</button>
 
 	<Modal
 			:showOpenModal="reviewModalOpen"
@@ -272,7 +277,7 @@ const openCloseReviewModalOpen = () => {
 		<div class="modal-parent">
 			<h3 class="modal-title">Отзывы о ячейки</h3>
 			<div class="link-parent-box">
-				<CellReviewComponent />
+				<CellReviewComponent :element="element" />
 			</div>
 		</div>
 	</Modal>
