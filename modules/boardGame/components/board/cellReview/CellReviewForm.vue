@@ -77,7 +77,7 @@ const {
 );
 
 const review = computed(() => requestData.value?.data || null);
-const requestNameForRefresh = 'player_reviews_in_event_' + props.eventSlug + '_' + props.element.boardPositionEffect.id;
+const requestNameForRefresh = 'player_reviews_in_event_' + props.eventSlug + '_' + props.element?.boardPositionEffect?.id;
 
 const errorsMessages = ref([]);
 
@@ -207,7 +207,7 @@ const pageState = computed(() => {
 	<ui-itemBox
 			v-else-if="pageState === 'not-same-position'"
 			classes="red"
-			message="Вы можете оставлять отзыв только о клетке, на которой вы стоите"
+			message="Вы можете оставлять отзыв только о клетке, на которой стоите"
 	/>
 	<ui-itemBox
 			v-else-if="pageState === 'event-closed'"

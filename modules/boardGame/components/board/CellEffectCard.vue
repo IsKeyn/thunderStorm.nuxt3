@@ -100,7 +100,9 @@ const sendInvitation = async () => {
 				}
 
 				await refreshNuxtData('getBoardGameBoard');
-				if (!hasWebSocked()) refreshLayoutData();
+				if (!hasWebSocked()) {
+					refreshLayoutData();
+				}
 			}
 		}
 	} catch (e) {
@@ -154,9 +156,8 @@ const setRequest = async (type) => {
 					alert(`Успешно выполнено`);
 				}
 
-
+				await refreshNuxtData('getBoardGameBoard');
 				if (!hasWebSocked()) {
-					await refreshNuxtData('getBoardGameBoard');
 					refreshLayoutData();
 				}
 			}
