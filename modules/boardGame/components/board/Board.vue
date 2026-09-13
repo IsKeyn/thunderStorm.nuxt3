@@ -1,9 +1,9 @@
 <script setup>
 import Modal from '@/components/modals/Modal.vue';
 import Dices from '@/modules/boardGame/components/board/Dices.vue';
-import BoardCellInfo from '@/modules/boardGame/components/board/BoardCellInfo.vue';
 import CellEffectCard from '@/modules/boardGame/components/board/CellEffectCard.vue';
 import PlayerInteractionCard from '@/modules/boardGame/components/player-interactions/PlayerInteractionCard.vue';
+import CellReviewComponent from '@/modules/boardGame/components/board/cellReview/CellReviewComponent.vue';
 
 import { computed, onMounted, ref } from "vue";
 
@@ -494,18 +494,17 @@ onMounted(() => {
 
 	<Modal
 			:showOpenModal="boxOpen"
-			size="small"
+			size="full-width"
 			:fullCloseModal="true"
 			@toggleModal="openCloseBoxFunc"
 	>
 		<div class="modal-parent">
-			<h3 class="modal-title">Информация о ячейке №{{ selectedPositionNumber }}</h3>
+			<h3 class="modal-title">Информация об игровой клетке №{{ selectedPositionNumber }}</h3>
 			<div class="link-parent-box">
-				<BoardCellInfo
+				<CellReviewComponent
 						:position="selectedPositionNumber"
 						:playersOnCols="playersOnCols"
-						:effects="getEffectsByPosition(selectedPositionNumber)"
-						:showReviewButton="true"
+						:element="getEffectsByPosition(selectedPositionNumber)[0]"
 				/>
 			</div>
 		</div>

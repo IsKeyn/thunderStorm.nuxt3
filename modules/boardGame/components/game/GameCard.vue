@@ -119,7 +119,7 @@ const eventType = computed(() => {
 						v-if="theme === 'default' || theme === 'CurrentGame'"
 						class="name"
 				>
-					{{ element.game.game.name }} <span v-if="element.game.platform">({{ element.game.platform.name }})</span>
+					<nuxt-link :to="`/e/${route.params.slug}/game/${element.game.game.slug}`">{{ element.game.game.name }} <span v-if="element.game.platform">({{ element.game.platform.name }})</span></nuxt-link>
 				</span>
 				<div
 						v-if="theme === 'default' || theme === 'CurrentGame'"

@@ -83,7 +83,7 @@ const titleName = computed(() => {
 						:faIcon="['fa-brands', 'fa-twitch']"
 						:hasFade="true"
 						buttonText="Участники онлайн"
-						:routerLinkUrl="`/e/${route.params.slug}/player/`"
+						:routerLinkUrl="`/e/${route.params.slug}/player/?twitchStreamOnline=true`"
 				/>
 			</div>
 		</div>

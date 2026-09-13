@@ -38,21 +38,8 @@ const props = defineProps({
 </script>
 
 <template>
-	<div v-if="openProfile">
-		<PublicAvatar
-				:user="user"
-				:useLightBox="useLightBox"
-				classes="w-[50px] h-[50px]"
-				:borderType="avatarBorder(player)"
-		/>
-		<div class="info">
-			<span class="field name">
-				{{ getPublicName(user) }}
-			</span>
-		</div>
-	</div>
 	<Nuxt-link
-			v-else
+			v-if="openProfile"
 			:class="['user-box', theme]"
 			:to="`/e/${route.params.slug}/player/${user.name}`"
 			target="_blank"
@@ -69,6 +56,19 @@ const props = defineProps({
 			</span>
 		</div>
 	</Nuxt-link>
+	<div v-else>
+		<PublicAvatar
+				:user="user"
+				:useLightBox="useLightBox"
+				classes="w-[50px] h-[50px]"
+				:borderType="avatarBorder(player)"
+		/>
+		<div class="info">
+			<span class="field name">
+				{{ getPublicName(user) }}
+			</span>
+		</div>
+	</div>
 </template>
 
 <style lang="scss" scoped>

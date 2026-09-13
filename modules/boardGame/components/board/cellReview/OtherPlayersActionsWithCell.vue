@@ -30,7 +30,7 @@ const tabsElements = ref([
 </script>
 
 <template>
-	<span class="user-interface-title text-left">Отзывы игроков о данной ячейки игрового поля</span>
+	<span class="user-interface-title text-left">Отзывы игроков о данной клетки игрового поля</span>
 	<Tabs
 			:tabs="tabsElements"
 			defaultCurrentTab="inEvent"
