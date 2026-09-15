@@ -133,7 +133,6 @@ const setMessageAsRead = async (chatId, messageId) => {
 	};
 
 	const response = await sendApiRequest('auth/message/set-message-as-read', 'POST', body, 'setMessageAsRead', '');
-console.log('setMessageAsRead');
 	emit('setLastReadMessage', response.last_read_message_id)
 }
 

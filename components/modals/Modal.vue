@@ -79,13 +79,11 @@ const setHideBodyOverflow = (newValue) => {
 		}
 
 		if (props.size === 'full-screen' || props.size === 'full-width') {
-			const body = document.querySelector('body');
-			body.classList.add('overflow-hidden');
+			toggleOverflowHidden(true);
 		}
 	} else {
 		if (props.size === 'full-screen' || props.size === 'full-width') {
-			const body = document.querySelector('body');
-			body.classList.remove('overflow-hidden');
+			toggleOverflowHidden();
 		}
 	}
 
@@ -98,13 +96,27 @@ const setHideBodyOverflow = (newValue) => {
 	}
 }
 
+const toggleOverflowHidden = (set) => {
+	const body = document.querySelector('body');
+
+	if (set) {
+		body.classList.add('overflow-hidden');
+	} else {
+		body.classList.remove('overflow-hidden');
+	}
+}
+
 const el = ref()
 
 onMounted(() => {
 	modalActive.value = props.showOpenModal;
 })
 
-onUnmounted(() => {});
+onUnmounted(() => {
+	if (props.size === 'full-screen' || props.size === 'full-width') {
+		toggleOverflowHidden();
+	}
+});
 
 const init = () => {
 	const modalsContainerDom = document.querySelector(props.modalsContainerSelector);
