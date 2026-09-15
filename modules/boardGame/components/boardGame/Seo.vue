@@ -22,7 +22,6 @@ const seoData = computed(() => {
 </script>
 
 <template>
-	{{ boardGameStore.boardGameInfo.seo }}
 	<Head :seo="seoData" />
 </template>
 
