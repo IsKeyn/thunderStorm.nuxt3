@@ -30,13 +30,13 @@
 
     .avatar-box-main {
       @apply
-      absolute z-[2]
-      top-[2rem] xl:top-auto
-      xl:bottom-[-2rem]
-      left-[50%] xl:left-[2rem]
-      xl:bottom-[-2rem]
-      -translate-x-1/2 xl:translate-x-0
-      max-w-[12rem]
+        absolute z-[2]
+        top-[2rem] xl:top-auto
+        xl:bottom-[-2rem]
+        left-[50%] xl:left-[2rem]
+        xl:bottom-[-2rem]
+        -translate-x-1/2 xl:translate-x-0
+        w-[12rem]
       ;
 
       .absolute-place-box {
