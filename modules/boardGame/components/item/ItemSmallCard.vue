@@ -7,6 +7,10 @@ const props = defineProps({
 		type: Object,
 		default: {},
 	},
+	useLightBox: {
+		type: Boolean,
+		default: false,
+	},
 });
 </script>
 
@@ -16,14 +20,24 @@ const props = defineProps({
 			class="item-small-card"
 	>
 		<VTooltip>
-			<img
-					v-if="element.item?.image"
-					:src="getResizeImg(element.item.image)"
-					:alt="element.item.name"
-					:title="element.item.name"
-					:class="['cursor-pointer media-obj']"
-					:media-id="element.item.image.id"
-			>
+			<template v-if="element.item?.image">
+				<img
+						v-if="useLightBox"
+						:src="getResizeImg(element.item.image)"
+						:alt="element.item.name"
+						:title="element.item.name"
+						:class="['cursor-pointer media-obj']"
+						:media-id="element.item.image.id"
+				>
+				<img
+						v-else
+						:src="getResizeImg(element.item.image)"
+						:alt="element.item.name"
+						:title="element.item.name"
+						:class="['cursor-pointer']"
+				>
+			</template>
+
 			<span v-if="element.quantity > 1" class="quantity">{{ element.quantity }}</span>
 			<template #popper>
 				<div class="description">

@@ -44,12 +44,14 @@ const props = defineProps({
 			:to="`/e/${route.params.slug}/player/${user.name}`"
 			target="_blank"
 	>
-		<PublicAvatar
-				:user="user"
-				:useLightBox="useLightBox"
-				classes="w-[50px] h-[50px]"
-				:borderType="avatarBorder(player)"
-		/>
+		<div class="w-[60px] mx-auto">
+			<PublicAvatar
+					:user="user"
+					:useLightBox="useLightBox"
+					classes="w-[50px] h-[50px]"
+					:borderType="avatarBorder(player)"
+			/>
+		</div>
 		<div class="info">
 			<span class="field name">
 				{{ getPublicName(user) }}
@@ -57,12 +59,14 @@ const props = defineProps({
 		</div>
 	</Nuxt-link>
 	<div v-else>
-		<PublicAvatar
-				:user="user"
-				:useLightBox="useLightBox"
-				classes="w-[50px] h-[50px]"
-				:borderType="avatarBorder(player)"
-		/>
+		<div class="w-[60px] mx-auto">
+			<PublicAvatar
+					:user="user"
+					:useLightBox="useLightBox"
+					classes="w-[50px] h-[50px]"
+					:borderType="avatarBorder(player)"
+			/>
+		</div>
 		<div class="info">
 			<span class="field name">
 				{{ getPublicName(user) }}
@@ -98,11 +102,11 @@ const props = defineProps({
 		@apply text-[var(--main-text-color)];
 
 		.field {
-			@apply block;
+			@apply block text-center;
 		}
 
 		.name {
-			@apply font-bold ml-2;
+			@apply font-bold;
 		}
 	}
 }

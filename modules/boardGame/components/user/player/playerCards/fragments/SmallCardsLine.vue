@@ -18,6 +18,10 @@ const props = defineProps({
 		type: String,
 		default: 'elements',
 	},
+	useLightBox: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const showAll = ref(false);
@@ -78,12 +82,14 @@ const elementsForShow = computed(() => {
 				v-for="(el, key) in elementsForShow"
 				:key="key"
 				:element="el?.statusEffectBind"
+				:useLightBox="useLightBox"
 		/>
 		<ItemSmallCard
 				v-if="type === 'items'"
 				v-for="(el, key) in elementsForShow"
 				:key="key"
 				:element="el?.item"
+				:useLightBox="useLightBox"
 		/>
 		<div
 				v-if="groupedElements.length > 4"

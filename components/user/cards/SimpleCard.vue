@@ -1,6 +1,9 @@
 <script setup>
 import PublicAvatar from '@/components/user/avatar/PublicAvatar.vue';
 
+import { userFunctions } from '@/composables/userFunctions.js'
+const { getPublicName } = userFunctions();
+
 const props = defineProps({
 	user: {
 		type: Object,
@@ -27,7 +30,7 @@ const props = defineProps({
 			class="min-w-[50px]"
 			classes="w-[50px] h-[50px]"
 		/>
-		<span class="name">{{ user.name }}</span>
+		<span class="name">{{ getPublicName(user) }}</span>
 		<span
 				v-if="counterValue"
 				class="notifications"
