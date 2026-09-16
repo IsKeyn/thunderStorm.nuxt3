@@ -64,7 +64,7 @@ const fetchedData = computed(() => requestData.value?.data || []);
 			>
 				<PlayerShortCard
 						:element="player"
-						bgClasses="my-0 mx-auto mb-4"
+						bgClasses="my-0 mx-auto mb-4 w-[12rem]"
 				/>
 			</div>
 		</div>

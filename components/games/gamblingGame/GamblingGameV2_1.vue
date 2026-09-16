@@ -66,6 +66,10 @@ const props = defineProps({
 				name: 'Бенни Хилл',
 				value: '/sounds/BennyHill.mp3',
 			},
+			{
+				name: 'Крутим рулетку, колесо судьбы',
+				value: '/sounds/RollRouletteWheelOfFate.mp3',
+			},
 		],
 	},
 
