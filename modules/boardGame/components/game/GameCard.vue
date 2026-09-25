@@ -16,7 +16,7 @@ const {
 } = date();
 
 import { userFunctions } from '@/composables/userFunctions.js';
-const { userStore } = userFunctions();
+const { userStore, getPublicName } = userFunctions();
 
 import { boardGame } from '@/composables/BoardGame/boardGame.js'
 const { addTextToPoints, getSettingValue } = boardGame();
@@ -69,6 +69,11 @@ const props = defineProps({
 	timeName: {
 		type: String,
 		default: 'время в игре',
+	},
+	// Отображать дату created_at
+	showCreatedAt: {
+		type: Boolean,
+		default: false,
 	}
 });
 
@@ -98,7 +103,7 @@ const eventType = computed(() => {
 					target="_blank"
 					class="header-link"
 					title="Открыть профайл"
-			>{{ element.user.name }}</router-link> - </span>{{ getStatusName(element.status) }} <span v-if="element.board_game"><nuxt-link :to="`/e/${element.board_game.slug}`" target="_blank" class="event">({{ element.board_game.name }})</nuxt-link></span> <span v-if="getFormattedHoursFromSeconds(element.time)">({{ timeName }} {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.finished_at">({{ getFormattedDate('d.m.Y', element.finished_at) }})</span>
+			>{{ getPublicName(element.user) }}</router-link> - </span>{{ getStatusName(element.status) }} <span v-if="element.board_game"><nuxt-link :to="`/e/${element.board_game.slug}`" target="_blank" class="event">({{ element.board_game.name }})</nuxt-link></span> <span v-if="getFormattedHoursFromSeconds(element.time)">({{ timeName }} {{ getFormattedHoursFromSeconds(element.time) }})</span> <span v-if="element.finished_at">({{ getFormattedDate('d.m.Y', element.finished_at) }})</span>  <span v-if="showCreatedAt && element.created_at">({{ getFormattedDate('d.m.Y', element.created_at) }})</span>
 		</div>
 		<div class="content-box">
 			<PublicAvatar

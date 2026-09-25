@@ -96,8 +96,10 @@ const sendForm = async () => {
 	}
 }
 
+const sendRequestInProgress = ref(false);
+
 const sendRequest = async () => {
-	requestInProgress.value = true;
+	sendRequestInProgress.value = true;
 
 	if (
 			!props.element?.boardPositionEffect?.id
@@ -118,12 +120,19 @@ const sendRequest = async () => {
 		body.comment = form.value.comment.value;
 
 		const response = await sendApiRequest(`board-game/v2/board-cell/set-review/`, 'PUT', body);
-		show(response, 'Отправлено', async () => { refresh(); await refreshNuxtData(requestNameForRefresh); });
+		show(
+				response,
+				'Отправлено',
+				async () => {
+					sendRequestInProgress.value = false;
+					refresh();
+					await refreshNuxtData(requestNameForRefresh);
+				});
 	} catch (e) {
 		error(e);
 	}
 
-	requestInProgress.value = false;
+	sendRequestInProgress.value = false;
 }
 
 const form = ref({
@@ -168,7 +177,7 @@ const pageState = computed(() => {
 	) {
 		return 'not-enough-data';
 	}
-	if (requestInProgress.value) return 'loading';
+	if (sendRequestInProgress.value) return 'loading';
 	if (!isAuth.value) return 'no-auth';
 	if (!isActivePlayer) return 'not-active';
 	if (props.element.position !== player.value.position.position) return 'not-same-position';
@@ -267,7 +276,7 @@ const pageState = computed(() => {
 			<ActionButton
 					buttonClasses="btn btn-simple-1 w-1/2"
 					buttonName="Отправить"
-					:actionInProgress="requestInProgress"
+					:actionInProgress="sendRequestInProgress"
 					@startAction="sendForm()"
 			/>
 		</div>

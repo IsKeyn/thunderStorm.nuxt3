@@ -121,6 +121,7 @@ watch(
 					theme="PlayerActionWithGame"
 					:showCover="false"
 					timeName="затраченное время"
+					:showCreatedAt="true"
 			/>
 		</div>
 	</div>
