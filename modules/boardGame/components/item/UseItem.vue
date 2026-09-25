@@ -22,6 +22,9 @@ const { sendApiRequest, preparedRequestBody } = api();
 import { players } from '@/composables/BoardGame/players.js';
 const { getPlayersForItem } = players();
 
+import { userFunctions } from '@/composables/userFunctions.js'
+const { getPublicName } = userFunctions();
+
 const props = defineProps({
 	item: {
 		type: Object,
@@ -344,7 +347,7 @@ const setMessages = () => {
 
 	/* Дополнение сообщений информацией о выбранном участнике */
 	if (Object.keys(selectedPlayer.value).length > 1) {
-		log = `${defaultLogMessage} на участника "${selectedPlayer.value.user.name}"`;
+		log = `${defaultLogMessage} на участника "${getPublicName(selectedPlayer.value.user)}"`;
 		message = `${defaultNotificationMessage}`;
 	}
 
@@ -369,13 +372,13 @@ const setMessages = () => {
 			log = `${defaultLogMessage}`;
 		}
 
-		log += ` выбрал второго участника "${selectedSecondPlayer.value.user.name}"`;
+		log += ` выбрал второго участника "${getPublicName(selectedSecondPlayer.value.user)}"`;
 
 		if (!message) {
 			message = `${defaultNotificationMessage}`;
 		}
 
-		message += ` выбрал второго участника "${selectedSecondPlayer.value.user.name}"`;
+		message += ` выбрал второго участника "${getPublicName(selectedSecondPlayer.value.user)}"`;
 	}
 
 	/* Дополнение сообщений информацией о статус эффекте */
