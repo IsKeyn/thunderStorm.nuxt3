@@ -37,17 +37,6 @@ const titles = ref(
 				// classes: '!bg-[#004251eb]',
 				sortable: true,
 			},
-			status_effect_id: {
-				name: 'Статус эффект',
-				type: 'EntityList',
-				apiUrl: 'entity/getFields',
-				body: {
-					entity: 'App\\Models\\BoardGame\\StatusEffect',
-				},
-				hasResource: false,
-				// classes: '!bg-[#004251eb]',
-				sortable: true,
-			},
 			status_effect_bind_id: {
 				name: 'ID привязки, привязанного статус эффекта',
 				type: 'text',
