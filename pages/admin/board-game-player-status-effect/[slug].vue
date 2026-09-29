@@ -36,18 +36,6 @@ const form = ref(
 				validateRules: 'required, maxLength_255',
 				classes: ['w-full', 'mt-[5px]'],
 			},
-			status_effect_id: {
-				name: 'Статус эффект',
-				value: '',
-				type: 'EntityList',
-				apiUrl: 'entity/getFields',
-				body: {
-					entity: 'App\\Models\\BoardGame\\StatusEffect',
-				},
-				hasResource: false,
-				validateRules: 'required, maxLength_255',
-				classes: ['w-full', 'mt-[5px]'],
-			},
 			status_effect_bind_id: {
 				name: 'ID привязки, привязанного статус эффекта',
 				type: 'text',
