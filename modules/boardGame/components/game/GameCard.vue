@@ -156,17 +156,17 @@ const eventType = computed(() => {
 								v-if="element?.game?.difficult"
 						>
 							<template v-if="difficultInPercent">
-								Сложность: {{ element.game.difficult }}%
+								Оценка сложности игры: {{ element.game.difficult }}%
 							</template>
 							<template v-else>
-								Сложность: {{ getDifficultName(element.game.difficult) }}
+								Оценка сложности игры: {{ getDifficultName(element.game.difficult) }}
 							</template>
 						</span>
 						<span
 								class="line-info"
 								v-if="platformDifficult"
 						>
-							Сложность платформы: {{ platformDifficult }}
+							Оценка сложности платформы: {{ platformDifficult }}
 						</span>
 						<span
 								class="line-info"
