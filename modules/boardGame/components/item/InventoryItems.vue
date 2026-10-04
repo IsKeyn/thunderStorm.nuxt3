@@ -100,11 +100,41 @@ const usedItems = computed(() => {
 	});
 });
 
+const itsAutoUseItem = (item) => {
+	const actions = item?.item?.item?.actions;
+
+	if (!actions) {
+		return false;
+	}
+
+	let hasAutoUse = false;
+
+	actions.forEach((e) => {
+		if (!hasAutoUse && e.autoUse) {
+			hasAutoUse = true;
+		}
+	});
+
+	return hasAutoUse;
+};
+
+const unusedItemsWithoutGroup = computed(() => {
+	if (!fetchedData.value) return null;
+
+	return fetchedData.value.filter((item) => {
+		return !item.has_used && !itsAutoUseItem(item);
+	});
+});
+
 const unusedItems = computed(() => {
 	const grouped = {};
 
 	if (fetchedData.value) {
-		fetchedData.value.filter(item => !item.has_used).forEach((item) => {
+		fetchedData.value
+				.filter((item) => {
+					return !item.has_used && !itsAutoUseItem(item);
+				})
+				.forEach((item) => {
 			if (item.item) {
 				if (grouped[item.item.id]) {
 					grouped[item.item.id].item.quantity++;
@@ -249,7 +279,7 @@ const sellItemRequest = async (
 			<span v-if="fetchedData.filter(item => !item.has_used).length === 0">Предметов нет</span>
 			<div class="wrapper">
 				<ItemCard
-						v-for="(element, key) in groupUnusedItems ? unusedItems : fetchedData.filter(item => !item.has_used)"
+						v-for="(element, key) in groupUnusedItems ? unusedItems : unusedItemsWithoutGroup"
 						:key="key"
 						:element="element.item"
 						:inventoryItem="element"
