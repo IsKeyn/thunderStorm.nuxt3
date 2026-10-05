@@ -122,7 +122,7 @@ const unusedItemsWithoutGroup = computed(() => {
 	if (!fetchedData.value) return null;
 
 	return fetchedData.value.filter((item) => {
-		return !item.has_used && !itsAutoUseItem(item);
+		return !item.has_used;
 	});
 });
 
@@ -132,7 +132,7 @@ const unusedItems = computed(() => {
 	if (fetchedData.value) {
 		fetchedData.value
 				.filter((item) => {
-					return !item.has_used && !itsAutoUseItem(item);
+					return !item.has_used;
 				})
 				.forEach((item) => {
 			if (item.item) {
