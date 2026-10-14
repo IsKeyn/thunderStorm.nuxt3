@@ -260,6 +260,7 @@ const showStats = computed(() => {
 									|| key === 'mostRerolledGames'
 									|| key === 'shortestGames'
 									|| key === 'longestGames'
+									|| key === 'longestGamesBeforeRerolling'
 							">
 								{{ gameKey + 1 }}. <a
 									:href="`/e/${route.params.slug}/game/${element.game.game.slug}`"
@@ -270,7 +271,7 @@ const showStats = computed(() => {
 										v-if="element.additional_data"
 								> - {{ element.additional_data }}</template>
 								<template
-										v-if="(key === 'shortestGames' || key === 'longestGames') && element.time"
+										v-if="(key === 'shortestGames' || key === 'longestGames' || key === 'longestGamesBeforeRerolling') && element.time"
 								> - {{ getFormattedHoursFromSeconds(element.time) }}</template>
 							</a>
 							</template>
@@ -309,7 +310,7 @@ const showStats = computed(() => {
 								:chart-options="chartOptions"
 						/>
 						<BarChart
-								v-if="key === 'shortestGames' || key === 'longestGames'"
+								v-if="key === 'shortestGames' || key === 'longestGames' || key === 'longestGamesBeforeRerolling'"
 								:chart-data="charDataForMostCompletedGames(data, 'time')"
 								:chart-options="chartOptionsTime"
 						/>
