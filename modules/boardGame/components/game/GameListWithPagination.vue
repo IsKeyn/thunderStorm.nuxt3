@@ -110,6 +110,11 @@ const usedFilters = [
 		type: 'checkbox',
 	},
 	{
+		name: 'eventCoop',
+		langName: 'Кооп',
+		type: 'checkbox',
+	},
+	{
 		name: 'tags',
 		langName: 'Теги',
 		type: 'curtained',
